@@ -3,7 +3,7 @@
 //  ArtAround
 //
 //  Created by Brandon Jones on 8/25/11.
-//
+//  Copyright 2011 ArtAround. All rights reserved.
 //
 
 #import "AAAPIManager.h"

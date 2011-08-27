@@ -421,7 +421,7 @@
 		CA5E10BF1405F0520075DAB8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				ORGANIZATIONNAME = nclud;
+				ORGANIZATIONNAME = ArtAround;
 			};
 			buildConfigurationList = CA5E10C21405F0520075DAB8 /* Build configuration list for PBXProject "ArtAround" */;
 			compatibilityVersion = "Xcode 3.2";
