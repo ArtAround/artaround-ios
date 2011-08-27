@@ -8,6 +8,7 @@
 
 #import "FilterViewController.h"
 #import "AAAPIManager.h"
+#import "Utilities.h"
 
 static NSArray *_kFilterTypes = nil;
 
@@ -39,6 +40,7 @@ static NSArray *_kFilterTypes = nil;
 		//top level titles
 		_titles = [[FilterViewController filterTypeTitles] retain];
 		_isTopLevel = YES;
+		_filterType = FilterTypeNone;
 		
     }
     return self;
@@ -52,8 +54,11 @@ static NSArray *_kFilterTypes = nil;
 		//set the title based on the filter type
 		[self setTitle:[[FilterViewController filterTypeTitles] objectAtIndex:filterType]];
 		
+		//set the proper filter type
+		_filterType = filterType;
+		
 		//initialize array
-		_selectedTitles = [[NSMutableArray alloc] init];
+		_selectedTitles = [[NSMutableArray alloc] initWithArray:[[Utilities instance] getFiltersForFilterType:_filterType]];
 		
 		switch (filterType) {
 				
@@ -147,29 +152,35 @@ static NSArray *_kFilterTypes = nil;
 	NSString *title = [_titles objectAtIndex:indexPath.row];
 	cell.textLabel.text = title;
 	
-	
-	if ([_selectedTitles count] == 0 && indexPath.row == 0) {
+	//update the cell accessory depending on the selected filters and filter types
+	if (_isTopLevel) {
 		
-		//nothing is selected, default to selecting the first row
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-		
-	} else if ([_selectedTitles containsObject:title]) {
-		
-		//the items is selected, show a checkmark
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		//top level
+		if (indexPath.row == [[Utilities instance] selectedFilterType]) {
+			cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		} else {
+			if (indexPath.row == 0) {
+				cell.accessoryType = UITableViewCellAccessoryNone;
+			} else {
+				cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			}
+		}
 		
 	} else {
-		if (_isTopLevel && indexPath.row != 0) {
+		
+		//not top level
+		if ([_selectedTitles count] == 0 && indexPath.row == 0) {
 			
-			//top level can dig deeper except for the first row
-			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			//nothing is selected, default to selecting the first row
+			cell.accessoryType = UITableViewCellAccessoryCheckmark;
 			
-		} else {
+		} else if ([_selectedTitles containsObject:title]) {
 			
-			//all other don't have an accessory view at all
-			cell.accessoryType = UITableViewCellAccessoryNone;
+			//the item is selected, show a checkmark
+			cell.accessoryType = UITableViewCellAccessoryCheckmark;
 			
 		}
+		
 	}
 
     return cell;
@@ -199,9 +210,8 @@ static NSArray *_kFilterTypes = nil;
 		NSString *selectedTitle = [_titles objectAtIndex:indexPath.row];
 		if (_isTopLevel) {
 			
-			//remove all selected items and select the tapped item
-			[_selectedTitles removeAllObjects];
-			[_selectedTitles addObject:selectedTitle];
+			//set the selected filter type
+			[[Utilities instance] setSelectedFilterType:indexPath.row];
 			
 			//reload all visible cells
 			[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
@@ -214,6 +224,9 @@ static NSArray *_kFilterTypes = nil;
 			} else {
 				[_selectedTitles addObject:selectedTitle];
 			}
+			
+			//update the filters
+			[[Utilities instance] setFilters:_selectedTitles forFilterType:_filterType];
 			
 			//reload the cell
 			[tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:0 inSection:indexPath.section], indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
@@ -230,7 +243,7 @@ static NSArray *_kFilterTypes = nil;
 		[self.navigationController pushViewController:filterController animated:YES];
 		[filterController release];			
 	}
-
+	
 }
 
 @end

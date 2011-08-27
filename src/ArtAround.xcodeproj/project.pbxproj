@@ -53,6 +53,7 @@
 		CAECF77B14073D9D00CD9A95 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */; };
 		CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */; };
 		CAECF77F14073DCA00CD9A95 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */; };
+		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -143,6 +144,8 @@
 		CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
+		CAFF2C9C1409781600C98C0E /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		CAFF2C9D1409781600C98C0E /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +177,7 @@
 				CA0093FC1409509A00E5001E /* Models */,
 				CA0094071409509A00E5001E /* ThirdParty */,
 				CA0094301409509B00E5001E /* Views&Controllers */,
+				CAFF2C9B1409781600C98C0E /* Utilities */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -395,6 +399,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CAFF2C9B1409781600C98C0E /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CAFF2C9C1409781600C98C0E /* Utilities.h */,
+				CAFF2C9D1409781600C98C0E /* Utilities.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -491,6 +504,7 @@
 				CA00946514095B6500E5001E /* NeighborhoodParser.m in Sources */,
 				CA00946814095E8C00E5001E /* CategoryParser.m in Sources */,
 				CA00946B1409600D00E5001E /* PhotoParser.m in Sources */,
+				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

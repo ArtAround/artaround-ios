@@ -88,6 +88,9 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+	// Synchronize defaults
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
 	// Saves changes in the application's managed object context before the application terminates.
 	[self saveContext];
 }

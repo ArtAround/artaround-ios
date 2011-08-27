@@ -7,20 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
-typedef enum {
-	FilterTypeNone = 0,
-	FilterTypeCategory = 1,
-	FilterTypeNeighborhood = 2,
-	FilterTypeTitle = 3,
-	FilterTypeArtist = 4,
-} FilterType;
+#import "Utilities.h"
 
 @interface FilterViewController : UITableViewController
 {
 	NSArray *_titles;
 	NSMutableArray *_selectedTitles;
 	BOOL _isTopLevel;
+	FilterType _filterType;
 }
 
 - (id)init;
