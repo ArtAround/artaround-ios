@@ -12,6 +12,7 @@
 #import "AAAPIManager.h"
 #import "Art.h"
 #import "ArtAnnotation.h"
+#import "DetailViewController.h"
 
 static const int _kAnnotationLimit = 9999;
 
@@ -212,20 +213,34 @@ static const int _kAnnotationLimit = 9999;
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
+	//if the annotation is not an ArtAnnotation, it's probably a system annotation like the user location
+	if (![annotation isKindOfClass:[ArtAnnotation class]]) {
+		return nil;
+	}
+	
 	//setup the annotation view
     MKPinAnnotationView *pin = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
 	pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
     pin.canShowCallout = YES;
 	pin.animatesDrop = YES;
+	pin.tag = [(ArtAnnotation *)annotation index];
     
     return pin;
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
 {
-	UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"TODO" message:@"show art detail" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-	[todoAlert show];
-	[todoAlert release];
+	if ([_items count] > view.tag) {
+		
+		//get the selected art piece
+		Art *selectedArt = [_items objectAtIndex:view.tag];
+		
+		//pass it along to a new detail controller and push it the navigation controller
+		DetailViewController *detailController = [[DetailViewController alloc] initWithArt:selectedArt];
+		[self.navigationController pushViewController:detailController animated:YES];
+		[detailController release];
+		
+	}
 }
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {

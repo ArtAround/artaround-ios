@@ -54,6 +54,8 @@
 		CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */; };
 		CAECF77F14073DCA00CD9A95 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */; };
 		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
+		CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB31409A50400C98C0E /* DetailViewController.m */; };
+		CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB61409A51400C98C0E /* DetailView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -146,6 +148,10 @@
 		CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		CAFF2C9C1409781600C98C0E /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		CAFF2C9D1409781600C98C0E /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
+		CAFF2CB21409A50400C98C0E /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		CAFF2CB31409A50400C98C0E /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		CAFF2CB51409A51400C98C0E /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailView.h; sourceTree = "<group>"; };
+		CAFF2CB61409A51400C98C0E /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,14 +309,9 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CA0094311409509B00E5001E /* ArtAnnotation.h */,
-				CA0094321409509B00E5001E /* ArtAnnotation.m */,
-				CA0094331409509B00E5001E /* FilterViewController.h */,
-				CA0094341409509B00E5001E /* FilterViewController.m */,
-				CA0094351409509B00E5001E /* MapView.h */,
-				CA0094361409509B00E5001E /* MapView.m */,
-				CA0094371409509B00E5001E /* MapViewController.h */,
-				CA0094381409509B00E5001E /* MapViewController.m */,
+				CAFF2CB81409A51800C98C0E /* Detail */,
+				CAFF2CB11409A4C400C98C0E /* Filter */,
+				CAFF2CB01409A4B600C98C0E /* Map */,
 			);
 			path = "Views&Controllers";
 			sourceTree = "<group>";
@@ -406,6 +407,39 @@
 				CAFF2C9D1409781600C98C0E /* Utilities.m */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CAFF2CB01409A4B600C98C0E /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				CA0094311409509B00E5001E /* ArtAnnotation.h */,
+				CA0094321409509B00E5001E /* ArtAnnotation.m */,
+				CA0094351409509B00E5001E /* MapView.h */,
+				CA0094361409509B00E5001E /* MapView.m */,
+				CA0094371409509B00E5001E /* MapViewController.h */,
+				CA0094381409509B00E5001E /* MapViewController.m */,
+			);
+			name = Map;
+			sourceTree = "<group>";
+		};
+		CAFF2CB11409A4C400C98C0E /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				CA0094331409509B00E5001E /* FilterViewController.h */,
+				CA0094341409509B00E5001E /* FilterViewController.m */,
+			);
+			name = Filter;
+			sourceTree = "<group>";
+		};
+		CAFF2CB81409A51800C98C0E /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				CAFF2CB21409A50400C98C0E /* DetailViewController.h */,
+				CAFF2CB31409A50400C98C0E /* DetailViewController.m */,
+				CAFF2CB51409A51400C98C0E /* DetailView.h */,
+				CAFF2CB61409A51400C98C0E /* DetailView.m */,
+			);
+			name = Detail;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -505,6 +539,8 @@
 				CA00946814095E8C00E5001E /* CategoryParser.m in Sources */,
 				CA00946B1409600D00E5001E /* PhotoParser.m in Sources */,
 				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
+				CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */,
+				CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
