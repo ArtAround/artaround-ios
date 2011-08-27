@@ -89,6 +89,9 @@ static const int _kAnnotationLimit = 20;
 {
 	[super viewDidAppear:animated];
 	
+	//temp
+	_mapNeedsRefresh = YES;
+	
 	//update the map if needed
 	if (_mapNeedsRefresh) {
 		[[AAAPIManager instance] downloadArtWithTarget:self callback:@selector(artUpdated)];
@@ -134,6 +137,39 @@ static const int _kAnnotationLimit = 20;
 	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 	[fetchRequest setEntity:entity];
 	[fetchRequest setFetchLimit:_kAnnotationLimit];
+	
+	//setup the proper delegate for the selected filter
+	switch ([Utilities instance].selectedFilterType) {
+			
+		case FilterTypeArtist: {
+			NSArray *artists = [[Utilities instance] getFiltersForFilterType:FilterTypeArtist];
+			if (artists) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"artist IN %@", artists]];
+			}
+			break;
+		}
+		case FilterTypeTitle: {
+			NSArray *titles = [[Utilities instance] getFiltersForFilterType:FilterTypeTitle];
+			if (titles) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"title IN %@", titles]];
+			}
+		}
+		case FilterTypeCategory: {
+			NSArray *categoriesTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeCategory];
+			if (categoriesTitles) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"category.title IN %@", categoriesTitles]];
+			}
+		}
+		case FilterTypeNeighborhood: {
+			NSArray *neighborhoodTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeNeighborhood];
+			if (neighborhoodTitles) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"neighborhood.title IN %@", neighborhoodTitles]];
+			}
+		}
+		default:
+			break;
+			
+	}
 	
 	//clear out the art and annotation arrays
 	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];

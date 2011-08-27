@@ -200,6 +200,9 @@ static NSArray *_kFilterTypes = nil;
 		//"all" or "none" selected, remove all others
 		[_selectedTitles removeAllObjects];
 		
+		//update the filter
+		[[Utilities instance] setFilters:nil forFilterType:_filterType];
+		
 		//reload all visible cells
 		[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
 		
@@ -225,7 +228,7 @@ static NSArray *_kFilterTypes = nil;
 				[_selectedTitles addObject:selectedTitle];
 			}
 			
-			//update the filters
+			//update the filter
 			[[Utilities instance] setFilters:_selectedTitles forFilterType:_filterType];
 			
 			//reload the cell
