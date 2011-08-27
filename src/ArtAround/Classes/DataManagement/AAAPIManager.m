@@ -27,6 +27,7 @@ static const NSString *_kCallbackKey = @"callback";
 //private methods
 @interface AAAPIManager (private)
 - (NSURL *)apiURLForMethod:(NSString *)method;
+- (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict;
 - (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
 - (ASIHTTPRequest *)downloadNeighborhoods;
 - (ASIHTTPRequest *)downloadCategories;
@@ -168,13 +169,15 @@ static const NSString *_kCallbackKey = @"callback";
 
 #pragma mark - Art Download Methods
 
-- (void)downloadArtWithTarget:(id)target callback:(SEL)callback
+- (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback
 {
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"arts"] userInfo:userInfo];
+	//todo: revisit this - may need to adjust how we download if too many items are being downloaded
+	NSDictionary *params = [NSDictionary dictionaryWithObject:@"9999" forKey:@"per_page"];
+	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"arts" parameters:params] userInfo:userInfo];
 	[request setDidFinishSelector:@selector(artRequestCompleted:)];
 	[request setDidFailSelector:@selector(artRequestFailed:)];
 	[request startAsynchronous];
@@ -209,7 +212,26 @@ static const NSString *_kCallbackKey = @"callback";
 
 - (NSURL *)apiURLForMethod:(NSString *)method
 {
-	return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@.%@", _kAPIRoot, method, _kAPIFormat]];
+	return [self apiURLForMethod:method parameters:nil];
+}
+
+- (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict
+{
+	//setup the base url
+	NSString *urlString = [NSString stringWithFormat:@"%@%@.%@", _kAPIRoot, method, _kAPIFormat];
+	
+	//add each parameter passed
+	BOOL first = YES;
+	for (NSString* key in parametersDict) {
+		NSString *value = [parametersDict objectForKey:key];
+		urlString = [urlString stringByAppendingFormat:@"%@%@=%@", (first) ? @"?" : @"&", key, value];
+		first = NO;
+	}
+	
+	DebugLog(@"URL Requested: %@", urlString);
+	
+	//return the fully formed url
+	return [NSURL URLWithString:urlString];
 }
 
 - (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
@@ -243,6 +265,15 @@ static const NSString *_kCallbackKey = @"callback";
 + (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
 	return [(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate persistentStoreCoordinator];
+}
+
+//makes sure a non-NSNull value is returned
++ (id)clean:(id)object
+{
+	if ([object isKindOfClass:[NSNull class]]) {
+		return nil;
+	}
+	return object;
 }
 
 @end

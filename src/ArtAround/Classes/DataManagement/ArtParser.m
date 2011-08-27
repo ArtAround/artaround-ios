@@ -73,10 +73,10 @@
 	
 	//set the art attribtues
 	art.slug = slug;
-	art.locationDescription = [artDict objectForKey:@"location_description"];
-	art.artist = [artDict objectForKey:@"artist"];
-	art.title = [artDict objectForKey:@"title"];
-	art.ward = [NSNumber numberWithInt:[[artDict objectForKey:@"ward"]intValue]];
+	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
+	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
+	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
+	art.ward = [AAAPIManager clean:[NSNumber numberWithInt:[[artDict objectForKey:@"ward"] intValue]]];
 	art.createdAt = [[ItemParser dateFormatter] dateFromString:[artDict objectForKey:@"created_at"]];
 	art.category = [CategoryParser categoryForTitle:[artDict objectForKey:@"category"] inContext:context];
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
@@ -85,8 +85,8 @@
 	//location
 	NSArray *location = [artDict objectForKey:@"location"];
 	if ([location count] >= 2) {
-		art.latitude = [location objectAtIndex:0];
-		art.longitude = [location objectAtIndex:1];
+		art.latitude = [AAAPIManager clean:[location objectAtIndex:0]];
+		art.longitude = [AAAPIManager clean:[location objectAtIndex:1]];
 	}
 	
 	//todo: comments

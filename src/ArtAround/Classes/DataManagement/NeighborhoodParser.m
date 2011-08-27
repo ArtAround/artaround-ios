@@ -16,14 +16,9 @@
 	NSMutableSet *neighborhoods = [NSMutableSet set];
 	for (NSString *title in neighborhoodTitles) {
 		
-		//create a new neighborhood if one doesn't exist yet
-		Neighborhood *neighborhood = [ItemParser existingEntity:@"Neighborhood" inContext:context uniqueKey:@"title" uniqueValue:title];
-		if (!neighborhood) {
-			neighborhood = (Neighborhood *)[NSEntityDescription insertNewObjectForEntityForName:@"Neighborhood" inManagedObjectContext:context];
-			neighborhood.title = title;
-		}
-		
+		//get the category for the given title
 		//add neighborbood to the set
+		Neighborhood *neighborhood = [NeighborhoodParser neighborhoodForTitle:title inContext:context];
 		[neighborhoods addObject:neighborhood];
 		
 	}
@@ -36,7 +31,7 @@
 	Neighborhood *neighborhood = [ItemParser existingEntity:@"Neighborhood" inContext:context uniqueKey:@"title" uniqueValue:title];
 	if (!neighborhood) {
 		neighborhood = (Neighborhood *)[NSEntityDescription insertNewObjectForEntityForName:@"Neighborhood" inManagedObjectContext:context];
-		neighborhood.title = title;
+		neighborhood.title = [AAAPIManager clean:title];
 	}
 	return neighborhood;
 }

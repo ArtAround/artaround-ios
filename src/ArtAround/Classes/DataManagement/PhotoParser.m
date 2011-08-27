@@ -25,12 +25,17 @@
 }
 
 + (Photo *)photoForFlickrID:(NSNumber *)flickrID inContext:(NSManagedObjectContext *)context
-{
+{	
+	//every once in a while a string is passed
+	if ([flickrID isKindOfClass:[NSString class]]) {
+		flickrID = [NSNumber numberWithLongLong:[flickrID longLongValue]];
+	}
+	
 	//create a new photo if one doesn't exist yet
 	Photo *photo = [ItemParser existingEntity:@"Photo" inContext:context uniqueKey:@"flickrID" uniqueValue:flickrID];
 	if (!photo) {
 		photo = (Photo *)[NSEntityDescription insertNewObjectForEntityForName:@"Photo" inManagedObjectContext:context];
-		photo.flickrID = flickrID;
+		photo.flickrID = [AAAPIManager clean:flickrID];
 	}
 	return photo;
 }

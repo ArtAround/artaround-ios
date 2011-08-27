@@ -16,14 +16,9 @@
 	NSMutableSet *categories = [NSMutableSet set];
 	for (NSString *title in categoryTitles) {
 		
-		//create a new neighborhood if one doesn't exist yet
-		Category *category = [ItemParser existingEntity:@"Category" inContext:context uniqueKey:@"title" uniqueValue:title];
-		if (!category) {
-			category = (Category *)[NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
-			category.title = title;
-		}
-		
-		//add neighborbood to the set
+		//get the category for the given title
+		//add cateogry to the set
+		Category *category = [CategoryParser categoryForTitle:title inContext:context];
 		[categories addObject:category];
 		
 	}
@@ -36,7 +31,7 @@
 	Category *category = [ItemParser existingEntity:@"Category" inContext:context uniqueKey:@"title" uniqueValue:title];
 	if (!category) {
 		category = (Category *)[NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
-		category.title = title;
+		category.title = [AAAPIManager clean:title];
 	}
 	return category;
 }

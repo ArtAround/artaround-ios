@@ -13,7 +13,7 @@
 }
 
 //instance methods
-- (void)downloadArtWithTarget:(id)target callback:(SEL)callback;
+- (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback;
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback;
 - (NSArray *)categories;
 - (NSArray *)neighborhoods;
@@ -24,5 +24,6 @@
 + (AAAPIManager *)instance;
 + (NSManagedObjectContext *)managedObjectContext;
 + (NSPersistentStoreCoordinator *)persistentStoreCoordinator;
++ (id)clean:(id)object;
 
 @end

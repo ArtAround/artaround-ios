@@ -13,7 +13,7 @@
 #import "Art.h"
 #import "ArtAnnotation.h"
 
-static const int _kAnnotationLimit = 20;
+static const int _kAnnotationLimit = 9999;
 
 @interface MapViewController (private)
 - (void)artUpdated;
@@ -90,7 +90,7 @@ static const int _kAnnotationLimit = 20;
 	
 	//update the map if needed
 	if (_mapNeedsRefresh) {
-		[[AAAPIManager instance] downloadArtWithTarget:self callback:@selector(artUpdated)];
+		[[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated)];
 		[self updateArt];
 	}
 }
