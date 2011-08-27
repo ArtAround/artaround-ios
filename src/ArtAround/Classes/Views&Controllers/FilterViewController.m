@@ -9,6 +9,7 @@
 #import "FilterViewController.h"
 #import "AAAPIManager.h"
 #import "Utilities.h"
+#import "MapViewController.h"
 
 static NSArray *_kFilterTypes = nil;
 
@@ -103,15 +104,20 @@ static NSArray *_kFilterTypes = nil;
 
 #pragma mark - View lifecycle
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	//set the UINavigationControllerDelegate delegate
+	self.navigationController.delegate = self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+	//add a done button
+	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
+	self.navigationItem.rightBarButtonItem = doneButton;
+	[doneButton release];
 }
 
 - (void)viewDidUnload
@@ -247,6 +253,23 @@ static NSArray *_kFilterTypes = nil;
 		[filterController release];			
 	}
 	
+}
+
+#pragma mark - UINavigationControllerDelegate
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+	//if the filters were updated, update the map
+	if ([viewController isKindOfClass:[MapViewController class]]) {
+		[(MapViewController *)viewController updateArt];
+	}
+}
+
+#pragma mark - Interface Actions
+
+- (void)doneButtonTapped
+{
+	[self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end

@@ -17,7 +17,6 @@ static const int _kAnnotationLimit = 20;
 
 @interface MapViewController (private)
 - (void)artUpdated;
-- (void)updateArt;
 -(void)filterButtonTapped;
 @end
 
@@ -89,9 +88,6 @@ static const int _kAnnotationLimit = 20;
 {
 	[super viewDidAppear:animated];
 	
-	//temp
-	_mapNeedsRefresh = YES;
-	
 	//update the map if needed
 	if (_mapNeedsRefresh) {
 		[[AAAPIManager instance] downloadArtWithTarget:self callback:@selector(artUpdated)];
@@ -127,11 +123,6 @@ static const int _kAnnotationLimit = 20;
 //queries core data for art and adds them to the map
 - (void)updateArt
 {	
-	//if we don't need to refresh, quit now
-	if (!_mapNeedsRefresh) {
-		return;
-	}
-	
 	//get art from core data
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
 	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];

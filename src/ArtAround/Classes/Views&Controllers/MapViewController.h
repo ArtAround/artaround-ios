@@ -19,4 +19,6 @@
 
 @property (nonatomic, retain) MapView *mapView;
 
+- (void)updateArt;
+
 @end

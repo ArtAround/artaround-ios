@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Utilities.h"
 
-@interface FilterViewController : UITableViewController
+@interface FilterViewController : UITableViewController <UINavigationControllerDelegate>
 {
 	NSArray *_titles;
 	NSMutableArray *_selectedTitles;
