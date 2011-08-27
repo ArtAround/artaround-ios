@@ -179,6 +179,11 @@ static NSArray *_kFilterTypes = nil;
 			//the item is selected, show a checkmark
 			cell.accessoryType = UITableViewCellAccessoryCheckmark;
 			
+		} else {
+			
+			//not selected
+			cell.accessoryType = UITableViewCellAccessoryNone;
+			
 		}
 		
 	}
