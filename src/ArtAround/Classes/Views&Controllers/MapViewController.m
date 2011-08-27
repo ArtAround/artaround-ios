@@ -1,0 +1,210 @@
+//
+//  MapViewController.m
+//  ArtAround
+//
+//  Created by Brandon Jones on 8/24/11.
+//
+//
+
+#import "MapViewController.h"
+#import "MapView.h"
+#import "FilterViewController.h"
+#import "AAAPIManager.h"
+#import "Art.h"
+#import "ArtAnnotation.h"
+
+static const int _kAnnotationLimit = 20;
+
+@interface MapViewController (private)
+- (void)artUpdated;
+- (void)updateArt;
+-(void)filterButtonTapped;
+@end
+
+@implementation MapViewController
+@synthesize mapView = _mapView;
+
+#pragma mark - View lifecycle
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+		
+		//initialize controller
+		self.title = @"ArtAround";
+		
+		//initialize arrays
+		_items = [[NSMutableArray alloc] init];
+		_annotations = [[NSMutableArray alloc] init];
+		
+    }
+    return self;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    
+    // Release any cached data, images, etc that aren't in use.
+	[self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+- (void)loadView
+{
+	[super loadView];
+	
+	//the map needs to be refreshed
+	_mapNeedsRefresh = YES;
+	
+	//setup the map view
+	MapView *aMapView = [[MapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
+	self.mapView = aMapView;
+	self.mapView.map.delegate = self;
+	[self.view addSubview:self.mapView];
+	[aMapView release];
+	
+	//default to dc map
+	MKCoordinateSpan spanDC = MKCoordinateSpanMake(0.09, 0.09);
+	CLLocationCoordinate2D centerDC;
+	centerDC.latitude = 38.895;
+	centerDC.longitude = -77.022;
+	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(centerDC, spanDC)]];
+	
+	//setup button actions
+	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+	
+    // Release any retained subviews of the main view.
+	[self setMapView:nil];
+	[self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	
+	//update the map if needed
+	if (_mapNeedsRefresh) {
+		[[AAAPIManager instance] downloadArtWithTarget:self callback:@selector(artUpdated)];
+		[self updateArt];
+	}
+}
+
+- (void)dealloc
+{
+	[super dealloc];
+	[self setMapView:nil];
+}
+
+#pragma mark - Button Actions
+
+-(void)filterButtonTapped
+{
+	//create a top level filter controller and push it to the nav controller
+	FilterViewController *filterController = [[FilterViewController alloc] init];
+	[self.navigationController pushViewController:filterController animated:YES];
+	[filterController release];
+}
+
+#pragma mark - Update Art
+
+//called by AAAPIManager when new art is downloaded
+- (void)artUpdated
+{
+	_mapNeedsRefresh = YES;
+	[self updateArt];
+}
+
+//queries core data for art and adds them to the map
+- (void)updateArt
+{	
+	//if we don't need to refresh, quit now
+	if (!_mapNeedsRefresh) {
+		return;
+	}
+	
+	//get art from core data
+	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
+	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+	[fetchRequest setEntity:entity];
+	[fetchRequest setFetchLimit:_kAnnotationLimit];
+	
+	//clear out the art and annotation arrays
+	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];
+	[_annotations removeAllObjects];
+	[_items removeAllObjects];
+	
+	//fetch art
+	//execute fetch request
+	NSError *error = nil;
+	NSArray *queryItems = [[AAAPIManager managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+	[_items addObjectsFromArray:queryItems];
+	
+	//release fetch request
+	[fetchRequest release];
+	
+	//check for errors
+	if (!_items || error) {
+		return;
+	}
+	
+	//add annotations
+	for (int i = 0; i < [_items count]; i++) {
+		
+		//add the annotation for the art
+		Art *art = [_items objectAtIndex:i];
+		if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
+			
+			//setup the coordinate
+			CLLocationCoordinate2D artLocation;
+			artLocation.latitude = [art.latitude doubleValue];
+			artLocation.longitude = [art.longitude doubleValue];
+			
+			//create an annotation, add it to the map, and store it in the array
+			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+			annotation.index = i; //used when tapping the callout accessory button
+			[_annotations addObject:annotation];
+			[annotation release];
+			
+		}
+		
+	}
+	
+	//add annotations
+	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
+	_mapNeedsRefresh = NO;
+}
+
+#pragma mark - MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
+{
+	//setup the annotation view
+    MKPinAnnotationView *pin = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
+	pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    pin.canShowCallout = YES;
+	pin.animatesDrop = YES;
+    
+    return pin;
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+{
+	UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"TODO" message:@"show art detail" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	[todoAlert show];
+	[todoAlert release];
+}
+
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
+}
+
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view {
+}
+
+@end

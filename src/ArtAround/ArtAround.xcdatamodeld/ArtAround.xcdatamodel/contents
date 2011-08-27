@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="562" systemVersion="11B26" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Art" representedClassName="Art">
+        <attribute name="artist" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date"/>
+        <attribute name="latitude" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="locationDescription" optional="YES" attributeType="String"/>
+        <attribute name="longitude" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="slug" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="ward" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category"/>
+        <relationship name="comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Comment" inverseName="art" inverseEntity="Comment"/>
+        <relationship name="neighborhood" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Neighborhood" inverseName="arts" inverseEntity="Neighborhood"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Photo" inverseName="art" inverseEntity="Photo"/>
+    </entity>
+    <entity name="Category" representedClassName="Category">
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="category" inverseEntity="Art"/>
+    </entity>
+    <entity name="Comment" representedClassName="Comment">
+        <attribute name="approved" optional="YES" attributeType="Boolean"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="comments" inverseEntity="Art"/>
+    </entity>
+    <entity name="Neighborhood" representedClassName="Neighborhood">
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="neighborhood" inverseEntity="Art"/>
+    </entity>
+    <entity name="Photo" representedClassName="Photo">
+        <attribute name="flickrID" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
+        <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art"/>
+    </entity>
+    <elements>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="225"/>
+        <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
+        <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
+        <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
+        <element name="Photo" positionX="-108" positionY="213" width="128" height="75"/>
+    </elements>
+</model>

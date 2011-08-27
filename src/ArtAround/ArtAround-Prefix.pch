@@ -1,0 +1,21 @@
+//
+// Prefix header for all source files of the 'ArtAround' target in the 'ArtAround' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iPhone SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+	#import <UIKit/UIKit.h>
+	#import <Foundation/Foundation.h>
+	#import <CoreData/CoreData.h>
+#endif
+
+#if DEBUG
+#define DebugLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+#else
+#define DebugLog( s, ... ) 
+#endif
