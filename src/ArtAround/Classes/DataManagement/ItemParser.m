@@ -7,7 +7,8 @@
 //
 
 #import "ItemParser.h"
-#import "AAAPIManager.h"
+
+static NSDateFormatter *_dateFormatter = nil;
 
 @implementation ItemParser
 
@@ -18,14 +19,33 @@
 		//observe NSManagedObjectContextDidSaveNotification
 		[[NSNotificationCenter defaultCenter] addObserver:[AAAPIManager instance] selector:@selector(itemParserContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:[self managedObjectContext]];
 		
-		//setup the date formatter
-		_dateFormatter = [[NSDateFormatter alloc] init];
-		[_dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
-		[_dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
-		
 	}
     return self;
 }
+
++ (NSDateFormatter *)dateFormatter
+{
+	//setup the date formatter if it doesn't exist yet
+	if (!_dateFormatter) {
+		_dateFormatter = [[NSDateFormatter alloc] init];
+		[_dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+		[_dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
+	}
+	return _dateFormatter;
+}
+
+- (void)dealloc
+{	
+	//stop listening for notifications
+	[[NSNotificationCenter defaultCenter] removeObserver:[AAAPIManager instance] name:NSManagedObjectContextDidSaveNotification object:[self managedObjectContext]];
+
+	if (_managedObjectContext) {
+		[_managedObjectContext release];
+	}
+    [super dealloc];
+}
+
+#pragma mark - Properties
 
 - (AAManagedObjectContext *)managedObjectContext
 {	
@@ -44,14 +64,36 @@
     return _managedObjectContext;
 }
 
-- (void)dealloc
-{	
-	//stop listening for notifications
-	[[NSNotificationCenter defaultCenter] removeObserver:[AAAPIManager instance] name:NSManagedObjectContextDidSaveNotification object:[self managedObjectContext]];
+#pragma mark - Class Methods
 
-	if (_managedObjectContext) {
-		[_managedObjectContext release];
++ (id)existingEntity:(NSString *)entityName inContext:(NSManagedObjectContext *)context uniqueKey:(NSString *)uniqueKey uniqueValue:(id)uniqueValue
+{
+	//initialize a request
+	NSFetchRequest *request = [[NSFetchRequest alloc] init];
+	NSEntityDescription *entityDescription = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+	[request setEntity:entityDescription];
+	[request setIncludesSubentities:NO];
+	[request setFetchLimit:1];
+	
+	//set the predicate
+	[request setPredicate:[NSPredicate predicateWithFormat:@"%K == %@", uniqueKey, uniqueValue]];
+	
+	id entity = nil;
+	@try {
+		//get the returned object if there is one
+		NSError *err;
+		NSArray *results = [context executeFetchRequest:request error:&err];
+		entity = (results && [results count] > 0) ? [results objectAtIndex:0] : nil;
 	}
-    [super dealloc];
+	@catch (NSException * e) {
+		return nil;
+	}
+	@finally {
+		[request release];
+	}
+	
+	//return the item
+	return entity;
 }
+
 @end

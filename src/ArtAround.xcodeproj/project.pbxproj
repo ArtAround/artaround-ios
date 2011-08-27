@@ -37,6 +37,9 @@
 		CA0094551409509B00E5001E /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0094341409509B00E5001E /* FilterViewController.m */; };
 		CA0094561409509B00E5001E /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0094361409509B00E5001E /* MapView.m */; };
 		CA0094571409509B00E5001E /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0094381409509B00E5001E /* MapViewController.m */; };
+		CA00946514095B6500E5001E /* NeighborhoodParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946414095B6500E5001E /* NeighborhoodParser.m */; };
+		CA00946814095E8C00E5001E /* CategoryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946714095E8C00E5001E /* CategoryParser.m */; };
+		CA00946B1409600D00E5001E /* PhotoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946A1409600D00E5001E /* PhotoParser.m */; };
 		CA5E10CD1405F0520075DAB8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CC1405F0520075DAB8 /* UIKit.framework */; };
 		CA5E10CF1405F0520075DAB8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CE1405F0520075DAB8 /* Foundation.framework */; };
 		CA5E10D11405F0520075DAB8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */; };
@@ -118,6 +121,12 @@
 		CA0094361409509B00E5001E /* MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapView.m; sourceTree = "<group>"; };
 		CA0094371409509B00E5001E /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
 		CA0094381409509B00E5001E /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
+		CA00946314095B6500E5001E /* NeighborhoodParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborhoodParser.h; sourceTree = "<group>"; };
+		CA00946414095B6500E5001E /* NeighborhoodParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NeighborhoodParser.m; sourceTree = "<group>"; };
+		CA00946614095E8C00E5001E /* CategoryParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryParser.h; sourceTree = "<group>"; };
+		CA00946714095E8C00E5001E /* CategoryParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryParser.m; sourceTree = "<group>"; };
+		CA0094691409600C00E5001E /* PhotoParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoParser.h; sourceTree = "<group>"; };
+		CA00946A1409600D00E5001E /* PhotoParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoParser.m; sourceTree = "<group>"; };
 		CA5E10C81405F0520075DAB8 /* ArtAround.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtAround.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA5E10CC1405F0520075DAB8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CA5E10CE1405F0520075DAB8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -181,16 +190,9 @@
 		CA0093F11409509A00E5001E /* DataManagement */ = {
 			isa = PBXGroup;
 			children = (
+				CA00946114095B1D00E5001E /* Parsers */,
 				CA0093F21409509A00E5001E /* AAAPIManager.h */,
 				CA0093F31409509A00E5001E /* AAAPIManager.m */,
-				CA0093F41409509A00E5001E /* AAManagedObjectContext.h */,
-				CA0093F51409509A00E5001E /* AAManagedObjectContext.m */,
-				CA0093F61409509A00E5001E /* ArtParser.h */,
-				CA0093F71409509A00E5001E /* ArtParser.m */,
-				CA0093F81409509A00E5001E /* ConfigParser.h */,
-				CA0093F91409509A00E5001E /* ConfigParser.m */,
-				CA0093FA1409509A00E5001E /* ItemParser.h */,
-				CA0093FB1409509A00E5001E /* ItemParser.m */,
 			);
 			path = DataManagement;
 			sourceTree = "<group>";
@@ -314,6 +316,27 @@
 			children = (
 			);
 			path = Images;
+			sourceTree = "<group>";
+		};
+		CA00946114095B1D00E5001E /* Parsers */ = {
+			isa = PBXGroup;
+			children = (
+				CA0093F41409509A00E5001E /* AAManagedObjectContext.h */,
+				CA0093F51409509A00E5001E /* AAManagedObjectContext.m */,
+				CA0093F61409509A00E5001E /* ArtParser.h */,
+				CA0093F71409509A00E5001E /* ArtParser.m */,
+				CA00946614095E8C00E5001E /* CategoryParser.h */,
+				CA00946714095E8C00E5001E /* CategoryParser.m */,
+				CA0093F81409509A00E5001E /* ConfigParser.h */,
+				CA0093F91409509A00E5001E /* ConfigParser.m */,
+				CA0093FA1409509A00E5001E /* ItemParser.h */,
+				CA0093FB1409509A00E5001E /* ItemParser.m */,
+				CA00946314095B6500E5001E /* NeighborhoodParser.h */,
+				CA00946414095B6500E5001E /* NeighborhoodParser.m */,
+				CA0094691409600C00E5001E /* PhotoParser.h */,
+				CA00946A1409600D00E5001E /* PhotoParser.m */,
+			);
+			name = Parsers;
 			sourceTree = "<group>";
 		};
 		CA5E10BD1405F0520075DAB8 = {
@@ -465,6 +488,9 @@
 				CA0094551409509B00E5001E /* FilterViewController.m in Sources */,
 				CA0094561409509B00E5001E /* MapView.m in Sources */,
 				CA0094571409509B00E5001E /* MapViewController.m in Sources */,
+				CA00946514095B6500E5001E /* NeighborhoodParser.m in Sources */,
+				CA00946814095E8C00E5001E /* CategoryParser.m in Sources */,
+				CA00946B1409600D00E5001E /* PhotoParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

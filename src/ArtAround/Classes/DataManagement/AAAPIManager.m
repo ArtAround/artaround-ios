@@ -245,34 +245,4 @@ static const NSString *_kCallbackKey = @"callback";
 	return [(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate persistentStoreCoordinator];
 }
 
-+ (id)existingEntity:(NSString *)entityName inContext:(NSManagedObjectContext *)context uniqueKey:(NSString *)uniqueKey uniqueValue:(id)uniqueValue
-{
-	//initialize a request
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	NSEntityDescription *entityDescription = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-	[request setEntity:entityDescription];
-	[request setIncludesSubentities:NO];
-	[request setFetchLimit:1];
-	
-	//set the predicate
-	[request setPredicate:[NSPredicate predicateWithFormat:@"%K == %@", uniqueKey, uniqueValue]];
-	
-	id entity = nil;
-	@try {
-		//get the returned object if there is one
-		NSError *err;
-		NSArray *results = [context executeFetchRequest:request error:&err];
-		entity = (results && [results count] > 0) ? [results objectAtIndex:0] : nil;
-	}
-	@catch (NSException * e) {
-		return nil;
-	}
-	@finally {
-		[request release];
-	}
-	
-	//return the item
-	return entity;
-}
-
 @end

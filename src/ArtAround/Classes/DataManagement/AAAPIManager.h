@@ -24,6 +24,5 @@
 + (AAAPIManager *)instance;
 + (NSManagedObjectContext *)managedObjectContext;
 + (NSPersistentStoreCoordinator *)persistentStoreCoordinator;
-+ (id)existingEntity:(NSString *)entityName inContext:(NSManagedObjectContext *)context uniqueKey:(NSString *)uniqueKey uniqueValue:(id)uniqueValue;
 
 @end

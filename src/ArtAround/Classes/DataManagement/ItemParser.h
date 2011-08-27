@@ -8,14 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import	"ASIHTTPRequest.h"
+#import "AAAPIManager.h"
 #import "AAManagedObjectContext.h"
 
 @interface ItemParser : NSObject
 {
 	AAManagedObjectContext *_managedObjectContext;
-	NSDateFormatter *_dateFormatter;
 }
 
 @property (nonatomic, readonly) AAManagedObjectContext *managedObjectContext;
+
++ (id)existingEntity:(NSString *)entityName inContext:(NSManagedObjectContext *)context uniqueKey:(NSString *)uniqueKey uniqueValue:(id)uniqueValue;
++ (NSDateFormatter *)dateFormatter;
 
 @end
