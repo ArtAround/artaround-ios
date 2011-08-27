@@ -194,8 +194,18 @@ static NSArray *_kFilterTypes = nil;
 	//deselect the row
 	[tableView deselectRowAtIndexPath:indexPath animated:NO];
 	
-	//was the first row selected?
-	if (indexPath.row == 0) {
+	//top level only one item can be selected
+	//deeper levels are multi-select
+	NSString *selectedTitle = [_titles objectAtIndex:indexPath.row];
+	if (_isTopLevel) {
+		
+		//set the selected filter type
+		[[Utilities instance] setSelectedFilterType:indexPath.row];
+		
+		//reload all visible cells
+		[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
+		
+	} else if (indexPath.row == 0) {
 		
 		//"all" or "none" selected, remove all others
 		[_selectedTitles removeAllObjects];
@@ -207,34 +217,19 @@ static NSArray *_kFilterTypes = nil;
 		[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
 		
 	} else {
-		
-		//top level only one item can be selected
-		//deeper levels are multi-select
-		NSString *selectedTitle = [_titles objectAtIndex:indexPath.row];
-		if (_isTopLevel) {
 			
-			//set the selected filter type
-			[[Utilities instance] setSelectedFilterType:indexPath.row];
-			
-			//reload all visible cells
-			[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
-			
+		//add or remove the title from the selection array
+		if ([_selectedTitles containsObject:selectedTitle]) {
+			[_selectedTitles removeObject:selectedTitle];
 		} else {
-			
-			//add or remove the title from the selection array
-			if ([_selectedTitles containsObject:selectedTitle]) {
-				[_selectedTitles removeObject:selectedTitle];
-			} else {
-				[_selectedTitles addObject:selectedTitle];
-			}
-			
-			//update the filter
-			[[Utilities instance] setFilters:_selectedTitles forFilterType:_filterType];
-			
-			//reload the cell
-			[tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:0 inSection:indexPath.section], indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
-			
+			[_selectedTitles addObject:selectedTitle];
 		}
+		
+		//update the filter
+		[[Utilities instance] setFilters:_selectedTitles forFilterType:_filterType];
+		
+		//reload the cell
+		[tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:0 inSection:indexPath.section], indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
 		
 	}
 
