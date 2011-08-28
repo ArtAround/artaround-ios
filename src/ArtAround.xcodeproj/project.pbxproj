@@ -58,6 +58,8 @@
 		CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB61409A51400C98C0E /* DetailView.m */; };
 		CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC31409B26D00C98C0E /* DetailView.css */; };
 		CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC51409B29000C98C0E /* DetailView.html */; };
+		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
+		CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,6 +158,8 @@
 		CAFF2CB61409A51400C98C0E /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
 		CAFF2CC31409B26D00C98C0E /* DetailView.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView.css; sourceTree = "<group>"; };
 		CAFF2CC51409B29000C98C0E /* DetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DetailView.html; sourceTree = "<group>"; };
+		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
+		CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -397,6 +401,8 @@
 			children = (
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
 				CA5E10D61405F0520075DAB8 /* ArtAround-Info.plist */,
+				CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */,
+				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
 				CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */,
 				CA5E10D71405F0520075DAB8 /* InfoPlist.strings */,
 				CA5E10DA1405F0520075DAB8 /* main.m */,
@@ -501,6 +507,8 @@
 				CA5E10D91405F0520075DAB8 /* InfoPlist.strings in Resources */,
 				CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */,
 				CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */,
+				CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */,
+				CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
