@@ -17,7 +17,7 @@ static Utilities *_kSharedInstance = nil;
 @end
 
 @implementation Utilities
-@synthesize selectedFilterType = _selectedFilterType;
+@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict;
 
 //singleton
 + (Utilities *)instance
@@ -39,9 +39,21 @@ static Utilities *_kSharedInstance = nil;
 		
 		//set an invalid filter type so it is forced to pull from NSUserDefaults on first load
 		_selectedFilterType = -1;
+		
+		//setup the keys dictionary
+		NSString *settingsLocation = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ArtAround-Keys.plist"];
+		NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsLocation];
+		[self setKeysDict:settingsDict];
+		[settingsDict release];
 
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	[self setKeysDict:nil];
+	[super dealloc];
 }
 
 #pragma mark - Map Methods

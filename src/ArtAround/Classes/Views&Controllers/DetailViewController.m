@@ -13,6 +13,8 @@
 #import "DetailView.h"
 #import "ArtAnnotation.h"
 #import "Utilities.h"
+#import "FlickrAPIManager.h"
+#import "Photo.h"
 
 @interface DetailViewController (private)
 - (void)updateMapFrame;
@@ -51,6 +53,13 @@
 	//load the html
 	[self.detailView.webView loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
 	
+	//get all the photo details for each photo that is missing the deets
+	for (Photo *photo in [_art.photos allObjects]) {
+		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
+			[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
+		}
+	}
+	
 	//add the annotation for the art
 	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
 		
@@ -65,6 +74,11 @@
 		[annotation release];
 		
 	}
+}
+
+- (void)setupImages
+{
+	//todo: update the source for each image view that doesn't have one yet
 }
 
 - (void)didReceiveMemoryWarning

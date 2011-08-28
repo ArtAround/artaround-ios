@@ -33,11 +33,26 @@
     </entity>
     <entity name="Photo" representedClassName="Photo">
         <attribute name="flickrID" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
-        <attribute name="medium" optional="YES" attributeType="String"/>
-        <attribute name="original" optional="YES" attributeType="String"/>
-        <attribute name="small" optional="YES" attributeType="String"/>
-        <attribute name="square" optional="YES" attributeType="String"/>
-        <attribute name="thumbnail" optional="YES" attributeType="String"/>
+        <attribute name="mediumHeight" optional="YES" attributeType="Integer 32"/>
+        <attribute name="mediumSource" optional="YES" attributeType="String"/>
+        <attribute name="mediumURL" optional="YES" attributeType="String"/>
+        <attribute name="mediumWidth" optional="YES" attributeType="Integer 32"/>
+        <attribute name="originalHeight" optional="YES" attributeType="Integer 32"/>
+        <attribute name="originalSource" optional="YES" attributeType="String"/>
+        <attribute name="originalURL" optional="YES" attributeType="String"/>
+        <attribute name="originalWidth" optional="YES" attributeType="Integer 32"/>
+        <attribute name="smallHeight" optional="YES" attributeType="Integer 32"/>
+        <attribute name="smallSource" optional="YES" attributeType="String"/>
+        <attribute name="smallURL" optional="YES" attributeType="String"/>
+        <attribute name="smallWidth" optional="YES" attributeType="Integer 32"/>
+        <attribute name="squareHeight" optional="YES" attributeType="Integer 32"/>
+        <attribute name="squareSource" optional="YES" attributeType="String"/>
+        <attribute name="squareURL" optional="YES" attributeType="String"/>
+        <attribute name="squareWidth" optional="YES" attributeType="Integer 32"/>
+        <attribute name="thumbnailHeight" optional="YES" attributeType="Integer 32"/>
+        <attribute name="thumbnailSource" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailURL" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailWidth" optional="YES" attributeType="Integer 32"/>
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art"/>
     </entity>
     <elements>
@@ -45,6 +60,6 @@
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
-        <element name="Photo" positionX="-108" positionY="213" width="128" height="150"/>
+        <element name="Photo" positionX="-108" positionY="213" width="128" height="75"/>
     </elements>
 </model>

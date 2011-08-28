@@ -2,7 +2,7 @@
 //  Photo.m
 //  ArtAround
 //
-//  Created by Brandon Jones on 8/27/11.
+//  Created by Brandon Jones on 8/28/11.
 //  Copyright (c) 2011 ArtAround. All rights reserved.
 //
 
@@ -12,11 +12,26 @@
 
 @implementation Photo
 @dynamic flickrID;
-@dynamic square;
-@dynamic thumbnail;
-@dynamic small;
-@dynamic medium;
-@dynamic original;
+@dynamic mediumHeight;
+@dynamic mediumSource;
+@dynamic mediumURL;
+@dynamic mediumWidth;
+@dynamic originalHeight;
+@dynamic originalSource;
+@dynamic originalURL;
+@dynamic originalWidth;
+@dynamic smallHeight;
+@dynamic smallSource;
+@dynamic smallURL;
+@dynamic smallWidth;
+@dynamic squareHeight;
+@dynamic squareSource;
+@dynamic squareURL;
+@dynamic squareWidth;
+@dynamic thumbnailHeight;
+@dynamic thumbnailSource;
+@dynamic thumbnailURL;
+@dynamic thumbnailWidth;
 @dynamic art;
 
 @end

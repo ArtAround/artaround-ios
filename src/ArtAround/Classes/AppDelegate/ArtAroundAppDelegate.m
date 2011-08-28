@@ -9,6 +9,8 @@
 #import "ArtAroundAppDelegate.h"
 #import "MapViewController.h"
 #import "AAAPIManager.h"
+#import "FlickrAPIManager.h"
+#import "Utilities.h"
 
 @implementation ArtAroundAppDelegate
 
@@ -40,6 +42,9 @@
 	
 	//download static config items
 	[self performSelectorInBackground:@selector(downloadConfig) withObject:nil];
+	
+	//set the Flickr API Key
+	[[FlickrAPIManager instance] setApiKey:[[Utilities instance].keysDict objectForKey:@"FlickrAPIKey"]];
 	
     return YES;
 }

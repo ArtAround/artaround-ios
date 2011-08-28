@@ -23,6 +23,7 @@ typedef enum {
 }
 
 @property (nonatomic, assign) FilterType selectedFilterType;
+@property (nonatomic, retain) NSDictionary *keysDict;
 
 + (Utilities *)instance;
 + (void)zoomToFitMapAnnotations:(MKMapView *)mapView;

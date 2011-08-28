@@ -60,6 +60,7 @@
 		CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC51409B29000C98C0E /* DetailView.html */; };
 		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
 		CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */; };
+		CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -160,6 +161,8 @@
 		CAFF2CC51409B29000C98C0E /* DetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DetailView.html; sourceTree = "<group>"; };
 		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
 		CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
+		CAFF2CEA1409F76C00C98C0E /* FlickrAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIManager.h; sourceTree = "<group>"; };
+		CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrAPIManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,9 +211,8 @@
 		CA0093F11409509A00E5001E /* DataManagement */ = {
 			isa = PBXGroup;
 			children = (
+				CAFF2CE61409F73800C98C0E /* APIManagers */,
 				CA00946114095B1D00E5001E /* Parsers */,
-				CA0093F21409509A00E5001E /* AAAPIManager.h */,
-				CA0093F31409509A00E5001E /* AAAPIManager.m */,
 			);
 			path = DataManagement;
 			sourceTree = "<group>";
@@ -454,6 +456,17 @@
 			name = Detail;
 			sourceTree = "<group>";
 		};
+		CAFF2CE61409F73800C98C0E /* APIManagers */ = {
+			isa = PBXGroup;
+			children = (
+				CA0093F21409509A00E5001E /* AAAPIManager.h */,
+				CA0093F31409509A00E5001E /* AAAPIManager.m */,
+				CAFF2CEA1409F76C00C98C0E /* FlickrAPIManager.h */,
+				CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */,
+			);
+			name = APIManagers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -557,6 +570,7 @@
 				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
 				CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */,
 				CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */,
+				CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
