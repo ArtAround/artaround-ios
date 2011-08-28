@@ -33,13 +33,18 @@
     </entity>
     <entity name="Photo" representedClassName="Photo">
         <attribute name="flickrID" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
+        <attribute name="medium" optional="YES" attributeType="String"/>
+        <attribute name="original" optional="YES" attributeType="String"/>
+        <attribute name="small" optional="YES" attributeType="String"/>
+        <attribute name="square" optional="YES" attributeType="String"/>
+        <attribute name="thumbnail" optional="YES" attributeType="String"/>
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art"/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="240"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="225"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
-        <element name="Photo" positionX="-108" positionY="213" width="128" height="75"/>
+        <element name="Photo" positionX="-108" positionY="213" width="128" height="150"/>
     </elements>
 </model>
