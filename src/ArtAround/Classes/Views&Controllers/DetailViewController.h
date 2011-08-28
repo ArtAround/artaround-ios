@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 @class DetailView;
 @class Art;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate>
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate>
 
 @property (nonatomic, retain) DetailView *detailView;
 @property (nonatomic, assign) Art *art;

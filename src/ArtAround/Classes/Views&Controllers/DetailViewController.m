@@ -11,6 +11,12 @@
 #import "Category.h"
 #import "Neighborhood.h"
 #import "DetailView.h"
+#import "ArtAnnotation.h"
+#import "Utilities.h"
+
+@interface DetailViewController (private)
+- (void)updateMapFrame;
+@end
 
 @implementation DetailViewController
 @synthesize art = _art, detailView = _detailView;
@@ -25,7 +31,9 @@
 		[self setDetailView:aDetailView];
 		[self.view addSubview:self.detailView];
 		[self.detailView.webView setDelegate:self];
+		[self.detailView.mapView setDelegate:self];
 		[aDetailView release];
+
     }
     return self;
 }
@@ -42,6 +50,21 @@
 	
 	//load the html
 	[self.detailView.webView loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
+	
+	//add the annotation for the art
+	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
+		
+		//setup the coordinate
+		CLLocationCoordinate2D artLocation;
+		artLocation.latitude = [art.latitude doubleValue];
+		artLocation.longitude = [art.longitude doubleValue];
+		
+		//create an annotation, add it to the map, and store it in the array
+		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+		[self.detailView.mapView addAnnotation:annotation];
+		[annotation release];
+		
+	}
 }
 
 - (void)didReceiveMemoryWarning
@@ -57,6 +80,15 @@
 	[super dealloc];
 }
 
+- (void)updateMapFrame
+{
+	//update the map frame
+	NSString *yOffset = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"mapPos();"];
+	CGRect mapFrame = self.detailView.mapView.frame;
+	[self.detailView.mapView setFrame:CGRectMake(mapFrame.origin.x, [yOffset floatValue] + 5.0f, mapFrame.size.width, mapFrame.size.height)];
+	[self.detailView.mapView setAlpha:1.0f];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidUnload
@@ -66,8 +98,13 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+	return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	//update the map frame
+	[self updateMapFrame];
 }
 
 #pragma mark - UIWebViewDelegate
@@ -78,6 +115,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+	//update the map frame
+	[self updateMapFrame];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
@@ -88,6 +127,12 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
 	DebugLog(@"detailController webview error:", error);
+}
+
+#pragma mark - MKMapViewDelegate
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+	[Utilities zoomToFitMapAnnotations:mapView];
 }
 
 @end

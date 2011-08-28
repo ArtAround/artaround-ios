@@ -9,28 +9,58 @@ html {
 	margin: 0;
 }
 
-.section {
-	margin: 0 0 20px 0;
-}
-
 .light {
 	background-color: #c0b9b7;
 	border-color: #524a4b;
-	border-style: solid
-	border-width: 0 3px;
-	-webkit-box-shadow: 0 0 15px #000;
+	border-style: solid;
+	border-width: 5px 0;
+	-webkit-box-shadow: 0 0 10px #333;
 }
 
 .dark {
 	
 }
 
-#photos {
-	height: 100px;
+.section {
+	margin: 0 0 5px 0;
+}
+
+#artist {
+	
+}
+
+#artist_info {
+	
+}
+
+#category {
+	
 }
 
 #details {
 	padding: 20px;
+}
+
+#location {
+	padding: 20px;
+}
+
+#location_description {
+	
+}
+
+#map {
+	height: 175px;
+	border: solid 5px #fff;
+	margin: 5px;
+}
+
+#neighborhood {
+	
+}
+
+#photos {
+	height: 100px;
 }
 
 #title {
@@ -40,34 +70,10 @@ html {
 	margin: 0;
 }
 
-#artist_info {
-	
-}
-
-#artist {
-	
-}
-
-#year {
-	
-}
-
-#category {
-	
-}
-
-#location {
-	padding: 20px;
-}
-
-#neighborhood {
-	
-}
-
 #ward {
 	
 }
 
-#location_description {
+#year {
 	
 }

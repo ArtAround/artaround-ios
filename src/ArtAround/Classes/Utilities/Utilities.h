@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@class MKMapView;
 
 typedef enum {
 	FilterTypeNone = 0,
@@ -24,6 +25,7 @@ typedef enum {
 @property (nonatomic, assign) FilterType selectedFilterType;
 
 + (Utilities *)instance;
++ (void)zoomToFitMapAnnotations:(MKMapView *)mapView;
 - (NSArray *)getFiltersForFilterType:(FilterType)filterType;
 - (void)setFilters:(NSArray *)filters forFilterType:(FilterType)filterType;
 

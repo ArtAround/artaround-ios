@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
 @interface DetailView : UIView
-{
-}
 
 @property (nonatomic, retain) UIWebView *webView;
+@property (nonatomic, retain) MKMapView *mapView;
 
 @end

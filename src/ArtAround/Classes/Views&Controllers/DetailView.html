@@ -5,8 +5,26 @@
 		<link rel="stylesheet" type="text/css" href="DetailView.css" title="stylesheet" /> 
 		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 		<meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0" />
+		<script type="text/javascript">
+			
+			function mapPos() {
+				return findPos(document.getElementById('map'));
+			}
+
+			function findPos(obj) {
+				var curtop = 0;
+				if (obj.offsetParent) {
+					do {
+						curtop += obj.offsetTop;
+					} while (obj = obj.offsetParent);
+					return curtop;
+				}
+			}
+
+		</script>
 	</head>
 	<body>
+
 		<div id="details" class="section light">
 			<h1 id="title">%@</h1>
 			<div id="artist_info">
@@ -29,5 +47,9 @@
 				%@
 			</p>
 		</div>
+		
+		<div id="map" class="section dark">
+		</div>
+		
 	</body>
 </html>
