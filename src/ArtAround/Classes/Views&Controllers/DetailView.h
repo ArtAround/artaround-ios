@@ -13,5 +13,6 @@
 
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) MKMapView *mapView;
+@property (nonatomic, retain) UIScrollView *photosScrollView;
 
 @end

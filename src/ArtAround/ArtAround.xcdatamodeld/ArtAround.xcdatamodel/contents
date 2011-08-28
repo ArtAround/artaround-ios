@@ -32,7 +32,7 @@
         <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="neighborhood" inverseEntity="Art"/>
     </entity>
     <entity name="Photo" representedClassName="Photo">
-        <attribute name="flickrID" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
+        <attribute name="flickrID" optional="YES" attributeType="Integer 64" defaultValueString="0"/>
         <attribute name="mediumHeight" optional="YES" attributeType="Integer 32"/>
         <attribute name="mediumSource" optional="YES" attributeType="String"/>
         <attribute name="mediumURL" optional="YES" attributeType="String"/>
@@ -60,6 +60,6 @@
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
-        <element name="Photo" positionX="-108" positionY="213" width="128" height="75"/>
+        <element name="Photo" positionX="-108" positionY="213" width="128" height="375"/>
     </elements>
 </model>

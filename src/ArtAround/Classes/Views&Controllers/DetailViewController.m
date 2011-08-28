@@ -15,10 +15,18 @@
 #import "Utilities.h"
 #import "FlickrAPIManager.h"
 #import "Photo.h"
+#import "EGOImageView.h"
 
 @interface DetailViewController (private)
 - (void)updateMapFrame;
+- (void)updatePhotosScrollFrame;
+- (void)updateImageFrames;
+- (void)setupImages;
 @end
+
+static const float _kPhotoPadding = 10.0f;
+static const float _kPhotoWidth = 150.0f;
+static const float _kPhotoHeight = 100.0f;
 
 @implementation DetailViewController
 @synthesize art = _art, detailView = _detailView;
@@ -53,6 +61,9 @@
 	//load the html
 	[self.detailView.webView loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
 	
+	//load images that we already have a source for
+	[self setupImages];
+	
 	//get all the photo details for each photo that is missing the deets
 	for (Photo *photo in [_art.photos allObjects]) {
 		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
@@ -78,7 +89,44 @@
 
 - (void)setupImages
 {
-	//todo: update the source for each image view that doesn't have one yet
+	//loop through all the images and add an image view if it doesn't exist yet
+	//update the url for each image view that doesn't have one yet
+	//this method may be called multiple times as the flickr api returns info on each photo
+	int count = 0;
+	for (Photo *photo in _art.photos) {
+		
+		//grab existing or create new image view
+		EGOImageView *imageView = (EGOImageView *)[self.detailView.photosScrollView viewWithTag:[photo.flickrID longLongValue]];
+		if (!imageView) {
+			imageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
+			[imageView setTag:[photo.flickrID longLongValue]];
+			[imageView setFrame:CGRectMake((count * _kPhotoWidth) + _kPhotoPadding, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
+			[imageView setContentMode:UIViewContentModeScaleAspectFill];
+			[imageView setBackgroundColor:[UIColor whiteColor]];
+			[self.detailView.photosScrollView addSubview:imageView];
+			[imageView release];
+		}
+		
+		//set the image url if it doesn't exist yet
+		if (!imageView.imageURL) {
+			[imageView setImageURL:[NSURL URLWithString:photo.smallSource]];
+		}
+		
+		//increment count
+		count++;
+		
+		//[self updateImageFrames];
+	}
+}
+
+- (void)updateImageFrames
+{
+	int count = 0;
+	for (EGOImageView *imageView in self.detailView.photosScrollView.subviews) {
+		
+		//increment count
+		count++;
+	}
 }
 
 - (void)didReceiveMemoryWarning
@@ -103,6 +151,16 @@
 	[self.detailView.mapView setAlpha:1.0f];
 }
 
+- (void)updatePhotosScrollFrame
+{
+	//update the photos scroll view frame
+	NSString *yOffset = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"photosPos();"];
+	CGRect photosFrame = self.detailView.photosScrollView.frame;
+	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffset floatValue], photosFrame.size.width, photosFrame.size.height)];
+	[self.detailView.photosScrollView setAlpha:1.0f];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidUnload
@@ -117,8 +175,9 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-	//update the map frame
+	//update the map and photo frames
 	[self updateMapFrame];
+	[self updatePhotosScrollFrame];
 }
 
 #pragma mark - UIWebViewDelegate
@@ -129,8 +188,9 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-	//update the map frame
+	//update the map and photo frames
 	[self updateMapFrame];
+	[self updatePhotosScrollFrame];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
