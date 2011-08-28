@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface DetailView : UIView
+{
+}
+
+@property (nonatomic, retain) UIWebView *webView;
 
 @end

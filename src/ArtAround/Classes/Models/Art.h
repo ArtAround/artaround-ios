@@ -2,8 +2,8 @@
 //  Art.h
 //  ArtAround
 //
-//  Created by Brandon Jones on 8/26/11.
-//  Copyright 2011 ArtAround. All rights reserved.
+//  Created by Brandon Jones on 8/27/11.
+//  Copyright (c) 2011 ArtAround. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSString * slug;
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSNumber * ward;
+@property (nonatomic, retain) NSNumber * year;
 @property (nonatomic, retain) Category *category;
 @property (nonatomic, retain) NSSet *comments;
 @property (nonatomic, retain) Neighborhood *neighborhood;

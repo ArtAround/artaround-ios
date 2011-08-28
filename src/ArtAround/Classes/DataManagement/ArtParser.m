@@ -76,6 +76,7 @@
 	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
 	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
 	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
+	art.year = [AAAPIManager clean:[NSNumber numberWithInt:[[artDict objectForKey:@"year"] intValue]]];
 	art.ward = [AAAPIManager clean:[NSNumber numberWithInt:[[artDict objectForKey:@"ward"] intValue]]];
 	art.createdAt = [[ItemParser dateFormatter] dateFromString:[artDict objectForKey:@"created_at"]];
 	art.category = [CategoryParser categoryForTitle:[artDict objectForKey:@"category"] inContext:context];

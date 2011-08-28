@@ -2,8 +2,8 @@
 //  Art.m
 //  ArtAround
 //
-//  Created by Brandon Jones on 8/26/11.
-//  Copyright 2011 ArtAround. All rights reserved.
+//  Created by Brandon Jones on 8/27/11.
+//  Copyright (c) 2011 ArtAround. All rights reserved.
 //
 
 #import "Art.h"
@@ -22,6 +22,7 @@
 @dynamic slug;
 @dynamic title;
 @dynamic ward;
+@dynamic year;
 @dynamic category;
 @dynamic comments;
 @dynamic neighborhood;

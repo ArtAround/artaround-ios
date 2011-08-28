@@ -56,6 +56,8 @@
 		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
 		CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB31409A50400C98C0E /* DetailViewController.m */; };
 		CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB61409A51400C98C0E /* DetailView.m */; };
+		CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC31409B26D00C98C0E /* DetailView.css */; };
+		CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC51409B29000C98C0E /* DetailView.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -152,6 +154,8 @@
 		CAFF2CB31409A50400C98C0E /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		CAFF2CB51409A51400C98C0E /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailView.h; sourceTree = "<group>"; };
 		CAFF2CB61409A51400C98C0E /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
+		CAFF2CC31409B26D00C98C0E /* DetailView.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView.css; sourceTree = "<group>"; };
+		CAFF2CC51409B29000C98C0E /* DetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DetailView.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +442,8 @@
 				CAFF2CB31409A50400C98C0E /* DetailViewController.m */,
 				CAFF2CB51409A51400C98C0E /* DetailView.h */,
 				CAFF2CB61409A51400C98C0E /* DetailView.m */,
+				CAFF2CC31409B26D00C98C0E /* DetailView.css */,
+				CAFF2CC51409B29000C98C0E /* DetailView.html */,
 			);
 			name = Detail;
 			sourceTree = "<group>";
@@ -493,6 +499,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA5E10D91405F0520075DAB8 /* InfoPlist.strings in Resources */,
+				CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */,
+				CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

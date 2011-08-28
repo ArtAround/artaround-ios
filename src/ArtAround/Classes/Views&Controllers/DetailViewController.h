@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+@class DetailView;
 @class Art;
 
-@interface DetailViewController : UIViewController
-{
-	Art *_art;
-}
+@interface DetailViewController : UIViewController <UIWebViewDelegate>
 
-- (id)initWithArt:(Art *)art;
+@property (nonatomic, retain) DetailView *detailView;
+@property (nonatomic, assign) Art *art;
 
 @end

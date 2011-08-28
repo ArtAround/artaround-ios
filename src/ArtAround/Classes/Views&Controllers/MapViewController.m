@@ -236,8 +236,9 @@ static const int _kAnnotationLimit = 9999;
 		Art *selectedArt = [_items objectAtIndex:view.tag];
 		
 		//pass it along to a new detail controller and push it the navigation controller
-		DetailViewController *detailController = [[DetailViewController alloc] initWithArt:selectedArt];
+		DetailViewController *detailController = [[DetailViewController alloc] init];
 		[self.navigationController pushViewController:detailController animated:YES];
+		[detailController setArt:selectedArt];
 		[detailController release];
 		
 	}
