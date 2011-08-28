@@ -222,7 +222,7 @@ static const int _kAnnotationLimit = 9999;
     MKPinAnnotationView *pin = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
 	pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
     pin.canShowCallout = YES;
-	pin.animatesDrop = YES;
+	pin.animatesDrop = NO;
 	pin.tag = [(ArtAnnotation *)annotation index];
     
     return pin;
