@@ -32,9 +32,9 @@
 	//setup the main navigation controller with a map view controller as the root controller
 	MapViewController *mapViewController = [[MapViewController alloc] init];
 	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:mapViewController];
-	[[navController navigationBar] setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
+	[navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
 	[self setNavigationController:navController];
-	[[self window] addSubview:[[self navigationController] view]];
+	[self.window addSubview:self.navigationController.view];
 	
 	//clean up
 	[mapViewController release];

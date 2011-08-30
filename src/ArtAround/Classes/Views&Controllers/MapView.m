@@ -10,7 +10,7 @@
 
 @implementation MapView
 @synthesize map = _map;
-@synthesize filterButton = _filterButton;
+@synthesize shareButton = _shareButton, filterButton = _filterButton, locateButton = _locateButton;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -30,14 +30,32 @@
 		[[self map] setShowsUserLocation:YES];
 		[self addSubview:[self map]];
 		
+		//initialize the share button
+		UIButton *aShareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		[aShareButton setImage:[UIImage imageNamed:@"ShareArt.png"] forState:UIControlStateNormal];
+		[aShareButton setImage:[UIImage imageNamed:@"ShareArtPressed.png"] forState:UIControlStateHighlighted];
+		[aShareButton setFrame:CGRectMake(0.0f, 0.0f, aShareButton.imageView.image.size.width, aShareButton.imageView.image.size.height)];
+		[aShareButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
+		[self setShareButton:aShareButton];
+		[self addSubview:self.shareButton];
+		
 		//initialize the filter button
-		UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-		[aFilterButton setTitle:@"Filter" forState:UIControlStateNormal];
-		[aFilterButton setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, 44.0f)];
+		UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
+		[aFilterButton setImage:[UIImage imageNamed:@"FilterPressed.png"] forState:UIControlStateHighlighted];
+		[aFilterButton setFrame:CGRectMake(self.shareButton.frame.origin.x + self.shareButton.frame.size.width, 0.0f, aFilterButton.imageView.image.size.width, aFilterButton.imageView.image.size.height)];
 		[aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self setFilterButton:aFilterButton];
 		[self addSubview:self.filterButton];
 		
+		//initialize the locate button
+		UIButton *aLocateButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		[aLocateButton setImage:[UIImage imageNamed:@"Locate.png"] forState:UIControlStateNormal];
+		[aLocateButton setImage:[UIImage imageNamed:@"LocatePressed.png"] forState:UIControlStateHighlighted];
+		[aLocateButton setFrame:CGRectMake(self.filterButton.frame.origin.x + self.filterButton.frame.size.width, 0.0f, aLocateButton.imageView.image.size.width, aLocateButton.imageView.image.size.height)];
+		[aLocateButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin];
+		[self setLocateButton:aLocateButton];
+		[self addSubview:self.locateButton];
     }
     return self;
 }

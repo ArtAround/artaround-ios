@@ -76,6 +76,20 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	//add the logo to the navigation bar
+	UIImage *logo = [UIImage imageNamed:@"ArtAroundLogo.png"];
+	UIImageView *logoView = [[UIImageView alloc] initWithImage:logo];
+	[logoView setFrame:CGRectMake(0.0f, 0.0f, logo.size.width, logo.size.height)];
+	[logoView setContentMode:UIViewContentModeScaleAspectFit];
+	[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+	[self.navigationItem setTitleView:logoView];
+	[logoView release];
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];

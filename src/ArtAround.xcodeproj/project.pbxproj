@@ -54,10 +54,10 @@
 		CA1AEA01140C906200C56C4D /* Locate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E3140C906200C56C4D /* Locate@2x.png */; };
 		CA1AEA02140C906200C56C4D /* LocatePressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E4140C906200C56C4D /* LocatePressed.png */; };
 		CA1AEA03140C906200C56C4D /* LocatePressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E5140C906200C56C4D /* LocatePressed@2x.png */; };
-		CA1AEA04140C906200C56C4D /* MoreArt.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E6140C906200C56C4D /* MoreArt.png */; };
-		CA1AEA05140C906200C56C4D /* MoreArt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E7140C906200C56C4D /* MoreArt@2x.png */; };
-		CA1AEA06140C906200C56C4D /* MoreArtPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E8140C906200C56C4D /* MoreArtPressed.png */; };
-		CA1AEA07140C906200C56C4D /* MoreArtPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E9140C906200C56C4D /* MoreArtPressed@2x.png */; };
+		CA1AEA04140C906200C56C4D /* ShareArt.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E6140C906200C56C4D /* ShareArt.png */; };
+		CA1AEA05140C906200C56C4D /* ShareArt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E7140C906200C56C4D /* ShareArt@2x.png */; };
+		CA1AEA06140C906200C56C4D /* ShareArtPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E8140C906200C56C4D /* ShareArtPressed.png */; };
+		CA1AEA07140C906200C56C4D /* ShareArtPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9E9140C906200C56C4D /* ShareArtPressed@2x.png */; };
 		CA1AEA08140C906200C56C4D /* PinArt.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9EA140C906200C56C4D /* PinArt.png */; };
 		CA1AEA09140C906200C56C4D /* PinArt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9EB140C906200C56C4D /* PinArt@2x.png */; };
 		CA1AEA0A140C906200C56C4D /* PinArtPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9EC140C906200C56C4D /* PinArtPressed.png */; };
@@ -184,10 +184,10 @@
 		CA1AE9E3140C906200C56C4D /* Locate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Locate@2x.png"; sourceTree = "<group>"; };
 		CA1AE9E4140C906200C56C4D /* LocatePressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LocatePressed.png; sourceTree = "<group>"; };
 		CA1AE9E5140C906200C56C4D /* LocatePressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LocatePressed@2x.png"; sourceTree = "<group>"; };
-		CA1AE9E6140C906200C56C4D /* MoreArt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MoreArt.png; sourceTree = "<group>"; };
-		CA1AE9E7140C906200C56C4D /* MoreArt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MoreArt@2x.png"; sourceTree = "<group>"; };
-		CA1AE9E8140C906200C56C4D /* MoreArtPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MoreArtPressed.png; sourceTree = "<group>"; };
-		CA1AE9E9140C906200C56C4D /* MoreArtPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MoreArtPressed@2x.png"; sourceTree = "<group>"; };
+		CA1AE9E6140C906200C56C4D /* ShareArt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ShareArt.png; sourceTree = "<group>"; };
+		CA1AE9E7140C906200C56C4D /* ShareArt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ShareArt@2x.png"; sourceTree = "<group>"; };
+		CA1AE9E8140C906200C56C4D /* ShareArtPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ShareArtPressed.png; sourceTree = "<group>"; };
+		CA1AE9E9140C906200C56C4D /* ShareArtPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ShareArtPressed@2x.png"; sourceTree = "<group>"; };
 		CA1AE9EA140C906200C56C4D /* PinArt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PinArt.png; sourceTree = "<group>"; };
 		CA1AE9EB140C906200C56C4D /* PinArt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PinArt@2x.png"; sourceTree = "<group>"; };
 		CA1AE9EC140C906200C56C4D /* PinArtPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PinArtPressed.png; sourceTree = "<group>"; };
@@ -419,10 +419,6 @@
 				CA1AE9E3140C906200C56C4D /* Locate@2x.png */,
 				CA1AE9E4140C906200C56C4D /* LocatePressed.png */,
 				CA1AE9E5140C906200C56C4D /* LocatePressed@2x.png */,
-				CA1AE9E6140C906200C56C4D /* MoreArt.png */,
-				CA1AE9E7140C906200C56C4D /* MoreArt@2x.png */,
-				CA1AE9E8140C906200C56C4D /* MoreArtPressed.png */,
-				CA1AE9E9140C906200C56C4D /* MoreArtPressed@2x.png */,
 				CA1AE9EA140C906200C56C4D /* PinArt.png */,
 				CA1AE9EB140C906200C56C4D /* PinArt@2x.png */,
 				CA1AE9EC140C906200C56C4D /* PinArtPressed.png */,
@@ -435,6 +431,10 @@
 				CA1AE9F3140C906200C56C4D /* PinVenue@2x.png */,
 				CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */,
 				CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */,
+				CA1AE9E6140C906200C56C4D /* ShareArt.png */,
+				CA1AE9E7140C906200C56C4D /* ShareArt@2x.png */,
+				CA1AE9E8140C906200C56C4D /* ShareArtPressed.png */,
+				CA1AE9E9140C906200C56C4D /* ShareArtPressed@2x.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -699,10 +699,10 @@
 				CA1AEA01140C906200C56C4D /* Locate@2x.png in Resources */,
 				CA1AEA02140C906200C56C4D /* LocatePressed.png in Resources */,
 				CA1AEA03140C906200C56C4D /* LocatePressed@2x.png in Resources */,
-				CA1AEA04140C906200C56C4D /* MoreArt.png in Resources */,
-				CA1AEA05140C906200C56C4D /* MoreArt@2x.png in Resources */,
-				CA1AEA06140C906200C56C4D /* MoreArtPressed.png in Resources */,
-				CA1AEA07140C906200C56C4D /* MoreArtPressed@2x.png in Resources */,
+				CA1AEA04140C906200C56C4D /* ShareArt.png in Resources */,
+				CA1AEA05140C906200C56C4D /* ShareArt@2x.png in Resources */,
+				CA1AEA06140C906200C56C4D /* ShareArtPressed.png in Resources */,
+				CA1AEA07140C906200C56C4D /* ShareArtPressed@2x.png in Resources */,
 				CA1AEA08140C906200C56C4D /* PinArt.png in Resources */,
 				CA1AEA09140C906200C56C4D /* PinArt@2x.png in Resources */,
 				CA1AEA0A140C906200C56C4D /* PinArtPressed.png in Resources */,
