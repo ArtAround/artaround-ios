@@ -89,6 +89,9 @@ static const int _kAnnotationLimit = 9999;
 {
 	[super viewDidAppear:animated];
 	
+	//clear out the navigation controller possibly set by another view controller
+	[self.navigationController setDelegate:nil];
+	
 	//update the map if needed
 	if (_mapNeedsRefresh) {
 		[[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated)];

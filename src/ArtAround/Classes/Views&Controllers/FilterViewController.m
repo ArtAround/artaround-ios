@@ -260,12 +260,7 @@ static NSArray *_kFilterTypes = nil;
 {
 	//if the filters were updated, update the map
 	if ([viewController isKindOfClass:[MapViewController class]]) {
-		
-		//update the map
-		//clear the UINavigationControllerDelegate delegate
 		[(MapViewController *)viewController updateArt];
-		[self.navigationController setDelegate:nil];
-		
 	}
 }
 
