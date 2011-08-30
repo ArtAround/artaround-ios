@@ -24,8 +24,11 @@
 @end
 
 static const float _kPhotoPadding = 10.0f;
-static const float _kPhotoInitialPaddingForOne = 93.0f;
-static const float _kPhotoInitialPaddingForTwo = 20.0f;
+static const float _kPhotoInitialPaddingForOnePortait = 93.0f;
+static const float _kPhotoInitialPaddingForTwoPortait = 20.0f;
+static const float _kPhotoInitialPaddingForOneLandScape = 173.0f;
+static const float _kPhotoInitialPaddingForTwoLandScape = 100.0f;
+static const float _kPhotoInitialPaddingForThreeLandScape = 29.0f;
 static const float _kPhotoWidth = 134.0f;
 static const float _kPhotoHeight = 100.0f;
 
@@ -95,6 +98,7 @@ static const float _kPhotoHeight = 100.0f;
 	//this method may be called multiple times as the flickr api returns info on each photo
 	EGOImageView *prevView = nil;
 	int totalPhotos = [_art.photos count];
+	totalPhotos = 3;
 	int photoCount = 0;
 	for (Photo *photo in _art.photos) {
 		
@@ -108,10 +112,15 @@ static const float _kPhotoHeight = 100.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
+			//todo: this was quick and dirty - may want to come back to this and properly align from the center out instead of this hardcoded stuff
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
 			if (totalPhotos == 1) {
-				prevOffset = _kPhotoInitialPaddingForOne;
+				prevOffset = isPortrait ? _kPhotoInitialPaddingForOnePortait : _kPhotoInitialPaddingForOneLandScape;
 			} else if (totalPhotos == 2) {
-				prevOffset = _kPhotoInitialPaddingForTwo;
+				prevOffset = isPortrait ? _kPhotoInitialPaddingForTwoPortait : _kPhotoInitialPaddingForTwoLandScape;
+			}
+			else if (totalPhotos == 3 && !isPortrait) {
+				prevOffset = _kPhotoInitialPaddingForThreeLandScape;
 			}
 
 		}

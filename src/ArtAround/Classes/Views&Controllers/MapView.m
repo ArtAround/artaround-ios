@@ -17,6 +17,9 @@
     self = [super initWithFrame:frame];
     if (self) {
 		
+		//setup view
+		[self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+		
 		//initialize the map view
 		MKMapView *aMap = [[MKMapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
 		[self setMap:aMap];

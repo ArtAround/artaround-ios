@@ -99,6 +99,11 @@ static const int _kAnnotationLimit = 9999;
 	}
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+
 - (void)dealloc
 {
 	[_items release];
