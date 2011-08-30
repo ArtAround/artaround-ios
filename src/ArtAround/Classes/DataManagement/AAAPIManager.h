@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface AAAPIManager : NSObject
-{
-}
 
 //instance methods
 - (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback;

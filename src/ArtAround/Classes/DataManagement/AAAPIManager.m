@@ -17,6 +17,7 @@
 #import "Neighborhood.h"
 #import "ArtParser.h"
 #import "ConfigParser.h"
+#import "EGOCache.h"
 
 static AAAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
@@ -26,12 +27,13 @@ static const NSString *_kCallbackKey = @"callback";
 
 //private methods
 @interface AAAPIManager (private)
-- (NSURL *)apiURLForMethod:(NSString *)method;
-- (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict;
 - (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
 - (ASIHTTPRequest *)downloadNeighborhoods;
 - (ASIHTTPRequest *)downloadCategories;
 - (NSArray *)arrayForSQL:(char *)sql;
++ (BOOL)isCacheExpiredForURL:(NSURL *)url;
++ (NSURL *)apiURLForMethod:(NSString *)method;
++ (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict;
 @end
 
 @implementation AAAPIManager
@@ -136,6 +138,12 @@ static const NSString *_kCallbackKey = @"callback";
 
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback
 {	
+	//if both neighborhoods and categories are cached, quit now
+	if (![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"neighborhoods"]] &&
+		![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"categories"]]) {
+		return;
+	}
+	
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
@@ -152,7 +160,7 @@ static const NSString *_kCallbackKey = @"callback";
 - (ASIHTTPRequest *)downloadNeighborhoods
 {
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"neighborhoods"] userInfo:nil];
+	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] userInfo:nil];
 	[request startSynchronous];
 	
 	return request;
@@ -161,7 +169,7 @@ static const NSString *_kCallbackKey = @"callback";
 - (ASIHTTPRequest *)downloadCategories
 {
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"categories"] userInfo:nil];
+	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"categories"] userInfo:nil];
 	[request startSynchronous];
 	
 	return request;
@@ -169,15 +177,24 @@ static const NSString *_kCallbackKey = @"callback";
 
 #pragma mark - Art Download Methods
 
+//todo: possibly add a BOOL:force parameter so that we can force refresh if needed
 - (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback
 {
+	//get the all art url
+	NSDictionary *params = [NSDictionary dictionaryWithObject:@"9999" forKey:@"per_page"];
+	NSURL *allArtURL = [AAAPIManager apiURLForMethod:@"arts" parameters:params];
+	
+	//if art is cached, quit now
+	if (![AAAPIManager isCacheExpiredForURL:allArtURL]) {
+		return;
+	}
+	
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
 	//setup and start the request
 	//todo: revisit this - may need to adjust how we download if too many items are being downloaded
-	NSDictionary *params = [NSDictionary dictionaryWithObject:@"9999" forKey:@"per_page"];
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"arts" parameters:params] userInfo:userInfo];
+	ASIHTTPRequest *request = [self requestWithURL:allArtURL userInfo:userInfo];
 	[request setDidFinishSelector:@selector(artRequestCompleted:)];
 	[request setDidFailSelector:@selector(artRequestFailed:)];
 	[request startAsynchronous];
@@ -209,30 +226,6 @@ static const NSString *_kCallbackKey = @"callback";
 }
 
 #pragma mark - Helper Methods
-
-- (NSURL *)apiURLForMethod:(NSString *)method
-{
-	return [self apiURLForMethod:method parameters:nil];
-}
-
-- (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict
-{
-	//setup the base url
-	NSString *urlString = [NSString stringWithFormat:@"%@%@.%@", _kAPIRoot, method, _kAPIFormat];
-	
-	//add each parameter passed
-	BOOL first = YES;
-	for (NSString* key in parametersDict) {
-		NSString *value = [parametersDict objectForKey:key];
-		urlString = [urlString stringByAppendingFormat:@"%@%@=%@", (first) ? @"?" : @"&", key, value];
-		first = NO;
-	}
-	
-	DebugLog(@"URL Requested: %@", urlString);
-	
-	//return the fully formed url
-	return [NSURL URLWithString:urlString];
-}
 
 - (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
 {
@@ -274,6 +267,57 @@ static const NSString *_kCallbackKey = @"callback";
 		return nil;
 	}
 	return object;
+}
+
+//todo: add a time parameter to set different cache periods for different items
++ (BOOL)isCacheExpiredForURL:(NSURL *)url
+{
+	//if a nil url was passed, quit now
+	if (!url || [[url absoluteString] length] == 0) {
+		return YES;
+	}
+	
+	//convert the url to a key for EGOCache
+	NSString *regexPattern = @"[/:.#]"; 
+	NSString *key = [[url absoluteString] stringByReplacingOccurrencesOfString:regexPattern
+										  withString:@"_"
+										  options:NSRegularExpressionSearch | NSCaseInsensitiveSearch
+										  range:NSMakeRange(0, [[url absoluteString] length])];
+	
+	//if cache exists, then it has not expired
+	if ([[EGOCache currentCache] hasCacheForKey:key]) {
+		return NO;
+	}
+	
+	//cache didn't exist
+	//create a new cache entry for 2 hours
+	//return yes, the cache is expired
+	[[EGOCache currentCache] setString:@"YES" forKey:key withTimeoutInterval:60 * 120];
+	return YES;
+}
+
++ (NSURL *)apiURLForMethod:(NSString *)method
+{
+	return [AAAPIManager apiURLForMethod:method parameters:nil];
+}
+
++ (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict
+{
+	//setup the base url
+	NSString *urlString = [NSString stringWithFormat:@"%@%@.%@", _kAPIRoot, method, _kAPIFormat];
+	
+	//add each parameter passed
+	BOOL first = YES;
+	for (NSString* key in parametersDict) {
+		NSString *value = [parametersDict objectForKey:key];
+		urlString = [urlString stringByAppendingFormat:@"%@%@=%@", (first) ? @"?" : @"&", key, value];
+		first = NO;
+	}
+	
+	DebugLog(@"URL Requested: %@", urlString);
+	
+	//return the fully formed url
+	return [NSURL URLWithString:urlString];
 }
 
 @end
