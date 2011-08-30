@@ -11,5 +11,4 @@ build
 *.mode2v3
 xcuserdata
 *.xcuserdatad
-*.xcworkspace
 ArtAround-Keys.plist
