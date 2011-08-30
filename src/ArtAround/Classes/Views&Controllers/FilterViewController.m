@@ -89,6 +89,7 @@ static NSArray *_kFilterTypes = nil;
 
 - (void)dealloc
 {
+	[self.navigationController setDelegate:nil];
 	[_titles release];
 	[_selectedTitles release];
 	[super dealloc];
@@ -107,7 +108,7 @@ static NSArray *_kFilterTypes = nil;
 - (void)viewWillAppear:(BOOL)animated
 {
 	//set the UINavigationControllerDelegate delegate
-	self.navigationController.delegate = self;
+	[self.navigationController setDelegate:self];
 }
 
 - (void)viewDidLoad

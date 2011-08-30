@@ -60,8 +60,8 @@ static const int _kAnnotationLimit = 9999;
 	
 	//setup the map view
 	MapView *aMapView = [[MapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
-	self.mapView = aMapView;
-	self.mapView.map.delegate = self;
+	[self setMapView:aMapView];
+	[self.mapView.map setDelegate:self];
 	[self.view addSubview:self.mapView];
 	[aMapView release];
 	
@@ -98,8 +98,11 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)dealloc
 {
-	[super dealloc];
+	[_items release];
+	[_annotations release];
+	[self.mapView.map setDelegate:nil];
 	[self setMapView:nil];
+	[super dealloc];
 }
 
 #pragma mark - Button Actions

@@ -137,6 +137,8 @@ static const float _kPhotoHeight = 100.0f;
 
 - (void)dealloc
 {
+	[self.detailView.webView setDelegate:nil];
+	[self.detailView.mapView setDelegate:nil];
 	[self setArt:nil];
 	[self setDetailView:nil];
 	[super dealloc];
