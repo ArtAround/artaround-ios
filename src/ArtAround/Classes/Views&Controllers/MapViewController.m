@@ -73,7 +73,10 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(centerDC, spanDC)]];
 	
 	//setup button actions
+	[self.mapView.shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+	
 }
 
 - (void)viewDidLoad
@@ -129,12 +132,52 @@ static const int _kAnnotationLimit = 9999;
 
 #pragma mark - Button Actions
 
+- (void)shareButtonTapped
+{
+	//todo: share
+}
+
 -(void)filterButtonTapped
 {
 	//create a top level filter controller and push it to the nav controller
 	FilterViewController *filterController = [[FilterViewController alloc] init];
 	[self.navigationController pushViewController:filterController animated:YES];
 	[filterController release];
+}
+
+- (void)locateButtonTapped
+{
+	//if the user location hasn't been found yet, an expection will be thrown
+	@try {
+		
+		//get the user location
+		CLLocationCoordinate2D location = self.mapView.map.userLocation.coordinate;
+		
+		//set the span
+		MKCoordinateSpan span;
+		span.latitudeDelta = 0.05f;
+		span.longitudeDelta = 0.05f;
+		
+		//set the region
+		MKCoordinateRegion region;
+		region.span=span;
+		region.center=location;
+		
+		//zoom/pan the map on the user location
+		[self.mapView.map setRegion:region animated:TRUE];
+		[self.mapView.map regionThatFits:region];
+		
+	}
+	@catch (NSException *exception) {
+		
+		//there was a problem setting zooming the map on the user
+		//their location probably hasn't been found yet because the app just loaded
+		//show an alert to let them know to hold their horses
+		UIAlertView *locateAlert = [[UIAlertView alloc] initWithTitle:@"Unable To Find You" message:@"There was a problem finding your location. Please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+		[locateAlert show];
+		[locateAlert release];
+		
+	}
 }
 
 #pragma mark - Update Art
@@ -270,9 +313,6 @@ static const int _kAnnotationLimit = 9999;
 }
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
-}
-
-- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view {
 }
 
 @end
