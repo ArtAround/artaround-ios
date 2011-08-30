@@ -112,7 +112,6 @@ static const float _kPhotoHeight = 100.0f;
 	//this method may be called multiple times as the flickr api returns info on each photo
 	EGOImageView *prevView = nil;
 	int totalPhotos = [_art.photos count];
-	totalPhotos = 3;
 	int photoCount = 0;
 	for (Photo *photo in _art.photos) {
 		
