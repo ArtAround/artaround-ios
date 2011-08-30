@@ -10,6 +10,7 @@
 
 static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 10.0f;
+static const float _kPhotoScrollerHeight = 124.0f;
 
 @implementation DetailView
 @synthesize webView = _webView, mapView = _mapView, photosScrollView = _photosScrollView;
@@ -37,7 +38,7 @@ static const float _kMapPadding = 10.0f;
 		[aMap release];
 		
 		//setup the images scroll view
-		UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, 120.0f)];
+		UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, _kPhotoScrollerHeight)];
 		[scrollView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[scrollView setAlpha:0.0f];
 		[self setPhotosScrollView:scrollView];

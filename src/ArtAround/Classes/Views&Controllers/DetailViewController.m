@@ -20,12 +20,13 @@
 @interface DetailViewController (private)
 - (void)updateMapFrame;
 - (void)updatePhotosScrollFrame;
-- (void)updateImageFrames;
 - (void)setupImages;
 @end
 
 static const float _kPhotoPadding = 10.0f;
-static const float _kPhotoWidth = 150.0f;
+static const float _kPhotoInitialPaddingForOne = 93.0f;
+static const float _kPhotoInitialPaddingForTwo = 20.0f;
+static const float _kPhotoWidth = 134.0f;
 static const float _kPhotoHeight = 100.0f;
 
 @implementation DetailViewController
@@ -92,15 +93,36 @@ static const float _kPhotoHeight = 100.0f;
 	//loop through all the images and add an image view if it doesn't exist yet
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
-	int count = 0;
+	EGOImageView *prevView = nil;
+	int totalPhotos = [_art.photos count];
+	int photoCount = 0;
 	for (Photo *photo in _art.photos) {
+		
+		//adjust the image view y offset
+		float prevOffset = _kPhotoPadding;
+		if (prevView) {
+			
+			//adjust offset based on the previous frame
+			prevOffset = prevView.frame.origin.x + prevView.frame.size.width + _kPhotoPadding;
+			
+		} else {
+			
+			//adjust the initial offset based on the total number of photos
+			if (totalPhotos == 1) {
+				prevOffset = _kPhotoInitialPaddingForOne;
+			} else if (totalPhotos == 2) {
+				prevOffset = _kPhotoInitialPaddingForTwo;
+			}
+
+		}
 		
 		//grab existing or create new image view
 		EGOImageView *imageView = (EGOImageView *)[self.detailView.photosScrollView viewWithTag:[photo.flickrID longLongValue]];
 		if (!imageView) {
 			imageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
 			[imageView setTag:[photo.flickrID longLongValue]];
-			[imageView setFrame:CGRectMake((count * _kPhotoWidth) + _kPhotoPadding, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
+			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
+			[imageView setClipsToBounds:YES];
 			[imageView setContentMode:UIViewContentModeScaleAspectFill];
 			[imageView setBackgroundColor:[UIColor whiteColor]];
 			[self.detailView.photosScrollView addSubview:imageView];
@@ -108,25 +130,27 @@ static const float _kPhotoHeight = 100.0f;
 		}
 		
 		//set the image url if it doesn't exist yet
-		if (!imageView.imageURL) {
+		if (imageView && !imageView.imageURL) {
 			[imageView setImageURL:[NSURL URLWithString:photo.smallSource]];
 		}
 		
-		//increment count
-		count++;
+		//adjust the imageView autoresizing masks when there are fewer than 3 images so that they stay centered
+		if (imageView && totalPhotos < 3) {
+			[imageView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
 		
-		//[self updateImageFrames];
-	}
-}
-
-- (void)updateImageFrames
-{
-	int count = 0;
-	for (EGOImageView *imageView in self.detailView.photosScrollView.subviews) {
+		//store the previous view for reference
+		//increment photo count
+		prevView = imageView;
+		photoCount++;
 		
-		//increment count
-		count++;
 	}
+	
+	//set the content size
+	if (prevView) {
+		[self.detailView.photosScrollView setContentSize:CGSizeMake(prevView.frame.origin.x + prevView.frame.size.width + _kPhotoPadding, self.detailView.photosScrollView.frame.size.height)];
+	}
+	
 }
 
 - (void)didReceiveMemoryWarning
