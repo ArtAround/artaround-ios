@@ -89,7 +89,6 @@ static NSArray *_kFilterTypes = nil;
 
 - (void)dealloc
 {
-	[self.navigationController setDelegate:nil];
 	[_titles release];
 	[_selectedTitles release];
 	[super dealloc];
@@ -105,12 +104,6 @@ static NSArray *_kFilterTypes = nil;
 
 #pragma mark - View lifecycle
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	//set the UINavigationControllerDelegate delegate
-	[self.navigationController setDelegate:self];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -119,6 +112,11 @@ static NSArray *_kFilterTypes = nil;
 	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
 	self.navigationItem.rightBarButtonItem = doneButton;
 	[doneButton release];
+	
+	//set the UINavigationControllerDelegate delegate
+	if (_isTopLevel) {
+		[self.navigationController setDelegate:self];
+	}
 }
 
 - (void)viewDidUnload
@@ -262,7 +260,12 @@ static NSArray *_kFilterTypes = nil;
 {
 	//if the filters were updated, update the map
 	if ([viewController isKindOfClass:[MapViewController class]]) {
+		
+		//update the map
+		//clear the UINavigationControllerDelegate delegate
 		[(MapViewController *)viewController updateArt];
+		[self.navigationController setDelegate:nil];
+		
 	}
 }
 
