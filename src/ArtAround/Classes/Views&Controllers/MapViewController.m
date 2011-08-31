@@ -12,6 +12,7 @@
 #import "AAAPIManager.h"
 #import "Art.h"
 #import "ArtAnnotation.h"
+#import "Category.h"
 #import "DetailViewController.h"
 
 static const int _kAnnotationLimit = 9999;
@@ -286,14 +287,39 @@ static const int _kAnnotationLimit = 9999;
 		return nil;
 	}
 	
-	//setup the annotation view
-    MKPinAnnotationView *pin = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
-	pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-    pin.canShowCallout = YES;
-	pin.animatesDrop = NO;
-	pin.tag = [(ArtAnnotation *)annotation index];
-    
-    return pin;
+	//setup the annotation view for the annotation
+	int index = [(ArtAnnotation *)annotation index];
+	if ([_items count] > index) {
+		
+		//get the art piece for this annotation view
+		Art *art = [_items objectAtIndex:index];
+		
+		//setup the pin image and reuse identifier
+		NSString *title = [art.category.title lowercaseString];
+		NSString *reuseIdentifier = nil;
+		UIImage *pinImage = nil;
+		if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
+			reuseIdentifier = title;
+			pinImage = [UIImage imageNamed:@"PinVenue.png"];
+		} else {
+			reuseIdentifier = @"art";
+			pinImage = [UIImage imageNamed:@"PinArt.png"];
+		}
+		
+		//setup the annotation view
+		MKAnnotationView *pin = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+		[pin setImage:pinImage];
+		[pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
+		[pin setCanShowCallout:YES];
+		[pin setTag:index];
+		
+		//return the annotion view
+		return pin;
+		
+	}
+
+	//something must have gone wrong
+	return nil;
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
