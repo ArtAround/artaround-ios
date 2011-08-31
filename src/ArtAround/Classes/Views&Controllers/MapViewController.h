@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 @class MapView;
+@class CalloutAnnotationView;
 
 @interface MapViewController : UIViewController <MKMapViewDelegate>
 {
@@ -18,6 +19,7 @@
 }
 
 @property (nonatomic, retain) MapView *mapView;
+@property (nonatomic, retain) CalloutAnnotationView *callout;
 
 - (void)updateArt;
 

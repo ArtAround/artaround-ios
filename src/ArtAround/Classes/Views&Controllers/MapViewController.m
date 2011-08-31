@@ -12,6 +12,8 @@
 #import "AAAPIManager.h"
 #import "Art.h"
 #import "ArtAnnotation.h"
+#import "ArtAnnotationView.h"
+#import "CalloutAnnotationView.h"
 #import "Category.h"
 #import "DetailViewController.h"
 
@@ -23,7 +25,7 @@ static const int _kAnnotationLimit = 9999;
 @end
 
 @implementation MapViewController
-@synthesize mapView = _mapView;
+@synthesize mapView = _mapView, callout = _callout;
 
 #pragma mark - View lifecycle
 
@@ -128,6 +130,7 @@ static const int _kAnnotationLimit = 9999;
 	[_annotations release];
 	[self.mapView.map setDelegate:nil];
 	[self setMapView:nil];
+	[self setCallout:nil];
 	[super dealloc];
 }
 
@@ -179,6 +182,11 @@ static const int _kAnnotationLimit = 9999;
 		[locateAlert release];
 		
 	}
+}
+
+- (void)calloutTapped
+{
+	
 }
 
 #pragma mark - Update Art
@@ -282,63 +290,94 @@ static const int _kAnnotationLimit = 9999;
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
-	//if the annotation is not an ArtAnnotation, it's probably a system annotation like the user location
-	if (![annotation isKindOfClass:[ArtAnnotation class]]) {
+	//if it's the user location, just return nil.
+	if ([annotation isKindOfClass:[MKUserLocation class]]) {
 		return nil;
 	}
 	
-	//setup the annotation view for the annotation
-	int index = [(ArtAnnotation *)annotation index];
-	if ([_items count] > index) {
-		
-		//get the art piece for this annotation view
-		Art *art = [_items objectAtIndex:index];
-		
-		//setup the pin image and reuse identifier
-		NSString *title = [art.category.title lowercaseString];
-		NSString *reuseIdentifier = nil;
-		UIImage *pinImage = nil;
-		if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
-			reuseIdentifier = title;
-			pinImage = [UIImage imageNamed:@"PinVenue.png"];
-		} else {
-			reuseIdentifier = @"art";
-			pinImage = [UIImage imageNamed:@"PinArt.png"];
+	if ([annotation isKindOfClass:[ArtAnnotation class]]) {
+	
+		//setup the annotation view for the annotation
+		int index = [(ArtAnnotation *)annotation index];
+		if ([_items count] > index) {
+			
+			//get the art piece for this annotation view
+			Art *art = [_items objectAtIndex:index];
+			
+			//setup the pin image and reuse identifier
+			NSString *title = [art.category.title lowercaseString];
+			NSString *reuseIdentifier = nil;
+			UIImage *pinImage = nil;
+			if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
+				reuseIdentifier = title;
+				pinImage = [UIImage imageNamed:@"PinVenue.png"];
+			} else {
+				reuseIdentifier = @"art";
+				pinImage = [UIImage imageNamed:@"PinArt.png"];
+			}
+			
+			//setup the annotation view
+			ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+			[pin setImage:pinImage];
+			[pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
+			[pin setCanShowCallout:NO];
+			[pin setTag:index];
+			
+			//return the annotion view
+			return pin;
+			
 		}
 		
-		//setup the annotation view
-		MKAnnotationView *pin = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
-		[pin setImage:pinImage];
-		[pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
-		[pin setCanShowCallout:YES];
-		[pin setTag:index];
-		
-		//return the annotion view
-		return pin;
-		
+	} else if ([annotation isKindOfClass:[CalloutAnnotationView class]]) {
+		[self.callout setCalloutOffset:CGPointMake(-200.0f, -200.0f)];
+		return (CalloutAnnotationView *)annotation;
 	}
 
 	//something must have gone wrong
 	return nil;
 }
 
-- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
 {
-	if ([_items count] > view.tag) {
+	//if it's the user location, just return nil.
+	if ([view.annotation isKindOfClass:[MKUserLocation class]]) {
+		return;
+	}
+	
+	if ([view isKindOfClass:[ArtAnnotationView class]] && (view.annotation.coordinate.latitude != self.callout.coordinate.latitude || view.annotation.coordinate.longitude != self.callout.coordinate.longitude)) {
 		
-		//get the selected art piece
-		Art *selectedArt = [_items objectAtIndex:view.tag];
+		//create the callout if it doesn't exist yet
+		if (!self.callout) {
+			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 325.0f)];
+			[aCallout setMapView:self.mapView.map];
+			[self setCallout:aCallout];
+			[aCallout release];
+		} else {
+			[self.callout setCoordinate:[(ArtAnnotation *)view.annotation coordinate]];
+		}
 		
-		//pass it along to a new detail controller and push it the navigation controller
-		DetailViewController *detailController = [[DetailViewController alloc] init];
-		[self.navigationController pushViewController:detailController animated:YES];
-		[detailController setArt:selectedArt];
-		[detailController release];
+		//first move the annotation, set the new art, then add it to the map
+		//removing it ensures it is on top of all other annotation
+		if ([_items count] > view.tag) {
+			Art *selectedArt = [_items objectAtIndex:view.tag];
+			[self.callout setTag:view.tag];
+			[self.mapView.map removeAnnotation:self.callout];
+			[self.callout setParentAnnotationView:(ArtAnnotationView *)view];
+			[self.callout prepareForReuse];
+			[self.callout setArt:selectedArt];
+			[self.mapView.map addAnnotation:self.callout];
+		}
 		
 	}
 }
 
-- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+{
+	//if this is the annotation that was showing the callout, remove the callout 
+	ArtAnnotationView *annotationView = (ArtAnnotationView *)view;
+	if ([annotationView isKindOfClass:[ArtAnnotationView class]] && annotationView.annotation.coordinate.latitude == self.callout.coordinate.latitude && annotationView.annotation.coordinate.longitude == self.callout.coordinate.longitude && !annotationView.preventSelectionChange) {
+		[self.mapView.map removeAnnotation:self.callout];
+	}
 }
 
 @end

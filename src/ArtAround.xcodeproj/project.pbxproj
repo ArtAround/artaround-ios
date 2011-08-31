@@ -86,6 +86,8 @@
 		CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */; };
 		CAC02B89140DBFE10032C4E5 /* FilterBackgroundPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B85140DBFE10032C4E5 /* FilterBackgroundPressed.png */; };
 		CAC02B8A140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B86140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png */; };
+		CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */; };
+		CAC02BA6140DF0140032C4E5 /* ArtAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */; };
 		CAEA5CFB140CA39D009345FD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CAEA5CF9140CA39D009345FD /* Default.png */; };
 		CAEA5CFC140CA39D009345FD /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAEA5CFA140CA39D009345FD /* Default@2x.png */; };
 		CAECF77914073D9100CD9A95 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77814073D9100CD9A95 /* CFNetwork.framework */; };
@@ -166,8 +168,8 @@
 		CA0094341409509B00E5001E /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		CA0094351409509B00E5001E /* MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView.h; sourceTree = "<group>"; };
 		CA0094361409509B00E5001E /* MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapView.m; sourceTree = "<group>"; };
-		CA0094371409509B00E5001E /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
-		CA0094381409509B00E5001E /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
+		CA0094371409509B00E5001E /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MapViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CA0094381409509B00E5001E /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MapViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CA00946314095B6500E5001E /* NeighborhoodParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborhoodParser.h; sourceTree = "<group>"; };
 		CA00946414095B6500E5001E /* NeighborhoodParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NeighborhoodParser.m; sourceTree = "<group>"; };
 		CA00946614095E8C00E5001E /* CategoryParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryParser.h; sourceTree = "<group>"; };
@@ -228,6 +230,10 @@
 		CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackground@2x.png"; sourceTree = "<group>"; };
 		CAC02B85140DBFE10032C4E5 /* FilterBackgroundPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackgroundPressed.png; sourceTree = "<group>"; };
 		CAC02B86140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackgroundPressed@2x.png"; sourceTree = "<group>"; };
+		CAC02B90140DCE400032C4E5 /* CalloutAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CalloutAnnotationView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CalloutAnnotationView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		CAC02BA4140DF0120032C4E5 /* ArtAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAnnotationView.h; sourceTree = "<group>"; };
+		CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAnnotationView.m; sourceTree = "<group>"; };
 		CAEA5CF9140CA39D009345FD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		CAEA5CFA140CA39D009345FD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		CAECF77814073D9100CD9A95 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -601,6 +607,10 @@
 			children = (
 				CA0094311409509B00E5001E /* ArtAnnotation.h */,
 				CA0094321409509B00E5001E /* ArtAnnotation.m */,
+				CAC02BA4140DF0120032C4E5 /* ArtAnnotationView.h */,
+				CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */,
+				CAC02B90140DCE400032C4E5 /* CalloutAnnotationView.h */,
+				CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */,
 				CA0094351409509B00E5001E /* MapView.h */,
 				CA0094361409509B00E5001E /* MapView.m */,
 				CA0094371409509B00E5001E /* MapViewController.h */,
@@ -785,6 +795,8 @@
 				CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */,
 				CA546F59140AE18D008B1B91 /* EGOImageLoader.m in Sources */,
 				CA546F5A140AE18D008B1B91 /* EGOImageView.m in Sources */,
+				CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */,
+				CAC02BA6140DF0140032C4E5 /* ArtAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
