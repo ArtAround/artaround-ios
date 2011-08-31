@@ -186,7 +186,18 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)calloutTapped
 {
-	
+	if ([_items count] > self.callout.tag) {
+		
+		//get the selected art piece
+		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
+		
+		//pass it along to a new detail controller and push it the navigation controller
+		DetailViewController *detailController = [[DetailViewController alloc] init];
+		[self.navigationController pushViewController:detailController animated:YES];
+		[detailController setArt:selectedArt];
+		[detailController release];
+		
+	}
 }
 
 #pragma mark - Update Art
@@ -329,8 +340,10 @@ static const int _kAnnotationLimit = 9999;
 		}
 		
 	} else if ([annotation isKindOfClass:[CalloutAnnotationView class]]) {
-		[self.callout setCalloutOffset:CGPointMake(-200.0f, -200.0f)];
+		
+		//return the callout annotation view
 		return (CalloutAnnotationView *)annotation;
+		
 	}
 
 	//something must have gone wrong
@@ -350,6 +363,7 @@ static const int _kAnnotationLimit = 9999;
 		if (!self.callout) {
 			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 325.0f)];
 			[aCallout setMapView:self.mapView.map];
+			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
 			[self setCallout:aCallout];
 			[aCallout release];
 		} else {
