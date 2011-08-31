@@ -16,16 +16,16 @@
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)theCoordinate title:(NSString *)theTitle subtitle:(NSString *)theSubTitle {
 	if (self = [super init]) {
-		_coordinate = theCoordinate;
-		_title = [theTitle retain];
-		_subtitle = [theSubTitle retain];
+		[self setCoordinate:theCoordinate];
+		[self setTitle:theTitle];
+		[self setSubtitle:theSubTitle];
 	}
 	return self;
 }
 
 - (void)dealloc {
-	[_title release];
-	[_subtitle release];
+	[self setTitle:nil];
+	[self setSubtitle:nil];
 	[super dealloc];
 }
 
