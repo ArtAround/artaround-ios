@@ -42,9 +42,11 @@
 		//initialize the filter button
 		UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
 		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
-		[aFilterButton setImage:[UIImage imageNamed:@"FilterPressed.png"] forState:UIControlStateHighlighted];
+		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
+		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
 		[aFilterButton setFrame:CGRectMake(self.shareButton.frame.origin.x + self.shareButton.frame.size.width, 0.0f, aFilterButton.imageView.image.size.width, aFilterButton.imageView.image.size.height)];
 		[aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+		[aFilterButton setAdjustsImageWhenHighlighted:NO];
 		[self setFilterButton:aFilterButton];
 		[self addSubview:self.filterButton];
 		
