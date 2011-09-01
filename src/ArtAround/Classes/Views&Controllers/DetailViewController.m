@@ -19,8 +19,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface DetailViewController (private)
-- (void)updateMapFrame;
-- (void)updatePhotosScrollFrame;
+- (void)updateNativeFrames;
 - (void)setupImages;
 @end
 
@@ -205,22 +204,31 @@ static const float _kPhotoHeight = 140.0f;
 	[super dealloc];
 }
 
-- (void)updateMapFrame
+- (void)updateNativeFrames
 {
 	//update the map frame
-	NSString *yOffset = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"mapPos();"];
+	NSString *yOffsetMap = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"mapPos();"];
 	CGRect mapFrame = self.detailView.mapView.frame;
-	[self.detailView.mapView setFrame:CGRectMake(mapFrame.origin.x, [yOffset floatValue] + 5.0f, mapFrame.size.width, mapFrame.size.height)];
-	[self.detailView.mapView setAlpha:1.0f];
-}
+	[self.detailView.mapView setFrame:CGRectMake(mapFrame.origin.x, [yOffsetMap floatValue] + 5.0f, mapFrame.size.width, mapFrame.size.height)];
 
-- (void)updatePhotosScrollFrame
-{
 	//update the photos scroll view frame
-	NSString *yOffset = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"photosPos();"];
+	NSString *yOffsetPhotos = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"photosPos();"];
 	CGRect photosFrame = self.detailView.photosScrollView.frame;
-	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffset floatValue] - 5.0f, photosFrame.size.width, photosFrame.size.height)];
+	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffsetPhotos floatValue] - 5.0f, photosFrame.size.width, photosFrame.size.height)];
+	
+	//start animation block
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.2];
+	
+	//fade the everything in
+	//this avoids a blank white screen blinding the user for a brief moment
+	[self.detailView.mapView setAlpha:1.0f];
+	[self.detailView.webView setAlpha:1.0f];
 	[self.detailView.photosScrollView setAlpha:1.0f];
+	
+	//end animation block
+    [UIView commitAnimations];
+
 }
 
 
@@ -239,8 +247,7 @@ static const float _kPhotoHeight = 140.0f;
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
 	//update the map and photo frames
-	[self updateMapFrame];
-	[self updatePhotosScrollFrame];
+	[self updateNativeFrames];
 }
 
 #pragma mark - UIWebViewDelegate
@@ -252,8 +259,7 @@ static const float _kPhotoHeight = 140.0f;
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
 	//update the map and photo frames
-	[self updateMapFrame];
-	[self updatePhotosScrollFrame];
+	[self updateNativeFrames];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType

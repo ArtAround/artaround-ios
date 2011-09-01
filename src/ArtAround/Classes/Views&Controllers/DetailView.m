@@ -20,11 +20,13 @@ static const float _kPhotoScrollerHeight = 150.0f;
     self = [super initWithFrame:frame];
     if (self) {
 		[self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+		[self setBackgroundColor:[UIColor darkGrayColor]];
 		
 		//setup the web view
 		UIWebView *aWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
 		[aWebView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		[aWebView setBackgroundColor:[UIColor colorWithRed:111.0f/255.0f green:101.0f/255.0f blue:103.0f/255.0f alpha:1.0f]];
+		[aWebView setAlpha:0.0f];
 		[self setWebView:aWebView];
 		[self addSubview:self.webView];
 		[aWebView release];
