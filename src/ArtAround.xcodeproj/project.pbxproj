@@ -40,6 +40,8 @@
 		CA00946514095B6500E5001E /* NeighborhoodParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946414095B6500E5001E /* NeighborhoodParser.m */; };
 		CA00946814095E8C00E5001E /* CategoryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946714095E8C00E5001E /* CategoryParser.m */; };
 		CA00946B1409600D00E5001E /* PhotoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA00946A1409600D00E5001E /* PhotoParser.m */; };
+		CA0F4926140F2D2C0064F072 /* DetailBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA0F4924140F2D2B0064F072 /* DetailBackground.jpg */; };
+		CA0F4927140F2D2C0064F072 /* DetailBackground@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA0F4925140F2D2C0064F072 /* DetailBackground@2x.jpg */; };
 		CA1AE9F6140C906200C56C4D /* ArtAroundLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9D8140C906200C56C4D /* ArtAroundLogo.png */; };
 		CA1AE9F7140C906200C56C4D /* ArtAroundLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9D9140C906200C56C4D /* ArtAroundLogo@2x.png */; };
 		CA1AE9F8140C906200C56C4D /* Filter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9DA140C906200C56C4D /* Filter.png */; };
@@ -81,6 +83,7 @@
 		CA5E10DB1405F0520075DAB8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10DA1405F0520075DAB8 /* main.m */; };
 		CA5E10E51405F0520075DAB8 /* ArtAround.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */; };
 		CA5E10FE1405F8650075DAB8 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10FC1405F8570075DAB8 /* MapKit.framework */; };
+		CA7AF524140F2EAE00571610 /* DetailView2x.css in Resources */ = {isa = PBXBuildFile; fileRef = CA7AF523140F2EAE00571610 /* DetailView2x.css */; };
 		CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */; };
 		CAC02B87140DBFE10032C4E5 /* FilterBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B83140DBFE10032C4E5 /* FilterBackground.png */; };
 		CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */; };
@@ -176,6 +179,8 @@
 		CA00946714095E8C00E5001E /* CategoryParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryParser.m; sourceTree = "<group>"; };
 		CA0094691409600C00E5001E /* PhotoParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoParser.h; sourceTree = "<group>"; };
 		CA00946A1409600D00E5001E /* PhotoParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoParser.m; sourceTree = "<group>"; };
+		CA0F4924140F2D2B0064F072 /* DetailBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DetailBackground.jpg; sourceTree = "<group>"; };
+		CA0F4925140F2D2C0064F072 /* DetailBackground@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "DetailBackground@2x.jpg"; sourceTree = "<group>"; };
 		CA1AE9D8140C906200C56C4D /* ArtAroundLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ArtAroundLogo.png; sourceTree = "<group>"; };
 		CA1AE9D9140C906200C56C4D /* ArtAroundLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ArtAroundLogo@2x.png"; sourceTree = "<group>"; };
 		CA1AE9DA140C906200C56C4D /* Filter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Filter.png; sourceTree = "<group>"; };
@@ -225,6 +230,7 @@
 		CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtAround-Prefix.pch"; sourceTree = "<group>"; };
 		CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround.xcdatamodel; sourceTree = "<group>"; };
 		CA5E10FC1405F8570075DAB8 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		CA7AF523140F2EAE00571610 /* DetailView2x.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView2x.css; sourceTree = "<group>"; };
 		CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		CAC02B83140DBFE10032C4E5 /* FilterBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackground.png; sourceTree = "<group>"; };
 		CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackground@2x.png"; sourceTree = "<group>"; };
@@ -423,6 +429,8 @@
 				CA1AE9D9140C906200C56C4D /* ArtAroundLogo@2x.png */,
 				CAEA5CF9140CA39D009345FD /* Default.png */,
 				CAEA5CFA140CA39D009345FD /* Default@2x.png */,
+				CA0F4924140F2D2B0064F072 /* DetailBackground.jpg */,
+				CA0F4925140F2D2C0064F072 /* DetailBackground@2x.jpg */,
 				CA1AE9DA140C906200C56C4D /* Filter.png */,
 				CA1AE9DB140C906200C56C4D /* Filter@2x.png */,
 				CAC02B83140DBFE10032C4E5 /* FilterBackground.png */,
@@ -636,6 +644,7 @@
 				CAFF2CB51409A51400C98C0E /* DetailView.h */,
 				CAFF2CB61409A51400C98C0E /* DetailView.m */,
 				CAFF2CC31409B26D00C98C0E /* DetailView.css */,
+				CA7AF523140F2EAE00571610 /* DetailView2x.css */,
 				CAFF2CC51409B29000C98C0E /* DetailView.html */,
 			);
 			name = Detail;
@@ -741,6 +750,9 @@
 				CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */,
 				CAC02B89140DBFE10032C4E5 /* FilterBackgroundPressed.png in Resources */,
 				CAC02B8A140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png in Resources */,
+				CA0F4926140F2D2C0064F072 /* DetailBackground.jpg in Resources */,
+				CA0F4927140F2D2C0064F072 /* DetailBackground@2x.jpg in Resources */,
+				CA7AF524140F2EAE00571610 /* DetailView2x.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

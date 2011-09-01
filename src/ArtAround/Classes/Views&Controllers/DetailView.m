@@ -9,8 +9,8 @@
 #import "DetailView.h"
 
 static const float _kMapHeight = 175.0f;
-static const float _kMapPadding = 10.0f;
-static const float _kPhotoScrollerHeight = 124.0f;
+static const float _kMapPadding = 11.0f;
+static const float _kPhotoScrollerHeight = 150.0f;
 
 @implementation DetailView
 @synthesize webView = _webView, mapView = _mapView, photosScrollView = _photosScrollView;
@@ -41,6 +41,8 @@ static const float _kPhotoScrollerHeight = 124.0f;
 		UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, _kPhotoScrollerHeight)];
 		[scrollView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[scrollView setAlpha:0.0f];
+		[scrollView setShowsVerticalScrollIndicator:NO];
+		[scrollView setShowsHorizontalScrollIndicator:NO];
 		[self setPhotosScrollView:scrollView];
 		[scrollView release];
 		

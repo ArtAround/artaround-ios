@@ -16,6 +16,7 @@
 #import "FlickrAPIManager.h"
 #import "Photo.h"
 #import "EGOImageView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface DetailViewController (private)
 - (void)updateMapFrame;
@@ -24,13 +25,13 @@
 @end
 
 static const float _kPhotoPadding = 10.0f;
-static const float _kPhotoInitialPaddingForOnePortait = 93.0f;
-static const float _kPhotoInitialPaddingForTwoPortait = 20.0f;
-static const float _kPhotoInitialPaddingForOneLandScape = 173.0f;
-static const float _kPhotoInitialPaddingForTwoLandScape = 100.0f;
-static const float _kPhotoInitialPaddingForThreeLandScape = 29.0f;
-static const float _kPhotoWidth = 134.0f;
-static const float _kPhotoHeight = 100.0f;
+static const float _kPhotoSpacing = 15.0f;
+static const float _kPhotoInitialPaddingPortait = 64.0f;
+static const float _kPhotoInitialPaddingForOneLandScape = 144.0f;
+static const float _kPhotoInitialPaddingForTwoLandScape = 40.0f;
+static const float _kPhotoInitialPaddingForThreeLandScape = 15.0f;
+static const float _kPhotoWidth = 192.0f;
+static const float _kPhotoHeight = 140.0f;
 
 @implementation DetailViewController
 @synthesize art = _art, detailView = _detailView;
@@ -120,20 +121,32 @@ static const float _kPhotoHeight = 100.0f;
 		if (prevView) {
 			
 			//adjust offset based on the previous frame
-			prevOffset = prevView.frame.origin.x + prevView.frame.size.width + _kPhotoPadding;
+			prevOffset = prevView.frame.origin.x + prevView.frame.size.width + _kPhotoSpacing;
 			
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
 			//todo: this was quick and dirty - may want to come back to this and properly align from the center out instead of this hardcoded stuff
 			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
-			if (totalPhotos == 1) {
-				prevOffset = isPortrait ? _kPhotoInitialPaddingForOnePortait : _kPhotoInitialPaddingForOneLandScape;
-			} else if (totalPhotos == 2) {
-				prevOffset = isPortrait ? _kPhotoInitialPaddingForTwoPortait : _kPhotoInitialPaddingForTwoLandScape;
-			}
-			else if (totalPhotos == 3 && !isPortrait) {
-				prevOffset = _kPhotoInitialPaddingForThreeLandScape;
+			if (isPortrait) {
+				prevOffset = _kPhotoInitialPaddingPortait;
+			} else {
+				
+				switch (totalPhotos) {
+					case 1:
+						prevOffset = _kPhotoInitialPaddingForOneLandScape;
+						break;
+						
+					case 2:
+						prevOffset = _kPhotoInitialPaddingForTwoLandScape;
+						break;
+						
+					case 3:
+					default:
+						prevOffset = _kPhotoInitialPaddingForThreeLandScape;
+						break;
+				}
+				
 			}
 
 		}
@@ -146,7 +159,9 @@ static const float _kPhotoHeight = 100.0f;
 			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
 			[imageView setClipsToBounds:YES];
 			[imageView setContentMode:UIViewContentModeScaleAspectFill];
-			[imageView setBackgroundColor:[UIColor whiteColor]];
+			[imageView setBackgroundColor:[UIColor lightGrayColor]];
+			[imageView.layer setBorderColor:[UIColor whiteColor].CGColor];
+			[imageView.layer setBorderWidth:6.0f];
 			[self.detailView.photosScrollView addSubview:imageView];
 			[imageView release];
 		}
@@ -170,7 +185,7 @@ static const float _kPhotoHeight = 100.0f;
 	
 	//set the content size
 	if (prevView) {
-		[self.detailView.photosScrollView setContentSize:CGSizeMake(prevView.frame.origin.x + prevView.frame.size.width + _kPhotoPadding, self.detailView.photosScrollView.frame.size.height)];
+		[self.detailView.photosScrollView setContentSize:CGSizeMake(prevView.frame.origin.x + prevView.frame.size.width + _kPhotoSpacing, self.detailView.photosScrollView.frame.size.height)];
 	}
 	
 }
@@ -204,7 +219,7 @@ static const float _kPhotoHeight = 100.0f;
 	//update the photos scroll view frame
 	NSString *yOffset = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"photosPos();"];
 	CGRect photosFrame = self.detailView.photosScrollView.frame;
-	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffset floatValue], photosFrame.size.width, photosFrame.size.height)];
+	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffset floatValue] - 5.0f, photosFrame.size.width, photosFrame.size.height)];
 	[self.detailView.photosScrollView setAlpha:1.0f];
 }
 
