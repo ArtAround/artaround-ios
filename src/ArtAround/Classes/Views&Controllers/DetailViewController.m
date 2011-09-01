@@ -228,7 +228,6 @@ static const float _kPhotoHeight = 140.0f;
 	
 	//end animation block
     [UIView commitAnimations];
-
 }
 
 
@@ -260,6 +259,16 @@ static const float _kPhotoHeight = 140.0f;
 {
 	//update the map and photo frames
 	[self updateNativeFrames];
+	
+	//set a native style scroll speed
+	for (UIView *subview in [webView subviews]) {
+		if ([subview isKindOfClass:NSClassFromString(@"UIScroller")] || [subview isKindOfClass:NSClassFromString(@"UIScrollView")]) {
+			if ([subview respondsToSelector:@selector(setDecelerationRate:)]) {
+				[(UIScrollView *)subview setDecelerationRate:UIScrollViewDecelerationRateNormal];
+			}
+			break;
+		}
+	}
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
