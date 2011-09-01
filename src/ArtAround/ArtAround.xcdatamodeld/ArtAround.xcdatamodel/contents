@@ -8,8 +8,8 @@
         <attribute name="longitude" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
         <attribute name="slug" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="ward" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
-        <attribute name="year" optional="YES" attributeType="Integer 32" defaultValueString="0"/>
+        <attribute name="ward" optional="YES" attributeType="Integer 32"/>
+        <attribute name="year" optional="YES" attributeType="Integer 32"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category"/>
         <relationship name="comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Comment" inverseName="art" inverseEntity="Comment"/>
         <relationship name="neighborhood" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Neighborhood" inverseName="arts" inverseEntity="Neighborhood"/>
@@ -56,7 +56,7 @@
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art"/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="225"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="240"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
