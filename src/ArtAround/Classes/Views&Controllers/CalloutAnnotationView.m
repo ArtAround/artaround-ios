@@ -188,7 +188,7 @@
         [self preventParentSelectionChange];
         [self performSelector:@selector(allowParentSelectionChange) withObject:nil afterDelay:0.8];
         for (UIView *sibling in self.superview.subviews) {
-            if ([sibling isKindOfClass:[MKAnnotationView class]]) {// && sibling != self.parentAnnotationView) {
+            if ([sibling isKindOfClass:[MKAnnotationView class]] && sibling != self.parentAnnotationView) {
                 ((MKAnnotationView *)sibling).enabled = NO;
                 [self performSelector:@selector(enableSibling:) withObject:sibling afterDelay:0.8];
             }
