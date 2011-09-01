@@ -363,7 +363,7 @@ static const int _kAnnotationLimit = 9999;
 		
 		//create the callout if it doesn't exist yet
 		if (!self.callout) {
-			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 325.0f)];
+			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 335.0f)];
 			[aCallout setMapView:self.mapView.map];
 			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
 			[self setCallout:aCallout];
