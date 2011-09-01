@@ -18,6 +18,7 @@
 
 @interface CalloutAnnotationView (private)
 - (void)preventParentSelectionChange;
+- (void)setupImage;
 @end
 
 @implementation CalloutAnnotationView
@@ -42,6 +43,8 @@
 		
 		//image
 		EGOImageView *anImageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
+		[anImageView setContentMode:UIViewContentModeScaleAspectFill];
+		[anImageView setClipsToBounds:YES];
 		[anImageView setBackgroundColor:[UIColor lightGrayColor]];
 		[anImageView setFrame:CGRectMake(13.0f, 13.0f, 100.0f, 100.0f)];
 		[anImageView.layer setBorderWidth:2.0f];
@@ -118,6 +121,16 @@
 		[self.summaryLabel setText:@""];
 		return;
 	}
+
+	//grab the first photo and either set the url or download the deets from flickr
+	if (_art.photos && [_art.photos count] > 0) {
+		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
+		if (photo.smallSource && ![photo.smallSource isEqualToString:@""]) {
+			[self setupImage];
+		} else {
+			[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
+		}
+	}
 	
 	//are the fields empty?
 	BOOL showTitle = _art.title && ![_art.title isEqualToString:@""];
@@ -150,6 +163,16 @@
 	[self.categoryLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, yOffset, self.titleLabel.frame.size.width, 15.0f)];
 	[self.summaryLabel setFrame:CGRectMake(self.categoryLabel.frame.origin.x, 63.0f, self.titleLabel.frame.size.width, 50.0f)];
 	
+}
+
+- (void)setupImage
+{
+	if (_art.photos && [_art.photos count] > 0) {
+		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
+		if (photo.smallSource && ![photo.smallSource isEqualToString:@""]) {
+			[self.imageView setImageURL:[NSURL URLWithString:photo.smallSource]];
+		}
+	}
 }
 
 #pragma mark - enable / disable parent and siblings
