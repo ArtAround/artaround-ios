@@ -159,7 +159,7 @@
 	[self.titleLabel setFrame:CGRectMake(self.imageView.frame.origin.x + self.imageView.frame.size.width + padding, yOffset, 185.0f, 20.0f)];
 	yOffset = (showTitle) ? self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height : yOffset;
 	[self.artistLabel setFrame:CGRectMake(self.titleLabel.frame.origin.x, yOffset, self.titleLabel.frame.size.width, 15.0f)];
-	yOffset = (showArtist) ? self.artistLabel.frame.origin.y + self.artistLabel.frame.size.height : yOffset;
+	yOffset = (showArtist || showYear) ? self.artistLabel.frame.origin.y + self.artistLabel.frame.size.height : yOffset;
 	[self.categoryLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, yOffset, self.titleLabel.frame.size.width, 15.0f)];
 	[self.summaryLabel setFrame:CGRectMake(self.categoryLabel.frame.origin.x, 63.0f, self.titleLabel.frame.size.width, 50.0f)];
 	
