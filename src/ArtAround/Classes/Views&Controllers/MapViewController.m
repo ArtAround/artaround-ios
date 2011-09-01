@@ -341,7 +341,9 @@ static const int _kAnnotationLimit = 9999;
 		
 	} else if ([annotation isKindOfClass:[CalloutAnnotationView class]]) {
 		
+		//center the map on the callout annotation
 		//return the callout annotation view
+		[mapView setCenterCoordinate:[(CalloutAnnotationView *)annotation coordinate] animated:YES];
 		return (CalloutAnnotationView *)annotation;
 		
 	}
