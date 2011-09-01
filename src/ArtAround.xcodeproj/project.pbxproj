@@ -872,12 +872,12 @@
 		CA5E10E91405F0520075DAB8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brandon Jones (F3768DVXK4)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1A38E187-183A-44E5-BDDE-B935E7BA2EB8";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;

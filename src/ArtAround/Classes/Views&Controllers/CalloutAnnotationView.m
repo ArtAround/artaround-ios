@@ -31,7 +31,7 @@
     if (self) {
 		[self setCoordinate:theCoordinate];
 		
-		//image view
+		//main callout button
 		UIImage *image = [UIImage imageNamed:@"ItemBubble.png"];
 		UIImage *imageHighlighted = [UIImage imageNamed:@"ItemBubblePressed.png"];
 		UIButton *aButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -46,7 +46,7 @@
 		[anImageView setContentMode:UIViewContentModeScaleAspectFill];
 		[anImageView setClipsToBounds:YES];
 		[anImageView setBackgroundColor:[UIColor lightGrayColor]];
-		[anImageView setFrame:CGRectMake(13.0f, 13.0f, 100.0f, 100.0f)];
+		[anImageView setFrame:CGRectMake(14.0f, 17.0f, 100.0f, 100.0f)];
 		[anImageView.layer setBorderWidth:2.0f];
 		[anImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
 		[self setImageView:anImageView];
