@@ -343,7 +343,22 @@ static const int _kAnnotationLimit = 9999;
 		
 		//center the map on the callout annotation
 		//return the callout annotation view
-		[mapView setCenterCoordinate:[(CalloutAnnotationView *)annotation coordinate] animated:YES];
+		if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+			
+			//landscape
+			//exactly center on landscape has the callout off the screen, gotta take an extra step to show it
+			[mapView setCenterCoordinate:[(CalloutAnnotationView *)annotation coordinate] animated:NO];
+			CGPoint point = [mapView convertCoordinate:[(CalloutAnnotationView *)annotation coordinate] toPointToView:mapView];
+			CLLocationCoordinate2D coordinate = [mapView convertPoint:CGPointMake(mapView.frame.size.width / 2, point.y - 70.0) toCoordinateFromView:mapView];
+			[mapView setCenterCoordinate:coordinate animated:YES];
+			
+			
+		} else {
+			
+			//portrait
+			[mapView setCenterCoordinate:[(CalloutAnnotationView *)annotation coordinate] animated:YES];
+			
+		}
 		return (CalloutAnnotationView *)annotation;
 		
 	}
