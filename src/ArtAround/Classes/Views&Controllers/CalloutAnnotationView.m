@@ -56,6 +56,8 @@
 		//title
 		UILabel *aTitleLabel = [[UILabel alloc] init];
 		[aTitleLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:13.0f]];
+		[aTitleLabel setMinimumFontSize:10.0f];
+		[aTitleLabel setAdjustsFontSizeToFitWidth:YES];
 		[aTitleLabel setBackgroundColor:[UIColor clearColor]];
 		[self setTitleLabel:aTitleLabel];
 		[self addSubview:self.titleLabel];
