@@ -142,7 +142,6 @@ static const float _kPhotoHeight = 140.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			//todo: this was quick and dirty - may want to come back to this and properly align from the center out instead of this hardcoded stuff
 			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;

@@ -274,7 +274,6 @@ static const NSString *_kCallbackKey = @"callback";
 	return object;
 }
 
-//todo: add a time parameter to set different cache periods for different items
 + (BOOL)isCacheExpiredForURL:(NSURL *)url
 {
 	//default to 2 hours

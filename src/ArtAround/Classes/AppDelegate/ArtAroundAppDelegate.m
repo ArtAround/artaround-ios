@@ -67,7 +67,7 @@
 	//probably performing this in the background so create an autorelease pool
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	//todo: possible lock the interface or display a message while this is happening
+	//todo: possibly lock the interface or display a message while this is happening
 	[[AAAPIManager instance] downloadConfigWithTarget:nil callback:nil];
 	
 	//release pool
