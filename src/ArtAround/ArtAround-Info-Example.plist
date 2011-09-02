@@ -10,6 +10,8 @@
 	<array/>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>Icon.png</string>
 	<key>CFBundleIdentifier</key>
 	<string>dev.us.theartaround.ArtAround</string>
 	<key>CFBundleInfoDictionaryVersion</key>
