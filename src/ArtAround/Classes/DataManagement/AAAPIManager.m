@@ -32,6 +32,7 @@ static const NSString *_kCallbackKey = @"callback";
 - (ASIHTTPRequest *)downloadCategories;
 - (NSArray *)arrayForSQL:(char *)sql;
 + (BOOL)isCacheExpiredForURL:(NSURL *)url;
++ (BOOL)isCacheExpiredForURL:(NSURL *)url timeout:(int)timeout;
 + (NSURL *)apiURLForMethod:(NSString *)method;
 + (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict;
 @end
@@ -138,9 +139,12 @@ static const NSString *_kCallbackKey = @"callback";
 
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback
 {	
+	//cache for 1 week
+	int timeout = 60 * 60 * 24 * 7;
+	
 	//if both neighborhoods and categories are cached, quit now
-	if (![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"neighborhoods"]] &&
-		![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"categories"]]) {
+	if (![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] timeout:timeout] &&
+		![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"categories"] timeout:timeout]) {
 		return;
 	}
 	
@@ -185,7 +189,8 @@ static const NSString *_kCallbackKey = @"callback";
 	NSURL *allArtURL = [AAAPIManager apiURLForMethod:@"arts" parameters:params];
 	
 	//if art is cached, quit now
-	if (![AAAPIManager isCacheExpiredForURL:allArtURL]) {
+	//cache for 24 hours
+	if (![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
 		return;
 	}
 	
@@ -272,6 +277,12 @@ static const NSString *_kCallbackKey = @"callback";
 //todo: add a time parameter to set different cache periods for different items
 + (BOOL)isCacheExpiredForURL:(NSURL *)url
 {
+	//default to 2 hours
+	return [AAAPIManager isCacheExpiredForURL:url timeout:60 * 120];
+}
+
++ (BOOL)isCacheExpiredForURL:(NSURL *)url timeout:(int)timeout
+{
 	//if a nil url was passed, quit now
 	if (!url || [[url absoluteString] length] == 0) {
 		return YES;
@@ -290,9 +301,9 @@ static const NSString *_kCallbackKey = @"callback";
 	}
 	
 	//cache didn't exist
-	//create a new cache entry for 2 hours
 	//return yes, the cache is expired
-	[[EGOCache currentCache] setString:@"YES" forKey:key withTimeoutInterval:60 * 120];
+	//create a new cache entry
+	[[EGOCache currentCache] setString:@"YES" forKey:key withTimeoutInterval:timeout];
 	return YES;
 }
 
