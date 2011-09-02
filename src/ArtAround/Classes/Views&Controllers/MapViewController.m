@@ -134,11 +134,31 @@ static const int _kAnnotationLimit = 9999;
 	[super dealloc];
 }
 
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	//decide what to do based on the button index
+	//just one button for now (plus cancel), but expect more later
+	switch (buttonIndex) {
+			
+		//show the art around web set
+		case 0:
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://theartaround.us/"]];
+			break;
+			
+		default:
+			break;
+	}
+}
+
 #pragma mark - Button Actions
 
 - (void)shareButtonTapped
 {
-	//todo: share
+	UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Visit theartaround.us", nil];
+	[shareSheet showInView:self.view];
+	[shareSheet release];
 }
 
 -(void)filterButtonTapped

@@ -11,7 +11,7 @@
 @class MapView;
 @class CalloutAnnotationView;
 
-@interface MapViewController : UIViewController <MKMapViewDelegate>
+@interface MapViewController : UIViewController <MKMapViewDelegate, UIActionSheetDelegate>
 {
 	NSMutableArray *_items;
 	NSMutableArray *_annotations;
