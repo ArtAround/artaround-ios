@@ -70,6 +70,7 @@
 		CA1AEA11140C906200C56C4D /* PinVenue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F3140C906200C56C4D /* PinVenue@2x.png */; };
 		CA1AEA12140C906200C56C4D /* PinVenuePressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */; };
 		CA1AEA13140C906200C56C4D /* PinVenuePressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */; };
+		CA2A10EB14109BBE009001A2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2A10EA14109BBE009001A2 /* MessageUI.framework */; };
 		CA546F56140AE18D008B1B91 /* EGOCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F49140AE18D008B1B91 /* EGOCache.m */; };
 		CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F4D140AE18D008B1B91 /* EGOImageButton.m */; };
 		CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F50140AE18D008B1B91 /* EGOImageLoadConnection.m */; };
@@ -227,6 +228,7 @@
 		CA1AE9F3140C906200C56C4D /* PinVenue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PinVenue@2x.png"; sourceTree = "<group>"; };
 		CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PinVenuePressed.png; sourceTree = "<group>"; };
 		CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PinVenuePressed@2x.png"; sourceTree = "<group>"; };
+		CA2A10EA14109BBE009001A2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CA546F48140AE18D008B1B91 /* EGOCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOCache.h; sourceTree = "<group>"; };
 		CA546F49140AE18D008B1B91 /* EGOCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOCache.m; sourceTree = "<group>"; };
 		CA546F4C140AE18D008B1B91 /* EGOImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOImageButton.h; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 			files = (
 				CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */,
 				CAECF77F14073DCA00CD9A95 /* libz.1.2.3.dylib in Frameworks */,
+				CA2A10EB14109BBE009001A2 /* MessageUI.framework in Frameworks */,
 				CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */,
 				CAECF77B14073D9D00CD9A95 /* SystemConfiguration.framework in Frameworks */,
 				CAECF77914073D9100CD9A95 /* CFNetwork.framework in Frameworks */,
@@ -620,6 +623,7 @@
 			children = (
 				CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */,
 				CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */,
+				CA2A10EA14109BBE009001A2 /* MessageUI.framework */,
 				CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */,
 				CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */,
 				CAECF77814073D9100CD9A95 /* CFNetwork.framework */,

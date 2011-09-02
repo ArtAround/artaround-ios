@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import <MessageUI/MessageUI.h>
 #import "ArtAroundAppDelegate.h"
 #import "FBConnect.h"
 @class DetailView;
@@ -19,7 +20,7 @@ typedef enum AAShareType {
 	AAShareTypeFacebook = 2
 } AAShareType;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate>
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, MFMailComposeViewControllerDelegate>
 {
 	ArtAroundAppDelegate *_appDelegate;
 	Facebook *_facebook;

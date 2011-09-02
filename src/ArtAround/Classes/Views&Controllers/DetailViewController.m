@@ -24,6 +24,7 @@
 - (void)shareOnTwitter;
 - (void)shareOnFacebook;
 - (void)showFBDialog;
+- (void)shareViaEmail;
 - (NSString *)shareMessage;
 - (NSString *)shareURL;
 @end
@@ -313,6 +314,28 @@ static const float _kPhotoHeight = 140.0f;
 	[shareSheet release];
 }
 
+- (void)shareViaEmail
+{
+	if ([MFMailComposeViewController canSendMail]) {
+		
+		//present the mail composer
+		MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
+		mailController.mailComposeDelegate = self;
+		[mailController setSubject:@"Art Around"];
+		[mailController setMessageBody:[self shareMessage] isHTML:NO];
+		[self presentModalViewController:mailController animated:YES];
+		[mailController release];
+		
+	} else {
+		
+		//this device can't send email
+		UIAlertView *emailAlert = [[UIAlertView alloc] initWithTitle:@"Email Error" message:@"This device is not configured to send email." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+		[emailAlert show];
+		[emailAlert release];
+		
+	}
+}
+
 - (void)shareOnTwitter
 {
 	//share on twitter in the browser
@@ -404,8 +427,9 @@ static const float _kPhotoHeight = 140.0f;
 	//decide what to do based on the button index
 	switch (buttonIndex) {
 			
-		//todo: share via email
+		//share via email
 		case AAShareTypeEmail:
+			[self shareViaEmail];
 			break;
 			
 		//share via twitter
@@ -422,5 +446,15 @@ static const float _kPhotoHeight = 140.0f;
 			break;
 	}
 }
+
+#pragma mark - MFMailComposeViewControllerDelegate
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error 
+{
+	//dismiss the mail composer
+	[self becomeFirstResponder];
+	[self dismissModalViewControllerAnimated:YES];
+}
+
 
 @end
