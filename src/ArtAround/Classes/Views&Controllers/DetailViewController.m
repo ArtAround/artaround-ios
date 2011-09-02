@@ -21,8 +21,11 @@
 @interface DetailViewController (private)
 - (void)updateNativeFrames;
 - (void)setupImages;
+- (void)shareOnTwitter;
 - (void)shareOnFacebook;
 - (void)showFBDialog;
+- (NSString *)shareMessage;
+- (NSString *)shareURL;
 @end
 
 static const float _kPhotoPadding = 10.0f;
@@ -310,6 +313,13 @@ static const float _kPhotoHeight = 140.0f;
 	[shareSheet release];
 }
 
+- (void)shareOnTwitter
+{
+	//share on twitter in the browser
+	NSString *twitterShare = [NSString stringWithFormat:@"http://twitter.com/share?text=%@", [[self shareMessage] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:twitterShare]];
+}
+
 - (void)shareOnFacebook
 {
 	//do we have a reference to the facebook object?
@@ -360,12 +370,22 @@ static const float _kPhotoHeight = 140.0f;
 	//setup the parameters with info about this art
 	NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 								   @"Share on Facebook",  @"user_message_prompt",
-								   [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug], @"link",
+								   [self shareURL], @"link",
 								   photoURL, @"picture",
 								   nil];
 	
 	//show the share dialog
 	[_facebook dialog:@"feed" andParams:params andDelegate:self];
+}
+
+- (NSString *)shareMessage
+{
+	return [NSString stringWithFormat:@"Art Around: %@", [self shareURL]];
+}
+
+- (NSString *)shareURL
+{
+	return [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug];
 }
 
 #pragma mark - FBDialogDelegate
@@ -388,8 +408,9 @@ static const float _kPhotoHeight = 140.0f;
 		case AAShareTypeEmail:
 			break;
 			
-		//todo: share via twitter
+		//share via twitter
 		case AAShareTypeTwitter:
+			[self shareOnTwitter];
 			break;
 			
 		//share via facebook
