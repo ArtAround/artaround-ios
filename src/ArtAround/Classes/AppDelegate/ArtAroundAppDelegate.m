@@ -11,6 +11,7 @@
 #import "AAAPIManager.h"
 #import "FlickrAPIManager.h"
 #import "Utilities.h"
+#import "FBConnect.h"
 
 @implementation ArtAroundAppDelegate
 
@@ -19,6 +20,7 @@
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
+@synthesize facebook = _facebook;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -46,7 +48,18 @@
 	//set the Flickr API Key
 	[[FlickrAPIManager instance] setApiKey:[[Utilities instance].keysDict objectForKey:@"FlickrAPIKey"]];
 	
+	//setup facebook
+	Facebook* theFacebook = [[Facebook alloc] initWithAppId:[[Utilities instance].keysDict objectForKey:@"FacebookAppID"] andDelegate:self];
+	[self setFacebook:theFacebook];
+	[theFacebook release];
+	
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+	//used for facebook single sign on
+    return [self.facebook handleOpenURL:url]; 
 }
 
 - (void)downloadConfig
@@ -106,6 +119,7 @@
 	[__managedObjectContext release];
 	[__managedObjectModel release];
 	[__persistentStoreCoordinator release];
+	[self setFacebook:nil];
     [super dealloc];
 }
 
@@ -228,6 +242,39 @@
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
+#pragma mark - FBSessionDelegate
+
+- (void)fbDidLogin
+{
+	//save the access token so the user will not have to authenticate every time
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[_facebook accessToken] forKey:@"FBAccessTokenKey"];
+    [defaults setObject:[_facebook expirationDate] forKey:@"FBExpirationDateKey"];
+    [defaults synchronize];
+	
+	//post a notification so other parts of the app know the login was successful
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"fbDidLogin" object:nil];
+}
+
+- (void)fbDidNotLogin:(BOOL)cancelled
+{
+	//if login failed and was not canclled, clear the access token and show an alert
+	if (!cancelled) {
+		
+		//clear out the saved access token
+		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+		[prefs setObject:nil forKey:@"FBAccessTokenKey"];
+		[prefs setObject:nil forKey:@"FBExpirationDateKey"];
+		[prefs synchronize];
+		
+		//show alert
+		UIAlertView *facebookError = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"There was a problem sharing on Facebook" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		[facebookError show];
+		[facebookError release];
+
+	}
 }
 
 @end

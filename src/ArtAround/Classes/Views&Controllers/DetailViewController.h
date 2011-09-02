@@ -8,10 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "ArtAroundAppDelegate.h"
+#import "FBConnect.h"
 @class DetailView;
 @class Art;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate>
+typedef enum AAShareType {
+	AAShareTypeEmail = 0,
+    AAShareTypeTwitter = 1,
+	AAShareTypeFacebook = 2
+} AAShareType;
+
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate>
+{
+	ArtAroundAppDelegate *_appDelegate;
+	Facebook *_facebook;
+}
 
 @property (nonatomic, retain) DetailView *detailView;
 @property (nonatomic, assign) Art *art;

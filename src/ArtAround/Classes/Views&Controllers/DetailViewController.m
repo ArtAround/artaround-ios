@@ -21,6 +21,8 @@
 @interface DetailViewController (private)
 - (void)updateNativeFrames;
 - (void)setupImages;
+- (void)shareOnFacebook;
+- (void)showFBDialog;
 @end
 
 static const float _kPhotoPadding = 10.0f;
@@ -47,6 +49,12 @@ static const float _kPhotoHeight = 140.0f;
 		[self.detailView.webView setDelegate:self];
 		[self.detailView.mapView setDelegate:self];
 		[aDetailView release];
+		
+		//get a reference to the app delegate
+		_appDelegate = (ArtAroundAppDelegate *)[[UIApplication sharedApplication] delegate];
+		
+		//observe notification for facebook login
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showFBDialog) name:@"fbDidLogin" object:nil];
 
     }
     return self;
@@ -64,6 +72,11 @@ static const float _kPhotoHeight = 140.0f;
 	[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self.navigationItem setTitleView:logoView];
 	[logoView release];
+	
+	//add a share button
+	UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
+	[self.navigationItem setRightBarButtonItem:shareButton];
+	[shareButton release];
 }
 
 - (void)setArt:(Art *)art
@@ -285,6 +298,108 @@ static const float _kPhotoHeight = 140.0f;
 
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
 	[Utilities zoomToFitMapAnnotations:mapView];
+}
+
+#pragma mark - Share
+
+- (void)shareButtonTapped
+{
+	//show an action sheet with the various sharing types
+	UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", @"Facebook", nil];
+	[shareSheet showInView:self.view];
+	[shareSheet release];
+}
+
+- (void)shareOnFacebook
+{
+	//do we have a reference to the facebook object?
+	if (!_facebook) {
+		
+		//get a reference to the facebook object
+		_facebook = _appDelegate.facebook;
+		
+		//make sure the access token is properly set if we previously saved it
+		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+		NSString *accessToken = [prefs stringForKey:@"FBAccessTokenKey"];
+		NSDate *expirationDate = [prefs objectForKey:@"FBExpirationDateKey"];
+		[_facebook setAccessToken:accessToken];
+		[_facebook setExpirationDate:expirationDate];
+		
+	}
+	
+	//make sure we have a valid reference to the facebook object
+	if (!_facebook) {
+		[_appDelegate fbDidNotLogin:NO];
+		return;
+	}
+	
+	//make sure we are authorized
+	if (![_facebook isSessionValid]) {
+		NSArray* permissions =  [NSArray arrayWithObjects:@"publish_stream", nil];
+		[_facebook authorize:permissions];
+	} else {
+		[self showFBDialog];
+	}
+}
+
+- (void)showFBDialog
+{
+	//make sure we have a valid reference to the facebook object
+	if (!_facebook) {
+		[_appDelegate fbDidNotLogin:NO];
+		return;
+	}
+	
+	//grab the first photo
+	NSString *photoURL = @"";
+	if (_art.photos && [_art.photos count] > 0) {
+		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
+		photoURL = photo.thumbnailSource;
+	}
+	
+	//setup the parameters with info about this art
+	NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								   @"Share on Facebook",  @"user_message_prompt",
+								   [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug], @"link",
+								   photoURL, @"picture",
+								   nil];
+	
+	//show the share dialog
+	[_facebook dialog:@"feed" andParams:params andDelegate:self];
+}
+
+#pragma mark - FBDialogDelegate
+
+- (void)dialogDidSucceed:(FBDialog*)dialog
+{
+	if ([dialog class] == [FBLoginDialog class]) {
+		[self showFBDialog];
+	}
+}
+
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	//decide what to do based on the button index
+	switch (buttonIndex) {
+			
+		//todo: share via email
+		case AAShareTypeEmail:
+			break;
+			
+		//todo: share via twitter
+		case AAShareTypeTwitter:
+			break;
+			
+		//share via facebook
+		case AAShareTypeFacebook:
+			[self shareOnFacebook];
+			break;
+			
+		default:
+			break;
+	}
 }
 
 @end
