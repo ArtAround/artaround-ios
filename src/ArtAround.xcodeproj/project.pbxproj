@@ -92,6 +92,7 @@
 		CAC02B8A140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B86140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png */; };
 		CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */; };
 		CAC02BA6140DF0140032C4E5 /* ArtAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */; };
+		CAD47C1A1410AA5D0059C69A /* ArtAround-Info-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */; };
 		CAE7E182141071380046890F /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = CAE7E17C141071380046890F /* Icon-72.png */; };
 		CAE7E183141071380046890F /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = CAE7E17D141071380046890F /* Icon-Small-50.png */; };
 		CAE7E184141071380046890F /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = CAE7E17E141071380046890F /* Icon-Small.png */; };
@@ -260,6 +261,7 @@
 		CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CalloutAnnotationView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CAC02BA4140DF0120032C4E5 /* ArtAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAnnotationView.h; sourceTree = "<group>"; };
 		CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAnnotationView.m; sourceTree = "<group>"; };
+		CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info-Example.plist"; sourceTree = "<group>"; };
 		CAE7E17C141071380046890F /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		CAE7E17D141071380046890F /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		CAE7E17E141071380046890F /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
@@ -651,6 +653,7 @@
 			children = (
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
 				CA5E10D61405F0520075DAB8 /* ArtAround-Info.plist */,
+				CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */,
 				CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */,
 				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
 				CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */,
@@ -859,6 +862,7 @@
 				CAE7E187141071380046890F /* Icon@2x.png in Resources */,
 				CAE7E18A141071540046890F /* iTunesArtwork in Resources */,
 				CAFD5B1A14107DCB0078D7B6 /* FBDialog.bundle in Resources */,
+				CAD47C1A1410AA5D0059C69A /* ArtAround-Info-Example.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

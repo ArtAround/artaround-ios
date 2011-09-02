@@ -12,3 +12,4 @@ build
 xcuserdata
 *.xcuserdatad
 ArtAround-Keys.plist
+ArtAround-Info.plist
