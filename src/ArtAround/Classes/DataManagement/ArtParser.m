@@ -8,7 +8,7 @@
 
 #import "ArtParser.h"
 #import "AAAPIManager.h"
-#import "CJSONDeserializer.h"
+#import "JSONKit.h"
 #import "Art.h"
 #import "Photo.h"
 #import "Category.h"
@@ -25,7 +25,7 @@
 {	
 	//deserialize the json response
 	NSError *jsonError = nil;
-	NSDictionary *responseDict = [[CJSONDeserializer deserializer] deserialize:[request responseData] error:&jsonError];
+	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
 	
 	//check for an error
 	if (jsonError || !responseDict) {

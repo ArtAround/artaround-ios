@@ -7,7 +7,7 @@
 //
 
 #import "NeighborhoodParser.h"
-#import "CJSONDeserializer.h"
+#import "JSONKit.h"
 
 @implementation NeighborhoodParser
 
@@ -40,7 +40,7 @@
 {
 	//deserialize the json response
 	NSError *error = nil;
-	NSArray *neighborhoods = [[CJSONDeserializer deserializer] deserialize:[neighborhoodRequest responseData] error:&error];
+	NSArray *neighborhoods = [[neighborhoodRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
 	
 	//check for an error
 	if (error || !neighborhoods) {

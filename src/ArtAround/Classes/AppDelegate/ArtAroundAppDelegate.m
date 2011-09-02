@@ -21,6 +21,7 @@
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 @synthesize facebook = _facebook;
+@synthesize mapViewController = _mapViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -31,16 +32,19 @@
 	[[self window] makeKeyAndVisible];
 	[newWindow release];
 	
-	//setup the main navigation controller with a map view controller as the root controller
-	MapViewController *mapViewController = [[MapViewController alloc] init];
-	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:mapViewController];
+	//setup the map view controller
+	MapViewController *aMapViewController = [[MapViewController alloc] init];
+	[self setMapViewController:aMapViewController];
+	[aMapViewController release];
+	
+	//setup the main navigation controller with a map view controller as the root controller	
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.mapViewController];
 	[navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
 	[self setNavigationController:navController];
-	[self.window addSubview:self.navigationController.view];
-	
-	//clean up
-	[mapViewController release];
 	[navController release];
+	
+	//add the nav controller view to the window
+	[self.window addSubview:self.navigationController.view];
 	
 	//download static config items
 	[self performSelectorInBackground:@selector(downloadConfig) withObject:nil];
@@ -182,7 +186,8 @@
     {
         return __managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"ArtAround" withExtension:@"momd"];
+	NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"ArtAround" ofType:@"momd"];
+    NSURL *modelURL = [NSURL fileURLWithPath:modelPath];
     __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];    
     return __managedObjectModel;
 }
@@ -197,8 +202,8 @@
     {
         return __persistentStoreCoordinator;
     }
-    
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"ArtAround.sqlite"];
+
+	NSURL *storeURL = [NSURL fileURLWithPath:[(NSString *)[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ArtAround.sqlite"]];
     
     NSError *error = nil;
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -241,7 +246,7 @@
  */
 - (NSURL *)applicationDocumentsDirectory
 {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
 #pragma mark - FBSessionDelegate

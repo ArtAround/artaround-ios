@@ -7,7 +7,7 @@
 //
 
 #import "PhotoParser.h"
-#import "CJSONDeserializer.h"
+#import "JSONKit.h"
 #import "ASIHTTPRequest.h"
 #import "FlickrAPIManager.h"
 
@@ -17,7 +17,7 @@
 {
 	//deserialize the json response
 	NSError *jsonError = nil;
-	NSDictionary *responseDict = [[CJSONDeserializer deserializer] deserialize:[request responseData] error:&jsonError];
+	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
 	
 	//check for an error
 	if (jsonError || !responseDict) {

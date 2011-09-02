@@ -11,7 +11,6 @@
 #import <sqlite3.h>
 #import "ASIHTTPRequest.h"
 #import "ArtAroundAppDelegate.h"
-#import "CJSONDeserializer.h"
 #import "Art.h"
 #import "Category.h"
 #import "Neighborhood.h"
@@ -159,7 +158,7 @@ static const NSString *_kCallbackKey = @"callback";
 	//parse the config items
 	ConfigParser *parser = [[ConfigParser alloc] init];
 	[parser parseCategoryRequest:categoryRequest neighborhoodRequest:neighborhoodRequest userInfo:userInfo];
-	[parser autorelease];
+	[parser release];
 }
 
 - (ASIHTTPRequest *)downloadNeighborhoods
@@ -235,7 +234,7 @@ static const NSString *_kCallbackKey = @"callback";
 	//parse the art
 	ArtParser *parser = [[ArtParser alloc] init];
 	[parser parseRequest:request];
-	[parser autorelease];
+	[parser release];
 	
 	//stop network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];

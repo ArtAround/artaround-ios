@@ -7,7 +7,7 @@
 //
 
 #import "CategoryParser.h"
-#import "CJSONDeserializer.h"
+#import "JSONKit.h"
 
 @implementation CategoryParser
 
@@ -40,7 +40,7 @@
 {
 	//deserialize the json response
 	NSError *error = nil;
-	NSArray *categories = [[CJSONDeserializer deserializer] deserialize:[categoryRequest responseData] error:&error];
+	NSArray *categories = [[categoryRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
 	
 	//check for an error
 	if (error || !categories) {

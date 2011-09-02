@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MapViewController.h"
 #import "FBConnect.h"
 
 @interface ArtAroundAppDelegate : NSObject <UIApplicationDelegate, FBSessionDelegate>
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) UINavigationController *navigationController;
+@property (nonatomic, retain) MapViewController *mapViewController;
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
