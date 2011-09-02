@@ -9,6 +9,7 @@
 #import "FlickrAPIManager.h"
 #import "ASIHTTPRequest.h"
 #import "PhotoParser.h"
+#import "Utilities.h"
 
 static FlickrAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://api.flickr.com/services/rest/";
@@ -48,6 +49,9 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 
 - (void)downloadPhotoWithID:(NSNumber *)flickrID target:(id)target callback:(SEL)callback
 {
+	//start network activity indicator
+	[[Utilities instance] startActivity];
+	
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, flickrID, _kFlickrIDKey, nil];
 	
@@ -63,6 +67,7 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 {
 	//parse the art in the background
 	[self performSelectorInBackground:@selector(parsePhotoRequest:) withObject:request];
+
 }
 
 - (void)parsePhotoRequest:(ASIHTTPRequest *)request
@@ -75,6 +80,9 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	[parser parseRequest:request];
 	[parser autorelease];
 	
+	//stop network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
+	
 	//release the pool
 	[pool release];
 }
@@ -82,6 +90,9 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 - (void)photoRequestFailed:(ASIHTTPRequest *)request
 {
 	DebugLog(@"artRequestFailed");
+	
+	//stop network activity indicator
+	[[Utilities instance] stopActivity];
 }
 
 #pragma mark - Helper Methods
@@ -109,7 +120,7 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 }
 
 - (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
-{
+{	
 	//setup and start the request
 	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
 	[request setNumberOfTimesToRetryOnTimeout:1];

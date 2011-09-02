@@ -9,6 +9,7 @@
 #import "Utilities.h"
 #import <MapKit/MapKit.h>
 #import "ArtAnnotation.h"
+#import "ASIHTTPRequest.h"
 
 static Utilities *_kSharedInstance = nil;
 
@@ -132,6 +133,33 @@ static Utilities *_kSharedInstance = nil;
 - (NSString *)keyForFilterType:(FilterType)filterType
 {
 	return [NSString stringWithFormat:@"AAFilters_%i", filterType];
+}
+
+#pragma mark - activity indicator methods
+
+//adds to the activity count which spins the network activity indicator
+- (void)startActivity
+{	
+	//we are manually updating the activity indicator
+	[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
+	
+	//increment the activity count
+	//show start the activity indicator
+	_activityCount++;
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+}
+
+//subtract from the activity count
+//if the count reaches zero, stop the network activity indicator
+- (void)stopActivity {
+	
+	if (--_activityCount <= 0) {
+		_activityCount = 0;
+		[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+		
+		//we are no longer updating the activity indicator
+		[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:YES];
+	}		
 }
 
 @end

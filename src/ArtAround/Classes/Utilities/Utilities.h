@@ -20,6 +20,7 @@ typedef enum {
 @interface Utilities : NSObject
 {
 	NSUserDefaults *_defaults;
+	int _activityCount;
 }
 
 @property (nonatomic, assign) FilterType selectedFilterType;
@@ -29,5 +30,7 @@ typedef enum {
 + (void)zoomToFitMapAnnotations:(MKMapView *)mapView;
 - (NSArray *)getFiltersForFilterType:(FilterType)filterType;
 - (void)setFilters:(NSArray *)filters forFilterType:(FilterType)filterType;
+- (void)startActivity;
+- (void)stopActivity;
 
 @end

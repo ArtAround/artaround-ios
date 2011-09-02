@@ -18,6 +18,7 @@
 #import "ArtParser.h"
 #import "ConfigParser.h"
 #import "EGOCache.h"
+#import "Utilities.h"
 
 static AAAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
@@ -163,18 +164,30 @@ static const NSString *_kCallbackKey = @"callback";
 
 - (ASIHTTPRequest *)downloadNeighborhoods
 {
+	//start network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
+	
 	//setup and start the request
 	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] userInfo:nil];
 	[request startSynchronous];
+	
+	//stop network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
 	
 	return request;
 }
 
 - (ASIHTTPRequest *)downloadCategories
 {
+	//start network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
+	
 	//setup and start the request
 	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"categories"] userInfo:nil];
 	[request startSynchronous];
+	
+	//stop network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
 	
 	return request;
 }
@@ -193,6 +206,9 @@ static const NSString *_kCallbackKey = @"callback";
 	if (![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
 		return;
 	}
+	
+	//start network activity indicator
+	[[Utilities instance] startActivity];
 	
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
@@ -221,6 +237,9 @@ static const NSString *_kCallbackKey = @"callback";
 	[parser parseRequest:request];
 	[parser autorelease];
 	
+	//stop network activity indicator
+	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
+	
 	//release the pool
 	[pool release];
 }
@@ -228,6 +247,9 @@ static const NSString *_kCallbackKey = @"callback";
 - (void)artRequestFailed:(ASIHTTPRequest *)request
 {
 	DebugLog(@"artRequestFailed");
+	
+	//stop network activity indicator
+	[[Utilities instance] stopActivity];
 }
 
 #pragma mark - Helper Methods
