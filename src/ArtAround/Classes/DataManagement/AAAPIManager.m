@@ -112,7 +112,7 @@ static const NSString *_kCallbackKey = @"callback";
 	}
 	sqlite3_close(database);
 	
-	return items;
+	return [items autorelease];
 }
 
 - (NSArray *)categories
