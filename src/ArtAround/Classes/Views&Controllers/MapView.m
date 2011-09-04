@@ -26,9 +26,9 @@
 		[aMap release];
 		
 		//setup the map view
-		[[self map] setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-		[[self map] setShowsUserLocation:YES];
-		[self addSubview:[self map]];
+		[self.map setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+		[self.map setShowsUserLocation:YES];
+		[self addSubview:self.map];
 		
 		//initialize the share button
 		UIButton *aShareButton = [UIButton buttonWithType:UIButtonTypeCustom];
