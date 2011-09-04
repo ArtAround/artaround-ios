@@ -402,12 +402,9 @@ static const int _kAnnotationLimit = 9999;
 			//setup the callout view
 			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 335.0f)];
 			[aCallout setMapView:self.mapView.map];			
+			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
 			[self setCallout:aCallout];
 			[aCallout release];
-			
-			//newer devices respond bettern to the preferred UIControlEventTouchUpInside
-			//older devices seem delayed so use UIControlEventTouchDown
-			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:([Utilities isNewHardware]) ? UIControlEventTouchUpInside : UIControlEventTouchDown];
 			
 		} else {
 			
