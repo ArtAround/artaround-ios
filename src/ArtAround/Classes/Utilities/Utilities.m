@@ -162,4 +162,28 @@ static Utilities *_kSharedInstance = nil;
 	}		
 }
 
+#pragma mark - device methods
+
+//determines if this is a newer device based on the screen scale and if this is an ipad or not
+//UIScreen scale is only available in ios 4+ and will be larger than 1.0 for retina devices
++ (BOOL)isNewHardware {
+	
+	//is this an ipad
+	//not using UI_USER_INTERFACE_IDIOM because that returns NO when running an iPhone interface on an iPad
+	if (NSClassFromString(@"UIPopoverController")) {
+		return YES;
+	}
+	
+	//is this a retina display device
+	UIScreen *screen = [UIScreen mainScreen];
+	if ([screen respondsToSelector:@selector(scale)]) {
+		if (screen.scale > 1.0f) {
+			return YES;
+		}
+	}
+	
+	//default to no
+	return NO;
+}
+
 @end

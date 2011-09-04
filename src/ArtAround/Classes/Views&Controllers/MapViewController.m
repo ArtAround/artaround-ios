@@ -398,13 +398,22 @@ static const int _kAnnotationLimit = 9999;
 		
 		//create the callout if it doesn't exist yet
 		if (!self.callout) {
+			
+			//setup the callout view
 			CalloutAnnotationView *aCallout = [[CalloutAnnotationView alloc] initWithCoordinate:[(ArtAnnotation *)view.annotation coordinate] frame:CGRectMake(0.0f, 0.0f, 320.0f, 335.0f)];
-			[aCallout setMapView:self.mapView.map];
-			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
+			[aCallout setMapView:self.mapView.map];			
 			[self setCallout:aCallout];
 			[aCallout release];
+			
+			//newer devices respond bettern to the preferred UIControlEventTouchUpInside
+			//older devices seem delayed so use UIControlEventTouchDown
+			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:([Utilities isNewHardware]) ? UIControlEventTouchUpInside : UIControlEventTouchDown];
+			
 		} else {
+			
+			//update the coordinate
 			[self.callout setCoordinate:[(ArtAnnotation *)view.annotation coordinate]];
+			
 		}
 		
 		//first move the annotation, set the new art, then add it to the map

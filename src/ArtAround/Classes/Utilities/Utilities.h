@@ -32,5 +32,6 @@ typedef enum {
 - (void)setFilters:(NSArray *)filters forFilterType:(FilterType)filterType;
 - (void)startActivity;
 - (void)stopActivity;
++ (BOOL)isNewHardware;
 
 @end
