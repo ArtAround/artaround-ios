@@ -83,6 +83,16 @@
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
 	art.photos = [PhotoParser setForFlickrIDs:[artDict objectForKey:@"flickr_ids"] inContext:context];
 	
+	//make sure we don't have empty artist
+	if (art.artist) {
+		art.artist = [art.artist stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	} else {
+		art.artist = @"";
+	}
+	if ([art.artist isEqualToString:@""] || [art.artist isEqualToString:@"?"]) {
+		art.artist = @"Unknown";
+	}
+	
 	//location
 	NSArray *location = [artDict objectForKey:@"location"];
 	if ([location count] >= 2) {
