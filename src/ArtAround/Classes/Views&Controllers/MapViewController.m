@@ -79,24 +79,6 @@ static const int _kAnnotationLimit = 9999;
 	
 }
 
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	
-	//add the logo to the navigation bar
-	UIImage *logo = [UIImage imageNamed:@"ArtAroundLogo.png"];
-	UIImageView *logoView = [[UIImageView alloc] initWithImage:logo];
-	[logoView setFrame:CGRectMake(0.0f, 0.0f, logo.size.width, logo.size.height)];
-	[logoView setCenter:CGPointMake(self.navigationController.navigationBar.center.x, logoView.center.y)];
-	[logoView setContentMode:UIViewContentModeScaleAspectFit];
-	[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[self.navigationController.navigationBar addSubview:logoView];
-	[logoView release];
-	
-	//make sure there is not title view
-	[self.navigationItem setTitleView:nil];
-}
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -104,6 +86,12 @@ static const int _kAnnotationLimit = 9999;
     // Release any retained subviews of the main view.
 	[self setMapView:nil];
 	[self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	//show the logo view
+	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 }
 
 - (void)viewDidAppear:(BOOL)animated

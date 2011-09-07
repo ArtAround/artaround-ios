@@ -186,4 +186,35 @@ static Utilities *_kSharedInstance = nil;
 	return NO;
 }
 
+#pragma mark - Navigation Bar Helpers
+
++ (void)showLogoView:(BOOL)show inNavigationBar:(UINavigationBar *)navBar
+{
+	const int logoViewTag = 123;
+	UIImageView *logoView = (UIImageView *)[navBar viewWithTag:logoViewTag];
+	
+	//if the logoview doesn't exist yet, add the logo to the navigation bar
+	if (!logoView) {
+		UIImage *logo = [UIImage imageNamed:@"ArtAroundLogo.png"];
+		UIImageView *logoView = [[UIImageView alloc] initWithImage:logo];
+		[logoView setFrame:CGRectMake(0.0f, 0.0f, logo.size.width, logo.size.height)];
+		[logoView setCenter:CGPointMake(navBar.center.x, logoView.center.y)];
+		[logoView setContentMode:UIViewContentModeScaleAspectFit];
+		[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+		[logoView setTag:logoViewTag];
+		[navBar addSubview:logoView];
+		[logoView release];
+	}
+	
+	//start animation block
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.3];
+	
+	//show/hide the logoview
+	[logoView setAlpha:show];
+	
+	//end animation block
+    [UIView commitAnimations];
+}
+
 @end

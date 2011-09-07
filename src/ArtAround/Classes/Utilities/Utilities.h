@@ -33,5 +33,6 @@ typedef enum {
 - (void)startActivity;
 - (void)stopActivity;
 + (BOOL)isNewHardware;
++ (void)showLogoView:(BOOL)show inNavigationBar:(UINavigationBar *)navBar;
 
 @end

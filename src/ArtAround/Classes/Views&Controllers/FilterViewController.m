@@ -126,6 +126,12 @@ static NSArray *_kFilterTypes = nil;
     // e.g. self.myOutlet = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	//hide the logo view
+	[Utilities showLogoView:NO inNavigationBar:self.navigationController.navigationBar];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
