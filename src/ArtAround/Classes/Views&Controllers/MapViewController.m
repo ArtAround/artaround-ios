@@ -206,7 +206,9 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)calloutTapped
 {
-	if ([_items count] > self.callout.tag) {
+	//make sure there is an item to select in the array
+	//don't add another detail controller if one is already displayed
+	if ([_items count] > self.callout.tag && [self.navigationController.topViewController class] != [DetailViewController class]) {
 		
 		//get the selected art piece
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
@@ -424,6 +426,13 @@ static const int _kAnnotationLimit = 9999;
 			[self.callout setArt:selectedArt];
 			[self.mapView.map addAnnotation:self.callout];
 		}
+		
+	} else if (self.callout && self.callout.parentAnnotationView == view) {
+		
+		//the callout was tapped
+		//this is primarily for older devices such as the iphone 3g which seems delayed in responding to the typical target for UIControlEventTouchUpInside
+		//calloutTapped checks to be sure multiple controllers aren't pushed to the navigation stack
+		[self calloutTapped];
 		
 	}
 }
