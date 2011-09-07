@@ -205,6 +205,16 @@ static const float _kPhotoHeight = 140.0f;
     [super didReceiveMemoryWarning];
 }
 
+//ensure that release is only called on the main thread
+- (oneway void)release
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(release) withObject:nil waitUntilDone:NO];
+    } else {
+        [super release];
+    }
+}
+
 - (void)dealloc
 {
 	[self.detailView.webView setDelegate:nil];
