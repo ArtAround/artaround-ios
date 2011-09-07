@@ -34,9 +34,6 @@ static const int _kAnnotationLimit = 9999;
     self = [super init];
     if (self) {
 		
-		//initialize controller
-		self.title = @"ArtAround";
-		
 		//initialize arrays
 		_items = [[NSMutableArray alloc] init];
 		_annotations = [[NSMutableArray alloc] init];
@@ -90,10 +87,14 @@ static const int _kAnnotationLimit = 9999;
 	UIImage *logo = [UIImage imageNamed:@"ArtAroundLogo.png"];
 	UIImageView *logoView = [[UIImageView alloc] initWithImage:logo];
 	[logoView setFrame:CGRectMake(0.0f, 0.0f, logo.size.width, logo.size.height)];
+	[logoView setCenter:CGPointMake(self.navigationController.navigationBar.center.x, logoView.center.y)];
 	[logoView setContentMode:UIViewContentModeScaleAspectFit];
 	[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[self.navigationItem setTitleView:logoView];
+	[self.navigationController.navigationBar addSubview:logoView];
 	[logoView release];
+	
+	//make sure there is not title view
+	[self.navigationItem setTitleView:nil];
 }
 
 - (void)viewDidUnload
