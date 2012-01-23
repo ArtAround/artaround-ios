@@ -10,7 +10,7 @@
 
 @implementation MapView
 @synthesize map = _map;
-@synthesize shareButton = _shareButton, filterButton = _filterButton, locateButton = _locateButton;
+@synthesize shareButton = _shareButton, filterButton = _filterButton, locateButton = _locateButton, addButton = _addButton;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -44,7 +44,7 @@
 		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
 		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
 		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
-		[aFilterButton setFrame:CGRectMake(self.shareButton.frame.origin.x + self.shareButton.frame.size.width, 0.0f, aFilterButton.imageView.image.size.width, aFilterButton.imageView.image.size.height)];
+		[aFilterButton setFrame:CGRectMake(self.shareButton.frame.origin.x + self.shareButton.frame.size.width, 0.0f, aFilterButton.imageView.image.size.width - aShareButton.frame.size.width, aFilterButton.imageView.image.size.height)];
 		[aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[aFilterButton setAdjustsImageWhenHighlighted:NO];
 		[self setFilterButton:aFilterButton];
@@ -58,6 +58,17 @@
 		[aLocateButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin];
 		[self setLocateButton:aLocateButton];
 		[self addSubview:self.locateButton];
+        
+        //initialize the add button
+		UIButton *aAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		[aAddButton setImage:[UIImage imageNamed:@"Locate.png"] forState:UIControlStateNormal];
+		[aAddButton setImage:[UIImage imageNamed:@"LocatePressed.png"] forState:UIControlStateHighlighted];
+		[aAddButton setFrame:CGRectMake(self.locateButton.frame.origin.x + self.locateButton.frame.size.width, 0.0f, aAddButton.imageView.image.size.width, aAddButton.imageView.image.size.height)];
+		[aAddButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin];
+		[self setAddButton:aAddButton];
+		[self addSubview:self.addButton];
+        
+        
     }
     return self;
 }
@@ -66,6 +77,7 @@
 {
 	[self setMap:nil];
 	[self setFilterButton:nil];
+    [self setAddButton:nil];
 	[super dealloc];
 }
 

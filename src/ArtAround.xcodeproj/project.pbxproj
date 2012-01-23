@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = C9722EB014CD116E00FC42E9 /* AddDetailView.html */; };
+		C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */; };
 		CA00943A1409509B00E5001E /* ArtAroundAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */; };
 		CA00943B1409509B00E5001E /* AAAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F31409509A00E5001E /* AAAPIManager.m */; };
 		CA00943C1409509B00E5001E /* AAManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F51409509A00E5001E /* AAManagedObjectContext.m */; };
@@ -123,6 +125,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C9722EB014CD116E00FC42E9 /* AddDetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AddDetailView.html; sourceTree = "<group>"; };
+		C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddDetailViewController.h; sourceTree = "<group>"; };
+		C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDetailViewController.m; sourceTree = "<group>"; };
 		CA0093EF1409509A00E5001E /* ArtAroundAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAroundAppDelegate.h; sourceTree = "<group>"; };
 		CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAroundAppDelegate.m; sourceTree = "<group>"; };
 		CA0093F21409509A00E5001E /* AAAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAAPIManager.h; sourceTree = "<group>"; };
@@ -318,6 +323,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C9722EAE14CD115600FC42E9 /* Add */ = {
+			isa = PBXGroup;
+			children = (
+				C9722EB014CD116E00FC42E9 /* AddDetailView.html */,
+				C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */,
+				C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */,
+			);
+			name = Add;
+			sourceTree = "<group>";
+		};
 		CA0093ED1409509A00E5001E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -417,6 +432,7 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C9722EAE14CD115600FC42E9 /* Add */,
 				CAFF2CB81409A51800C98C0E /* Detail */,
 				CAFF2CB11409A4C400C98C0E /* Filter */,
 				CAFF2CB01409A4B600C98C0E /* Map */,
@@ -820,6 +836,7 @@
 				CAE7E18A141071540046890F /* iTunesArtwork in Resources */,
 				CAFD5B1A14107DCB0078D7B6 /* FBDialog.bundle in Resources */,
 				CAD47C1A1410AA5D0059C69A /* ArtAround-Info-Example.plist in Resources */,
+				C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,6 +898,7 @@
 				CAFD5B2214107DCB0078D7B6 /* SBJsonParser.m in Sources */,
 				CAFD5B2314107DCB0078D7B6 /* SBJsonWriter.m in Sources */,
 				CADE14471411860D0068EA45 /* JSONKit.m in Sources */,
+				C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

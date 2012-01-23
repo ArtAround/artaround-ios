@@ -27,7 +27,11 @@
 - (void)shareViaEmail;
 - (NSString *)shareMessage;
 - (NSString *)shareURL;
+- (void)addImageButtonTapped;
 @end
+
+#define _kAddImageActionSheet 100
+#define _kShareActionSheet 101
 
 static const float _kPhotoPadding = 10.0f;
 static const float _kPhotoSpacing = 15.0f;
@@ -52,6 +56,7 @@ static const float _kPhotoHeight = 140.0f;
 		[self.view addSubview:self.detailView];
 		[self.detailView.webView setDelegate:self];
 		[self.detailView.mapView setDelegate:self];
+        [self.detailView.submitButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		[aDetailView release];
 		
 		//get a reference to the app delegate
@@ -64,17 +69,12 @@ static const float _kPhotoHeight = 140.0f;
     return self;
 }
 
-- (void)viewDidLoad
+- (void)setArt:(Art *)art
 {
-	[super viewDidLoad];
-	
-	//add a share button
-	UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
-	[self.navigationItem setRightBarButtonItem:shareButton];
-	[shareButton release];
+    [self setArt:art withTemplate:nil];
 }
 
-- (void)setArt:(Art *)art
+- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName
 {
 	//assign the art
 	_art = art;
@@ -83,7 +83,7 @@ static const float _kPhotoHeight = 140.0f;
 	NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
 	
 	//setup the template
-	NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"DetailView" ofType:@"html"];
+	NSString *templatePath = [[NSBundle mainBundle] pathForResource:(templateFileName) ? templateFileName : @"DetailView" ofType:@"html"];
 	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
 	NSString *html = [NSString stringWithFormat:template, _art.title, _art.artist, year, _art.category.title, _art.neighborhood.title, [_art.ward stringValue], _art.locationDescription];
 	
@@ -121,6 +121,7 @@ static const float _kPhotoHeight = 140.0f;
 	//loop through all the images and add an image view if it doesn't exist yet
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
+    //insert the add button at the end of the scroll view
 	EGOImageView *prevView = nil;
 	int totalPhotos = [_art.photos count];
 	int photoCount = 0;
@@ -192,10 +193,41 @@ static const float _kPhotoHeight = 140.0f;
 		
 	}
 	
+    //get the add button's offset
+    float prevOffset = _kPhotoPadding;
+    if (prevView) {
+        //adjust offset based on the previous frame
+        prevOffset = prevView.frame.origin.x + prevView.frame.size.width + _kPhotoSpacing;
+        
+    } else {
+        
+        //adjust the initial offset based on the total number of photos
+        BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+        if (isPortrait) {
+            prevOffset = _kPhotoInitialPaddingPortait;
+        } else {
+            prevOffset = _kPhotoInitialPaddingForOneLandScape;
+        }
+    }
+    
+    //setup the add image button
+    UIButton *addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
+    [addImgButton setBackgroundImage:[UIImage imageNamed:@"Locate.png"] forState:UIControlStateNormal];
+    [addImgButton.imageView setContentMode:UIViewContentModeCenter];
+    [addImgButton setBackgroundColor:[UIColor lightGrayColor]];
+    [addImgButton addTarget:self action:@selector(addImageButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    //adjust the button's autoresizing mask when there are fewer than 3 images so that it stays centered
+    if (totalPhotos < 3) {
+        [addImgButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+    }
+    
+    [self.detailView.photosScrollView addSubview:addImgButton];
+    
 	//set the content size
-	if (prevView) {
-		[self.detailView.photosScrollView setContentSize:CGSizeMake(prevView.frame.origin.x + prevView.frame.size.width + _kPhotoSpacing, self.detailView.photosScrollView.frame.size.height)];
-	}
+	[self.detailView.photosScrollView setContentSize:CGSizeMake(addImgButton.frame.origin.x + addImgButton.frame.size.width + _kPhotoSpacing, self.detailView.photosScrollView.frame.size.height)];
+	
 	
 }
 
@@ -250,8 +282,25 @@ static const float _kPhotoHeight = 140.0f;
     [UIView commitAnimations];
 }
 
+- (void)bottomToolbarButtonTapped
+{
+    
+    UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Edit TODO" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [todoAlert show];
+    
+}
 
 #pragma mark - View lifecycle
+
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	//add a share button
+	UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
+	[self.navigationItem setRightBarButtonItem:shareButton];
+	[shareButton release];
+}
 
 - (void)viewDidUnload
 {
@@ -307,12 +356,24 @@ static const float _kPhotoHeight = 140.0f;
 	[Utilities zoomToFitMapAnnotations:mapView];
 }
 
+#pragma mark - AddImageButton
+- (void)addImageButtonTapped
+{
+    
+    UIActionSheet *imgSheet = [[UIActionSheet alloc] initWithTitle:@"Upload Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"Choose from your camera roll", nil];
+    [imgSheet setTag:_kAddImageActionSheet];
+    [imgSheet showInView:self.view];
+    [imgSheet release];
+    
+}
+
 #pragma mark - Share
 
 - (void)shareButtonTapped
 {
 	//show an action sheet with the various sharing types
 	UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", @"Facebook", nil];
+    [shareSheet setTag:_kShareActionSheet];
 	[shareSheet showInView:self.view];
 	[shareSheet release];
 }
@@ -353,6 +414,7 @@ static const float _kPhotoHeight = 140.0f;
 		
 		//get a reference to the facebook object
 		_facebook = _appDelegate.facebook;
+
 		
 		//make sure the access token is properly set if we previously saved it
 		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
@@ -423,31 +485,73 @@ static const float _kPhotoHeight = 140.0f;
 	}
 }
 
+
+
+
 #pragma mark - UIActionSheetDelegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-	//decide what to do based on the button index
-	switch (buttonIndex) {
-			
-		//share via email
-		case AAShareTypeEmail:
-			[self shareViaEmail];
-			break;
-			
-		//share via twitter
-		case AAShareTypeTwitter:
-			[self shareOnTwitter];
-			break;
-			
-		//share via facebook
-		case AAShareTypeFacebook:
-			[self shareOnFacebook];
-			break;
-			
-		default:
-			break;
-	}
+    //switch on the action sheet tag
+    switch (actionSheet.tag) {
+        case _kAddImageActionSheet:
+        {
+            
+            //decide what the picker's source is
+            switch (buttonIndex) {
+                    
+                case 0:
+                {
+                    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+                    imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                    [self presentModalViewController:imgPicker animated:YES];
+                    break;
+                }
+                case 1:
+                {
+                    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+                    imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                    [self presentModalViewController:imgPicker animated:YES];
+                    break;
+                }	
+                default:
+                    break;
+            }
+            
+            break;
+        }
+        case _kShareActionSheet:
+        {
+            //decide what to do based on the button index
+            switch (buttonIndex) {
+                    
+                    //share via email
+                case AAShareTypeEmail:
+                    [self shareViaEmail];
+                    break;
+                    
+                    //share via twitter
+                case AAShareTypeTwitter:
+                    [self shareOnTwitter];
+                    break;
+                    
+                    //share via facebook
+                case AAShareTypeFacebook:
+                    [self shareOnFacebook];
+                    break;
+                    
+                default:
+                    break;
+            }
+        
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+	
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate

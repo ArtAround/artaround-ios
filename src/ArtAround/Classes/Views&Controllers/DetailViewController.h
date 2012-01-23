@@ -20,11 +20,14 @@ typedef enum AAShareType {
 	AAShareTypeFacebook = 2
 } AAShareType;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, MFMailComposeViewControllerDelegate>
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, FBSessionDelegate, MFMailComposeViewControllerDelegate>
 {
 	ArtAroundAppDelegate *_appDelegate;
 	Facebook *_facebook;
 }
+
+- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName;
+- (void)bottomToolbarButtonTapped;
 
 @property (nonatomic, retain) DetailView *detailView;
 @property (nonatomic, assign) Art *art;

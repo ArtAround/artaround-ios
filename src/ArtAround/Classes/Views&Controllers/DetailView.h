@@ -14,5 +14,7 @@
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) MKMapView *mapView;
 @property (nonatomic, retain) UIScrollView *photosScrollView;
+@property (nonatomic, retain) UIToolbar *bottomToolbar;
+@property (nonatomic, retain) UIButton *submitButton;
 
 @end

@@ -15,5 +15,6 @@
 @property (nonatomic, retain) UIButton *shareButton;
 @property (nonatomic, retain) UIButton *filterButton;
 @property (nonatomic, retain) UIButton *locateButton;
+@property (nonatomic, retain) UIButton *addButton;
 
 @end

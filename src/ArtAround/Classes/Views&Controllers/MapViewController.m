@@ -16,12 +16,14 @@
 #import "CalloutAnnotationView.h"
 #import "Category.h"
 #import "DetailViewController.h"
+#import "AddDetailViewController.h"
 
 static const int _kAnnotationLimit = 9999;
 
 @interface MapViewController (private)
 - (void)artUpdated;
 -(void)filterButtonTapped;
+-(void)addButtonTapped;
 @end
 
 @implementation MapViewController
@@ -76,6 +78,7 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.mapView.addButton addTarget:self action:@selector(addButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	
 }
 
@@ -143,11 +146,22 @@ static const int _kAnnotationLimit = 9999;
 
 #pragma mark - Button Actions
 
+-(void)addButtonTapped 
+{
+    AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
+    [self.navigationController pushViewController:detailController animated:YES];
+    //[detailController setArt:selectedArt];
+    [detailController setArt:nil withTemplate:@"AddDetailView"];
+    [detailController release];
+}
+
 - (void)shareButtonTapped
 {
 	UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Visit theartaround.us", nil];
 	[shareSheet showInView:self.view];
 	[shareSheet release];
+    
+    
 }
 
 -(void)filterButtonTapped
@@ -204,8 +218,10 @@ static const int _kAnnotationLimit = 9999;
 		
 		//pass it along to a new detail controller and push it the navigation controller
 		DetailViewController *detailController = [[DetailViewController alloc] init];
+        //AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
 		[self.navigationController pushViewController:detailController animated:YES];
-		[detailController setArt:selectedArt];
+        //[detailController setArt:selectedArt];
+        [detailController setArt:selectedArt withTemplate:nil];
 		[detailController release];
 		
 	}
