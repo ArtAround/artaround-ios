@@ -13,6 +13,7 @@
 
 static FlickrAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://api.flickr.com/services/rest/";
+static const NSString *_kAPIUpladRoot = @"http://api.flickr.com/services/upload/";
 static const NSString *_kAPIFormat = @"json";
 static const NSString *_kTargetKey = @"target";
 static const NSString *_kCallbackKey = @"callback";
@@ -43,6 +44,23 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 + (const NSString *)flickrIDKey
 {
 	return _kFlickrIDKey;
+}
+
+#pragma mark - Flickr Upload Methods
+- (void)uploadPhotoWithImage:(UIImage *)image target:(id)target callback:(SEL)callback
+{
+	//start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
+	
+	//setup and start the request
+	NSDictionary *params = [NSDictionary dictionaryWithObject:UIImagePNGRepresentation(image) forKey:@"photo"];
+	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
+	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
+	[request setDidFailSelector:@selector(photoRequestFailed:)];
+	[request startAsynchronous];
 }
 
 #pragma mark - Flickr Download Methods

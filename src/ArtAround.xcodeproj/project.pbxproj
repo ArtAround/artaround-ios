@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = C9722EB014CD116E00FC42E9 /* AddDetailView.html */; };
 		C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */; };
+		C9722EBA14CD19D600FC42E9 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */; };
 		CA00943A1409509B00E5001E /* ArtAroundAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */; };
 		CA00943B1409509B00E5001E /* AAAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F31409509A00E5001E /* AAAPIManager.m */; };
 		CA00943C1409509B00E5001E /* AAManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F51409509A00E5001E /* AAManagedObjectContext.m */; };
@@ -102,7 +103,6 @@
 		CAECF77914073D9100CD9A95 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77814073D9100CD9A95 /* CFNetwork.framework */; };
 		CAECF77B14073D9D00CD9A95 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */; };
 		CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */; };
-		CAECF77F14073DCA00CD9A95 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */; };
 		CAFD5B1914107DCB0078D7B6 /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFD5B0214107DCB0078D7B6 /* Facebook.m */; };
 		CAFD5B1A14107DCB0078D7B6 /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CAFD5B0414107DCB0078D7B6 /* FBDialog.bundle */; };
 		CAFD5B1B14107DCB0078D7B6 /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFD5B0614107DCB0078D7B6 /* FBDialog.m */; };
@@ -128,6 +128,7 @@
 		C9722EB014CD116E00FC42E9 /* AddDetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AddDetailView.html; sourceTree = "<group>"; };
 		C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddDetailViewController.h; sourceTree = "<group>"; };
 		C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDetailViewController.m; sourceTree = "<group>"; };
+		C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		CA0093EF1409509A00E5001E /* ArtAroundAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAroundAppDelegate.h; sourceTree = "<group>"; };
 		CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAroundAppDelegate.m; sourceTree = "<group>"; };
 		CA0093F21409509A00E5001E /* AAAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAAPIManager.h; sourceTree = "<group>"; };
@@ -306,8 +307,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9722EBA14CD19D600FC42E9 /* libz.1.2.5.dylib in Frameworks */,
 				CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */,
-				CAECF77F14073DCA00CD9A95 /* libz.1.2.3.dylib in Frameworks */,
 				CA2A10EB14109BBE009001A2 /* MessageUI.framework in Frameworks */,
 				CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */,
 				CAECF77B14073D9D00CD9A95 /* SystemConfiguration.framework in Frameworks */,
@@ -570,6 +571,7 @@
 		CA5E10BD1405F0520075DAB8 = {
 			isa = PBXGroup;
 			children = (
+				C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */,
 				CA5E10D41405F0520075DAB8 /* ArtAround */,
 				CA5E10CB1405F0520075DAB8 /* Frameworks */,
 				CA5E10C91405F0520075DAB8 /* Products */,

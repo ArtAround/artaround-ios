@@ -503,6 +503,7 @@ static const float _kPhotoHeight = 140.0f;
                 case 0:
                 {
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+                    imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     [self presentModalViewController:imgPicker animated:YES];
                     break;
@@ -511,6 +512,7 @@ static const float _kPhotoHeight = 140.0f;
                 {
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                    imgPicker.delegate = self;
                     [self presentModalViewController:imgPicker animated:YES];
                     break;
                 }	
@@ -563,5 +565,20 @@ static const float _kPhotoHeight = 140.0f;
 	[self dismissModalViewControllerAnimated:YES];
 }
 
+#pragma mark - UIImagePickerControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [self dismissModalViewControllerAnimated:YES];    
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
 
 @end

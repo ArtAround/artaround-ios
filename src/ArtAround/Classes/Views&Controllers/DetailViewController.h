@@ -20,7 +20,7 @@ typedef enum AAShareType {
 	AAShareTypeFacebook = 2
 } AAShareType;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, FBSessionDelegate, MFMailComposeViewControllerDelegate>
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, FBSessionDelegate, MFMailComposeViewControllerDelegate, UIImagePickerControllerDelegate>
 {
 	ArtAroundAppDelegate *_appDelegate;
 	Facebook *_facebook;
