@@ -27,6 +27,9 @@
 @property (nonatomic, retain) NSSet *comments;
 @property (nonatomic, retain) Neighborhood *neighborhood;
 @property (nonatomic, retain) NSSet *photos;
+
+//new v2 props
+@property (nonatomic, retain) NSNumber * favorite;
 @end
 
 @interface Art (CoreDataGeneratedAccessors)

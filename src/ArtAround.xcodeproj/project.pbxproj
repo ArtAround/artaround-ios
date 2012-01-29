@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */; };
+		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
+		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
+		C91B24BB14CF624B000B342F /* FavoriteButtonSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B714CF624B000B342F /* FavoriteButtonSelected.png */; };
 		C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = C9722EB014CD116E00FC42E9 /* AddDetailView.html */; };
 		C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */; };
 		C9722EBA14CD19D600FC42E9 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */; };
@@ -125,6 +129,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButtonSelected@2x.png"; sourceTree = "<group>"; };
+		C91B24B514CF624B000B342F /* FavoriteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton@2x.png"; sourceTree = "<group>"; };
+		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
+		C91B24B714CF624B000B342F /* FavoriteButtonSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButtonSelected.png; sourceTree = "<group>"; };
+		C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround2.xcdatamodel; sourceTree = "<group>"; };
 		C9722EB014CD116E00FC42E9 /* AddDetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AddDetailView.html; sourceTree = "<group>"; };
 		C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddDetailViewController.h; sourceTree = "<group>"; };
 		C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDetailViewController.m; sourceTree = "<group>"; };
@@ -450,6 +459,10 @@
 				CAEA5CFA140CA39D009345FD /* Default@2x.png */,
 				CA0F4924140F2D2B0064F072 /* DetailBackground.jpg */,
 				CA0F4925140F2D2C0064F072 /* DetailBackground@2x.jpg */,
+				C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */,
+				C91B24B514CF624B000B342F /* FavoriteButton@2x.png */,
+				C91B24B614CF624B000B342F /* FavoriteButton.png */,
+				C91B24B714CF624B000B342F /* FavoriteButtonSelected.png */,
 				CA1AE9DA140C906200C56C4D /* Filter.png */,
 				CA1AE9DB140C906200C56C4D /* Filter@2x.png */,
 				CAC02B83140DBFE10032C4E5 /* FilterBackground.png */,
@@ -571,7 +584,6 @@
 		CA5E10BD1405F0520075DAB8 = {
 			isa = PBXGroup;
 			children = (
-				C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */,
 				CA5E10D41405F0520075DAB8 /* ArtAround */,
 				CA5E10CB1405F0520075DAB8 /* Frameworks */,
 				CA5E10C91405F0520075DAB8 /* Products */,
@@ -590,6 +602,7 @@
 			isa = PBXGroup;
 			children = (
 				CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */,
+				C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */,
 				CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */,
 				CA2A10EA14109BBE009001A2 /* MessageUI.framework */,
 				CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */,
@@ -839,6 +852,10 @@
 				CAFD5B1A14107DCB0078D7B6 /* FBDialog.bundle in Resources */,
 				CAD47C1A1410AA5D0059C69A /* ArtAround-Info-Example.plist in Resources */,
 				C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */,
+				C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */,
+				C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */,
+				C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */,
+				C91B24BB14CF624B000B342F /* FavoriteButtonSelected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,6 +960,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -975,6 +993,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1012,6 +1031,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1047,9 +1067,10 @@
 		CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */,
 				CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */,
 			);
-			currentVersion = CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */;
+			currentVersion = C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */;
 			path = ArtAround.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

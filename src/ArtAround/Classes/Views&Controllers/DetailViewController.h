@@ -28,6 +28,7 @@ typedef enum AAShareType {
 
 - (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName;
 - (void)bottomToolbarButtonTapped;
+- (NSString*)buildHTMLString;
 
 @property (nonatomic, retain) DetailView *detailView;
 @property (nonatomic, assign) Art *art;

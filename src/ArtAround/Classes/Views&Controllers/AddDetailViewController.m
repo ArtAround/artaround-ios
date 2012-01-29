@@ -8,6 +8,10 @@
 
 #import "AddDetailViewController.h"
 #import "DetailView.h"
+#import "Art.h"
+#import "Category.h"
+#import "Neighborhood.h"
+#import "AAAPIManager.h"
 
 @interface AddDetailViewController (private)
 - (NSString *)yearString;
@@ -41,6 +45,45 @@
     UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Submit TODO" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [todoAlert show];
     
+}
+
+//override the buildHTMLString method for Add view
+- (NSString*)buildHTMLString 
+{
+    
+    //setup the template
+	NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"AddDetailView" ofType:@"html"];
+	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
+
+    //get the categories
+    NSMutableArray *catsArray = [[NSMutableArray alloc] initWithArray:[[[AAAPIManager instance] categories] copy]];
+    
+    //don't include the "all" category
+    [catsArray removeObject:@"All"];
+
+    //setup categories
+    NSString *categoriesString = @"";    
+    for (NSString *cat in catsArray) {
+        categoriesString = [NSString stringWithFormat:@"%@<option value=\"%@\">%@</option>", categoriesString, cat, cat, nil];
+    }
+
+    //get the neighborhoods
+    NSMutableArray *neighborhoodsArray = [[NSMutableArray alloc] initWithArray:[[[AAAPIManager instance] neighborhoods] copy]];
+    
+    //don't include the "all" category
+    [neighborhoodsArray removeObject:@""];
+    [neighborhoodsArray removeObject:@"All"];
+    
+    //setup categories
+    NSString *neighborhoodsString = @"";    
+    for (NSString *n in neighborhoodsArray) {
+        neighborhoodsString = [NSString stringWithFormat:@"%@<option value=\"%@\">%@</option>", neighborhoodsString, n, n, nil];
+    }
+
+    
+	NSString *html = [NSString stringWithFormat:template, categoriesString, neighborhoodsString];
+    
+    return html;
 }
 
 #pragma mark - ArtInfo

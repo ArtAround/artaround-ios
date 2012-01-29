@@ -248,7 +248,11 @@ static const int _kAnnotationLimit = 9999;
 	//setup the proper delegate for the selected filter
 	switch ([Utilities instance].selectedFilterType) {
 			
-		case FilterTypeArtist: {
+		case FilterTypeFavorites: {
+			[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"favorite == TRUE", nil]];
+			break;
+		}
+        case FilterTypeArtist: {
 			NSArray *artists = [[Utilities instance] getFiltersForFilterType:FilterTypeArtist];
 			if (artists) {
 				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"artist IN %@", artists]];

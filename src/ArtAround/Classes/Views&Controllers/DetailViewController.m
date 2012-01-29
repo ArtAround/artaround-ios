@@ -28,6 +28,7 @@
 - (NSString *)shareMessage;
 - (NSString *)shareURL;
 - (void)addImageButtonTapped;
+- (void)favoriteButtonTapped;
 @end
 
 #define _kAddImageActionSheet 100
@@ -79,16 +80,11 @@ static const float _kPhotoHeight = 140.0f;
 	//assign the art
 	_art = art;
 	
-	//don't show "0" year
-	NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
-	
 	//setup the template
-	NSString *templatePath = [[NSBundle mainBundle] pathForResource:(templateFileName) ? templateFileName : @"DetailView" ofType:@"html"];
-	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
-	NSString *html = [NSString stringWithFormat:template, _art.title, _art.artist, year, _art.category.title, _art.neighborhood.title, [_art.ward stringValue], _art.locationDescription];
-	
+    NSString *htmlString = [self buildHTMLString];
+    
 	//load the html
-	[self.detailView.webView loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
+	[self.detailView.webView loadHTMLString:htmlString baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
 	
 	//load images that we already have a source for
 	[self setupImages];
@@ -290,6 +286,40 @@ static const float _kPhotoHeight = 140.0f;
     
 }
 
+- (void)favoriteButtonTapped {
+    
+    //switch the art's favorite property
+    _art.favorite = [NSNumber numberWithBool:![_art.favorite boolValue]];
+    
+    //if the filter type is favorites then refresh the mapview so that the updated favorites are showing
+    if ([Utilities instance].selectedFilterType == FilterTypeFavorites) {
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        [appDelegate saveContext];
+        [appDelegate.mapViewController updateArt];
+    }
+    
+    //reload the webview --
+    //setup the template
+    NSString *htmlString = [self buildHTMLString];
+    
+	//load the html
+	[self.detailView.webView loadHTMLString:htmlString baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
+}
+
+- (NSString*)buildHTMLString 
+{
+    //don't show "0" year
+	NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
+    
+    //setup the template
+	NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"DetailView" ofType:@"html"];
+	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
+    NSString *favButtonImageSrc = ([_art.favorite boolValue]) ? @"FavoriteButtonSelected.png" : @"FavoriteButton.png";
+	NSString *html = [NSString stringWithFormat:template, favButtonImageSrc, _art.title, _art.artist, year, _art.category.title, _art.neighborhood.title, [_art.ward stringValue], _art.locationDescription];
+    
+    return html;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -342,6 +372,15 @@ static const float _kPhotoHeight = 140.0f;
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {	
+    //url location
+	NSString *url = [[request URL] absoluteString];
+	
+	//video play link
+	if ([url rangeOfString:@"artaround://favoriteButtonTapped"].location != NSNotFound) {
+        [self favoriteButtonTapped];
+        return NO;
+    }
+    
 	return YES;
 }
 

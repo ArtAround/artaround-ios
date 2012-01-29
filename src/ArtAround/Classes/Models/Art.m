@@ -27,5 +27,6 @@
 @dynamic comments;
 @dynamic neighborhood;
 @dynamic photos;
+@dynamic favorite;
 
 @end
