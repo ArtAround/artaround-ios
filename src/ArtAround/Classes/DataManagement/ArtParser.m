@@ -83,6 +83,7 @@
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
 	art.photos = [PhotoParser setForFlickrIDs:[artDict objectForKey:@"flickr_ids"] inContext:context];
 	
+    
 	//make sure we don't have empty artist
 	if (art.artist) {
 		art.artist = [art.artist stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -93,14 +94,24 @@
 		art.artist = @"Unknown";
 	}
 	
+    
 	//location
 	NSArray *location = [artDict objectForKey:@"location"];
 	if ([location count] >= 2) {
-		art.latitude = [AAAPIManager clean:[location objectAtIndex:0]];
-		art.longitude = [AAAPIManager clean:[location objectAtIndex:1]];
+        //check to see if this object is a string or number
+        if ([[location objectAtIndex:0] isKindOfClass:[NSString class]])
+            art.latitude = [NSDecimalNumber decimalNumberWithString:[AAAPIManager clean:[location objectAtIndex:0]]];
+        else
+            art.latitude = [AAAPIManager clean:[location objectAtIndex:0]];
+        
+        //check to see if this object is a string or number
+        if ([[location objectAtIndex:0] isKindOfClass:[NSString class]])
+            art.longitude = [NSDecimalNumber decimalNumberWithString:[AAAPIManager clean:[location objectAtIndex:1]]];
+        else
+            art.longitude = [AAAPIManager clean:[location objectAtIndex:1]];
+        
 	}
-	
-	//todo: comments
+
 	
 	return art;
 }

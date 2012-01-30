@@ -12,15 +12,19 @@
 #import "Category.h"
 #import "Neighborhood.h"
 #import "AAAPIManager.h"
+#import "ItemParser.h"
 
 @interface AddDetailViewController (private)
 - (NSString *)yearString;
 - (NSString *)category;
 - (NSString *)artName;
 - (NSString *)artistName;
+- (BOOL)validateFieldsReadyToSubmit;
 @end
 
 @implementation AddDetailViewController
+
+@synthesize currentLocation;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -39,13 +43,48 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+
+//return YES if title & category have been filled in; no otherwise
+- (BOOL)validateFieldsReadyToSubmit
+{
+    //make sure the title and category have been selected
+    if ([[self category] length] > 0 && [[self artName] length] > 0)
+        return YES;
+    else
+        return NO;
+}
+
+//Submit button tapped
 - (void)bottomToolbarButtonTapped
 {
- 
-    UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Submit TODO" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [todoAlert show];
+    //validate title/category field
+    if (![self validateFieldsReadyToSubmit]) {
+        UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Need More Info" message:@"You must enter a title and category to submit art." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [todoAlert show];
+        return;
+    }
+
+    //get the title & cat
+    NSString *aTitle = [self artName];
+    NSString *aCat = [self category];
+    
+    //create the art parameters dictionary
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:aTitle, @"title", aCat, @"category", self.currentLocation, @"location[]", nil];
+    
+    //get the year if it exists
+    if ([self yearString] && [[self yearString] length] > 0)
+        [params setObject:[self yearString] forKey:@"year"];
+    
+    //get the artist if it exists
+    if ([self artistName] && [[self artistName] length] > 0)
+        [params setObject:[self artistName] forKey:@"artist"];
+
+    
+    //call the submit request
+    [[AAAPIManager instance] submitArt:params withTarget:self callback:nil];
     
 }
+
 
 //override the buildHTMLString method for Add view
 - (NSString*)buildHTMLString 
@@ -81,7 +120,7 @@
     }
 
     
-	NSString *html = [NSString stringWithFormat:template, categoriesString, neighborhoodsString];
+	NSString *html = [NSString stringWithFormat:template, categoriesString, neighborhoodsString, [NSString stringWithFormat:@"%f",self.currentLocation.coordinate.latitude], [NSString stringWithFormat:@"%f",self.currentLocation.coordinate.longitude], nil];
     
     return html;
 }
@@ -89,12 +128,12 @@
 #pragma mark - ArtInfo
 - (NSString *)yearString
 {
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getCategory();"];
+    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getYear();"];
 }
 
 - (NSString *)category
 {
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getYear();"];
+    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getCategory();"];
 }
 
 - (NSString *)artName

@@ -73,7 +73,8 @@ static const int _kAnnotationLimit = 9999;
 	centerDC.latitude = 38.895;
 	centerDC.longitude = -77.022;
 	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(centerDC, spanDC)]];
-	
+	[self.mapView.map setShowsUserLocation:YES];
+    
 	//setup button actions
 	[self.mapView.shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -148,9 +149,16 @@ static const int _kAnnotationLimit = 9999;
 
 -(void)addButtonTapped 
 {
+    //create the add controller
     AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
+    
+    //set the location coord to the user's location
+    detailController.currentLocation = self.mapView.map.userLocation.location;
+    
+    //push add controller onto nav 
     [self.navigationController pushViewController:detailController animated:YES];
-    //[detailController setArt:selectedArt];
+    
+    //set the art for the controller & release
     [detailController setArt:nil withTemplate:@"AddDetailView"];
     [detailController release];
 }

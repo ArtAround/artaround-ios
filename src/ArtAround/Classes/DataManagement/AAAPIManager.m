@@ -10,6 +10,7 @@
 #import <CoreData/CoreData.h>
 #import <sqlite3.h>
 #import "ASIHTTPRequest.h"
+#import "ASIFormDataRequest.h"
 #import "ArtAroundAppDelegate.h"
 #import "Art.h"
 #import "Category.h"
@@ -20,7 +21,7 @@
 #import "Utilities.h"
 
 static AAAPIManager *_sharedInstance = nil;
-static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
+static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
 static const NSString *_kAPIFormat = @"json";
 static const NSString *_kTargetKey = @"target";
 static const NSString *_kCallbackKey = @"callback";
@@ -222,6 +223,10 @@ static const NSString *_kCallbackKey = @"callback";
 
 - (void)artRequestCompleted:(ASIHTTPRequest *)request
 {
+    
+    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
+    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
+    
 	//parse the art in the background
 	[self performSelectorInBackground:@selector(parseArtRequest:) withObject:request];
 }
@@ -250,6 +255,57 @@ static const NSString *_kCallbackKey = @"callback";
 	//stop network activity indicator
 	[[Utilities instance] stopActivity];
 }
+
+#pragma mark - Art Upload Methods
+- (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback {
+    
+    //setup the art's paramters
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:art];
+    [params setObject:@"put" forKey:@"_method"];
+    
+    //get the art upload url
+    NSURL *artUploadURL = [AAAPIManager apiURLForMethod:@"arts" parameters:params];
+    
+    //start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
+    
+    //setup and start the request
+	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
+    [request setRequestMethod:@"POST"];
+	[request setDidFinishSelector:@selector(artRequestCompleted:)];
+	[request setDidFailSelector:@selector(artRequestFailed:)];
+	[request startAsynchronous];
+    
+}
+
+
+#warning in progress
+- (void)uploadImage:(UIImage*)image withTarget:(id)target callback:(SEL)callback {
+    
+    //get the photo upload url
+    NSURL *photoUploadURL = [AAAPIManager apiURLForMethod:@"arts/this-is-on-staging/photos"];
+    
+    //start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
+    
+    //setup and start the request
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:photoUploadURL];
+    [request setUserInfo:userInfo];
+    [request setData:UIImageJPEGRepresentation(image, 1) forKey:@"file"];
+    //[request addData:UIImageJPEGRepresentation(image, 1) withFileName:@"myPhoto.jpg" andContentType:@"image/jpg" forKey:@"file"];
+    [request setDidFinishSelector:@selector(artRequestCompleted:)];
+	[request setDidFailSelector:@selector(artRequestFailed:)];
+    [request setTimeOutSeconds:60];
+    [request startAsynchronous];
+    
+}
+
 
 #pragma mark - Helper Methods
 
@@ -340,8 +396,15 @@ static const NSString *_kCallbackKey = @"callback";
 	//add each parameter passed
 	BOOL first = YES;
 	for (NSString* key in parametersDict) {
-		NSString *value = [parametersDict objectForKey:key];
-		urlString = [urlString stringByAppendingFormat:@"%@%@=%@", (first) ? @"?" : @"&", key, value];
+        //if the key is location[] then split the lat/long out of the coordinate 
+        if ([key isEqualToString:@"location[]"]) {
+            urlString = [urlString stringByAppendingFormat:@"%@%@=%f&%@=%f", (first) ? @"?" : @"&", key, [(CLLocation*)[parametersDict objectForKey:key] coordinate].latitude, key, [(CLLocation*)[parametersDict objectForKey:key] coordinate].longitude];
+        }
+		else {
+            NSString *value = [parametersDict objectForKey:key];
+            urlString = [urlString stringByAppendingFormat:@"%@%@=%@", (first) ? @"?" : @"&", key, value];
+        }
+		
 		first = NO;
 	}
 	

@@ -17,6 +17,7 @@
 #import "Photo.h"
 #import "EGOImageView.h"
 #import <QuartzCore/QuartzCore.h>
+#import "AAAPIManager.h"
 
 @interface DetailViewController (private)
 - (void)updateNativeFrames;
@@ -607,11 +608,16 @@ static const float _kPhotoHeight = 140.0f;
 #pragma mark - UIImagePickerControllerDelegate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
+    
+    [[AAAPIManager instance] uploadImage:image withTarget:self callback:nil];
+    
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    [[AAAPIManager instance] uploadImage:[info objectForKey:UIImagePickerControllerOriginalImage] withTarget:self callback:nil];
+    
     [self dismissModalViewControllerAnimated:YES];    
 }
 
