@@ -81,7 +81,7 @@
 
     
     //call the submit request
-    [[AAAPIManager instance] submitArt:params withTarget:self callback:nil];
+    [[AAAPIManager instance] submitArt:params withTarget:self callback:nil failCallback:nil];
     
 }
 
@@ -212,6 +212,7 @@
         {
             UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
             imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+            imgPicker.delegate = self;
             [self presentModalViewController:imgPicker animated:YES];
 			break;
         }
@@ -219,6 +220,7 @@
         {
             UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
             imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+            imgPicker.delegate = self;            
             [self presentModalViewController:imgPicker animated:YES];
 			break;
         }	

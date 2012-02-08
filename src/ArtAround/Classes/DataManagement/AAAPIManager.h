@@ -14,8 +14,8 @@
 //instance methods
 - (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback;
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback;
-- (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback;
-- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withTarget:(id)target callback:(SEL)callback;
+- (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
+- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (NSArray *)categories;
 - (NSArray *)neighborhoods;
 - (NSArray *)titles;

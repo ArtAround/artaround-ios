@@ -20,20 +20,23 @@
 #import "AAAPIManager.h"
 
 @interface DetailViewController (private)
-- (void)updateNativeFrames;
+- (void)addImageButtonTapped;
+- (void)favoriteButtonTapped;
+- (void)photoUploadCompleted;
+- (void)photoUploadFailed;
 - (void)setupImages;
 - (void)shareOnTwitter;
 - (void)shareOnFacebook;
-- (void)showFBDialog;
 - (void)shareViaEmail;
 - (NSString *)shareMessage;
 - (NSString *)shareURL;
-- (void)addImageButtonTapped;
-- (void)favoriteButtonTapped;
+- (void)showFBDialog;
+- (void)updateNativeFrames;
 @end
 
 #define _kAddImageActionSheet 100
 #define _kShareActionSheet 101
+#define _kUserAddedImageTagBase 1000
 
 static const float _kPhotoPadding = 10.0f;
 static const float _kPhotoSpacing = 15.0f;
@@ -66,6 +69,10 @@ static const float _kPhotoHeight = 140.0f;
 		
 		//observe notification for facebook login
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showFBDialog) name:@"fbDidLogin" object:nil];
+        
+        //initialize useraddedimages
+        _userAddedImages = [[NSMutableArray alloc] init];
+        
 
     }
     return self;
@@ -120,7 +127,7 @@ static const float _kPhotoHeight = 140.0f;
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
 	EGOImageView *prevView = nil;
-	int totalPhotos = [_art.photos count];
+	int totalPhotos = [_art.photos count] + _userAddedImages.count;
 	int photoCount = 0;
 	for (Photo *photo in _art.photos) {
 		
@@ -176,6 +183,74 @@ static const float _kPhotoHeight = 140.0f;
 		//set the image url if it doesn't exist yet
 		if (imageView && !imageView.imageURL) {
 			[imageView setImageURL:[NSURL URLWithString:photo.smallSource]];
+		}
+		
+		//adjust the imageView autoresizing masks when there are fewer than 3 images so that they stay centered
+		if (imageView && totalPhotos < 3) {
+			[imageView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
+		
+		//store the previous view for reference
+		//increment photo count
+		prevView = imageView;
+		photoCount++;
+		
+	}
+    
+    for (UIImage *thisUserImage in _userAddedImages) {
+		
+		//adjust the image view y offset
+		float prevOffset = _kPhotoPadding;
+		if (prevView) {
+            
+			//adjust offset based on the previous frame
+			prevOffset = prevView.frame.origin.x + prevView.frame.size.width + _kPhotoSpacing;
+			
+		} else {
+			
+			//adjust the initial offset based on the total number of photos
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			if (isPortrait) {
+				prevOffset = _kPhotoInitialPaddingPortait;
+			} else {
+				
+				switch (totalPhotos) {
+					case 1:
+						prevOffset = _kPhotoInitialPaddingForOneLandScape;
+						break;
+						
+					case 2:
+						prevOffset = _kPhotoInitialPaddingForTwoLandScape;
+						break;
+						
+					case 3:
+					default:
+						prevOffset = _kPhotoInitialPaddingForThreeLandScape;
+						break;
+				}
+				
+			}
+            
+		}
+		
+		//grab existing or create new image view
+		EGOImageView *imageView = (EGOImageView *)[self.detailView.photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+		if (!imageView) {
+			imageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
+			[imageView setTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
+			[imageView setClipsToBounds:YES];
+			[imageView setContentMode:UIViewContentModeScaleAspectFill];
+			[imageView setBackgroundColor:[UIColor lightGrayColor]];
+			[imageView.layer setBorderColor:[UIColor whiteColor].CGColor];
+			[imageView.layer setBorderWidth:6.0f];
+			[self.detailView.photosScrollView addSubview:imageView];
+			[imageView release];
+		}
+		
+		//set the image url if it doesn't exist yet
+		if (imageView && !imageView.imageURL) {
+			[imageView setImage:thisUserImage];
 		}
 		
 		//adjust the imageView autoresizing masks when there are fewer than 3 images so that they stay centered
@@ -596,6 +671,25 @@ static const float _kPhotoHeight = 140.0f;
 	
 }
 
+#pragma mark - Photo Upload Callback Methods 
+
+- (void)photoUploadCompleted
+{
+
+    //dismiss the alert view
+    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+
+}
+
+- (void)photoUploadFailed
+{
+
+    //dismiss the alert view
+    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+    
+}
+
+
 #pragma mark - MFMailComposeViewControllerDelegate
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error 
@@ -607,39 +701,47 @@ static const float _kPhotoHeight = 140.0f;
 
 #pragma mark - UIImagePickerControllerDelegate
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
-    
-    [[AAAPIManager instance] uploadImageAtPath:image withTarget:self callback:nil];
-    
-    [self dismissModalViewControllerAnimated:YES];
-}
-
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    //dismiss the picker view
+    [self dismissModalViewControllerAnimated:YES];    
+    
     // Get the image from the result
     UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
     
-    // Get the data for the image as a PNG
-    NSData* imageData = UIImageJPEGRepresentation(image, 1);
+    //add image to user added images array
+    [_userAddedImages addObject:image];
     
-    // Give a name to the file
-    NSString* imageName = @"newImage.jpg";
+    //reload the images to show the new image
+    [self setupImages];
     
-    // Now, we have to find the documents directory so we can save it
-    // Note that you might want to save it elsewhere, like the cache directory,
-    // or something similar.
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* documentsDirectory = [paths objectAtIndex:0];
+    //upload image
+    [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted) failCallback:@selector(photoUploadFailed)];
     
-    // Now we get the full path to the file
-    NSString* fullPathToFile = [documentsDirectory stringByAppendingPathComponent:imageName];
+    //display loading alert view
+    if (!_loadingAlertView) {
+        _loadingAlertView = [[UIAlertView alloc] initWithTitle:@"Uploading Photo\nPlease Wait..." message:nil delegate:self cancelButtonTitle:nil otherButtonTitles: nil];
+        UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        indicator.tag = 10;
+        // Adjust the indicator so it is up a few pixels from the bottom of the alert
+        indicator.center = CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 50);
+        indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+        [indicator startAnimating];
+        [_loadingAlertView addSubview:indicator];
+        [indicator release];
+    }
     
-    // and then we write it out
-    [imageData writeToFile:fullPathToFile atomically:NO];
+    [_loadingAlertView show];
     
-    [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withTarget:self callback:nil];
+    //display an activity indicator view in the center of alert
+	UIActivityIndicatorView *activityView = (UIActivityIndicatorView*)[_loadingAlertView viewWithTag:10];
+    [activityView setCenter:CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 44)];
+	[activityView setFrame:CGRectMake(roundf(activityView.frame.origin.x), roundf(activityView.frame.origin.y), activityView.frame.size.width, activityView.frame.size.height)];
     
-    [self dismissModalViewControllerAnimated:YES];    
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

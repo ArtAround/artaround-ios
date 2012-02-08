@@ -13,7 +13,6 @@
 
 static FlickrAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://api.flickr.com/services/rest/";
-static const NSString *_kAPIUpladRoot = @"http://api.flickr.com/services/upload/";
 static const NSString *_kAPIFormat = @"json";
 static const NSString *_kTargetKey = @"target";
 static const NSString *_kCallbackKey = @"callback";

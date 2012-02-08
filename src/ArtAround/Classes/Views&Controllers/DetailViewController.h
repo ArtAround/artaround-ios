@@ -24,11 +24,14 @@ typedef enum AAShareType {
 {
 	ArtAroundAppDelegate *_appDelegate;
 	Facebook *_facebook;
+    UIAlertView *_loadingAlertView;    
+    NSMutableArray *_userAddedImages;
 }
 
 - (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName;
 - (void)bottomToolbarButtonTapped;
 - (NSString*)buildHTMLString;
+
 
 @property (nonatomic, retain) DetailView *detailView;
 @property (nonatomic, assign) Art *art;
