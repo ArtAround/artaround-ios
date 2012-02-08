@@ -282,11 +282,11 @@ static const NSString *_kCallbackKey = @"callback";
 }
 
 
-#warning in progress
-- (void)uploadImage:(UIImage*)image withTarget:(id)target callback:(SEL)callback {
-    
+//adds an image to a piece of art
+// -- a slug is required
+- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withTarget:(id)target callback:(SEL)callback {  
     //get the photo upload url
-    NSURL *photoUploadURL = [AAAPIManager apiURLForMethod:@"arts/this-is-on-staging/photos"];
+    NSURL *photoUploadURL = [AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@/photos", slug]];
     
     //start network activity indicator
 	[[Utilities instance] startActivity];
@@ -294,15 +294,27 @@ static const NSString *_kCallbackKey = @"callback";
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
     
+    //create the post body
+    NSString *filename = @"file";
+    NSString *boundary = @"---------------------------14737809831466499882746641449";
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+    NSMutableData *postbody = [NSMutableData data];
+    [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postbody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postbody appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 1)]];
+    [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    
     //setup and start the request
-    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:photoUploadURL];
-    [request setUserInfo:userInfo];
-    [request setData:UIImageJPEGRepresentation(image, 1) forKey:@"file"];
-    //[request addData:UIImageJPEGRepresentation(image, 1) withFileName:@"myPhoto.jpg" andContentType:@"image/jpg" forKey:@"file"];
-    [request setDidFinishSelector:@selector(artRequestCompleted:)];
+	ASIHTTPRequest *request = [self requestWithURL:photoUploadURL userInfo:userInfo];
+    [request setRequestMethod:@"POST"];
+    [request addRequestHeader:@"Content-Type" value:contentType];
+    [request setPostBody:postbody];
+	[request setDidFinishSelector:@selector(artRequestCompleted:)];
 	[request setDidFailSelector:@selector(artRequestFailed:)];
-    [request setTimeOutSeconds:60];
-    [request startAsynchronous];
+	[request startAsynchronous];
+    
     
 }
 

@@ -609,14 +609,35 @@ static const float _kPhotoHeight = 140.0f;
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     
-    [[AAAPIManager instance] uploadImage:image withTarget:self callback:nil];
+    [[AAAPIManager instance] uploadImageAtPath:image withTarget:self callback:nil];
     
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    [[AAAPIManager instance] uploadImage:[info objectForKey:UIImagePickerControllerOriginalImage] withTarget:self callback:nil];
+    // Get the image from the result
+    UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
+    
+    // Get the data for the image as a PNG
+    NSData* imageData = UIImageJPEGRepresentation(image, 1);
+    
+    // Give a name to the file
+    NSString* imageName = @"newImage.jpg";
+    
+    // Now, we have to find the documents directory so we can save it
+    // Note that you might want to save it elsewhere, like the cache directory,
+    // or something similar.
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString* documentsDirectory = [paths objectAtIndex:0];
+    
+    // Now we get the full path to the file
+    NSString* fullPathToFile = [documentsDirectory stringByAppendingPathComponent:imageName];
+    
+    // and then we write it out
+    [imageData writeToFile:fullPathToFile atomically:NO];
+    
+    [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withTarget:self callback:nil];
     
     [self dismissModalViewControllerAnimated:YES];    
 }

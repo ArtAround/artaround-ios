@@ -15,7 +15,7 @@
 - (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback;
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback;
 - (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback;
-- (void)uploadImage:(UIImage*)image withTarget:(id)target callback:(SEL)callback;
+- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withTarget:(id)target callback:(SEL)callback;
 - (NSArray *)categories;
 - (NSArray *)neighborhoods;
 - (NSArray *)titles;
