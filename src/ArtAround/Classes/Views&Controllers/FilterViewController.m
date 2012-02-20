@@ -128,8 +128,17 @@ static NSArray *_kFilterTypes = nil;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
 	//hide the logo view
 	[Utilities showLogoView:NO inNavigationBar:self.navigationController.navigationBar];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [Utilities trackPageViewWithName:@"FilterView"];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

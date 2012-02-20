@@ -21,6 +21,7 @@
 @property (nonatomic, retain) MapView *mapView;
 @property (nonatomic, retain) CalloutAnnotationView *callout;
 
-- (void)updateArt;
+-(void)updateArt;
+-(void)refreshArt;
 
 @end

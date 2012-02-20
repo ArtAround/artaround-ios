@@ -10,6 +10,10 @@
 #import "MapViewController.h"
 #import "FBConnect.h"
 
+#define kGoogleAnalyticsAccountID @"UA-19074200-1"
+// Dispatch period in seconds
+static const NSInteger kGANDispatchPeriodSec = 10;
+
 @interface ArtAroundAppDelegate : NSObject <UIApplicationDelegate, FBSessionDelegate>
 
 @property (nonatomic, retain) UIWindow *window;

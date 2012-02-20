@@ -8,6 +8,7 @@
 
 #import "DetailViewController.h"
 #import "Art.h"
+#import "Comment.h"
 #import "Category.h"
 #import "Neighborhood.h"
 #import "DetailView.h"
@@ -18,27 +19,49 @@
 #import "EGOImageView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
+#import "ItemParser.h"
+#import "ArtParser.h"
 
 @interface DetailViewController (private)
+
+- (NSString *)yearString;
+- (NSString *)category;
+- (NSString *)artName;
+- (NSString *)artistName;
+- (NSString *)artDesctiption;
+- (NSString *)ward;
+- (NSString *)neighborhood;
+- (NSString *)locationDescription;
+
 - (void)addImageButtonTapped;
 - (void)favoriteButtonTapped;
-- (void)photoUploadCompleted;
-- (void)photoUploadFailed;
-- (void)setupImages;
+- (void)submitCommentButtonTapped;
 - (void)shareOnTwitter;
 - (void)shareOnFacebook;
+- (void)showFBDialog;
 - (void)shareViaEmail;
 - (NSString *)shareMessage;
 - (NSString *)shareURL;
-- (void)showFBDialog;
-- (void)updateNativeFrames;
+- (void)showLoadingView:(NSString*)msg;
+
+- (BOOL)validateFieldsReadyToSubmit;
+- (void)artUploadCompleted:(NSDictionary*)responseDict;
+- (void)artUploadFailed:(NSDictionary*)responseDict;
+- (void)artDownloadComplete;
+- (void)photoUploadCompleted:(NSDictionary*)responseDict;
+- (void)photoUploadFailed:(NSDictionary*)responseDict;
+- (void)photoUploadCompleted;
+- (void)photoUploadFailed;
+- (void)commentUploadCompleted:(NSDictionary*)responseDict;
+- (void)commentUploadFailed:(NSDictionary*)responseDict;
+
 @end
 
 #define _kAddImageActionSheet 100
 #define _kShareActionSheet 101
 #define _kUserAddedImageTagBase 1000
 
-static const float _kPhotoPadding = 10.0f;
+static const float _kPhotoPadding = 5.0f;
 static const float _kPhotoSpacing = 15.0f;
 static const float _kPhotoInitialPaddingPortait = 64.0f;
 static const float _kPhotoInitialPaddingForOneLandScape = 144.0f;
@@ -48,21 +71,13 @@ static const float _kPhotoWidth = 192.0f;
 static const float _kPhotoHeight = 140.0f;
 
 @implementation DetailViewController
+@synthesize currentLocation;
 @synthesize art = _art, detailView = _detailView;
 
 - (id)init
 {
 	self = [super init];
     if (self) {
-		
-		//setup the detail view
-		DetailView *aDetailView = [[DetailView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height)];
-		[self setDetailView:aDetailView];
-		[self.view addSubview:self.detailView];
-		[self.detailView.webView setDelegate:self];
-		[self.detailView.mapView setDelegate:self];
-        [self.detailView.submitButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-		[aDetailView release];
 		
 		//get a reference to the app delegate
 		_appDelegate = (ArtAroundAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -73,9 +88,153 @@ static const float _kPhotoHeight = 140.0f;
         //initialize useraddedimages
         _userAddedImages = [[NSMutableArray alloc] init];
         
-
+        //initialize edit mode
+        _inEditMode = NO;
+        
+        //init show all mode
+        _showAllComments = NO;
+        
+        //initialize addedImageCount
+        _addedImageCount = 0;
+        
     }
     return self;
+}
+
+
+- (void)didReceiveMemoryWarning
+{
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+}
+
+//ensure that release is only called on the main thread
+- (oneway void)release
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(release) withObject:nil waitUntilDone:NO];
+    } else {
+        [super release];
+    }
+}
+
+- (void)dealloc
+{
+	[self.detailView.mapView setDelegate:nil];
+	[self setArt:nil];
+	[self setDetailView:nil];
+	[super dealloc];
+}
+
+
+#pragma mark - View lifecycle
+
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+    
+	//setup the detail view
+    DetailView *aDetailView = [[DetailView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height)];
+    [self setDetailView:aDetailView];
+    [self.view addSubview:self.detailView];
+    [self.detailView.tableView setDelegate:self];
+    [self.detailView.tableView setDataSource:self];
+    [self.detailView.mapView setDelegate:self];
+    [self.detailView.submitButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.detailView.favoriteButton addTarget:self action:@selector(favoriteButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [aDetailView release];
+    
+    if (_inEditMode) {
+        
+        //if there's already a share button disable it
+        if ([self.navigationItem rightBarButtonItem] != nil) {
+            
+            [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        }
+    }
+    else {
+        
+        //if there's already a share button enable it
+        //else add it
+        if ([self.navigationItem rightBarButtonItem] != nil) {
+            
+            [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        }
+        else {
+            
+            //add a share button to toolbar
+            UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
+            [self.navigationItem setRightBarButtonItem:shareButton animated:YES];
+            [shareButton release];
+        }
+    }
+    
+	
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+}
+
+- (void) viewDidAppear:(BOOL)animated 
+{
+    [super viewDidAppear:animated];
+    
+    if (_inEditMode) {
+        [Utilities trackPageViewWithName:[NSString stringWithFormat:@"ArtDetailView/%@", (_art.slug) ? _art.slug : @""]];
+    }
+    else {
+        [Utilities trackPageViewWithName:@"AddViewArt"];
+    }
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    
+}
+
+
+#pragma mark - View Controller Setup
+
+- (void)setInEditMode:(BOOL)editMode 
+{
+    _inEditMode = editMode;
+    
+    if (editMode) {
+        
+        //if there's already a share button disable it
+        if ([self.navigationItem rightBarButtonItem] != nil) {
+            
+            [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        }
+    }
+    else {
+        
+        //if there's already a share button enable it
+        //else add it
+        if ([self.navigationItem rightBarButtonItem] != nil) {
+            
+            [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        }
+        else {
+            
+            //add a share button to toolbar
+            UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
+            [self.navigationItem setRightBarButtonItem:shareButton animated:YES];
+            [shareButton release];
+        }
+    }
+    
+    //[self setArt:self.art];
+    
+    //reload the table
+    [self.detailView.tableView reloadData];
 }
 
 - (void)setArt:(Art *)art
@@ -83,16 +242,16 @@ static const float _kPhotoHeight = 140.0f;
     [self setArt:art withTemplate:nil];
 }
 
-- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName
+- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName 
+{
+    
+    [self setArt:art withTemplate:templateFileName forceDownload:NO];
+}
+
+- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName forceDownload:(BOOL)force
 {
 	//assign the art
-	_art = art;
-	
-	//setup the template
-    NSString *htmlString = [self buildHTMLString];
-    
-	//load the html
-	[self.detailView.webView loadHTMLString:htmlString baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
+	_art = [art retain];
 	
 	//load images that we already have a source for
 	[self setupImages];
@@ -103,6 +262,12 @@ static const float _kPhotoHeight = 140.0f;
 			[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
 		}
 	}
+    
+    //download the full art object
+    if (art) {
+        //get the comments for this art
+        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
+    }
 	
 	//add the annotation for the art
 	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
@@ -118,6 +283,10 @@ static const float _kPhotoHeight = 140.0f;
 		[annotation release];
 		
 	}
+    
+    //reload the table
+    [self.detailView.tableView reloadData];
+    
 }
 
 - (void)setupImages
@@ -127,7 +296,7 @@ static const float _kPhotoHeight = 140.0f;
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
 	EGOImageView *prevView = nil;
-	int totalPhotos = [_art.photos count] + _userAddedImages.count;
+	int totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
 	int photoCount = 0;
 	for (Photo *photo in _art.photos) {
 		
@@ -162,7 +331,7 @@ static const float _kPhotoHeight = 140.0f;
 				}
 				
 			}
-
+            
 		}
 		
 		//grab existing or create new image view
@@ -303,69 +472,208 @@ static const float _kPhotoHeight = 140.0f;
 	
 }
 
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-}
 
-//ensure that release is only called on the main thread
-- (oneway void)release
+- (NSString*)buildHTMLString 
 {
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(release) withObject:nil waitUntilDone:NO];
-    } else {
-        [super release];
+    //setup the template
+	NSString *templatePath = [[NSBundle mainBundle] pathForResource:(_inEditMode) ? @"AddDetailView" : @"DetailView" ofType:@"html"];
+	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
+    NSString *html = [[NSString alloc] initWithString:template];
+    
+    //setup attribute values
+    //don't show "0" year
+    NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
+    NSString *artTitle = (_art.title) ? _art.title : @"";
+    NSString *artist = (_art.artist) ? _art.artist : @"";
+    NSString *category = (_art.category && _art.category.title) ? _art.category.title : @"";
+    NSString *neighborhood = (_art.neighborhood && _art.neighborhood.title) ? _art.neighborhood.title : @"";
+    NSString *ward = (_art.ward) ? [_art.ward stringValue] : @"";
+    NSString *locationDesc = (_art.locationDescription) ? _art.locationDescription : @"";    
+    
+    if (_inEditMode) {
+        
+        //get the categories
+        NSMutableArray *catsArray = [[NSMutableArray alloc] initWithArray:[[[AAAPIManager instance] categories] copy]];
+        
+        //don't include the "all" category
+        [catsArray removeObject:@"All"];
+        
+        //setup categories
+        NSString *categoriesString = @"";    
+        for (NSString *cat in catsArray) {
+            
+            //check to see if this is the current neighborhood
+            BOOL selectedOption = ([[cat lowercaseString] isEqualToString:[category lowercaseString]]);
+            
+            categoriesString = [NSString stringWithFormat:@"%@<option%@ value=\"%@\">%@</option>", categoriesString, (selectedOption) ? @" selected=\"selected\"" : @"", cat, cat, nil];
+        }
+        [catsArray release];
+        
+        
+        //get the neighborhoods
+        NSMutableArray *neighborhoodsArray = [[NSMutableArray alloc] initWithArray:[[[AAAPIManager instance] neighborhoods] copy]];
+        
+        //don't include the "all" category
+        [neighborhoodsArray removeObject:@""];
+        [neighborhoodsArray removeObject:@"All"];
+        
+        //setup categories
+        NSString *neighborhoodsString = @"";    
+        for (NSString *n in neighborhoodsArray) {
+            
+            //check to see if this is the current neighborhood
+            BOOL selectedOption = ([[n lowercaseString] isEqualToString:[neighborhood lowercaseString]]);
+            
+            neighborhoodsString = [NSString stringWithFormat:@"%@<option%@ value=\"%@\">%@</option>", neighborhoodsString, (selectedOption) ? @" selected=\"selected\"" : @"", n, n, nil];
+            
+        }
+        [neighborhoodsArray release];
+        
+        //setup html
+        html = [NSString stringWithFormat:template, artTitle, artist, year, categoriesString, neighborhoodsString, ward, locationDesc, [NSString stringWithFormat:@"%f",self.currentLocation.coordinate.latitude], [NSString stringWithFormat:@"%f",self.currentLocation.coordinate.longitude], nil];
     }
+    else {
+        
+        NSString *favButtonImageSrc = ([_art.favorite boolValue]) ? @"FavoriteButtonSelected.png" : @"FavoriteButton.png";
+        
+        //setup html
+        html = [NSString stringWithFormat:html, favButtonImageSrc, artTitle, artist, year, category, neighborhood, ward, locationDesc];
+        
+    }
+    
+    return html;
 }
 
-- (void)dealloc
+//present the loading view
+- (void)showLoadingView:(NSString*)msg
 {
-	[self.detailView.webView setDelegate:nil];
-	[self.detailView.mapView setDelegate:nil];
-	[self setArt:nil];
-	[self setDetailView:nil];
-	[super dealloc];
+    //display loading alert view
+    if (!_loadingAlertView) {
+        _loadingAlertView = [[UIAlertView alloc] initWithTitle:msg message:nil delegate:self cancelButtonTitle:nil otherButtonTitles: nil];
+        UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        indicator.tag = 10;
+        // Adjust the indicator so it is up a few pixels from the bottom of the alert
+        indicator.center = CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 50);
+        indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+        [indicator startAnimating];
+        [_loadingAlertView addSubview:indicator];
+        [indicator release];
+    }
+    
+    [_loadingAlertView setTitle:msg];
+    [_loadingAlertView show];
+    
+    
+    
+    //display an activity indicator view in the center of alert
+    UIActivityIndicatorView *activityView = (UIActivityIndicatorView*)[_loadingAlertView viewWithTag:10];
+    [activityView setCenter:CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 44)];
+    [activityView setFrame:CGRectMake(roundf(activityView.frame.origin.x), roundf(activityView.frame.origin.y), activityView.frame.size.width, activityView.frame.size.height)];
 }
 
-- (void)updateNativeFrames
-{
-	//update the map frame
-	NSString *yOffsetMap = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"mapPos();"];
-	CGRect mapFrame = self.detailView.mapView.frame;
-	[self.detailView.mapView setFrame:CGRectMake(mapFrame.origin.x, [yOffsetMap floatValue] + 5.0f, mapFrame.size.width, mapFrame.size.height)];
 
-	//update the photos scroll view frame
-	NSString *yOffsetPhotos = [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"photosPos();"];
-	CGRect photosFrame = self.detailView.photosScrollView.frame;
-	[self.detailView.photosScrollView setFrame:CGRectMake(photosFrame.origin.x, [yOffsetPhotos floatValue] - 5.0f, photosFrame.size.width, photosFrame.size.height)];
-	
-	//start animation block
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.2];
-	
-	//fade the everything in
-	//this avoids a blank white screen blinding the user for a brief moment
-	[self.detailView.mapView setAlpha:1.0f];
-	[self.detailView.webView setAlpha:1.0f];
-	[self.detailView.photosScrollView setAlpha:1.0f];
-	
-	//end animation block
-    [UIView commitAnimations];
-}
-
+#pragma mark - Action's
 - (void)bottomToolbarButtonTapped
 {
     
-    UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Edit TODO" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [todoAlert show];
+    if (_inEditMode) {
+        
+        //validate title/category field
+        if (![self validateFieldsReadyToSubmit]) {
+            UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Need More Info" message:@"All art must have a title and category before submission." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [todoAlert show];
+            return;
+        }
+
+        //create the art parameters dictionary
+        if (_newArtDictionary) {
+            _newArtDictionary = nil, [_newArtDictionary release];
+        }
+        
+        //init the new dict with the art name, category, and location
+        _newArtDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:[Utilities urlEncode:[self artName]], @"title", [Utilities urlEncode:[self category]], @"category", nil];
+        
+                
+        //get the year if it exists
+        if ([self yearString] && [[self yearString] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self yearString]] forKey:@"year"];
+        
+        //get the artist if it exists
+        if ([self artistName] && [[self artistName] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self artistName]] forKey:@"artist"];
+        
+        //get the description if it exists
+        if ([self artDesctiption] && [[self artDesctiption] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self artDesctiption]] forKey:@"description"];        
+        
+        //get the neighborhood if it exists
+        if ([self neighborhood] && [[self neighborhood] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self neighborhood]] forKey:@"neighborhood"];        
+
+        //get the ward if it exists
+        if ([self ward] && [[self ward] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self ward]] forKey:@"ward"];        
+
+        //get the location description if it exists
+        if ([self locationDescription] && [[self locationDescription] length] > 0)
+            [_newArtDictionary setObject:[Utilities urlEncode:[self locationDescription]] forKey:@"location_description"];        
+        
+        
+        //if this is an update - add the existing slug and submit 
+        //else add the location and submit
+        if (_art.slug && _art.slug.length > 0) {  
+            
+            [_newArtDictionary setValue:[Utilities urlEncode:_art.slug] forKey:@"slug"];
+            
+            //call the submit request
+            [[AAAPIManager instance] updateArt:_newArtDictionary withTarget:self callback:@selector(artUploadCompleted:) failCallback:@selector(artUploadFailed:)];
+            
+            //show loading view
+            [self showLoadingView:@"Updating Art\nPlease Wait..."];
+        
+        }
+        else {
+            
+            //[_newArtDictionary setValue:_art.slug forKey:@"slug"];
+
+            //add location
+            [_newArtDictionary setValue:self.currentLocation forKey:@"location[]"];
+            
+            
+            //call the submit request
+            [[AAAPIManager instance] submitArt:_newArtDictionary withTarget:self callback:@selector(artUploadCompleted:) failCallback:@selector(artUploadFailed:)];
+            
+            //show loading view
+            [self showLoadingView:@"Uploading Art\nPlease Wait..."];
+            
+        }
+        
+        [self setInEditMode:NO];
+    }
+    else {
+        [self setInEditMode:YES];
+        [self.detailView.tableView reloadData];
+    }
     
+}
+
+//return YES if title & category have been filled in; no otherwise
+- (BOOL)validateFieldsReadyToSubmit
+{
+    //make sure the title and category have been selected
+    if ([[self category] length] > 0 && [[self artName] length] > 0)
+        return YES;
+    else
+        return NO;
 }
 
 - (void)favoriteButtonTapped {
     
     //switch the art's favorite property
     _art.favorite = [NSNumber numberWithBool:![_art.favorite boolValue]];
+    
+    //update the button
+    [self.detailView.favoriteButton setSelected:([_art.favorite boolValue])];
     
     //if the filter type is favorites then refresh the mapview so that the updated favorites are showing
     if ([Utilities instance].selectedFilterType == FilterTypeFavorites) {
@@ -374,96 +682,153 @@ static const float _kPhotoHeight = 140.0f;
         [appDelegate.mapViewController updateArt];
     }
     
-    //reload the webview --
-    //setup the template
-    NSString *htmlString = [self buildHTMLString];
+}
+
+
+- (void)userAddedImage:(UIImage*)image
+{
+    //increment the number of new images
+    _addedImageCount += 1;
     
-	//load the html
-	[self.detailView.webView loadHTMLString:htmlString baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
-}
-
-- (NSString*)buildHTMLString 
-{
-    //don't show "0" year
-	NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
+    //reload the images to show the new image
+    [self setupImages];
     
-    //setup the template
-	NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"DetailView" ofType:@"html"];
-	NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:NULL];
-    NSString *favButtonImageSrc = ([_art.favorite boolValue]) ? @"FavoriteButtonSelected.png" : @"FavoriteButton.png";
-	NSString *html = [NSString stringWithFormat:template, favButtonImageSrc, _art.title, _art.artist, year, _art.category.title, _art.neighborhood.title, [_art.ward stringValue], _art.locationDescription];
-    
-    return html;
+    if (_inEditMode) {
+        
+    }
+    else {
+        
+        //upload image
+        [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        
+        [self showLoadingView:@"Uploading Photo\nPlease Wait..."];
+    }
 }
 
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
+- (void)submitCommentButtonTapped
 {
-	[super viewDidLoad];
-	
-	//add a share button
-	UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareButtonTapped)];
-	[self.navigationItem setRightBarButtonItem:shareButton];
-	[shareButton release];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-	//update the map and photo frames
-	[self updateNativeFrames];
-}
-
-#pragma mark - UIWebViewDelegate
-
-- (void)webViewDidStartLoad:(UIWebView *)webView 
-{
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-	//update the map and photo frames
-	[self updateNativeFrames];
-	
-	//set a native style scroll speed
-	for (UIView *subview in [webView subviews]) {
-		if ([subview isKindOfClass:NSClassFromString(@"UIScroller")] || [subview isKindOfClass:NSClassFromString(@"UIScrollView")]) {
-			if ([subview respondsToSelector:@selector(setDecelerationRate:)]) {
-				[(UIScrollView *)subview setDecelerationRate:UIScrollViewDecelerationRateNormal];
-			}
-			break;
-		}
-	}
-}
-
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{	
-    //url location
-	NSString *url = [[request URL] absoluteString];
-	
-	//video play link
-	if ([url rangeOfString:@"artaround://favoriteButtonTapped"].location != NSNotFound) {
-        [self favoriteButtonTapped];
-        return NO;
+    for (int row = 1; row < 4; row++) {
+        if ([(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row] isFirstResponder])
+            [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row] resignFirstResponder];
     }
     
-	return YES;
+    if ([(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:1] isFirstResponder])
+        [(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:1] resignFirstResponder];
+    
+    
+    //set the tableview inset back to the original size
+    [UIView beginAnimations:nil context:nil];
+    [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+    [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+    [UIView commitAnimations];
+    
+    if ([[_newCommentDictionary objectForKey:@"text"] length] > 0 && [[_newCommentDictionary objectForKey:@"email"] length] > 0 && [[_newCommentDictionary objectForKey:@"name"] length] > 0) {
+        
+        //upload the comment
+        [[AAAPIManager instance] uploadComment:_newCommentDictionary forSlug:_art.slug target:self callback:@selector(commentUploadCompleted:) failCallback:@selector(commentUploadFailed:)];
+        
+    }
+    else {
+        UIAlertView *noDataAlert = [[UIAlertView alloc] initWithTitle:@"Missing Data" message:@"To submit a comment you have to enter a Name, Email Address, and a Comment" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [noDataAlert show];
+        [noDataAlert release];
+    }
+    
+    
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+
+#pragma mark - UIWebViewDelegate
+/*
+ - (void)webViewDidStartLoad:(UIWebView *)webView 
+ {
+ }
+ 
+ - (void)webViewDidFinishLoad:(UIWebView *)webView
+ {
+ 
+ //set a native style scroll speed
+ for (UIView *subview in [webView subviews]) {
+ if ([subview isKindOfClass:NSClassFromString(@"UIScroller")] || [subview isKindOfClass:NSClassFromString(@"UIScrollView")]) {
+ if ([subview respondsToSelector:@selector(setDecelerationRate:)]) {
+ [(UIScrollView *)subview setDecelerationRate:UIScrollViewDecelerationRateNormal];
+ }
+ break;
+ }
+ }
+ }
+ 
+ - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+ {	
+ //url location
+ NSString *url = [[request URL] absoluteString];
+ 
+ //video play link
+ if ([url rangeOfString:@"artaround://favoriteButtonTapped"].location != NSNotFound) {
+ [self favoriteButtonTapped];
+ return NO;
+ }
+ 
+ return YES;
+ }
+ 
+ - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+ {
+ DebugLog(@"detailController webview error:", error);
+ }
+ */
+
+ 
+ #pragma mark - Gather ArtInfo from Webview
+ 
+ - (NSString *)yearString
+ {
+     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:4] text];
+ }
+ 
+ - (NSString *)category
 {
-	DebugLog(@"detailController webview error:", error);
+     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:3] text];
+ }
+ 
+ - (NSString *)artName
+ {
+     //if this is a update, grab the existing title
+     //else grab the user input
+     if (_art) 
+         return _art.title;
+     else
+         return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:1] text];
+ }
+ 
+ - (NSString *)artistName
+ {
+     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:2] text];
+ }
+
+- (NSString *)artDesctiption
+{
+    return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:5] text];
 }
+ 
+- (NSString *)ward
+{
+
+    return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:2] text];
+}
+
+- (NSString *)neighborhood
+{
+
+return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:1] text];
+}
+
+- (NSString *)locationDescription
+{
+
+return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]] viewWithTag:1] text];
+}
+
 
 #pragma mark - MKMapViewDelegate
 
@@ -529,7 +894,7 @@ static const float _kPhotoHeight = 140.0f;
 		
 		//get a reference to the facebook object
 		_facebook = _appDelegate.facebook;
-
+        
 		
 		//make sure the access token is properly set if we previously saved it
 		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
@@ -660,7 +1025,7 @@ static const float _kPhotoHeight = 140.0f;
                 default:
                     break;
             }
-        
+            
             break;
         }
             
@@ -675,20 +1040,169 @@ static const float _kPhotoHeight = 140.0f;
 
 - (void)photoUploadCompleted
 {
-
-    //dismiss the alert view
-    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
-
-}
-
-- (void)photoUploadFailed
-{
-
+    _addedImageCount -= 1;
+    
     //dismiss the alert view
     [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
     
 }
 
+- (void)photoUploadFailed
+{
+    _addedImageCount -= 1;
+    
+    //dismiss the alert view
+    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+    
+}
+
+
+- (void)photoUploadCompleted:(NSDictionary*)responseDict
+{
+    if ([responseDict objectForKey:@"slug"]) {
+        
+        //parse the art object returned and update this controller instance's art
+        [[AAAPIManager managedObjectContext] lock];
+        _art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
+        [[AAAPIManager managedObjectContext] unlock];
+        
+        //merge context
+        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+    }
+    else {
+        [self photoUploadFailed:responseDict];
+        return;
+    }
+    
+    _addedImageCount -= 1;
+    
+    //if there are no more photo upload requests processing 
+    //switch out of edit mode
+    if (_addedImageCount == 0) {
+        [self setInEditMode:NO];
+        
+        //dismiss the alert view
+        [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+        
+        //reload the map view so the updated/new art is there
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        [appDelegate saveContext];
+        [appDelegate.mapViewController updateArt];
+        
+        //clear the user added images array
+        [_userAddedImages removeAllObjects];
+    }
+    
+    
+}
+
+- (void)photoUploadFailed:(NSDictionary*)responseDict
+{
+    _addedImageCount -= 1;    
+    
+    //dismiss the alert view
+    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+
+#pragma mark - Art Upload Callback Methods
+
+- (void)artUploadCompleted:(NSDictionary*)responseDict
+{
+    if ([responseDict objectForKey:@"success"]) {
+        
+        //parse new art and update this controller instance's art
+        //grab the newly created slug if this is a creation
+        if (!_art.slug)
+            [_newArtDictionary setObject:[responseDict objectForKey:@"success"] forKey:@"slug"];
+        
+        //decode the objects
+        for (NSString *thisKey in [_newArtDictionary allKeys]) {
+            if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
+                [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
+        }
+        
+        [[AAAPIManager managedObjectContext] lock];
+        _art = [[ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]] retain];
+        [[AAAPIManager managedObjectContext] unlock];
+        
+        //merge context
+        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+        [(id)[[UIApplication sharedApplication] delegate] saveContext];
+    }
+    else {
+        [self artUploadFailed:responseDict];
+        return;
+    }
+    
+    
+    //if there are user added images upload them
+    if (_userAddedImages.count > 0) {
+        for (UIImage *thisImage in _userAddedImages) {
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        }
+    }
+    else {
+        //take out of edit mode
+        [self setInEditMode:NO];
+        
+        //dismiss loadign view
+        [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+        
+        //reload the map view so the updated/new art is there
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        [appDelegate saveContext];
+        [appDelegate.mapViewController refreshArt];
+        
+    }
+    
+}
+
+- (void)artUploadFailed:(NSDictionary*)responseDict
+{
+    //dismiss loading view
+    [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+#pragma mark - Art Download Callback Methods
+- (void)artDownloadComplete 
+{
+    
+    //if there are entities in the dictionary reset the art, force a downlod, and reset the dictionary
+    //else just reset the art
+    if (_newCommentDictionary && [_newCommentDictionary count] > 0) {
+        
+        //reload the art with newly downloaded comments
+        [self setArt:_art withTemplate:nil forceDownload:YES];
+        
+        //reset comment dictionary
+        _newCommentDictionary = nil, [_newCommentDictionary release];
+    }
+    else {
+        
+        //reload the art
+        [self setArt:_art];
+    }
+}
+
+#pragma mark - Comment Upload Callback Methods
+
+- (void)commentUploadCompleted:(NSDictionary*)responseDict
+{
+    
+    //clear the comment fields
+    for (int row = 1; row < 4; row++) {
+        [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row] setText:@""];
+    }
+    [(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:1] setText:@""];
+    
+    
+    //get the comments for this art
+    [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:YES];
+}
+
+- (void)commentUploadFailed:(NSDictionary*)responseDict
+{}
 
 #pragma mark - MFMailComposeViewControllerDelegate
 
@@ -712,31 +1226,7 @@ static const float _kPhotoHeight = 140.0f;
     //add image to user added images array
     [_userAddedImages addObject:image];
     
-    //reload the images to show the new image
-    [self setupImages];
-    
-    //upload image
-    [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted) failCallback:@selector(photoUploadFailed)];
-    
-    //display loading alert view
-    if (!_loadingAlertView) {
-        _loadingAlertView = [[UIAlertView alloc] initWithTitle:@"Uploading Photo\nPlease Wait..." message:nil delegate:self cancelButtonTitle:nil otherButtonTitles: nil];
-        UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        indicator.tag = 10;
-        // Adjust the indicator so it is up a few pixels from the bottom of the alert
-        indicator.center = CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 50);
-        indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-        [indicator startAnimating];
-        [_loadingAlertView addSubview:indicator];
-        [indicator release];
-    }
-    
-    [_loadingAlertView show];
-    
-    //display an activity indicator view in the center of alert
-	UIActivityIndicatorView *activityView = (UIActivityIndicatorView*)[_loadingAlertView viewWithTag:10];
-    [activityView setCenter:CGPointMake(_loadingAlertView.bounds.size.width / 2, _loadingAlertView.bounds.size.height - 44)];
-	[activityView setFrame:CGRectMake(roundf(activityView.frame.origin.x), roundf(activityView.frame.origin.y), activityView.frame.size.width, activityView.frame.size.height)];
+    [self userAddedImage:image];
     
 }
 
@@ -749,4 +1239,1361 @@ static const float _kPhotoHeight = 140.0f;
     [self dismissModalViewControllerAnimated:YES];
 }
 
+
+#pragma mark - UITableViewDelegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    //make sure this scroll view is the table and not a text view
+    if ([scrollView isKindOfClass:[UITextView class]]) {
+        return;
+    }
+    
+    //check comment fields for first responder
+    for (int row = 1; row < 6; row++) {
+        if ([(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row + 10] isFirstResponder]) {
+            [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row + 10] resignFirstResponder];
+            
+            //set the tableview inset back to the original size
+            [UIView beginAnimations:nil context:nil];
+            [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+            [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+            [UIView commitAnimations];
+            
+            return;
+        }
+    }
+    
+    //check comment text view for first responder    
+    if ([(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:11] isFirstResponder]) {
+        [(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:11] resignFirstResponder];
+        
+        //set the tableview inset back to the original size
+        [UIView beginAnimations:nil context:nil];
+        [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+        [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+        [UIView commitAnimations];
+        
+        return;
+    }
+    
+    if (_inEditMode) {
+    //check art detail fields for first responder    
+    for (int fieldTag = 1; fieldTag < 6; fieldTag++) {
+        if ([(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:fieldTag] isFirstResponder]) {
+            [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:fieldTag] resignFirstResponder];
+            
+            //set the tableview inset back to the original size
+            [UIView beginAnimations:nil context:nil];
+            [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+            [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+            [UIView commitAnimations];
+            
+            return;
+        }
+    }
+    }
+    
+    //check location detail fields for first responder    
+    if (_inEditMode) {
+    for (int fieldTag = 1; fieldTag < 3; fieldTag++) {
+        if ([(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:fieldTag] isFirstResponder]) {
+            [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:fieldTag] resignFirstResponder];
+            
+            //set the tableview inset back to the original size
+            [UIView beginAnimations:nil context:nil];
+            [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+            [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+            [UIView commitAnimations];
+            
+            return;
+        }
+    }    
+    }
+    
+    if (_inEditMode) {
+    //check loc description text view for first responder    
+    if ([(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]] viewWithTag:1] isFirstResponder]) {
+        [(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]] viewWithTag:1] resignFirstResponder];
+        
+        //set the tableview inset back to the original size
+        [UIView beginAnimations:nil context:nil];
+        [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+        [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)]; 
+        [UIView commitAnimations];
+        
+        return;
+    }
+    }
+    
+}
+
+
+//- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {	
+    
+	switch (indexPath.section) {
+        case 0:
+        {
+            switch (indexPath.row) {
+                case 0: 
+                    //Header Cell (title, artist, category, year)    
+                {
+                    
+                    if (_inEditMode) {
+                        return 200;
+                    }
+                    else {
+                        if (_art.artDescription.length > 0) {
+                            CGSize reqdSize = [_art.artDescription sizeWithFont:kDetailFont constrainedToSize:CGSizeMake(_detailView.frame.size.width - (2 * kHorizontalPadding), MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                            return (75 + reqdSize.height);
+                        }
+                        else
+                            return 70;
+                    }
+                    break;
+                }
+                case 1:
+                {
+                    return self.detailView.photosScrollView.frame.size.height + 20;
+                    break;
+                }
+                default:
+                    break;
+            }
+            
+            break;
+        }
+        case 1:
+        {
+            switch (indexPath.row) {
+                case 0: 
+                    //Header Cell    
+                {
+                    return 22;
+                    break;
+                }
+                case 1:
+                {
+                    if (_inEditMode) {
+                        return 30;
+                    }
+                    else {
+                        return 14;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    if (_inEditMode) {
+                        return 98;
+                    }
+                    else {
+                        CGSize reqdSize = [_art.locationDescription sizeWithFont:kDetailFont constrainedToSize:CGSizeMake(_detailView.frame.size.width - (2 * kHorizontalPadding), MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                        return reqdSize.height + 10;
+                    }
+                    break;
+                }
+                case 3:
+                {
+                    return self.detailView.mapView.frame.size.height + 30;
+                    break;
+                }
+                default:
+                    return 0;
+                    break;
+            }
+            
+            break;
+        }
+        case 2:
+        {
+            //comments
+            switch (indexPath.row) {
+                //comment header
+                case 0:
+                    return 25;
+                    break;
+                //comments
+                default:
+                {
+                    //if this is the last row - "view all comments" row
+                    if (indexPath.row == (_art.comments.count * 2) + 1) {
+                        return 25;
+                    }
+                    else //normal comment row
+                    {
+                    Comment *thisComment = [[_art.comments allObjects] objectAtIndex:((indexPath.row - 1) / 2.0)];
+                    if (indexPath.row % 2 != 0)  
+                        return 18;
+                    else {
+                        CGSize reqdSize = [thisComment.text sizeWithFont:kDetailFont constrainedToSize:CGSizeMake(_detailView.frame.size.width - (2 * kHorizontalPadding), MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                        return reqdSize.height + 5;
+                    }
+                    }
+                                            
+                    break;
+                 }
+            }
+            
+            break;
+        }
+        case 3:
+        {
+            switch (indexPath.row) {
+                case 0: 
+                    //Header Cell     
+                {
+                    return 40;
+                    break;
+                }
+                case 1:
+                case 2:
+                case 3:
+                {
+                    return 30;
+                    break;
+                }
+                case 4:
+                {
+                    return 74;
+                    break;
+                }
+                case 5:
+                {
+                    return 35;
+                    break;
+                }
+                default:
+                    return 0;
+                    break;
+            }  
+            
+            break;
+        }
+        default:
+            return 0;
+            break;
+    }
+    
+    return 0;
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+	return 0;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {	
+    return nil;
+}
+
+
+
+
+#pragma mark - UITableViewDataSource
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+	return (_art) ? 4 : 2;
+}
+
+//always return at least one row so we can display a NoData cell
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    switch (section) {
+        case 0:
+            return 2;
+            break;
+        case 1:
+            return 4;
+            break;            
+        case 2:
+            if ([_art.comments isKindOfClass:[NSSet class]] && _art.comments.count > 3 && _showAllComments)       //show all comments (> 3)
+                return (2 + (_art.comments.count * 2));
+            else if ([_art.comments isKindOfClass:[NSSet class]] && _art.comments.count > 3)                      //just show 3 & "view more"
+                return 8;
+            else if ([_art.comments isKindOfClass:[NSSet class]] && _art.comments.count > 0)                      //show all comments (< 3)
+                return 1 + (_art.comments.count * 2);
+            else                                                   //no comments
+                return 1;
+            break;
+        case 3:
+            if (_inEditMode)
+                return 0;
+            else
+                return 6;
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
+
+//subclasses MUST override this method
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	
+    
+    
+    switch (indexPath.section) {
+            //Art Info
+        case 0:
+        {
+            switch (indexPath.row) {
+                case 0: 
+                    //Header Cell (title, artist, category, year)    
+                {
+                    
+                    if (_inEditMode) //if the controller is in edit mode - display the input fields
+                    {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"HeaderCellEditMode"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"HeaderCellEditMode"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            
+                            UIImageView *bgImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"DetailBackground.jpg"]];
+                            [bgImageView setFrame:CGRectInset(cell.frame, 0, 0)];
+                            cell.backgroundView = bgImageView;
+                            
+                            double yOffset = 0;
+                            
+                            //if this is an update - just show the title label
+                            //else - add the title field
+                            if (_art) {
+                                //title Label
+                                UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 
+                                                                                                kHorizontalPadding, 
+                                                                                                cell.frame.size.width - (3 * kHorizontalPadding), 
+                                                                                                25)];
+                                titleLabel.tag = 1;
+                                titleLabel.font = kH1Font;
+                                titleLabel.textColor = kFontColorDarkBrown;
+                                titleLabel.backgroundColor = [UIColor clearColor];
+                                [cell addSubview:titleLabel];
+                                
+                                //set the offset
+                                yOffset = titleLabel.frame.size.height;
+                                
+                                [titleLabel release];
+                            }
+                            else {
+                                //title field
+                                UITextField *titleField = [[UITextField alloc] initWithFrame:CGRectMake(kHorizontalPadding + 75, 
+                                                                                                        kHorizontalPadding, 
+                                                                                                        220, 
+                                                                                                        25)];
+                                [titleField setTag:1];
+                                [titleField setFont:kDetailFont];
+                                [titleField setTextColor:kBGdarkBrown];
+                                [titleField setPlaceholder:@"Title"];
+                                [titleField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                                [titleField setLeftViewMode:UITextFieldViewModeAlways];
+                                [titleField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                                [titleField setRightViewMode:UITextFieldViewModeAlways];
+                                [titleField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                                if ([Utilities is5OrHigher])
+                                    [titleField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                                else 
+                                    [titleField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                                
+                                [cell addSubview:titleField];
+                                
+                                //set the offset
+                                yOffset = titleField.frame.size.height;
+                                
+                                //title label
+                                UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 66, 16)];
+                                [titleLabel setText:@"Title:"];
+                                [titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin];
+                                [titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                                [titleLabel setBackgroundColor:[UIColor clearColor]];
+                                [titleLabel setTextColor:kFontColorDarkBrown];
+                                [titleLabel setCenter:CGPointMake(round(titleLabel.center.x), round(titleField.center.y))];
+                                [cell addSubview:titleLabel];
+                                [titleLabel release];
+                                [titleField release];
+                            }
+                            
+                            //artist field & label
+                            UITextField *artistField = [[UITextField alloc] initWithFrame:CGRectMake(kHorizontalPadding + 75, 
+                                                                                                     kHorizontalPadding, 
+                                                                                                     220, 
+                                                                                                     26)];
+                            [artistField setFrame:CGRectOffset(artistField.frame, 0, yOffset + 4)];
+                            artistField.tag = 2;
+                            [artistField setFont:kDetailFont];
+                            [artistField setTextColor:kBGdarkBrown];
+                            [artistField setPlaceholder:@"Artist"];
+                            [artistField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [artistField setLeftViewMode:UITextFieldViewModeAlways];
+                            [artistField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [artistField setRightViewMode:UITextFieldViewModeAlways];
+                            [artistField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            if ([Utilities is5OrHigher])
+                                [artistField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [artistField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            
+                            [cell addSubview:artistField];
+                            
+                            //artist label
+                            UILabel *artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 66, 16)];
+                            [artistLabel setText:@"Artist:"];
+                            [artistLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [artistLabel setBackgroundColor:[UIColor clearColor]];
+                            [artistLabel setTextColor:kFontColorDarkBrown];
+                            [artistLabel setCenter:CGPointMake(roundf(artistLabel.center.x), roundf(artistField.center.y))];
+                            [cell addSubview:artistLabel];
+                            [artistLabel release];
+                            [artistField release];
+                            
+                            //category field & label
+                            UITextField *catField = [[UITextField alloc] initWithFrame:CGRectMake(artistField.frame.origin.x, artistField.frame.origin.y + artistField.frame.size.height + 4, 110, artistField.frame.size.height)];
+                            catField.tag = 3;
+                            [catField setFont:kDetailFont];
+                            [catField setTextColor:kBGdarkBrown];
+                            [catField setPlaceholder:@"Category"];
+                            [catField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [catField setLeftViewMode:UITextFieldViewModeAlways];
+                            [catField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [catField setRightViewMode:UITextFieldViewModeAlways];
+                            [catField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            if ([Utilities is5OrHigher])
+                                [catField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [catField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            
+                            [cell addSubview:catField];
+                            
+                            //category label
+                            UILabel *catLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 76, 16)];
+                            [catLabel setText:@"Category:"];
+                            [catLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [catLabel setBackgroundColor:[UIColor clearColor]];
+                            [catLabel setTextColor:kFontColorDarkBrown];
+                            [catLabel setCenter:CGPointMake(roundf(catLabel.center.x), roundf(catField.center.y))];
+                            [cell addSubview:catLabel];
+                            [catLabel release];
+                            [catField release];
+                            
+                            //year field & label
+                            UITextField *yearField = [[UITextField alloc] initWithFrame:CGRectMake(artistField.frame.origin.x + artistField.frame.size.width - 50, artistField.frame.origin.y + artistField.frame.size.height + 4, 50, artistField.frame.size.height)];
+                            yearField.tag = 4;
+                            [yearField setFont:kDetailFont];
+                            [yearField setTextColor:kBGdarkBrown];
+                            [yearField setPlaceholder:@"Year"];
+                            [yearField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [yearField setLeftViewMode:UITextFieldViewModeAlways];
+                            [yearField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [yearField setRightViewMode:UITextFieldViewModeAlways];
+                            [yearField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            if ([Utilities is5OrHigher])
+                                [yearField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [yearField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            [cell addSubview:yearField];
+                            
+                            //year label
+                            UILabel *yearLabel = [[UILabel alloc] initWithFrame:CGRectMake(catField.frame.origin.x + catField.frame.size.width + 15, 0, 40, 16)];
+                            [yearLabel setText:@"Year:"];
+                            [yearLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [yearLabel setBackgroundColor:[UIColor clearColor]];
+                            [yearLabel setTextColor:kFontColorDarkBrown];
+                            [yearLabel setCenter:CGPointMake(roundf(yearLabel.center.x), roundf(yearField.center.y))];
+                            [cell addSubview:yearLabel];
+                            [yearLabel release];
+                            [yearField release];
+                            
+                            //description field & label
+                            UILabel *descLabel = [[UILabel alloc] initWithFrame:CGRectMake(catLabel.frame.origin.x, 0, 80, 16)];
+                            [descLabel setText:@"Description:"];
+                            [descLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [descLabel setBackgroundColor:[UIColor clearColor]];
+                            [descLabel setTextColor:kFontColorDarkBrown];
+                            [descLabel setCenter:CGPointMake(roundf(descLabel.center.x), roundf(catLabel.center.y + (catLabel.center.y - artistLabel.center.y)))];
+                            
+                            UIImageView *textViewBackground = [[UIImageView alloc] initWithFrame:CGRectMake(kHorizontalPadding, descLabel.frame.origin.y + descLabel.frame.size.height + 4, 296, 70)];
+                            
+                            if ([Utilities is5OrHigher])
+                                [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            
+                            UITextView *artDescField = [[UITextView alloc] initWithFrame:CGRectInset(textViewBackground.frame, 5, 5)];
+                            artDescField.tag = 5;
+                            [artDescField setFont:kDetailFont];
+                            [artDescField setTextColor:kBGdarkBrown];
+                            
+                            [cell addSubview:descLabel];                            
+                            [cell addSubview:textViewBackground];
+                            [cell addSubview:artDescField];
+                            [textViewBackground release];
+                            [descLabel release];
+                            [artDescField release];
+                            
+                        }
+                        
+                        //if this is an update - set title label text
+                        if (_art) 
+                            [(UILabel*)[cell viewWithTag:1] setText:_art.title];
+                        
+                        
+                        return cell;
+                        
+                    }
+                    else {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"HeaderCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            
+                            UIImageView *bgImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"DetailBackground.jpg"]];
+                            [bgImageView setFrame:CGRectInset(cell.frame, 0, 0)];
+                            cell.backgroundView = bgImageView;
+                            
+                            //title Label
+                            UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 
+                                                                                            kHorizontalPadding, 
+                                                                                            roundf(cell.frame.size.width - (3 * kHorizontalPadding) - self.detailView.favoriteButton.frame.size.width), 
+                                                                                            20)];
+                            titleLabel.tag = 1;
+                            titleLabel.font = kH1Font;
+                            titleLabel.textColor = kFontColorDarkBrown;
+                            titleLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:titleLabel];
+                            [titleLabel release];
+                            
+                            //favorite button
+                            [self.detailView.favoriteButton setCenter:CGPointMake(roundf(cell.frame.size.width - kHorizontalPadding - (self.detailView.favoriteButton.frame.size.width / 2.0)), roundf(titleLabel.center.y))];
+                            [cell addSubview:self.detailView.favoriteButton];
+                            
+                            //artist label
+                            UILabel *artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, titleLabel.frame.origin.y + titleLabel.frame.size.height + 4, roundf(cell.frame.size.width - (2 * kHorizontalPadding)), 12)];
+                            artistLabel.tag = 2;
+                            artistLabel.textColor = kFontColorDarkBrown;
+                            artistLabel.font = kDetailFont;
+                            artistLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:artistLabel];
+                            [artistLabel release];
+                            
+                            //year label
+                            UILabel *yearLabel = [[UILabel alloc] initWithFrame:CGRectInset(artistLabel.frame, 0, 0)];
+                            yearLabel.tag = 5;
+                            yearLabel.textColor = kFontColorDarkBrown;
+                            yearLabel.font = kBoldDetailFont;
+                            yearLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:yearLabel];
+                            [yearLabel release];
+                            
+                            //category label
+                            UILabel *catLabel = [[UILabel alloc] initWithFrame:CGRectOffset(artistLabel.frame, 0, artistLabel.frame.size.height + 2)];
+                            catLabel.tag = 3;
+                            catLabel.textColor = kFontColorDarkBrown;
+                            catLabel.font = kBoldDetailFont;
+                            catLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:catLabel];
+                            [catLabel release];
+                            
+                            //description label
+                            UILabel *descLabel = [[UILabel alloc] initWithFrame:CGRectOffset(catLabel.frame, 0, catLabel.frame.size.height + 4)];
+                            descLabel.tag = 4;
+                            descLabel.textColor = kFontColorDarkBrown;
+                            descLabel.numberOfLines = 0;
+                            descLabel.font = kDetailFont;
+                            descLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:descLabel];
+                            [descLabel release];
+                            
+                        }
+                        
+                        //set title and category label text
+                        [(UILabel*)[cell viewWithTag:1] setText:_art.title];
+                        [(UILabel*)[cell viewWithTag:3] setText:[_art.category.title uppercaseString]];
+                        
+                        //arrange the artist & year label                        
+                        UILabel *aLabel = (UILabel*)[cell viewWithTag:2];
+                        UILabel *yLabel = (UILabel*)[cell viewWithTag:5];                        
+                        
+                        if (_art.year != NULL && _art.year != nil && _art.year != 0) {
+                            [yLabel setText:[_art.year stringValue]];
+                        }
+                        
+                        if (_art.artist.length > 0 && _art.year != NULL && _art.year != nil && _art.year != 0) {
+                            [aLabel setText:[NSString stringWithFormat:@"%@ - ", _art.artist, nil]];
+                        }
+                        else if (_art.artist.length > 0) {
+                            [aLabel setText:_art.artist];
+                        }
+                        else {
+                            [aLabel setText:@""];
+                        }
+                        
+                        double reqdWidth = [aLabel.text sizeWithFont:aLabel.font].width;
+                        double maxWidth = roundf(cell.frame.size.width - (2 * kHorizontalPadding));
+                        aLabel.frame = CGRectMake(aLabel.frame.origin.x, aLabel.frame.origin.y, roundf((reqdWidth > maxWidth) ? maxWidth : reqdWidth), aLabel.frame.size.height);
+                        yLabel.frame = CGRectMake(aLabel.frame.origin.x + aLabel.frame.size.width, yLabel.frame.origin.y, [yLabel.text sizeWithFont:aLabel.font].width, yLabel.frame.size.height);
+                        
+                        
+                        //set the description label and arrange
+                        UILabel *dLabel = (UILabel*)[cell viewWithTag:4];
+                        [dLabel setText:_art.artDescription];
+                        CGSize reqdSize = [dLabel.text sizeWithFont:dLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                        [dLabel setFrame:CGRectMake(dLabel.frame.origin.x, dLabel.frame.origin.y, maxWidth, roundf(reqdSize.height))];
+                        
+                        
+                        return cell;
+                    }
+                    break;
+                }
+                case 1:
+                    //Photo ScrollView
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"PhotosCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotosCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.contentView.backgroundColor = [UIColor clearColor];
+                        
+                        self.detailView.photosScrollView.frame = CGRectOffset(self.detailView.photosScrollView.frame, 0, 10);
+                        [cell addSubview:self.detailView.photosScrollView];
+                        
+                    }
+                    
+                    return cell;
+                    break;
+                }
+                default:
+                    break;
+            }
+            
+            break;
+        }
+            //Location Info
+        case 1:
+        {
+            switch (indexPath.row) {
+                case 0:
+                    //location header
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationTitleCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationTitleCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.contentView.backgroundColor = kBGlightBrown;
+                        cell.textLabel.font = kH2Font;
+                        cell.textLabel.backgroundColor = [UIColor clearColor];
+                        cell.textLabel.textColor = kFontColorBrown;
+                    }
+                    
+                    cell.textLabel.text = @"Location";
+                    
+                    return cell;
+                    break;
+                }
+                case 1:
+                //location details cell
+                {
+                    if (_inEditMode) {
+                        
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDetailsInputCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDetailsInputCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            
+                            
+                            //neighborhood label
+                            UILabel *nLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 90, 16)];
+                            [nLabel setText:@"Neighborhood:"];
+                            [nLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [nLabel setBackgroundColor:[UIColor clearColor]];
+                            [nLabel setTextColor:kFontColorDarkBrown];
+                            [cell addSubview:nLabel];
+                            
+                            //neighborhood field
+                            UITextField *nField = [[UITextField alloc] initWithFrame:CGRectMake(nLabel.frame.origin.x + nLabel.frame.size.width + 4, 0, 110, 26)];
+                            nField.tag = 1;
+                            [nField setFont:kDetailFont];
+                            [nField setDelegate:self];
+                            [nField setEnablesReturnKeyAutomatically:NO];                            
+                            [nField setTextColor:kBGdarkBrown];
+                            [nField setPlaceholder:@"Neighborhood"];
+                            [nField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [nField setLeftViewMode:UITextFieldViewModeAlways];
+                            [nField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [nField setRightViewMode:UITextFieldViewModeAlways];
+                            [nField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            if ([Utilities is5OrHigher])
+                                [nField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [nField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            
+                            [cell addSubview:nField];
+                            [nLabel setCenter:CGPointMake(roundf(nLabel.center.x), roundf(nField.center.y))];                            
+                            [nLabel release];
+                            [nField release];
+                            
+                            //ward field
+                            UITextField *wField = [[UITextField alloc] initWithFrame:CGRectMake(cell.frame.size.width - kHorizontalPadding - 40, 0, 40, 26)];
+                            wField.tag = 2;
+                            [wField setFont:kDetailFont];
+                            [wField setTextColor:kBGdarkBrown];
+                            [wField setDelegate:self];
+                            [wField setEnablesReturnKeyAutomatically:NO];
+                            [wField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [wField setLeftViewMode:UITextFieldViewModeAlways];
+                            [wField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [wField setRightViewMode:UITextFieldViewModeAlways];
+                            [wField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            if ([Utilities is5OrHigher])
+                                [wField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [wField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            [cell addSubview:wField];
+                            
+                            //ward label
+                            UILabel *wLabel = [[UILabel alloc] initWithFrame:CGRectMake(wField.frame.origin.x - 40, 0, 40, 16)];
+                            [wLabel setText:@"Ward:"];
+                            [wLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [wLabel setBackgroundColor:[UIColor clearColor]];
+                            [wLabel setTextColor:kFontColorDarkBrown];
+                            [wLabel setCenter:CGPointMake(wLabel.center.x, wField.center.y)];
+                            [cell addSubview:wLabel];
+                            [wLabel release];
+                            [wField release];
+
+                        }
+                        
+                        return cell;
+                        
+                    }
+                    else {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDetailsCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDetailsCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            cell.textLabel.font = kDetailFont;
+                            
+                            //neighborhood label & value
+                            UILabel *nLabel = [[UILabel alloc] init];
+                            nLabel.text = @"Neighborhood: ";
+                            nLabel.font = kBoldDetailFont;
+                            nLabel.backgroundColor = [UIColor clearColor];
+                            nLabel.frame = CGRectMake(kHorizontalPadding, 0, roundf([nLabel.text sizeWithFont:nLabel.font].width), 12);
+                            nLabel.textColor = kFontColorDarkBrown;
+                            [cell addSubview:nLabel];
+                            
+                            UILabel *nValue = [[UILabel alloc] initWithFrame:CGRectOffset(nLabel.frame, nLabel.frame.size.width, 0)];
+                            nValue.font = kDetailFont;
+                            nValue.backgroundColor = [UIColor clearColor];                        
+                            nValue.tag = 1;
+                            nValue.textColor = kFontColorDarkBrown;
+                            [cell addSubview:nValue];
+                            
+                            //ward label & value
+                            UILabel *wLabel = [[UILabel alloc] init];
+                            wLabel.text = @"Ward: ";
+                            wLabel.font = kBoldDetailFont;
+                            wLabel.backgroundColor = [UIColor clearColor];                        
+                            wLabel.tag = 2;
+                            wLabel.frame = CGRectMake(cell.frame.size.width - kHorizontalPadding - 80, 0, roundf([wLabel.text sizeWithFont:nLabel.font].width), 12);
+                            wLabel.textColor = kFontColorDarkBrown;
+                            [cell addSubview:wLabel];
+                            
+                            UILabel *wValue = [[UILabel alloc] initWithFrame:CGRectOffset(wLabel.frame, roundf(wLabel.frame.size.width), 0)];
+                            wValue.font = kDetailFont;
+                            wValue.backgroundColor = [UIColor clearColor];                        
+                            wValue.tag = 3;
+                            wValue.textColor = kFontColorDarkBrown;
+                            [cell addSubview:wValue];
+                            
+                            [nLabel release];
+                            [nValue release];
+                            [wLabel release];
+                            [wValue release];
+                        }
+                        
+                        UILabel *nValueLabel = (UILabel*)[cell viewWithTag:1];
+                        nValueLabel.text = _art.neighborhood.title;
+                        double nWidth = roundf([nValueLabel.text sizeWithFont:nValueLabel.font].width);
+                        double maxWidth = roundf(cell.frame.size.width - (2 * kHorizontalPadding) - 80);
+                        nValueLabel.frame = CGRectMake(nValueLabel.frame.origin.x, nValueLabel.frame.origin.y, ((nValueLabel.frame.origin.x + nWidth) > maxWidth) ? maxWidth : nWidth, nValueLabel.frame.size.height);
+                        
+                        UILabel *wDescLabel = (UILabel*)[cell viewWithTag:2];
+                        UILabel *wValueLabel = (UILabel*)[cell viewWithTag:3];                    
+                        wValueLabel.text = (_art.ward != nil && _art.ward != NULL) ? [_art.ward stringValue] : @"";
+                        double wWidth = roundf([wValueLabel.text sizeWithFont:wValueLabel.font].width + wDescLabel.frame.size.width);
+                        double maxwWidth = 80;
+                        wValueLabel.frame = CGRectMake(wValueLabel.frame.origin.x, wValueLabel.frame.origin.y, (wWidth > maxwWidth) ? (maxwWidth - wDescLabel.frame.size.width) : (wWidth - wDescLabel.frame.size.width), nValueLabel.frame.size.height);
+                        
+                        
+                        
+                        return cell;
+                    }
+                    break;
+                }
+                case 2:
+                //locaiton desc cell
+                {
+                    
+                    if (_inEditMode) {
+                        
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDescriptionInputCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDescriptionInputCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            
+                            
+                            //description field & label
+                            UILabel *descLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 80, 16)];
+                            [descLabel setText:@"Description:"];
+                            [descLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+                            [descLabel setBackgroundColor:[UIColor clearColor]];
+                            [descLabel setTextColor:kFontColorDarkBrown];
+                            
+                            UIImageView *textViewBackground = [[UIImageView alloc] initWithFrame:CGRectMake(kHorizontalPadding, descLabel.frame.origin.y + descLabel.frame.size.height + 4, roundf(cell.frame.size.width - (2 * kHorizontalPadding)), 70)];
+                            
+                            if ([Utilities is5OrHigher])
+                                [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                            else 
+                                [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                            
+                            UITextView *locDescField = [[UITextView alloc] initWithFrame:CGRectInset(textViewBackground.frame, 5, 5)];
+                            locDescField.tag = 1;
+                            [locDescField setDelegate:self];
+                            [locDescField setFont:kDetailFont];
+                            [locDescField setTextColor:kBGdarkBrown];
+                            
+                            [cell addSubview:descLabel];                            
+                            [cell addSubview:textViewBackground];
+                            [cell addSubview:locDescField];
+                            [textViewBackground release];
+                            [descLabel release];
+                            [locDescField release];
+                        }
+                        
+                        return cell;
+                        
+                    }
+                    else {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDescriptionCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDescriptionCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            cell.textLabel.numberOfLines = 0;
+                            cell.textLabel.font = kDetailFont;
+                            cell.textLabel.backgroundColor = [UIColor clearColor];
+                            cell.textLabel.textColor = kFontColorDarkBrown;                        
+                        }
+                        
+                        cell.textLabel.text = _art.locationDescription;
+                        
+                        return cell;
+                    }
+                    
+                    break;
+                }                    
+                case 3:
+                    //map cell
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"MapCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MapCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        
+                        UIView *brownView = [[UIView alloc] initWithFrame:CGRectMake(0, 10, cell.frame.size.width, self.detailView.mapView.frame.size.height + 10)];
+                        brownView.backgroundColor = kBGBrown;
+                        [cell addSubview:brownView];
+                        [brownView release];
+                        
+                        
+                        self.detailView.mapView.frame = CGRectOffset(self.detailView.mapView.frame, 0, 15);
+                        CGFloat components[] = { 1.0, 1.0, 1.0, 1.0 };
+                        self.detailView.mapView.layer.borderColor = CGColorCreate(CGColorSpaceCreateDeviceRGB(), components);
+                        self.detailView.mapView.layer.borderWidth = 8;
+                        [cell addSubview:self.detailView.mapView];
+                        
+                    }
+                    
+                    return cell;
+                    break;
+                }
+                    
+                default:
+                    return nil;
+                    break;
+            }
+            
+            break;
+        }
+        case 2:
+        {
+            //comments
+            switch (indexPath.row) {
+                case 0:
+                    //comments title
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentsTitleCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentsTitleCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.contentView.backgroundColor = kBGlightBrown;                        
+                        cell.textLabel.font = kH2Font;
+                        cell.textLabel.textColor = kFontColorBrown;
+                        cell.textLabel.backgroundColor = [UIColor clearColor];
+                    }
+                    
+                    cell.textLabel.text = [NSString stringWithFormat:@"Comments (%i)", (_art.comments && [_art.comments isKindOfClass:[NSSet class]]) ? _art.comments.count : 0];
+                    
+                    return cell;
+                    break;
+                }
+                    
+                default:
+                    //comments
+                {
+                    
+                    //if this is the last row - "view all comments" row
+                    if ((!_showAllComments && _art.comments.count > 3 && indexPath.row == 7) ||
+                        (_showAllComments && indexPath.row == (_art.comments.count * 2) + 1)) {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"ShowCommentsCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ShowCommentsCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Oblique" size:11];
+                            cell.textLabel.textColor = kFontColorDarkBrown;
+                            [cell.textLabel setTextAlignment:UITextAlignmentRight];
+                            [cell.textLabel setBackgroundColor:kBGlightBrown];
+                        }
+                        
+                        [cell.textLabel setText:(_showAllComments) ? @"" : @"View all comments..."];
+                        
+                        if (_showAllComments)
+                            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+                        else
+                            [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
+                        
+                        return cell;
+                    }
+                    
+                    Comment *thisComment = [[_art.comments allObjects] objectAtIndex:((indexPath.row - 1) / 2.0)];
+                    
+                    if (indexPath.row % 2 != 0) //comment meta
+                    {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentsMetaCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentsMetaCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            
+                            //neighborhood label & value
+                            UILabel *nLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 6, 0, 12)];
+                            nLabel.font = kBoldDetailFont;
+                            nLabel.tag = 1;
+                            nLabel.backgroundColor = [UIColor clearColor];
+                            nLabel.textColor = kFontColorDarkBrown;
+                            [cell addSubview:nLabel];
+                            
+                            UILabel *uLabel = [[UILabel alloc] initWithFrame:CGRectOffset(nLabel.frame, nLabel.frame.size.width, 0)];
+                            uLabel.font = kDetailFont;
+                            uLabel.backgroundColor = [UIColor clearColor];                        
+                            uLabel.tag = 2;
+                            uLabel.textColor = kFontColorDarkBrown;
+                            [cell addSubview:uLabel];
+                            
+                            //ward label & value
+                            UILabel *cLabel = [[UILabel alloc] init];
+                            cLabel.font = kBoldDetailFont;
+                            cLabel.backgroundColor = [UIColor clearColor];                        
+                            cLabel.tag = 3;
+                            cLabel.frame = CGRectMake(cell.frame.size.width - kHorizontalPadding - 70, 6, 70, 12);
+                            cLabel.textColor = kFontColorDarkBrown;
+                            [cell addSubview:cLabel];
+                            
+                            [uLabel release];
+                            [cLabel release];
+                            [nLabel release];
+                        }
+                        
+                        //name
+                        UILabel *nLabel = (UILabel*)[cell viewWithTag:1];
+                        nLabel.text = [NSString stringWithFormat:@"%@%@", thisComment.name, (thisComment.url.length > 0) ? @" | " : @"", nil];
+                        double nWidth = roundf([nLabel.text sizeWithFont:nLabel.font].width);
+                        double maxWidth = roundf(cell.frame.size.width - (2 * kHorizontalPadding) - 80);
+                        nLabel.frame = CGRectMake(nLabel.frame.origin.x, nLabel.frame.origin.y, ((nLabel.frame.origin.x + nWidth) > maxWidth) ? maxWidth : nWidth, nLabel.frame.size.height);
+                        
+                        //url
+                        UILabel *uLabel = (UILabel*)[cell viewWithTag:2];
+                        uLabel.text = thisComment.url;
+                        double uWidth = roundf([uLabel.text sizeWithFont:uLabel.font].width + uLabel.frame.size.width);
+                        double maxwWidth = roundf(cell.frame.size.width - (2 * kHorizontalPadding) - 75 - nLabel.frame.size.width);
+                        uLabel.frame = CGRectMake(nLabel.frame.origin.x + nLabel.frame.size.width + 1, uLabel.frame.origin.y, (uWidth > maxwWidth) ? maxwWidth : (uWidth - uLabel.frame.size.width), uLabel.frame.size.height);
+
+                        //created date
+                        UILabel *cLabel = (UILabel*)[cell viewWithTag:3];                    
+                        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                        [dateFormatter setDateFormat:@"MMM dd, yyyy"];
+                        cLabel.text = [dateFormatter stringFromDate:thisComment.createdAt];
+                        
+                        
+                        return cell;
+                    }
+                    else //comment body
+                    {
+                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentsDescriptionCell"];
+                        
+                        if (cell == nil) {
+                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentsDescriptionCell"];
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                            cell.contentView.backgroundColor = kBGlightBrown;
+                            cell.textLabel.numberOfLines = 0;
+                            cell.textLabel.font = kDetailFont;
+                            cell.textLabel.textColor = kFontColorDarkBrown;
+                            cell.textLabel.backgroundColor = kBGlightBrown;
+                        }
+                        
+                        cell.textLabel.text = thisComment.text;
+                        
+                        return cell;
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+        case 3:
+            //Add Comment
+        {
+            switch (indexPath.row) {
+                case 0:
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LeaveCommentTitleCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LeaveCommentTitleCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.textLabel.font = kH2Font;
+                        cell.textLabel.textColor = kBGlightBrown;
+                        cell.textLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+                        cell.contentView.backgroundColor = kBGBrown;
+                        cell.textLabel.backgroundColor = [UIColor clearColor];            
+                        
+                        UIView *darkBox = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, 10)];
+                        [darkBox setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth];
+                        [darkBox setBackgroundColor:kBGdarkBrown];
+                        [cell addSubview:darkBox];
+                        [darkBox release];
+                        
+                    }
+                    
+                    cell.textLabel.text = @"Leave a Comment";
+                    
+                    return cell;
+                    break;
+                }
+                case 1:
+                case 2:
+                case 3:
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentInputCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentInputCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.textLabel.font = kBoldItalicDetailFont;
+                        cell.textLabel.textColor = [UIColor whiteColor];
+                        cell.textLabel.backgroundColor = [UIColor clearColor];
+                        cell.contentView.backgroundColor = kBGBrown;                        
+                        
+                        //setup input textbox
+                        UITextField *inputField = [[UITextField alloc] initWithFrame:CGRectMake(cell.frame.size.width - kHorizontalPadding - 250, 3, 250, 26)];
+                        inputField.tag = indexPath.row + 10;
+                        inputField.autoresizingMask = UIViewAutoresizingFlexibleWidth;             
+                        inputField.delegate = self;
+                        inputField.returnKeyType = UIReturnKeyNext;
+                        [inputField setFont:kDetailFont];
+                        [inputField setTextColor:kBGdarkBrown];
+                        [inputField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                        [inputField setLeftViewMode:UITextFieldViewModeAlways];
+                        [inputField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                        [inputField setRightViewMode:UITextFieldViewModeAlways];
+                        [inputField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                        if ([Utilities is5OrHigher])
+                            [inputField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                        else 
+                            [inputField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                        
+                        [cell addSubview:inputField];
+                        
+                        [inputField release];
+                        
+                    }
+                    
+                    //setup the label string
+                    NSString *labelString = @"";
+                    NSString *placeholderString = @"";
+                    
+                    //set the string based on the row
+                    switch (indexPath.row - 1) {
+                        case 0:
+                            labelString = @"name";
+                            placeholderString = @"name";
+                            break;
+                        case 1:
+                            labelString = @"email";
+                            placeholderString = @"email";
+                            break;
+                        case 2:
+                            labelString = @"url";
+                            placeholderString = @"url";
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    cell.textLabel.text = labelString;
+                    [(UITextField*)[cell viewWithTag:indexPath.row + 10] setPlaceholder:placeholderString];
+                    
+                    return cell;
+                    break;
+                }
+                case 4:
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentTextInputCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentTextInputCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.contentView.backgroundColor = kBGBrown;                        
+                        cell.textLabel.backgroundColor = [UIColor clearColor];
+                        
+
+                        //setup text view bg
+                        UIImageView *textViewBackground = [[UIImageView alloc] initWithFrame:CGRectInset(cell.frame, kHorizontalPadding, 3)];
+                        [textViewBackground setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+                        
+                        if ([Utilities is5OrHigher])
+                            [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                        else 
+                            [textViewBackground setImage:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                        
+                        //setup input textbox
+                        UITextView *inputField = [[UITextView alloc] initWithFrame:CGRectInset(textViewBackground.frame, 6, 6)];
+                        inputField.tag = 11;
+                        inputField.returnKeyType = UIReturnKeyDefault;                        
+                        inputField.delegate = self;
+                        inputField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+                        
+
+                        [cell addSubview:textViewBackground];
+                        [cell addSubview:inputField];
+                        
+                        [textViewBackground release];
+                        [inputField release];
+                        
+                    }
+                    
+                    return cell;
+                    break;
+                }
+                case 5:
+                {
+                    UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"CommentSubmitCell"];
+                    
+                    if (cell == nil) {
+                        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentSubmitCell"];
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.contentView.backgroundColor = kBGBrown;
+                        cell.accessoryView.backgroundColor = kBGBrown;
+                        
+                        //setup submit button
+                        UIButton *submitButton = [[UIButton alloc] initWithFrame:CGRectInset(cell.frame, 120, 6)];
+                        [submitButton setTitle:@"Submit" forState:UIControlStateNormal];
+                        [submitButton addTarget:self action:@selector(submitCommentButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+                        [cell setAccessoryView:submitButton];
+                        [submitButton release];
+                        
+                    }
+                    
+                    return cell;
+                    break;
+                }
+                    
+                default:
+                    break; 
+            }
+            break;
+        }
+        default:
+            return nil;
+            break;
+    }
+    
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"rando"];
+    
+    return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 2) {
+        if ((!_showAllComments && _art.comments.count > 3 && indexPath.row == 7) ||
+            (_showAllComments && indexPath.row == (_art.comments.count * 2) + 1)) {
+            //only selectable cell is the view more cell
+            _showAllComments = YES;
+            [self.detailView.tableView reloadData];
+        }
+    }
+}
+
+
+#pragma mark - UITextFieldDelegate Methods
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {return YES;}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    
+    //comment fields
+    if (textField.tag > 10) {
+        //if the comment dictionary doesn't exist then create it
+        if (!_newCommentDictionary)
+            _newCommentDictionary = [[NSMutableDictionary alloc] init];
+        
+        switch (textField.tag - 11) {
+            case 0:
+            {
+                [_newCommentDictionary setValue:textField.text forKey:@"name"];
+                break;
+            }
+            case 1:
+            {
+                [_newCommentDictionary setValue:textField.text forKey:@"email"];
+                break;
+            }
+            case 2:
+            {
+                [_newCommentDictionary setValue:textField.text forKey:@"url"];
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField 
+{
+    
+    //set the tableview inset so the keyboard doesn't cover the table
+    [UIView beginAnimations:nil context:nil];
+    [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, 220.0, 0.0)];
+    [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, 220.0, 0.0)];    
+    [self.detailView.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(textField.tag > 10) ? 1 : 0 inSection:(textField.tag > 10) ? 3 : 1] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    [UIView commitAnimations];
+    
+    return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {return YES;}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {return YES;}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    //if this is a comment field
+    if (textField.tag > 10) {
+        
+        //set focuse on the next text field
+        //if it's the 3rd text field set focus on the text view
+        if (textField.tag < 13) {
+            [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:textField.tag - 9 inSection:3]] viewWithTag:textField.tag + 1] becomeFirstResponder];
+        }
+        else {
+            [(UITextView*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:4 inSection:3]] viewWithTag:11] becomeFirstResponder];
+        }
+        
+    }
+    
+    return YES;
+}
+
+#pragma mark - UITextViewDelegate Methods
+
+- (void) textViewDidBeginEditing:(UITextView *)textView {}
+
+- (void) textViewDidEndEditing:(UITextView *)textView 
+{
+    
+    //if the comment dictionary doesn't exist then create it
+    if (!_newCommentDictionary)
+        _newCommentDictionary = [[NSMutableDictionary alloc] init];
+    
+    
+    //set the comment text
+    [_newCommentDictionary setValue:textView.text forKey:@"text"];
+    
+    
+    //figure out if user is in a different text field
+//    BOOL userIsStillInputting = NO;
+//    
+//    for (int row = 1; row < 4; row++) {
+//        if ([(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:3]] viewWithTag:row] isFirstResponder])
+//            userIsStillInputting = YES;
+//    }
+//    
+//    if (!userIsStillInputting) {
+//        //only if the user is done inputting set the tableview inset back to the original size
+//        [UIView beginAnimations:nil context:nil];
+//        [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];
+//        [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, _kSubmitButtonBarHeight, 0.0)];    
+//        [UIView commitAnimations];
+//    }
+    
+}
+
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView 
+{
+    
+    //set the tableview inset so the keyboard doesn't cover the table
+    [UIView beginAnimations:nil context:nil];
+    [self.detailView.tableView setContentInset:UIEdgeInsetsMake(0.0, 0.0, 220.0, 0.0)];
+    [self.detailView.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0.0, 0.0, 220.0, 0.0)];    
+    [UIView commitAnimations];
+    
+    //if the tag is > 10 it's a comment view
+    if (textView.tag > 10) {
+        [self.detailView.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:3] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    }
+    else {
+        [self.detailView.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:1] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    }
+    
+    
+    return YES;
+}
+
+- (BOOL) textViewShouldEndEditing:(UITextView *)textView {return YES;}
+
+- (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {return  YES;}
+
+- (void) textViewDidChangeSelection:(UITextView *)textView {}
+
+- (void) textViewDidChange:(UITextView *)textView {}
 @end

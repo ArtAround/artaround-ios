@@ -15,6 +15,7 @@
 
 @implementation Art
 @dynamic artist;
+@dynamic artDescription;
 @dynamic createdAt;
 @dynamic latitude;
 @dynamic locationDescription;

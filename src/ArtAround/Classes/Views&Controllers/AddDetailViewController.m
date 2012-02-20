@@ -13,6 +13,7 @@
 #import "Neighborhood.h"
 #import "AAAPIManager.h"
 #import "ItemParser.h"
+#import "ArtParser.h"
 
 @interface AddDetailViewController (private)
 - (NSString *)yearString;
@@ -20,6 +21,10 @@
 - (NSString *)artName;
 - (NSString *)artistName;
 - (BOOL)validateFieldsReadyToSubmit;
+- (void)artUploadCompleted:(NSDictionary*)responseDict;
+- (void)artUploadFailed:(NSDictionary*)responseDict;
+- (void)photoUploadCompleted:(NSDictionary*)responseDict;
+- (void)photoUploadFailed:(NSDictionary*)responseDict;
 @end
 
 @implementation AddDetailViewController
@@ -31,6 +36,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        _addedImageCount = 0;
     }
     return self;
 }
@@ -57,6 +63,7 @@
 //Submit button tapped
 - (void)bottomToolbarButtonTapped
 {
+    
     //validate title/category field
     if (![self validateFieldsReadyToSubmit]) {
         UIAlertView *todoAlert = [[UIAlertView alloc] initWithTitle:@"Need More Info" message:@"You must enter a title and category to submit art." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -69,19 +76,22 @@
     NSString *aCat = [self category];
     
     //create the art parameters dictionary
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:aTitle, @"title", aCat, @"category", self.currentLocation, @"location[]", nil];
+    if (_newArtDictionary) {
+        _newArtDictionary = nil, [_newArtDictionary release];
+    }
+    _newArtDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:aTitle, @"title", aCat, @"category", self.currentLocation, @"location[]", nil];
     
     //get the year if it exists
     if ([self yearString] && [[self yearString] length] > 0)
-        [params setObject:[self yearString] forKey:@"year"];
+        [_newArtDictionary setObject:[self yearString] forKey:@"year"];
     
     //get the artist if it exists
     if ([self artistName] && [[self artistName] length] > 0)
-        [params setObject:[self artistName] forKey:@"artist"];
+        [_newArtDictionary setObject:[self artistName] forKey:@"artist"];
 
     
     //call the submit request
-    [[AAAPIManager instance] submitArt:params withTarget:self callback:nil failCallback:nil];
+    [[AAAPIManager instance] submitArt:_newArtDictionary withTarget:self callback:@selector(artUploadCompleted:) failCallback:@selector(artUploadFailed:)];
     
 }
 
@@ -125,26 +135,17 @@
     return html;
 }
 
-#pragma mark - ArtInfo
-- (NSString *)yearString
+- (void)userAddedImage:(UIImage*)image
 {
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getYear();"];
+    //increment the number of new images
+    _addedImageCount += 1;
+    
+    //reload the images to show the new image
+    [self setupImages];
+    
 }
 
-- (NSString *)category
-{
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getCategory();"];
-}
 
-- (NSString *)artName
-{
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getTitle();"];
-}
-
-- (NSString *)artistName
-{
-    return [self.detailView.webView stringByEvaluatingJavaScriptFromString:@"getArtistName();"];
-}
 
 #pragma mark - View lifecycle
 
@@ -160,7 +161,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.navigationItem setRightBarButtonItem:nil];
+    
+    
 }
 
 
@@ -175,6 +177,69 @@
 {
     // Return YES for supported orientations
     return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+}
+
+#pragma mark - Upload Method Callbacks
+
+- (void)artUploadCompleted:(NSDictionary*)responseDict
+{
+    if ([responseDict objectForKey:@"success"]) {
+        
+        //parse new art and update this controller instance's art
+        [_newArtDictionary setObject:[responseDict objectForKey:@"success"] forKey:@"slug"];
+        [[AAAPIManager managedObjectContext] lock];
+        self.art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
+        [[AAAPIManager managedObjectContext] unlock];
+
+        //merge context
+        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+    }
+    else {
+        [self artUploadFailed:responseDict];
+        return;
+    }
+    
+    
+    //if there are user added images upload them
+    if (_userAddedImages.count > 0) {
+        for (UIImage *thisImage in _userAddedImages) {
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        }
+    }
+    else {
+        
+    }
+    
+}
+
+- (void)artUploadFailed:(NSDictionary*)responseDict
+{
+
+}
+
+- (void)photoUploadCompleted:(NSDictionary*)responseDict
+{
+    if ([responseDict objectForKey:@"slug"]) {
+        
+        //parse the art object returned and update this controller instance's art
+        [[AAAPIManager managedObjectContext] lock];
+        self.art = [ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]];
+        [[AAAPIManager managedObjectContext] unlock];
+        
+        //merge context
+        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+    }
+    else {
+        [self photoUploadFailed:responseDict];
+        return;
+    }
+    
+    _addedImageCount -= 1;
+}
+
+- (void)photoUploadFailed:(NSDictionary*)responseDict
+{
+    _addedImageCount -= 1;    
 }
 
 #pragma mark - UIWebViewDelegate

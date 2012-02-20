@@ -16,9 +16,11 @@
 #import "Category.h"
 #import "Neighborhood.h"
 #import "ArtParser.h"
+#import "CommentParser.h"
 #import "ConfigParser.h"
 #import "EGOCache.h"
 #import "Utilities.h"
+#import "JSONKit.h"
 
 static AAAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
@@ -194,9 +196,15 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 }
 
 #pragma mark - Art Download Methods
+//download all art objects - do not force
+- (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback 
+{
+    [self downloadAllArtWithTarget:target callback:callback forceDownload:NO];
+}
 
-//todo: possibly add a BOOL:force parameter so that we can force refresh if needed
-- (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback
+//download all art objects
+//if force is true then download regardless of cached data
+- (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback forceDownload:(BOOL)force
 {
 	//get the all art url
 	NSDictionary *params = [NSDictionary dictionaryWithObject:@"9999" forKey:@"per_page"];
@@ -204,7 +212,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	
 	//if art is cached, quit now
 	//cache for 24 hours
-	if (![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
+	if (!force && ![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
 		return;
 	}
 	
@@ -222,16 +230,47 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[request startAsynchronous];
 }
 
+- (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback 
+{
+
+    //call full download method
+    [self downloadArtForSlug:slug target:target callback:callback forceDownload:NO];
+}
+
+//download a single art object
+//if force is true then download regardless of cached data
+- (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback forceDownload:(BOOL)force
+{
+    //get the art for this slug
+	NSURL *artURL = [AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", slug, nil] parameters:nil];
+
+    //if art is cached, quit now
+	//cache for 24 hours
+	if (![AAAPIManager isCacheExpiredForURL:artURL timeout:60 * 60 * 24] && !force) {
+		return;
+	}	
+    
+	//start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
+	
+	//setup and start the request
+	ASIHTTPRequest *request = [self requestWithURL:artURL userInfo:userInfo];
+	[request setDidFinishSelector:@selector(artRequestCompleted:)];
+	[request setDidFailSelector:@selector(artRequestFailed:)];
+	[request startAsynchronous];
+}
+
 - (void)artRequestCompleted:(ASIHTTPRequest *)request
 {
 
-    //for testing
-//    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-//    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
-    
 	//parse the art in the background
 	[self performSelectorInBackground:@selector(parseArtRequest:) withObject:request];
 }
+
+
 
 - (void)parseArtRequest:(ASIHTTPRequest *)request
 {
@@ -241,7 +280,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	//parse the art
 	ArtParser *parser = [[ArtParser alloc] init];
 	[parser parseRequest:request];
-	[parser release];
+	//[parser autorelease];
 	
 	//stop network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
@@ -259,6 +298,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 }
 
 
+
 #pragma mark - Art Upload Methods
 - (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback {
     
@@ -268,7 +308,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     //get the art upload url
     NSURL *artUploadURL = [AAAPIManager apiURLForMethod:@"arts" parameters:params];
-    
+   
     //start network activity indicator
 	[[Utilities instance] startActivity];
 	
@@ -278,6 +318,33 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     //setup and start the request
 	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
     [request setRequestMethod:@"POST"];
+	[request setDidFinishSelector:@selector(artUploadCompleted:)];
+	[request setDidFailSelector:@selector(artUploadFailed:)];
+	[request startAsynchronous];
+    
+}
+
+//update art (put method)
+- (void)updateArt:(NSMutableDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback {
+    
+    //setup the art's paramters
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:art];
+    
+    //get the art upload url
+    NSURL *artUploadURL = [AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", [art objectForKey:@"slug"]] parameters:params];
+    
+    //remove art slug from dictionary
+//    [art removeObjectForKey:@"slug"];
+    
+    //start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
+    
+    //setup and start the request
+	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
+    [request setRequestMethod:@"PUT"];
 	[request setDidFinishSelector:@selector(artUploadCompleted:)];
 	[request setDidFailSelector:@selector(artUploadFailed:)];
 	[request startAsynchronous];
@@ -297,6 +364,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
     
+    
+    
     //create the post body
     NSString *filename = @"file";
     NSString *boundary = @"---------------------------14737809831466499882746641449";
@@ -305,7 +374,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
     [postbody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postbody appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 1)]];
+    [postbody appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.5)]];
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
 
     
@@ -324,17 +393,27 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 {
     
     //for testing
-    //    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-    //    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
+    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
+    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
     
     
-    //call the selector on the target if applicable
+    //deserialize the json response
+	NSError *jsonError = nil;
+	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
+	
+	//check for an error
+	if (jsonError || !responseDict) {
+		DebugLog(@"artUploadCompleted error: %@", jsonError);
+		return;
+	}
+    
+    //call the selector on the target if applicable and pass the responseDict
 	NSDictionary *userInfo = [request userInfo];
 	if (userInfo) {
 		id target = [userInfo objectForKey:_kTargetKey];
  		SEL callback = [[userInfo objectForKey:_kCallbackKey] pointerValue];
 		if (target && [target respondsToSelector:callback]) {
-			[target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+			[target performSelectorOnMainThread:callback withObject:responseDict waitUntilDone:NO];
 		}
 	}
     
@@ -360,6 +439,98 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[[Utilities instance] stopActivity];
 }
 
+
+#pragma mark - Comment Upload
+//upload the comment dictionary
+- (void)uploadComment:(NSDictionary*)commentDictionary forSlug:(NSString*)slug target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback
+{
+    
+    //setup the art's paramters
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    
+    if ([[commentDictionary objectForKey:@"name"] length] > 0) {
+        [params setValue:[Utilities urlEncode:[commentDictionary objectForKey:@"name"]] forKey:@"name"];
+    }
+    
+    if ([[commentDictionary objectForKey:@"url"] length] > 0) {
+        [params setValue:[Utilities urlEncode:[commentDictionary objectForKey:@"url"]] forKey:@"url"];
+    }
+    
+    if ([[commentDictionary objectForKey:@"email"] length] > 0) {
+        [params setValue:[Utilities urlEncode:[commentDictionary objectForKey:@"email"]] forKey:@"email"];
+    }
+    
+    if ([[commentDictionary objectForKey:@"text"] length] > 0) {
+        [params setValue:[Utilities urlEncode:[commentDictionary objectForKey:@"text"]] forKey:@"text"];
+    }
+    
+    
+    //get the art upload url
+    NSURL *commentUploadURL = [AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@/comments", slug, nil] parameters:params];
+    
+    //start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
+    
+    //setup and start the request
+	ASIHTTPRequest *request = [self requestWithURL:commentUploadURL userInfo:userInfo];
+    [request setRequestMethod:@"POST"];
+	[request setDidFinishSelector:@selector(commentUploadCompleted:)];
+	[request setDidFailSelector:@selector(commentUploadFailed:)];
+	[request startAsynchronous];
+}
+
+//comment upload callback
+- (void)commentUploadCompleted:(ASIHTTPRequest *)request
+{
+    //for testing
+    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
+    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
+    
+    //deserialize the json response
+	NSError *jsonError = nil;
+	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
+	
+	//check for an error
+	if (jsonError || !responseDict) {
+		DebugLog(@"commentUploadCompleted error: %@", jsonError);
+		return;
+	}
+    
+    //call the selector on the target if applicable and pass the responseDict
+	NSDictionary *userInfo = [request userInfo];
+	if (userInfo) {
+		id target = [userInfo objectForKey:_kTargetKey];
+ 		SEL callback = [[userInfo objectForKey:_kCallbackKey] pointerValue];
+		if (target && [target respondsToSelector:callback]) {
+			[target performSelectorOnMainThread:callback withObject:responseDict waitUntilDone:NO];
+		}
+	}
+    
+	//stop network activity indicator
+	[[Utilities instance] stopActivity];
+}
+
+//coment upload fail callback
+- (void)commentUploadFailed:(ASIHTTPRequest *)request
+{
+	DebugLog(@"commentUploadFailed");
+    
+    //call the selector on the target if applicable
+	NSDictionary *userInfo = [request userInfo];
+	if (userInfo) {
+		id target = [userInfo objectForKey:_kTargetKey];
+ 		SEL callback = [[userInfo objectForKey:_kFailCallbackKey] pointerValue];
+		if (target && [target respondsToSelector:callback]) {
+			[target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+		}
+	}
+    
+	//stop network activity indicator
+	[[Utilities instance] stopActivity];
+}
 
 #pragma mark - Helper Methods
 

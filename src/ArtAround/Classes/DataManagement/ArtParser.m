@@ -16,6 +16,7 @@
 #import "NeighborhoodParser.h"
 #import "CategoryParser.h"
 #import "PhotoParser.h"
+#import "CommentParser.h"
 
 @implementation ArtParser
 
@@ -41,6 +42,13 @@
 	for (NSDictionary *artDict in arts) {
 		[ArtParser artForDict:artDict inContext:self.managedObjectContext];
 	}
+    
+    //parse the single art returned and add to/update the local data
+    NSDictionary *singleArtDict = [responseDict objectForKey:@"art"];
+    if (singleArtDict) {
+        [ArtParser artForDict:singleArtDict inContext:self.managedObjectContext];
+    }
+    
 	
 	//pass the userInfo along to the managedObjectContext
 	[[self managedObjectContext] setUserInfo:[request userInfo]];
@@ -64,6 +72,7 @@
 
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context
 {
+    
 	//create a new art if one doesn't exist yet
 	NSString *slug = [artDict objectForKey:@"slug"];
 	Art *art = [ItemParser existingEntity:@"Art" inContext:context uniqueKey:@"slug" uniqueValue:slug];
@@ -74,6 +83,7 @@
 	//set the art attribtues
 	art.slug = slug;
 	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
+    art.artDescription = [AAAPIManager clean:[artDict objectForKey:@"description"]];
 	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
 	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
 	art.year = [AAAPIManager clean:[NSNumber numberWithInt:[[artDict objectForKey:@"year"] intValue]]];
@@ -82,7 +92,9 @@
 	art.category = [CategoryParser categoryForTitle:[artDict objectForKey:@"category"] inContext:context];
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
 	art.photos = [PhotoParser setForFlickrIDs:[artDict objectForKey:@"flickr_ids"] inContext:context];
-	
+
+    if ([artDict objectForKey:@"comments"])
+        art.comments = [CommentParser setForArray:[artDict objectForKey:@"comments"] inContext:context];
     
 	//make sure we don't have empty artist
 	if (art.artist) {

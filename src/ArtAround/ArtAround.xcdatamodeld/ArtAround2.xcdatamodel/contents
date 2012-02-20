@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="872" systemVersion="11C74" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="872" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Art" representedClassName="Art">
+        <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="artist" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date"/>
         <attribute name="favorite" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -22,7 +23,9 @@
     </entity>
     <entity name="Comment" representedClassName="Comment">
         <attribute name="approved" optional="YES" attributeType="Boolean"/>
+        <attribute name="commentID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
@@ -57,9 +60,9 @@
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art"/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="255"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="270"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
-        <element name="Comment" positionX="-110" positionY="63" width="128" height="135"/>
+        <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
         <element name="Photo" positionX="-108" positionY="213" width="128" height="375"/>
     </elements>

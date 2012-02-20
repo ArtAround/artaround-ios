@@ -10,6 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "ArtAnnotation.h"
 #import "ASIHTTPRequest.h"
+#import "GANTracker.h"
 
 static Utilities *_kSharedInstance = nil;
 
@@ -55,6 +56,15 @@ static Utilities *_kSharedInstance = nil;
 {
 	[self setKeysDict:nil];
 	[super dealloc];
+}
+
+#pragma mark - Helper Methods
++ (NSString *)urlEncode:(NSString *)string {
+	return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8) autorelease];
+}
+
++ (NSString *)urlDecode:(NSString *)string {
+	return [string stringByReplacingPercentEscapesUsingEncoding:kCFStringEncodingUTF8];	
 }
 
 #pragma mark - Map Methods
@@ -164,6 +174,12 @@ static Utilities *_kSharedInstance = nil;
 
 #pragma mark - device methods
 
+//determines if the current iOS is 5.0 or higher
++ (BOOL) is5OrHigher 
+{
+	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0");
+}
+
 //determines if this is a newer device based on the screen scale and if this is an ipad or not
 //UIScreen scale is only available in ios 4+ and will be larger than 1.0 for retina devices
 + (BOOL)isNewHardware {
@@ -187,7 +203,6 @@ static Utilities *_kSharedInstance = nil;
 }
 
 #pragma mark - Navigation Bar Helpers
-
 + (void)showLogoView:(BOOL)show inNavigationBar:(UINavigationBar *)navBar
 {
 	const int logoViewTag = 123;
@@ -215,6 +230,55 @@ static Utilities *_kSharedInstance = nil;
 	
 	//end animation block
     [UIView commitAnimations];
+}
+
+#pragma mark analytics
+
++ (void) trackPageViewWithHierarch:(NSArray*)pageHierarchy
+{
+    
+    NSString *str = @"/aaiOS";
+    for (NSString *pageName in pageHierarchy) {
+        
+//        if ([kViewNamesDictionary objectForKey:pageName])
+//            pageName = [kViewNamesDictionary objectForKey:pageName];
+        
+        str = [NSString stringWithFormat:@"%@/%@", str, pageName];
+    }
+    
+    NSError *error;
+    [[GANTracker sharedTracker] trackPageview:str withError:&error];
+    
+    if (error)
+        DebugLog(@"Page Tracking Error: %@", [error description]);
+    
+    
+}
+
++ (void) trackPageViewWithName:(NSString*)pageName
+{
+    
+//    if ([kViewNamesDictionary objectForKey:pageName])
+//        pageName = [kViewNamesDictionary objectForKey:pageName];
+    
+    NSError *error;
+    [[GANTracker sharedTracker] trackPageview:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil] withError:&error];
+    
+    if (error)
+        DebugLog(@"Page Tracking Error: %@", [error description]);
+    
+    
+}
+
++ (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)label value:(NSInteger*)value
+{
+    
+    NSError *error;
+    [[GANTracker sharedTracker] trackEvent:event action:action label:nil value:0 withError:&error];    
+    if (error)
+        DebugLog(@"Page Tracking Error: %@", [error description]);
+    
+    
 }
 
 @end

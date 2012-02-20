@@ -21,7 +21,7 @@
 static const int _kAnnotationLimit = 9999;
 
 @interface MapViewController (private)
-- (void)artUpdated;
+-(void)artUpdated;
 -(void)filterButtonTapped;
 -(void)addButtonTapped;
 @end
@@ -59,6 +59,15 @@ static const int _kAnnotationLimit = 9999;
 	
 	//the map needs to be refreshed
 	_mapNeedsRefresh = YES;
+    
+    //add button
+    UIBarButtonItem *addButton= [[UIBarButtonItem alloc] initWithTitle:@"Add Art" style:UIBarButtonItemStylePlain target:self action:@selector(addButtonTapped)];
+    
+    //refresh button
+    UIBarButtonItem *refreshButton= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshArt)];
+    
+    [self.navigationItem setLeftBarButtonItem:addButton];
+    [self.navigationItem setRightBarButtonItem:refreshButton];
 	
 	//setup the map view
 	MapView *aMapView = [[MapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
@@ -79,7 +88,6 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.mapView.addButton addTarget:self action:@selector(addButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	
 }
 
@@ -98,6 +106,8 @@ static const int _kAnnotationLimit = 9999;
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 }
 
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
@@ -107,7 +117,7 @@ static const int _kAnnotationLimit = 9999;
 	
 	//update the map if needed
 	if (_mapNeedsRefresh) {
-		[[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated)];
+		[self refreshArt];
 		[self updateArt];
 	}
 }
@@ -150,7 +160,8 @@ static const int _kAnnotationLimit = 9999;
 -(void)addButtonTapped 
 {
     //create the add controller
-    AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
+    //AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
+    DetailViewController *detailController = [[DetailViewController alloc] init];
     
     //set the location coord to the user's location
     detailController.currentLocation = self.mapView.map.userLocation.location;
@@ -160,6 +171,7 @@ static const int _kAnnotationLimit = 9999;
     
     //set the art for the controller & release
     [detailController setArt:nil withTemplate:@"AddDetailView"];
+    [detailController setInEditMode:YES];
     [detailController release];
 }
 
@@ -226,16 +238,24 @@ static const int _kAnnotationLimit = 9999;
 		
 		//pass it along to a new detail controller and push it the navigation controller
 		DetailViewController *detailController = [[DetailViewController alloc] init];
-        //AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
 		[self.navigationController pushViewController:detailController animated:YES];
-        //[detailController setArt:selectedArt];
+        
+        //set the location coord to the user's location and the art selected
+        detailController.currentLocation = self.mapView.map.userLocation.location;
         [detailController setArt:selectedArt withTemplate:nil];
+        
 		[detailController release];
 		
 	}
 }
 
 #pragma mark - Update Art
+
+//refersh art
+- (void)refreshArt
+{
+    [[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated) forceDownload:YES];
+}
 
 //called by AAAPIManager when new art is downloaded
 - (void)artUpdated

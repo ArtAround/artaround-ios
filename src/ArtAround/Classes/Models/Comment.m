@@ -16,6 +16,7 @@
 @dynamic name;
 @dynamic text;
 @dynamic url;
+@dynamic email;
 @dynamic art;
 
 @end

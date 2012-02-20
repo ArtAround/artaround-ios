@@ -15,6 +15,7 @@
 @private
 }
 @property (nonatomic, retain) NSString * artist;
+@property (nonatomic, retain) NSString * artDescription;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSDecimalNumber * latitude;
 @property (nonatomic, retain) NSString * locationDescription;

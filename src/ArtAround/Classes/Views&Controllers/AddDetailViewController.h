@@ -9,6 +9,8 @@
 #import "DetailViewController.h"
 
 @interface AddDetailViewController : DetailViewController <UIActionSheetDelegate>
+{
+}
 
 @property (nonatomic, retain) CLLocation *currentLocation;
 
