@@ -660,6 +660,7 @@ static const float _kPhotoHeight = 140.0f;
 //return YES if title & category have been filled in; no otherwise
 - (BOOL)validateFieldsReadyToSubmit
 {
+    NSLog(@"CAT: %@ NAME: %@", [self category], [self artName], nil);
     //make sure the title and category have been selected
     if ([[self category] length] > 0 && [[self artName] length] > 0)
         return YES;
@@ -795,7 +796,7 @@ static const float _kPhotoHeight = 140.0f;
  {
      //if this is a update, grab the existing title
      //else grab the user input
-     if (_art) 
+     if (_art != nil) 
          return _art.title;
      else
          return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:1] text];
@@ -1735,8 +1736,8 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                         }
                         
                         //if this is an update - set title label text
-                        if (_art) 
-                            [(UILabel*)[cell viewWithTag:1] setText:_art.title];
+//                        if (_art) 
+//                            [(UILabel*)[cell viewWithTag:1] setText:_art.title];
                         
                         
                         return cell;
@@ -1955,6 +1956,11 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                             else 
                                 [wField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
                             [cell addSubview:wField];
+                            
+                            
+                            
+                            
+                            
                             
                             //ward label
                             UILabel *wLabel = [[UILabel alloc] initWithFrame:CGRectMake(wField.frame.origin.x - 40, 0, 40, 16)];
@@ -2191,7 +2197,10 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                         return cell;
                     }
                     
-                    Comment *thisComment = [[_art.comments allObjects] objectAtIndex:((indexPath.row - 1) / 2.0)];
+                    
+                    Comment *thisComment = [[[_art.comments allObjects] sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                        return [[obj2 createdAt] compare:[obj1 createdAt]];
+                    } ]objectAtIndex:((indexPath.row - 1) / 2.0)];
                     
                     if (indexPath.row % 2 != 0) //comment meta
                     {
