@@ -454,8 +454,11 @@ static const float _kPhotoHeight = 140.0f;
     //setup the add image button
     UIButton *addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
-    [addImgButton setBackgroundImage:[UIImage imageNamed:@"Locate.png"] forState:UIControlStateNormal];
+//    [addImgButton setBackgroundImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
+    [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
     [addImgButton.imageView setContentMode:UIViewContentModeCenter];
+    [addImgButton.layer setBorderColor:[UIColor whiteColor].CGColor];
+    [addImgButton.layer setBorderWidth:6.0f];
     [addImgButton setBackgroundColor:[UIColor lightGrayColor]];
     [addImgButton addTarget:self action:@selector(addImageButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
@@ -1736,8 +1739,8 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                         }
                         
                         //if this is an update - set title label text
-//                        if (_art) 
-//                            [(UILabel*)[cell viewWithTag:1] setText:_art.title];
+                        if (_art) 
+                            [(UILabel*)[cell viewWithTag:1] setText:_art.title];
                         
                         
                         return cell;

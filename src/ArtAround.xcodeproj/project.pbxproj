@@ -18,6 +18,8 @@
 		C98BA75914E9E31B00784A9F /* TextFieldBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C98BA75714E9E31B00784A9F /* TextFieldBackground@2x.png */; };
 		C9C1BCFA14E44C8E0057164B /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C1BCF914E44C8E0057164B /* libGoogleAnalytics.a */; };
 		C9C1BD1514E4D4B20057164B /* CommentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C1BD1414E4D4B10057164B /* CommentParser.m */; };
+		C9F034F714F862910031EB03 /* uploadPhoto_noBg.png in Resources */ = {isa = PBXBuildFile; fileRef = C9F034F514F862910031EB03 /* uploadPhoto_noBg.png */; };
+		C9F034F814F862910031EB03 /* uploadPhoto_noBgx2.png in Resources */ = {isa = PBXBuildFile; fileRef = C9F034F614F862910031EB03 /* uploadPhoto_noBgx2.png */; };
 		CA00943A1409509B00E5001E /* ArtAroundAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */; };
 		CA00943B1409509B00E5001E /* AAAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F31409509A00E5001E /* AAAPIManager.m */; };
 		CA00943C1409509B00E5001E /* AAManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0093F51409509A00E5001E /* AAManagedObjectContext.m */; };
@@ -148,6 +150,8 @@
 		C9C1BCF914E44C8E0057164B /* libGoogleAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGoogleAnalytics.a; path = "Google Analytics/libGoogleAnalytics.a"; sourceTree = "<group>"; };
 		C9C1BD1314E4D4B00057164B /* CommentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentParser.h; sourceTree = "<group>"; };
 		C9C1BD1414E4D4B10057164B /* CommentParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentParser.m; sourceTree = "<group>"; };
+		C9F034F514F862910031EB03 /* uploadPhoto_noBg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBg.png; sourceTree = "<group>"; };
+		C9F034F614F862910031EB03 /* uploadPhoto_noBgx2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBgx2.png; sourceTree = "<group>"; };
 		CA0093EF1409509A00E5001E /* ArtAroundAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAroundAppDelegate.h; sourceTree = "<group>"; };
 		CA0093F01409509A00E5001E /* ArtAroundAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAroundAppDelegate.m; sourceTree = "<group>"; };
 		CA0093F21409509A00E5001E /* AAAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAAPIManager.h; sourceTree = "<group>"; };
@@ -522,6 +526,8 @@
 				CA1AE9E9140C906200C56C4D /* ShareArtPressed@2x.png */,
 				C98BA75614E9E31B00784A9F /* TextFieldBackground.png */,
 				C98BA75714E9E31B00784A9F /* TextFieldBackground@2x.png */,
+				C9F034F514F862910031EB03 /* uploadPhoto_noBg.png */,
+				C9F034F614F862910031EB03 /* uploadPhoto_noBgx2.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -883,6 +889,8 @@
 				C91B24BB14CF624B000B342F /* FavoriteButtonSelected.png in Resources */,
 				C98BA75814E9E31B00784A9F /* TextFieldBackground.png in Resources */,
 				C98BA75914E9E31B00784A9F /* TextFieldBackground@2x.png in Resources */,
+				C9F034F714F862910031EB03 /* uploadPhoto_noBg.png in Resources */,
+				C9F034F814F862910031EB03 /* uploadPhoto_noBgx2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
