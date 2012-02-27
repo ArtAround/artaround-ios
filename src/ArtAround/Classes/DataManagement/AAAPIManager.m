@@ -23,7 +23,7 @@
 #import "JSONKit.h"
 
 static AAAPIManager *_sharedInstance = nil;
-static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
+static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
 static const NSString *_kAPIFormat = @"json";
 static const NSString *_kTargetKey = @"target";
 static const NSString *_kCallbackKey = @"callback";
@@ -318,6 +318,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     //setup and start the request
 	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
     [request setRequestMethod:@"POST"];
+    [request setTimeOutSeconds:45];
+    [request setNumberOfTimesToRetryOnTimeout:0];
 	[request setDidFinishSelector:@selector(artUploadCompleted:)];
 	[request setDidFailSelector:@selector(artUploadFailed:)];
 	[request startAsynchronous];
@@ -424,6 +426,15 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 - (void)artUploadFailed:(ASIHTTPRequest *)request
 {
 	DebugLog(@"artUploadFailed");
+    
+    //for testing
+    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
+    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
+    
+    //deserialize the json response
+	NSError *jsonError = nil;
+	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
+	
     
     //call the selector on the target if applicable
 	NSDictionary *userInfo = [request userInfo];

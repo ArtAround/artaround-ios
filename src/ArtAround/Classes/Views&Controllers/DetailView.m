@@ -11,7 +11,7 @@
 
 
 @implementation DetailView
-@synthesize tableView = _tableView, mapView = _mapView, photosScrollView = _photosScrollView, submitButton = _submitButton, bottomToolbar = _bottomToolbar, favoriteButton = _favoriteButton;
+@synthesize tableView = _tableView, mapView = _mapView, photosScrollView = _photosScrollView, rightButton = _rightButton, bottomToolbar = _bottomToolbar, favoriteButton = _favoriteButton, leftButton = _leftButton;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -40,23 +40,16 @@
         [aFavButton setFrame:CGRectMake(0, 0, [UIImage imageNamed:@"FavoriteButton.png"].size.width, [UIImage imageNamed:@"FavoriteButton.png"].size.height)];
         [self setFavoriteButton:aFavButton];
         
-        //setup the submit button bar and button
-        UIButton *aButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
-        [self setSubmitButton:aButton];
-        UIBarButtonItem *aBarButton = [[UIBarButtonItem alloc] initWithCustomView:aButton];
-        UIBarButtonItem *leftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-        UIBarButtonItem *rightSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        //setup the submit button bar
         UIToolbar *aToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, frame.size.height - _kSubmitButtonBarHeight, frame.size.width, _kSubmitButtonBarHeight)];
         [self setBottomToolbar:aToolbar];
         [aToolbar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
-        [aToolbar setBarStyle:UIBarStyleBlackTranslucent];
-        [aToolbar setItems:[NSArray arrayWithObjects:leftSpace, aBarButton, rightSpace, nil]];
+        [aToolbar setBarStyle:UIBarStyleDefault];
+        [aToolbar setBackgroundColor:[UIColor clearColor]];
         [self addSubview:aToolbar];
         [aToolbar release];
-        [aBarButton release];
-        [aButton release];
-        [leftSpace release];
-        [rightSpace release];
+        
+        [self setEditMode:NO withCancel:NO];
         
 		//setup the map view
 		MKMapView *aMap = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, 0.0f, frame.size.width - (_kMapPadding * 2), _kMapHeight)];
@@ -77,6 +70,80 @@
 		
     }
     return self;
+}
+
+- (void) setEditMode:(BOOL)editMode withCancel:(BOOL)withCancel
+{
+    for (UIView *thisView in self.bottomToolbar.subviews) {
+        [thisView removeFromSuperview];
+    }
+    
+    UIView *seperator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, self.bottomToolbar.frame.size.height)];
+    seperator.center = CGPointMake(self.bottomToolbar.center.x, seperator.center.y);
+    seperator.backgroundColor = [UIColor darkGrayColor];
+    seperator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    
+    if (editMode) {
+        
+        //setup the submit button
+        UIButton *rButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [rButton setFrame:CGRectMake(0, 0, self.bottomToolbar.frame.size.width, self.bottomToolbar.frame.size.height)];
+        [rButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+        [rButton setBackgroundColor:[UIColor colorWithRed:(58.0/255.0) green:(54.0/255.0) blue:(53.0/255.0) alpha:0.9]];
+        rButton.titleLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16.0];
+        [rButton setTitleColor:[UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateNormal];
+        [rButton setTitleColor:[UIColor colorWithRed:(170.0/255.0) green:(173.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateHighlighted];
+        [rButton setTitle:@"SUBMIT" forState:UIControlStateNormal];
+        [self setRightButton:rButton];
+        
+       
+        
+        if (withCancel) {
+            UIButton *lButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            [lButton setFrame:CGRectMake(0, 0, self.bottomToolbar.frame.size.width / 2.0, self.bottomToolbar.frame.size.height)];
+            [rButton setFrame:CGRectMake(lButton.frame.size.width, 0, self.bottomToolbar.frame.size.width / 2.0, self.bottomToolbar.frame.size.height)];
+            [lButton setBackgroundColor:[UIColor colorWithRed:(58.0/255.0) green:(54.0/255.0) blue:(53.0/255.0) alpha:0.9]];
+            [lButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+            lButton.titleLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16.0];
+            [lButton setTitleColor:[UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [lButton setTitleColor:[UIColor colorWithRed:(170.0/255.0) green:(173.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateHighlighted];
+            [lButton setTitle:@"CANCEL" forState:UIControlStateNormal];
+            [self setLeftButton:lButton];
+            [self.bottomToolbar addSubview:lButton];
+            [self.bottomToolbar addSubview:rButton];
+            [self.bottomToolbar addSubview:seperator];
+            
+        }
+        else {
+            [self.bottomToolbar addSubview:rButton];
+        }
+        
+    }
+    else {
+        //fav button
+        UIButton *lButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [lButton setFrame:CGRectMake(0, 0, self.bottomToolbar.frame.size.width / 2.0, self.bottomToolbar.frame.size.height)];
+        [lButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+        [lButton setBackgroundColor:[UIColor colorWithRed:(58.0/255.0) green:(54.0/255.0) blue:(53.0/255.0) alpha:0.9]];
+        [lButton setImage:[UIImage imageNamed:@"FavoriteButton.png"] forState:UIControlStateNormal];
+        
+        //setup the submit button
+        UIButton *rButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [rButton setFrame:CGRectMake(lButton.frame.size.width, 0, self.bottomToolbar.frame.size.width / 2.0, self.bottomToolbar.frame.size.height)];
+        [rButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+        [rButton setBackgroundColor:[UIColor colorWithRed:(58.0/255.0) green:(54.0/255.0) blue:(53.0/255.0) alpha:0.9]];
+        rButton.titleLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16.0];
+        [rButton setTitleColor:[UIColor colorWithRed:(170.0/255.0) green:(173.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateHighlighted];        
+        [rButton setTitleColor:[UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateNormal];
+        [rButton setTitle:@"EDIT" forState:UIControlStateNormal];
+        
+        [self.bottomToolbar addSubview:lButton];
+        [self.bottomToolbar addSubview:rButton];
+        [self.bottomToolbar addSubview:seperator];
+        [self setLeftButton:lButton];
+        [self setRightButton:rButton];
+    }
+    
 }
 
 - (void)dealloc

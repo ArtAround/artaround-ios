@@ -12,7 +12,7 @@
 static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
 static const float _kPhotoScrollerHeight = 150.0f;
-static const float _kSubmitButtonBarHeight = 45.0f;
+static const float _kSubmitButtonBarHeight = 40.0f;
 
 @interface DetailView : UIView
 
@@ -20,6 +20,8 @@ static const float _kSubmitButtonBarHeight = 45.0f;
 @property (nonatomic, retain) MKMapView *mapView;
 @property (nonatomic, retain) UIScrollView *photosScrollView;
 @property (nonatomic, retain) UIToolbar *bottomToolbar;
-@property (nonatomic, retain) UIButton *submitButton, *favoriteButton;
+@property (nonatomic, retain) UIButton *favoriteButton, *rightButton, *leftButton;
+
+- (void) setEditMode:(BOOL)editMode withCancel:(BOOL)withCancel;
 
 @end

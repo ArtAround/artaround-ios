@@ -36,6 +36,7 @@
 - (void)addImageButtonTapped;
 - (void)favoriteButtonTapped;
 - (void)submitCommentButtonTapped;
+- (void)cancelButtonTapped;
 - (void)shareOnTwitter;
 - (void)shareOnFacebook;
 - (void)showFBDialog;
@@ -140,10 +141,24 @@ static const float _kPhotoHeight = 140.0f;
     [self.detailView.tableView setDelegate:self];
     [self.detailView.tableView setDataSource:self];
     [self.detailView.mapView setDelegate:self];
-    [self.detailView.submitButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.detailView setEditMode:NO withCancel:NO];
+    [self.detailView.rightButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.detailView.favoriteButton addTarget:self action:@selector(favoriteButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [aDetailView release];
     
+    //add invisible back button to the logo on the toolbar
+    _invBackButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    [_invBackButton setFrame:CGRectMake(0, 0, 80, self.navigationController.navigationBar.frame.size.height)];
+    [_invBackButton setCenter:CGPointMake(self.navigationController.navigationBar.center.x, _invBackButton.center.y)];
+    [_invBackButton setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+    [_invBackButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [_invBackButton setShowsTouchWhenHighlighted:YES];
+    [self.navigationController.navigationBar addSubview:_invBackButton];
+    
+
+    
+    
+    //share button
     if (_inEditMode) {
         
         //if there's already a share button disable it
@@ -174,7 +189,9 @@ static const float _kPhotoHeight = 140.0f;
 
 - (void)viewDidUnload
 {
+    
     [super viewDidUnload];
+    
 }
 
 - (void) viewDidAppear:(BOOL)animated 
@@ -187,6 +204,15 @@ static const float _kPhotoHeight = 140.0f;
     else {
         [Utilities trackPageViewWithName:@"AddViewArt"];
     }
+}
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    //get rid of the inv back button from the toolbar
+    [_invBackButton removeFromSuperview];
+    [_invBackButton release];
+    
+    [super viewWillDisappear:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -213,6 +239,9 @@ static const float _kPhotoHeight = 140.0f;
             
             [self.navigationItem.rightBarButtonItem setEnabled:NO];
         }
+        
+        [self.detailView setEditMode:YES withCancel:(_art) ? YES : NO];
+        
     }
     else {
         
@@ -229,9 +258,13 @@ static const float _kPhotoHeight = 140.0f;
             [self.navigationItem setRightBarButtonItem:shareButton animated:YES];
             [shareButton release];
         }
+        
+        [self.detailView setEditMode:NO withCancel:NO];
     }
     
-    //[self setArt:self.art];
+    [self.detailView.leftButton addTarget:self action:@selector(cancelButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.detailView.rightButton addTarget:self action:@selector(bottomToolbarButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+   
     
     //reload the table
     [self.detailView.tableView reloadData];
@@ -651,7 +684,7 @@ static const float _kPhotoHeight = 140.0f;
             
         }
         
-        [self setInEditMode:NO];
+        
     }
     else {
         [self setInEditMode:YES];
@@ -741,6 +774,10 @@ static const float _kPhotoHeight = 140.0f;
     
 }
 
+- (void)cancelButtonTapped {
+    [self setInEditMode:NO];
+}
+
 
 #pragma mark - UIWebViewDelegate
 /*
@@ -792,17 +829,22 @@ static const float _kPhotoHeight = 140.0f;
  
  - (NSString *)category
 {
-     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:3] text];
+    return _categoryField.text;
+    
  }
  
  - (NSString *)artName
  {
      //if this is a update, grab the existing title
      //else grab the user input
-     if (_art != nil) 
+     if (_artNameField) {
+         return _artNameField.text;
+     }
+     else {
          return _art.title;
-     else
-         return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:1] text];
+     }
+     
+     
  }
  
  - (NSString *)artistName
@@ -1106,6 +1148,8 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
     
     //dismiss the alert view
     [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+    
+    
 }
 
 
@@ -1133,6 +1177,7 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
         //merge context
         [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
         [(id)[[UIApplication sharedApplication] delegate] saveContext];
+        
     }
     else {
         [self artUploadFailed:responseDict];
@@ -1166,6 +1211,11 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
 {
     //dismiss loading view
     [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+    
+    //show fail alert
+    UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Upload Failed" message:@"The upload failed. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [failedAlertView show];
+    [failedAlertView release];
 }
 
 #pragma mark - Art Download Callback Methods
@@ -1583,28 +1633,28 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                             }
                             else {
                                 //title field
-                                UITextField *titleField = [[UITextField alloc] initWithFrame:CGRectMake(kHorizontalPadding + 75, 
+                                _artNameField = [[UITextField alloc] initWithFrame:CGRectMake(kHorizontalPadding + 75, 
                                                                                                         kHorizontalPadding, 
                                                                                                         220, 
                                                                                                         25)];
-                                [titleField setTag:1];
-                                [titleField setFont:kDetailFont];
-                                [titleField setTextColor:kBGdarkBrown];
-                                [titleField setPlaceholder:@"Title"];
-                                [titleField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-                                [titleField setLeftViewMode:UITextFieldViewModeAlways];
-                                [titleField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                                [titleField setRightViewMode:UITextFieldViewModeAlways];
-                                [titleField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                                [_artNameField setTag:1];
+                                [_artNameField setFont:kDetailFont];
+                                [_artNameField setTextColor:kBGdarkBrown];
+                                [_artNameField setPlaceholder:@"Title"];
+                                [_artNameField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                                [_artNameField setLeftViewMode:UITextFieldViewModeAlways];
+                                [_artNameField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                                [_artNameField setRightViewMode:UITextFieldViewModeAlways];
+                                [_artNameField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
                                 if ([Utilities is5OrHigher])
-                                    [titleField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                                    [_artNameField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
                                 else 
-                                    [titleField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                                    [_artNameField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
                                 
-                                [cell addSubview:titleField];
+                                [cell addSubview:_artNameField];
                                 
                                 //set the offset
-                                yOffset = titleField.frame.size.height;
+                                yOffset = _artNameField.frame.size.height;
                                 
                                 //title label
                                 UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 66, 16)];
@@ -1613,10 +1663,9 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                                 [titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
                                 [titleLabel setBackgroundColor:[UIColor clearColor]];
                                 [titleLabel setTextColor:kFontColorDarkBrown];
-                                [titleLabel setCenter:CGPointMake(round(titleLabel.center.x), round(titleField.center.y))];
+                                [titleLabel setCenter:CGPointMake(round(titleLabel.center.x), round(_artNameField.center.y))];
                                 [cell addSubview:titleLabel];
                                 [titleLabel release];
-                                [titleField release];
                             }
                             
                             //artist field & label
@@ -1653,22 +1702,22 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                             [artistField release];
                             
                             //category field & label
-                            UITextField *catField = [[UITextField alloc] initWithFrame:CGRectMake(artistField.frame.origin.x, artistField.frame.origin.y + artistField.frame.size.height + 4, 110, artistField.frame.size.height)];
-                            catField.tag = 3;
-                            [catField setFont:kDetailFont];
-                            [catField setTextColor:kBGdarkBrown];
-                            [catField setPlaceholder:@"Category"];
-                            [catField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-                            [catField setLeftViewMode:UITextFieldViewModeAlways];
-                            [catField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                            [catField setRightViewMode:UITextFieldViewModeAlways];
-                            [catField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            _categoryField = [[UITextField alloc] initWithFrame:CGRectMake(artistField.frame.origin.x, artistField.frame.origin.y + artistField.frame.size.height + 4, 110, artistField.frame.size.height)];
+                            _categoryField.tag = 3;
+                            [_categoryField setFont:kDetailFont];
+                            [_categoryField setTextColor:kBGdarkBrown];
+                            [_categoryField setPlaceholder:@"Category"];
+                            [_categoryField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+                            [_categoryField setLeftViewMode:UITextFieldViewModeAlways];
+                            [_categoryField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
+                            [_categoryField setRightViewMode:UITextFieldViewModeAlways];
+                            [_categoryField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
                             if ([Utilities is5OrHigher])
-                                [catField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
+                                [_categoryField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
                             else 
-                                [catField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
+                                [_categoryField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
                             
-                            [cell addSubview:catField];
+                            [cell addSubview:_categoryField];
                             
                             //category label
                             UILabel *catLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 76, 16)];
@@ -1676,10 +1725,10 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                             [catLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
                             [catLabel setBackgroundColor:[UIColor clearColor]];
                             [catLabel setTextColor:kFontColorDarkBrown];
-                            [catLabel setCenter:CGPointMake(roundf(catLabel.center.x), roundf(catField.center.y))];
+                            [catLabel setCenter:CGPointMake(roundf(catLabel.center.x), roundf(_categoryField.center.y))];
                             [cell addSubview:catLabel];
                             [catLabel release];
-                            [catField release];
+                            
                             
                             //year field & label
                             UITextField *yearField = [[UITextField alloc] initWithFrame:CGRectMake(artistField.frame.origin.x + artistField.frame.size.width - 50, artistField.frame.origin.y + artistField.frame.size.height + 4, 50, artistField.frame.size.height)];
@@ -1699,7 +1748,7 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                             [cell addSubview:yearField];
                             
                             //year label
-                            UILabel *yearLabel = [[UILabel alloc] initWithFrame:CGRectMake(catField.frame.origin.x + catField.frame.size.width + 15, 0, 40, 16)];
+                            UILabel *yearLabel = [[UILabel alloc] initWithFrame:CGRectMake(_categoryField.frame.origin.x + _categoryField.frame.size.width + 15, 0, 40, 16)];
                             [yearLabel setText:@"Year:"];
                             [yearLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
                             [yearLabel setBackgroundColor:[UIColor clearColor]];
