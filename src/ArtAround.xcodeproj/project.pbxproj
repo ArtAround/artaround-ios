@@ -632,18 +632,18 @@
 		CA5E10CB1405F0520075DAB8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CAECF77814073D9100CD9A95 /* CFNetwork.framework */,
+				CA5E10D21405F0520075DAB8 /* CoreData.framework */,
+				CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */,
+				CA5E10CE1405F0520075DAB8 /* Foundation.framework */,
 				CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */,
-				C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */,
 				CAECF77E14073DCA00CD9A95 /* libz.1.2.3.dylib */,
+				C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */,
+				CA5E10FC1405F8570075DAB8 /* MapKit.framework */,
 				CA2A10EA14109BBE009001A2 /* MessageUI.framework */,
 				CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */,
 				CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */,
-				CAECF77814073D9100CD9A95 /* CFNetwork.framework */,
-				CA5E10FC1405F8570075DAB8 /* MapKit.framework */,
 				CA5E10CC1405F0520075DAB8 /* UIKit.framework */,
-				CA5E10CE1405F0520075DAB8 /* Foundation.framework */,
-				CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */,
-				CA5E10D21405F0520075DAB8 /* CoreData.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
