@@ -64,7 +64,7 @@ static const int _kAnnotationLimit = 9999;
     UIBarButtonItem *addButton= [[UIBarButtonItem alloc] initWithTitle:@"Add Art" style:UIBarButtonItemStylePlain target:self action:@selector(addButtonTapped)];
     
     //refresh button
-    UIBarButtonItem *refreshButton= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshArt)];
+    UIBarButtonItem *refreshButton= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MapIcon.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(refreshArt)];
     
     [self.navigationItem setLeftBarButtonItem:addButton];
     [self.navigationItem setRightBarButtonItem:refreshButton];
