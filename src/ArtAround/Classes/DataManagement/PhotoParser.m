@@ -59,8 +59,24 @@
 	[self.managedObjectContext unlock];
 }
 
++ (NSSet *)setForPhotoDicts:(NSArray *)photoDicts inContext:(NSManagedObjectContext *)context
+{
+    
+	NSMutableSet *photos = [NSMutableSet set];
+	for (NSDictionary *photoDict in photoDicts) {
+		
+		//get the photo for the given flickrID
+		//add the photo to the set
+		Photo *photo = [PhotoParser photoForPhotoDict:photoDict inContext:context];
+		[photos addObject:photo];
+		
+	}
+	return photos;
+}
+
 + (NSSet *)setForFlickrIDs:(NSArray *)flickrIDs inContext:(NSManagedObjectContext *)context
 {
+    
 	NSMutableSet *photos = [NSMutableSet set];
 	for (NSNumber *flickrID in flickrIDs) {
 		
@@ -86,6 +102,66 @@
 		photo = (Photo *)[NSEntityDescription insertNewObjectForEntityForName:@"Photo" inManagedObjectContext:context];
 		photo.flickrID = [AAAPIManager clean:flickrID];
 	}
+	return photo;
+}
+
++ (Photo *)photoForPhotoDict:(NSDictionary *)photoDict inContext:(NSManagedObjectContext *)context
+{	
+	//every once in a while a string is passed
+	if (![photoDict isKindOfClass:[NSDictionary class]]) {
+		return nil;
+	}
+	
+    NSNumber *primary = [NSNumber numberWithBool:NO];
+    NSString *originalURL = @"";
+    NSString *mediumURL = @"";
+    NSString *thumbnailURL = @"";
+    NSString *flickrName = @"";    
+    NSDate *addedDate = [NSDate date];
+    
+    if (![[photoDict objectForKey:@"primary"] isKindOfClass:[NSNull class]]) {
+        primary = [AAAPIManager clean:[photoDict objectForKey:@"primary"]];
+    }
+    
+    if (![[photoDict objectForKey:@"image_big_url"] isKindOfClass:[NSNull class]]) {    
+        originalURL = [AAAPIManager clean:[photoDict objectForKey:@"image_big_url"]];
+    }
+
+    if (![[photoDict objectForKey:@"image_small_url"] isKindOfClass:[NSNull class]]) {    
+        mediumURL = [AAAPIManager clean:[photoDict objectForKey:@"image_small_url"]];
+    }
+
+    if (![[photoDict objectForKey:@"image_thumbnail_url"] isKindOfClass:[NSNull class]]) {    
+        thumbnailURL = [AAAPIManager clean:[photoDict objectForKey:@"image_thumbnail_url"]];
+    }    
+    
+    if (![[photoDict objectForKey:@"flickr_username"] isKindOfClass:[NSNull class]]) {    
+        flickrName = [AAAPIManager clean:[photoDict objectForKey:@"flickr_username"]];
+    }
+    
+    if (!originalURL || originalURL.length <= 0)
+        return nil;
+    
+	//create a new photo if one doesn't exist yet
+	Photo *photo = [ItemParser existingEntity:@"Photo" inContext:context uniqueKey:@"originalURL" uniqueValue:originalURL];
+	if (!photo) {
+		photo = (Photo *)[NSEntityDescription insertNewObjectForEntityForName:@"Photo" inManagedObjectContext:context];
+		photo.originalURL = [AAAPIManager clean:originalURL];
+        
+        if (mediumURL || mediumURL.length > 0)
+            photo.mediumURL = mediumURL;
+        
+        if (thumbnailURL || thumbnailURL.length > 0)
+            photo.thumbnailURL = thumbnailURL;
+        
+        if (flickrName || flickrName.length > 0)
+            photo.flickrName = flickrName;
+        
+        photo.dateAdded = addedDate;
+            
+	}
+    
+    
 	return photo;
 }
 

@@ -45,6 +45,23 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	return _kFlickrIDKey;
 }
 
+#pragma mark - Flickr Upload Methods
+- (void)uploadPhotoWithImage:(UIImage *)image target:(id)target callback:(SEL)callback
+{
+	//start network activity indicator
+	[[Utilities instance] startActivity];
+	
+	//pass along target and selector in userInfo
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
+	
+	//setup and start the request
+	NSDictionary *params = [NSDictionary dictionaryWithObject:UIImagePNGRepresentation(image) forKey:@"photo"];
+	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
+	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
+	[request setDidFailSelector:@selector(photoRequestFailed:)];
+	[request startAsynchronous];
+}
+
 #pragma mark - Flickr Download Methods
 
 - (void)downloadPhotoWithID:(NSNumber *)flickrID target:(id)target callback:(SEL)callback

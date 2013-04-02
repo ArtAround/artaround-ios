@@ -35,6 +35,9 @@
 @property (nonatomic, retain) NSString * thumbnailSource;
 @property (nonatomic, retain) NSString * thumbnailURL;
 @property (nonatomic, retain) NSNumber * thumbnailWidth;
+@property (nonatomic, retain) NSNumber * primary;
+@property (nonatomic, retain) NSString * flickrName;
+@property (nonatomic, retain) NSDate * dateAdded;
 @property (nonatomic, retain) Art *art;
 
 @end

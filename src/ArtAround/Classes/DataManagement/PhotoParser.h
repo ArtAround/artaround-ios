@@ -15,6 +15,8 @@
 - (void)parseRequest:(ASIHTTPRequest *)request;
 + (Photo *)photoForFlickrID:(NSNumber *)flickrID inContext:(NSManagedObjectContext *)context;
 + (Photo *)photoForFlickrID:(NSNumber *)flickrID sizesDict:(NSDictionary *)sizesDict inContext:(NSManagedObjectContext *)context;
++ (Photo *)photoForPhotoDict:(NSDictionary *)photoDict inContext:(NSManagedObjectContext *)context;
 + (NSSet *)setForFlickrIDs:(NSArray *)flickrIDs inContext:(NSManagedObjectContext *)context;
++ (NSSet *)setForPhotoDicts:(NSArray *)photoDicts inContext:(NSManagedObjectContext *)context;
 
 @end

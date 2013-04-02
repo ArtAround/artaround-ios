@@ -16,16 +16,21 @@
 #import "CalloutAnnotationView.h"
 #import "Category.h"
 #import "DetailViewController.h"
+#import "AddDetailViewController.h"
+#import "QuartzCore/CALayer.h"
 
 static const int _kAnnotationLimit = 9999;
 
 @interface MapViewController (private)
-- (void)artUpdated;
+-(void)artUpdated;
 -(void)filterButtonTapped;
+-(void)addButtonTapped;
+-(void)favoritesButtonTapped;
+-(void)closeButtonPressed;
 @end
 
 @implementation MapViewController
-@synthesize mapView = _mapView, callout = _callout;
+@synthesize mapView = _mapView, callout = _callout, listViewController = _listViewController, showFavorites = _showFavorites;
 
 #pragma mark - View lifecycle
 
@@ -33,10 +38,19 @@ static const int _kAnnotationLimit = 9999;
 {
     self = [super init];
     if (self) {
-		
+        
 		//initialize arrays
 		_items = [[NSMutableArray alloc] init];
 		_annotations = [[NSMutableArray alloc] init];
+
+        //initialize list view controller
+        _listViewController = [[ListViewController alloc] initWithStyle:UITableViewStylePlain items:_items];
+        
+        //init favs flag
+        _showFavorites = NO;
+        
+        //init showingMap
+        _showingMap = YES;
 		
     }
     return self;
@@ -54,29 +68,201 @@ static const int _kAnnotationLimit = 9999;
 - (void)loadView
 {
 	[super loadView];
-	
+    
 	//the map needs to be refreshed
 	_mapNeedsRefresh = YES;
+    
+    
+    //add button
+    UIBarButtonItem *addButton= [[UIBarButtonItem alloc] initWithTitle:@"Add Art" style:UIBarButtonItemStylePlain target:self action:@selector(addButtonTapped)];
+    
+    //refresh button
+    UIImage *mapButtonImage = [UIImage imageNamed:@"MapButton.png"];
+    UIImage *listButtonImage = [UIImage imageNamed:@"ListButton.png"];
+    _listButton = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, mapButtonImage.size.width, mapButtonImage.size.height)];
+    [_listButton setImage:listButtonImage];
+    _mapButton = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, listButtonImage.size.width, listButtonImage.size.height)];
+    [_mapButton setImage:mapButtonImage];
+    _listButton.backgroundColor = [UIColor clearColor];
+    _mapButton.backgroundColor = [UIColor clearColor];
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn addTarget:self action:@selector(flipMap) forControlEvents:UIControlEventTouchUpInside];
+    btn.frame = CGRectMake(0, 0, 30, 30);    
+    
+    UIView *buttonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mapButtonImage.size.width, mapButtonImage.size.height)];
+    buttonView.backgroundColor = [UIColor clearColor];
+
+    [buttonView addSubview:_mapButton];
+    [buttonView addSubview:_listButton];
+    [buttonView addSubview:btn];
+    
+    UIBarButtonItem *flipButton = [[UIBarButtonItem alloc] initWithCustomView:buttonView];
+    [flipButton setTarget:self];
+    [flipButton setAction:@selector(flipMap)];
+    
+    UIBarButtonItem *refreshButton= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(flipMap)];
+    
+    
+    [self.navigationItem setLeftBarButtonItem:addButton];
+    [self.navigationItem setRightBarButtonItem:flipButton];
+
+    
+    //setup the list view
+    [_listViewController.tableView setFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
+    _listViewController.delegate = self;
+    [_listViewController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [_listViewController.favoriteButton setSelected:_showFavorites];    
+    [self.view addSubview:_listViewController.tableView];	
 	
-	//setup the map view
+    //setup the map view
 	MapView *aMapView = [[MapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
 	[self setMapView:aMapView];
 	[self.mapView.map setDelegate:self];
+    [self.mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self.view addSubview:self.mapView];
 	[aMapView release];
-	
+
+    
 	//default to dc map
 	MKCoordinateSpan spanDC = MKCoordinateSpanMake(0.09, 0.09);
 	CLLocationCoordinate2D centerDC;
 	centerDC.latitude = 38.895;
 	centerDC.longitude = -77.022;
 	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(centerDC, spanDC)]];
-	
+	[self.mapView.map setShowsUserLocation:YES];
+    
 	//setup button actions
-	[self.mapView.shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+	[self.mapView.favoritesButton addTarget:self action:@selector(favoritesButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	
+    //inital load view
+    if (![[Utilities instance] hasLoadedBefore]) {
+        _initialLoadView = [[UIView alloc] initWithFrame:CGRectInset(_mapView.frame, 20, 50)];
+        _initialLoadView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.9];
+        _initialLoadView.alpha = 0;
+        _initialLoadView.center = CGPointMake(_initialLoadView.center.x, _initialLoadView.center.y - 20);
+        _initialLoadView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
+        _initialLoadView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+        _initialLoadView.layer.shadowRadius = 3.0f;
+        _initialLoadView.layer.shadowOffset = CGSizeMake(0, 1.0);
+        _initialLoadView.layer.shadowOpacity = 0.9f;
+        
+        UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 4, _initialLoadView.frame.size.width, 20)];
+        [topLabel setText:@"A hint before you start..."];
+        [topLabel setTextAlignment:UITextAlignmentCenter];
+        [topLabel setBackgroundColor:[UIColor clearColor]];
+        [topLabel setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:15]];
+        [topLabel setTextColor:kFontColorDarkBrown];
+        [_initialLoadView addSubview:topLabel];
+        [topLabel release];
+
+        UILabel *secondLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 24, _initialLoadView.frame.size.width, 14)];
+        [secondLabel setText:@"(We'll only show this once. We promise.)"];
+        [secondLabel setBackgroundColor:[UIColor clearColor]];
+        [secondLabel setTextAlignment:UITextAlignmentCenter];
+        [secondLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:10]];
+        [secondLabel setTextColor:kFontColorDarkBrown];
+        [_initialLoadView addSubview:secondLabel];
+        [secondLabel release]; 
+        
+        
+        float yVal = 44;
+        for (int index = 0; index < 4; index++) {
+
+            //add divider
+            UIView *line1 = [[UIView alloc] initWithFrame:CGRectMake(0, yVal, _initialLoadView.frame.size.width, 1)];
+            UIView *line2 = [[UIView alloc] initWithFrame:CGRectMake(0, 1+yVal, _initialLoadView.frame.size.width, 1)];
+            line1.backgroundColor = [UIColor whiteColor];
+            line2.backgroundColor = kBGlightBrown;
+            line1.alpha = 0.2;
+            line2.alpha = 0.2;
+            [_initialLoadView addSubview:line1];
+            [_initialLoadView addSubview:line2];
+            [line1 release];
+            [line2 release];
+            
+            if (index < 3) {
+                
+                NSString *text1, *text2, *img1, *img2;
+                
+                switch (index) {
+                    case 0:
+                        text1 = @"Art";
+                        text2 = @"Popular Art";
+                        img1 = @"PinArt.png";
+                        img2 = @"PinArtPressed.png";
+                        break;
+                        
+                    case 1:
+                        text1 = @"Venue";
+                        text2 = @"Popular Venue";
+                        img1 = @"PinVenue.png";
+                        img2 = @"PinVenuePressed.png";
+                        break;
+                        
+                    case 2:
+                        text1 = @"Event";
+                        text2 = @"Popular Event";
+                        img1 = @"PinEvent.png";
+                        img2 = @"PinEventPressed.png";
+                        break;                    
+                    default:
+                        break;
+                }
+                
+                float sectionCenter = yVal + 38;
+                
+                //add pins
+                UIImageView *pin1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:img1]];
+                [pin1 setCenter:CGPointMake(35, sectionCenter)];
+                [_initialLoadView addSubview:pin1];
+                UIImageView *pin2 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:img2]];
+                [pin2 setCenter:CGPointMake(135, sectionCenter)];
+                [_initialLoadView addSubview:pin2];
+                [pin1 release];
+                [pin2 release];
+                
+                //add labels
+                UILabel *regular = [[UILabel alloc] initWithFrame:CGRectMake(pin1.image.size.width + pin1.frame.origin.x, 0, 60, 20)];
+                UILabel *popular = [[UILabel alloc] initWithFrame:CGRectMake(pin2.image.size.width + pin2.frame.origin.x, 0, 160, 20)];
+                [regular setCenter:CGPointMake(regular.center.x, sectionCenter)];
+                [popular setCenter:CGPointMake(popular.center.x, sectionCenter)];
+                [regular setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:14.0f]];
+                [popular setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:14.0f]];
+                [regular setBackgroundColor:[UIColor clearColor]];
+                [popular setBackgroundColor:[UIColor clearColor]];
+                [regular setText:text1];
+                [popular setText:text2];
+                [regular setTextColor:kFontColorDarkBrown];
+                [popular setTextColor:kFontColorDarkBrown]; 
+                [_initialLoadView addSubview:regular];
+                [_initialLoadView addSubview:popular];
+                [regular release];
+                [popular release];
+                
+                
+            }
+            
+            yVal += 76;
+        }
+        
+        UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, _initialLoadView.frame.size.height - 46, _initialLoadView.frame.size.width, 48)];
+        [closeButton addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [closeButton setTitle:@"LET ME SEE THE ART!" forState:UIControlStateNormal];
+        closeButton.titleLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16.0];
+        [closeButton setTitleColor:[UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateNormal];
+        [closeButton setTitleColor:[UIColor colorWithRed:(170.0/255.0) green:(173.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateHighlighted];
+        [closeButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
+        [_initialLoadView addSubview:closeButton];
+        [closeButton release];
+        
+        [self.view addSubview:_initialLoadView];
+    }
+    
+    
+    //bg color
+    [self.view setBackgroundColor:[UIColor blackColor]];
 }
 
 - (void)viewDidUnload
@@ -86,6 +272,7 @@ static const int _kAnnotationLimit = 9999;
     // Release any retained subviews of the main view.
 	[self setMapView:nil];
 	[self.navigationController popToRootViewControllerAnimated:NO];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -94,6 +281,8 @@ static const int _kAnnotationLimit = 9999;
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 }
 
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
@@ -101,16 +290,29 @@ static const int _kAnnotationLimit = 9999;
 	//clear out the navigation controller possibly set by another view controller
 	[self.navigationController setDelegate:nil];
 	
+    if (_initialLoadView) {
+        [UIView animateWithDuration:0.3 animations:^{
+            [_initialLoadView setAlpha:1.0];
+        }];
+    }
+    
 	//update the map if needed
 	if (_mapNeedsRefresh) {
-		[[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated)];
+		[self refreshArt];
 		[self updateArt];
 	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return YES;
+    return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+//	return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    _listViewController.view.frame = CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height);
+    _mapView.frame = CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height);
 }
 
 - (void)dealloc
@@ -142,12 +344,48 @@ static const int _kAnnotationLimit = 9999;
 }
 
 #pragma mark - Button Actions
-
-- (void)shareButtonTapped
+-(void)closeButtonPressed 
 {
-	UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Visit theartaround.us", nil];
-	[shareSheet showInView:self.view];
-	[shareSheet release];
+    
+    float scale = 0.1f;
+    [_initialLoadView setAlpha:0.0];
+    [_initialLoadView setTransform:CGAffineTransformMakeScale(scale, scale)];
+    [_initialLoadView release];
+    _initialLoadView = nil;
+    
+    [[Utilities instance] setHasLoadedBefore:YES];
+    
+}
+
+-(void)addButtonTapped 
+{
+    //create the add controller
+    //AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
+    DetailViewController *detailController = [[DetailViewController alloc] init];
+    
+    //set the location coord to the user's location
+    detailController.currentLocation = self.mapView.map.userLocation.location;
+    
+    //push add controller onto nav 
+    [self.navigationController pushViewController:detailController animated:YES];
+    
+    //set the art for the controller & release
+    [detailController setArt:nil withTemplate:@"AddDetailView"];
+    [detailController setInEditMode:YES];
+    [detailController release];
+}
+
+- (void)favoritesButtonTapped
+{
+    //reverser favs flag
+	_showFavorites = !_showFavorites;
+    
+    //update the button image
+    [self.mapView.favoritesButton setSelected:_showFavorites];
+    [_listViewController.favoriteButton setSelected:_showFavorites];
+    
+    //update art
+    [self updateArt];
 }
 
 -(void)filterButtonTapped
@@ -205,13 +443,42 @@ static const int _kAnnotationLimit = 9999;
 		//pass it along to a new detail controller and push it the navigation controller
 		DetailViewController *detailController = [[DetailViewController alloc] init];
 		[self.navigationController pushViewController:detailController animated:YES];
-		[detailController setArt:selectedArt];
+        
+        //set the location coord to the user's location and the art selected
+        detailController.currentLocation = self.mapView.map.userLocation.location;
+        [detailController setArt:selectedArt withTemplate:nil];
+        
 		[detailController release];
 		
 	}
 }
 
 #pragma mark - Update Art
+
+- (void)flipMap 
+{
+    
+    if (_showingMap) {
+        [UIView transitionFromView:self.mapView toView:_listViewController.tableView duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
+        [UIView transitionFromView:_listButton toView:_mapButton duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
+        
+        [_listViewController.favoriteButton setSelected:_showFavorites];
+    }
+    else {
+        [UIView transitionFromView:_listViewController.tableView toView:self.mapView duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];
+        [UIView transitionFromView:_mapButton  toView:_listButton duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];        
+    }
+    
+    _showingMap = !_showingMap;
+    
+}
+
+//refersh art
+- (void)refreshArt
+{
+    [[AAAPIManager instance] downloadAllArtWithTarget:self callback:@selector(artUpdated) forceDownload:YES];
+    
+}
 
 //called by AAAPIManager when new art is downloaded
 - (void)artUpdated
@@ -229,37 +496,78 @@ static const int _kAnnotationLimit = 9999;
 	[fetchRequest setEntity:entity];
 	[fetchRequest setFetchLimit:_kAnnotationLimit];
 	
+    //turn the header on or off
+    if ([Utilities instance].selectedFilterType == FilterTypeNone && !_showFavorites)
+        self.mapView.headerView.alpha = 0;
+    else {
+        self.mapView.headerView.alpha = 1;
+        
+        if ([Utilities instance].selectedFilterType != FilterTypeNone && _showFavorites)
+            [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Filtered & Favorites"];
+        else if ([Utilities instance].selectedFilterType == FilterTypeNone && _showFavorites)
+            [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Favorites"];
+        else
+            [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Filtered"];        
+    }
+
 	//setup the proper delegate for the selected filter
 	switch ([Utilities instance].selectedFilterType) {
 			
-		case FilterTypeArtist: {
+        case FilterTypeArtist: {
 			NSArray *artists = [[Utilities instance] getFiltersForFilterType:FilterTypeArtist];
 			if (artists) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"artist IN %@", artists]];
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND artist IN %@" : @"artist IN %@", artists]];
 			}
+            
 			break;
 		}
 		case FilterTypeTitle: {
 			NSArray *titles = [[Utilities instance] getFiltersForFilterType:FilterTypeTitle];
 			if (titles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"title IN %@", titles]];
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND title IN %@" : @"title IN %@", titles]];
 			}
+            
+			break;            
 		}
 		case FilterTypeCategory: {
 			NSArray *categoriesTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeCategory];
 			if (categoriesTitles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"category.title IN %@", categoriesTitles]];
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND category.title IN %@" : @"category.title IN %@", categoriesTitles]];
 			}
+
+            break;
 		}
 		case FilterTypeNeighborhood: {
 			NSArray *neighborhoodTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeNeighborhood];
 			if (neighborhoodTitles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"neighborhood.title IN %@", neighborhoodTitles]];
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND neighborhood.title IN %@" : @"neighborhood.title IN %@", neighborhoodTitles]];
 			}
+            
+			break;            
 		}
-		default:
+        case FilterTypeRank: {
+            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND rank > 0" : @"rank > 0"]];
+			break;            
+		}
+        case FilterTypeEvent: {
+			NSArray *eventTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeEvent];
+			if (eventTitles) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND event.name IN %@" : @"event.name IN %@", eventTitles]];
+			}
+            else {
+                [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND event.name <> NULL" : @"event.name <> NULL"]];
+            }
+            
+            break;
+		}
+		default: {
+            
+            if (_showFavorites) {
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"favorite == TRUE"]];
+			}
+        
 			break;
-			
+        }
 	}
 	
 	//clear out the art and annotation arrays
@@ -272,7 +580,22 @@ static const int _kAnnotationLimit = 9999;
 	NSError *error = nil;
 	NSArray *queryItems = [[AAAPIManager managedObjectContext] executeFetchRequest:fetchRequest error:&error];
 	[_items addObjectsFromArray:queryItems];
+    
+    CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
+    
+    //sort items by distance
+    for (Art *thisArt in _items) {
+        CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
+        [thisArt setDistance:[NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)]];
+    }
+    
+    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
+    [_items sortUsingDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+    
 	
+    //reset the list view
+    [_listViewController setItems:_items];
+    
 	//release fetch request
 	[fetchRequest release];
 	
@@ -330,12 +653,15 @@ static const int _kAnnotationLimit = 9999;
 			NSString *title = [art.category.title lowercaseString];
 			NSString *reuseIdentifier = nil;
 			UIImage *pinImage = nil;
-			if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
+			if (art.event != nil) {
+                pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinEvent.png" : @"PinEventPressed.png"];
+            }
+            else if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
 				reuseIdentifier = title;
-				pinImage = [UIImage imageNamed:@"PinVenue.png"];
+				pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinVenue.png" : @"PinVenuePressed.png"];
 			} else {
 				reuseIdentifier = @"art";
-				pinImage = [UIImage imageNamed:@"PinArt.png"];
+				pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinArt.png" : @"PinArtPressed.png"];
 			}
 			
 			//setup the annotation view
@@ -387,6 +713,8 @@ static const int _kAnnotationLimit = 9999;
 	
 	if ([view isKindOfClass:[ArtAnnotationView class]] && (view.annotation.coordinate.latitude != self.callout.coordinate.latitude || view.annotation.coordinate.longitude != self.callout.coordinate.longitude)) {
 		
+        
+        
 		//create the callout if it doesn't exist yet
 		if (!self.callout) {
 			
@@ -414,6 +742,8 @@ static const int _kAnnotationLimit = 9999;
 			[self.callout prepareForReuse];
 			[self.callout setArt:selectedArt];
 			[self.mapView.map addAnnotation:self.callout];
+            
+
 		}
 		
 	} else if (self.callout && self.callout.parentAnnotationView == view) {
@@ -432,7 +762,44 @@ static const int _kAnnotationLimit = 9999;
 	ArtAnnotationView *annotationView = (ArtAnnotationView *)view;
 	if ([annotationView isKindOfClass:[ArtAnnotationView class]] && annotationView.annotation.coordinate.latitude == self.callout.coordinate.latitude && annotationView.annotation.coordinate.longitude == self.callout.coordinate.longitude && !annotationView.preventSelectionChange) {
 		[self.mapView.map removeAnnotation:self.callout];
+        
 	}
+}
+
+
+#pragma mark - Listview delegate
+- (void)selectedArtAtIndex:(int)index
+{
+
+    //get the selected art piece
+    Art *selectedArt = [_items objectAtIndex:index];
+    
+    //pass it along to a new detail controller and push it the navigation controller
+    DetailViewController *detailController = [[DetailViewController alloc] init];
+    [self.navigationController pushViewController:detailController animated:YES];
+    
+    //set the location coord to the user's location and the art selected
+    detailController.currentLocation = self.mapView.map.userLocation.location;
+    [detailController setArt:selectedArt withTemplate:nil];
+    
+    [detailController release];
+    
+}
+
+- (NSDictionary*) currentLocation
+{
+
+    NSDictionary *locDict = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithDouble:self.mapView.map.userLocation.coordinate.latitude], @"lat", [NSNumber numberWithDouble:self.mapView.map.userLocation.coordinate.longitude], @"long", nil];
+    return locDict;
+    
+}
+
+- (void) listViewFilterButtonPressed {
+    [self filterButtonTapped];
+}
+
+- (void) listViewFavoritesButtonPressed {
+    [self favoritesButtonTapped];
 }
 
 @end

@@ -12,6 +12,7 @@
 #import "FlickrAPIManager.h"
 #import "Utilities.h"
 #import "FBConnect.h"
+#import "GANTracker.h"
 
 @implementation ArtAroundAppDelegate
 
@@ -25,10 +26,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
+                                           dispatchPeriod:kGANDispatchPeriodSec
+                                                 delegate:nil];
+    
 	//initialize the window
 	UIWindow *newWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	[self setWindow:newWindow];
-	[[self window] setBackgroundColor:[UIColor whiteColor]];
+	[[self window] setBackgroundColor:[UIColor scrollViewTexturedBackgroundColor]];
 	[[self window] makeKeyAndVisible];
 	[newWindow release];
 	
@@ -205,9 +211,11 @@
 
 	NSURL *storeURL = [NSURL fileURLWithPath:[(NSString *)[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ArtAround.sqlite"]];
     
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    
     NSError *error = nil;
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
+    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error])
     {
         /*
          Replace this implementation with code to handle the error appropriately.
@@ -224,8 +232,10 @@
          
          If you encounter schema incompatibility errors during development, you can reduce their frequency by:
          * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
+         */
+        //[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
+
+        /*
          * Performing automatic lightweight migration by passing the following dictionary as the options parameter: 
          [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
          

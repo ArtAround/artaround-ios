@@ -20,7 +20,7 @@ static NSArray *_kFilterTypes = nil;
 + (NSArray *)filterTypeTitles
 {
 	if (!_kFilterTypes) {
-		_kFilterTypes = [[NSArray alloc] initWithObjects:@"Don't Filter", @"Category", @"Neighborhood", @"Title", @"Artist", nil];
+		_kFilterTypes = [[NSArray alloc] initWithObjects:@"Don't Filter", @"Popular", @"Category", @"Neighborhood", @"Title", @"Artist", @"Event", nil];
 	}
 	return _kFilterTypes;
 }
@@ -78,6 +78,10 @@ static NSArray *_kFilterTypes = nil;
 			case FilterTypeArtist:
 				_titles = [[[AAAPIManager instance] artists] copy];
 				break;
+                
+            case FilterTypeEvent:
+				_titles = [[[AAAPIManager instance] events] copy];
+				break;    
 				
 			default:
 				break;
@@ -128,8 +132,17 @@ static NSArray *_kFilterTypes = nil;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
 	//hide the logo view
 	[Utilities showLogoView:NO inNavigationBar:self.navigationController.navigationBar];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [Utilities trackPageViewWithName:@"FilterView"];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -169,7 +182,7 @@ static NSArray *_kFilterTypes = nil;
 		if (indexPath.row == [[Utilities instance] selectedFilterType]) {
 			cell.accessoryType = UITableViewCellAccessoryCheckmark;
 		} else {
-			if (indexPath.row == 0) {
+			if (indexPath.row <= 1) {
 				cell.accessoryType = UITableViewCellAccessoryNone;
 			} else {
 				cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -249,7 +262,7 @@ static NSArray *_kFilterTypes = nil;
 	}
 
 	//if this is the top level?
-	if (_isTopLevel && indexPath.row != 0) {
+	if (_isTopLevel && indexPath.row > 1) {
 			
 		//dig deeper based on the filter type selected
 		FilterViewController *filterController = [[FilterViewController alloc] initWithFilterType:indexPath.row];

@@ -33,5 +33,16 @@
 @dynamic thumbnailURL;
 @dynamic thumbnailWidth;
 @dynamic art;
+@dynamic primary;
+@dynamic flickrName;
+@dynamic dateAdded;
+
+- (NSString*)description 
+{
+    
+    NSString *desc = [NSString stringWithFormat:@"originalURL: %@", self.originalURL];
+    return desc;
+    
+}
 
 @end

@@ -14,5 +14,5 @@
 
 - (void)parseRequest:(ASIHTTPRequest *)request;
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context;
-
++ (BOOL)setFavorite:(BOOL)fav forSlug:(NSString*)slug;
 @end

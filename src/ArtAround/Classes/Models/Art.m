@@ -11,10 +11,11 @@
 #import "Comment.h"
 #import "Neighborhood.h"
 #import "Photo.h"
-
+#import "Event.h"
 
 @implementation Art
 @dynamic artist;
+@dynamic artDescription;
 @dynamic createdAt;
 @dynamic latitude;
 @dynamic locationDescription;
@@ -27,5 +28,10 @@
 @dynamic comments;
 @dynamic neighborhood;
 @dynamic photos;
+@dynamic favorite;
+@dynamic distance;
+@dynamic rank;
+@dynamic commissioned;
+@dynamic event;
 
 @end

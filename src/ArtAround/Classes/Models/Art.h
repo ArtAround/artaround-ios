@@ -9,12 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Category, Comment, Neighborhood, Photo;
+@class Category, Comment, Neighborhood, Photo, Event;
 
 @interface Art : NSManagedObject {
 @private
 }
 @property (nonatomic, retain) NSString * artist;
+@property (nonatomic, retain) NSString * artDescription;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSDecimalNumber * latitude;
 @property (nonatomic, retain) NSString * locationDescription;
@@ -23,10 +24,17 @@
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSNumber * ward;
 @property (nonatomic, retain) NSNumber * year;
+@property (nonatomic, retain) NSNumber * rank;
+@property (nonatomic, retain) Event *event;
+@property (nonatomic, retain) NSNumber * commissioned;
 @property (nonatomic, retain) Category *category;
 @property (nonatomic, retain) NSSet *comments;
 @property (nonatomic, retain) Neighborhood *neighborhood;
 @property (nonatomic, retain) NSSet *photos;
+@property (nonatomic, retain) NSDecimalNumber *distance;
+
+//new v2 props
+@property (nonatomic, retain) NSNumber * favorite;
 @end
 
 @interface Art (CoreDataGeneratedAccessors)

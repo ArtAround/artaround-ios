@@ -15,6 +15,7 @@
 #import "EGOImageView.h"
 #import "FlickrAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "AAAPIManager.h"
 
 @interface CalloutAnnotationView (private)
 - (void)preventParentSelectionChange;
@@ -127,12 +128,16 @@
 	//grab the first photo and either set the url or download the deets from flickr
 	if (_art.photos && [_art.photos count] > 0) {
 		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
-		if (photo.smallSource && ![photo.smallSource isEqualToString:@""]) {
+		if (photo.mediumURL && ![photo.mediumURL isEqualToString:@""]) {
 			[self setupImage];
 		} else {
-			[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
+			[[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
+            //[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
 		}
 	}
+    else {
+        [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
+    }
 	
 	//are the fields empty?
 	BOOL showTitle = _art.title && ![_art.title isEqualToString:@""];
@@ -171,8 +176,8 @@
 {
 	if (_art.photos && [_art.photos count] > 0) {
 		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
-		if (photo.smallSource && ![photo.smallSource isEqualToString:@""]) {
-			[self.imageView setImageURL:[NSURL URLWithString:photo.smallSource]];
+		if (photo.mediumURL && ![photo.mediumURL isEqualToString:@""]) {
+			[self.imageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.mediumURL]]];
 		}
 	}
 }

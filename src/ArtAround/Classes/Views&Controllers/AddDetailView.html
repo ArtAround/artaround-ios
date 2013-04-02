@@ -1,0 +1,77 @@
+<!doctype> 
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>ArtAround</title>
+		<link rel="stylesheet" type="text/css" href="DetailView.css" title="stylesheet" /> 
+		<link rel="stylesheet" type="text/css" href="DetailView2x.css" media="only screen and (-webkit-min-device-pixel-ratio:2)"/>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0" />
+		<script type="text/javascript">
+            
+            function getArtistName() {
+                return document.getElementById('artistInput').value;
+			}
+            
+            function getTitle() {
+				return document.getElementById('titleInput').value;
+			}
+            
+            function getYear() {
+				return document.getElementById('yearInput').value;
+			}
+            
+            function getCategory() {
+				return document.getElementById('categoryInput').value;
+			}
+            
+			function mapPos() {
+				return findPos(document.getElementById('map'));
+			}
+			
+			function photosPos() {
+				return findPos(document.getElementById('photos'));
+			}
+
+			function findPos(obj) {
+				var curtop = 0;
+				if (obj.offsetParent) {
+					do {
+						curtop += obj.offsetTop;
+					} while (obj = obj.offsetParent);
+					return curtop;
+				}
+			}
+
+		</script>
+	</head>
+	<body>
+
+		<div id="details" class="section light">            
+            Name: <input value="%@" type="text" id="titleInput" placeholder="name"/> <br>
+            Artist: <input value="%@" type="text" id="artistInput" name="artistInput" selectBoxOptions="Canada;Denmark;Finland;Germany;Mexico;Norway;Sweden;United Kingdom;United States"> <br>
+            Date: <input value="%@" type="month" id="yearInput"/>
+            Category: <select id="categoryInput">
+                    %@
+                    </select> <br>
+		</div>
+		
+		<div id="photos" class="section dark">
+		</div>
+		
+		<div id="location" class="section light">
+            Area: <select id="areaInput">
+                %@
+            </select> 
+            Ward: <input value="%@" type="text" id="wardInput"/> <br>
+            <input value="%@" type="text" id="areaDescription" placeholder="Enter a description of the location..." /> <br>
+		</div>
+		
+        <div id "location">
+            <h2>Your coordinates: %@, %@</h2>
+        </div>
+        
+		<div id="map" class="section dark">
+		</div>
+		
+	</body>
+</html>
