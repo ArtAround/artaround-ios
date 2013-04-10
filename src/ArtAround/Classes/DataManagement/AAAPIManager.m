@@ -359,10 +359,6 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 - (void)artRequestCompleted:(ASIHTTPRequest *)request
 {
-
-    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
-    
     
 	//parse the art in the background
 	[self performSelectorInBackground:@selector(parseArtRequest:) withObject:request];
@@ -533,11 +529,6 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 - (void)artUploadCompleted:(ASIHTTPRequest *)request
 {
     
-    //for testing
-    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
-    
-    
     //deserialize the json response
 	NSError *jsonError = nil;
 	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
@@ -579,15 +570,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 {
 	DebugLog(@"artUploadFailed");
     
-    //for testing
-    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
-    
-    //deserialize the json response
-	NSError *jsonError = nil;
-	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
 	
-    
     //call the selector on the target if applicable
 	NSDictionary *userInfo = [request userInfo];
 	if (userInfo) {
@@ -650,9 +633,6 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 //comment upload callback
 - (void)commentUploadCompleted:(ASIHTTPRequest *)request
 {
-    //for testing
-    NSMutableString *responseData = [[NSMutableString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
-    NSString *body = [[NSString alloc] initWithData:[request postBody] encoding:NSUTF8StringEncoding];
     
     //deserialize the json response
 	NSError *jsonError = nil;
