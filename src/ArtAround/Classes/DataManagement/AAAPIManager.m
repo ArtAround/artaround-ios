@@ -458,21 +458,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
-    
-    
-//    ASIFormDataRequest *formDataRequest = [[ASIFormDataRequest alloc] initWithURL:photoUploadURL];
-//    [formDataRequest setDelegate:self];
-//    [formDataRequest setUserInfo:userInfo];
-//    [formDataRequest setRequestMethod:@"POST"];
-//    [formDataRequest setTimeOutSeconds:45];
-//    [formDataRequest setNumberOfTimesToRetryOnTimeout:0];    
-//	[formDataRequest setDidFinishSelector:@selector(artUploadCompleted:)];
-//	[formDataRequest setDidFailSelector:@selector(artUploadFailed:)];  
-//    [formDataRequest setData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.5)] withFileName:@"file.jpg" andContentType:@"image/jpeg;" forKey:@"new_photo"];
-//    [formDataRequest startAsynchronous];  
-//
-//    NSString *body = [[NSString alloc] initWithData:[formDataRequest postBody] encoding:NSUTF8StringEncoding];
-//    DebugLog(@"FORM REQUEST: %@", body);
+
     
     //--create the post body
     //----
