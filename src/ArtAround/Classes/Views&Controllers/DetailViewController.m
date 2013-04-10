@@ -353,7 +353,9 @@ static const float _kPhotoHeight = 140.0f;
 	int totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
 	int photoCount = 0;
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
-	for (Photo *photo in [_art.photos sortedArrayUsingDescriptors:sortDescriptors]) {
+	NSArray * sortedPhotos = [_art.photos sortedArrayUsingDescriptors:sortDescriptors];
+    
+    for (Photo *photo in sortedPhotos) {
 		
 		//adjust the image view y offset
 		float prevOffset = _kPhotoPadding;
@@ -512,7 +514,6 @@ static const float _kPhotoHeight = 140.0f;
     //setup the add image button
     UIButton *addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
-//    [addImgButton setBackgroundImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
     [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
     [addImgButton.imageView setContentMode:UIViewContentModeCenter];
     [addImgButton.layer setBorderColor:[UIColor whiteColor].CGColor];
@@ -1371,7 +1372,9 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     //dismiss the picker view
-    [self dismissModalViewControllerAnimated:YES];    
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    
     
     // Get the image from the result
     UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
@@ -1379,10 +1382,10 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
     //if the user has already been asked for a flickr handle just add image    
     if ([Utilities instance].lastFlickrUpdate) {
     
-    //add image to user added images array
-    [_userAddedImages addObject:image];
-    
-    [self userAddedImage:image];
+        //add image to user added images array
+        [_userAddedImages addObject:image];
+        
+        [self userAddedImage:image];
         
     }
     else {  //if this is the first upload then prompt for their flickr handle
@@ -1393,15 +1396,19 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
         flickrNameController.delegate = self;
         
         [self.view addSubview:flickrNameController.view];
-        [self.navigationItem.backBarButtonItem setEnabled:NO];   
+        [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
         
     }
+        
+    }];
     
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    
     
     //if the user has already been asked for a flickr handle just add image
     if ([Utilities instance].lastFlickrUpdate) {
@@ -1424,11 +1431,13 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
         
     }
+    
+    }];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 
@@ -2959,13 +2968,17 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
     [Utilities instance].flickrHandle = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller flickrHandleField] text]];
     [self userAddedImage:[(FlickrNameViewController*)controller image]];
     
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+    
+    
+    [[controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     //[[AAAPIManager instance] submitFlagForSlug:_art.slug withText:[[(FlickrNameViewController*)controller flickrHandleField] text] target:self callback:@selector(flickrNameSubmissionCompleted) failCallback:@selector(flickrNameSubmissionFailed)];
+    
+    
     
 }
 
@@ -2975,7 +2988,8 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
 
     [self userAddedImage:[(FlickrNameViewController*)controller image]];
     
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+    //[[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+    [[(FlickrNameViewController*)controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
