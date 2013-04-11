@@ -33,7 +33,7 @@ typedef enum AAShareType {
     NSMutableArray*        _userAddedImages;
     NSMutableDictionary*   _newArtDictionary, *_newCommentDictionary;
     int                    _addedImageCount;
-    UITextField*           _artNameField, *_categoryField, *_artistField, *_yearField, *_neighborhoodField, *_wardField;
+    UITextField*           _artNameField, *_categoryField, *_artistField, *_yearField;
     UITextView*            _artDescriptionView, *_locationDescriptionView;
     UIButton*              _invBackButton;
     

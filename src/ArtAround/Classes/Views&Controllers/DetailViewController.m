@@ -32,8 +32,6 @@
 - (NSString *)artName;
 - (NSString *)artistName;
 - (NSString *)artDesctiption;
-- (NSString *)ward;
-- (NSString *)neighborhood;
 - (NSString *)locationDescription;
 
 - (void)addImageButtonTapped;
@@ -703,14 +701,6 @@ static const float _kPhotoHeight = 140.0f;
         if ([self artDesctiption] && [[self artDesctiption] length] > 0)
             [_newArtDictionary setObject:[Utilities urlEncode:[self artDesctiption]] forKey:@"description"];        
         
-        //get the neighborhood if it exists
-        if ([self neighborhood] && [[self neighborhood] length] > 0)
-            [_newArtDictionary setObject:[Utilities urlEncode:[self neighborhood]] forKey:@"neighborhood"];        
-
-        //get the ward if it exists
-        if ([self ward] && [[self ward] length] > 0)
-            [_newArtDictionary setObject:[Utilities urlEncode:[self ward]] forKey:@"ward"];        
-
         //get the location description if it exists
         if ([self locationDescription] && [[self locationDescription] length] > 0)
             [_newArtDictionary setObject:[Utilities urlEncode:[self locationDescription]] forKey:@"location_description"];        
@@ -922,23 +912,11 @@ static const float _kPhotoHeight = 140.0f;
 {
     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:5] text];
 }
- 
-- (NSString *)ward
-{
-
-    return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:2] text];
-}
-
-- (NSString *)neighborhood
-{
-
-return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:1] text];
-}
 
 - (NSString *)locationDescription
 {
 
-return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]] viewWithTag:1] text];
+return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:1] text];
 }
 
 
@@ -1578,16 +1556,6 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                 case 1:
                 {
                     if (_inEditMode) {
-                        return 30;
-                    }
-                    else {
-                        return 14;
-                    }
-                    break;
-                }
-                case 2:
-                {
-                    if (_inEditMode) {
                         return 98;
                     }
                     else {
@@ -1596,7 +1564,7 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                     }
                     break;
                 }
-                case 3:
+                case 2:
                 {
                     return self.detailView.mapView.frame.size.height + 30;
                     break;
@@ -1707,7 +1675,7 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
             return 2;
             break;
         case 1:
-            return 4;
+            return 3;
             break;            
         case 2:
             if ([_art.comments isKindOfClass:[NSSet class]] && _art.comments.count > 3 && _showAllComments)       //show all comments (> 3)
@@ -2192,166 +2160,6 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                     break;
                 }
                 case 1:
-                //location details cell
-                {
-                    if (_inEditMode) {
-                        
-                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDetailsInputCell"];
-                        
-                        if (cell == nil) {
-                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDetailsInputCell"];
-                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                            cell.contentView.backgroundColor = kBGlightBrown;
-                            
-                            
-                            //neighborhood label
-                            UILabel *nLabel = [[UILabel alloc] initWithFrame:CGRectMake(kHorizontalPadding, 0, 90, 16)];
-                            [nLabel setText:@"Neighborhood:"];
-                            [nLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
-                            [nLabel setBackgroundColor:[UIColor clearColor]];
-                            [nLabel setTextColor:kFontColorDarkBrown];
-                            [cell addSubview:nLabel];
-                            
-                            //neighborhood field
-                            _neighborhoodField = [[UITextField alloc] initWithFrame:CGRectMake(nLabel.frame.origin.x + nLabel.frame.size.width + 4, 0, 110, 26)];
-                            _neighborhoodField.tag = 1;
-                            [_neighborhoodField setFont:kDetailFont];
-                            [_neighborhoodField setDelegate:self];
-                            [_neighborhoodField setEnablesReturnKeyAutomatically:NO];                            
-                            [_neighborhoodField setTextColor:kBGdarkBrown];
-                            [_neighborhoodField setPlaceholder:@"Neighborhood"];
-                            [_neighborhoodField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-                            [_neighborhoodField setLeftViewMode:UITextFieldViewModeAlways];
-                            [_neighborhoodField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                            [_neighborhoodField setRightViewMode:UITextFieldViewModeAlways];
-                            [_neighborhoodField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                            if ([Utilities is5OrHigher])
-                                [_neighborhoodField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
-                            else 
-                                [_neighborhoodField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
-                            
-                            [cell addSubview:_neighborhoodField];
-                            [nLabel setCenter:CGPointMake(roundf(nLabel.center.x), roundf(_neighborhoodField.center.y))];                            
-                            [nLabel release];
-                            
-                            //ward field
-                            _wardField = [[UITextField alloc] initWithFrame:CGRectMake(cell.frame.size.width - kHorizontalPadding - 40, 0, 40, 26)];
-                            _wardField.tag = 2;
-                            [_wardField setFont:kDetailFont];
-                            [_wardField setTextColor:kBGdarkBrown];
-                            [_wardField setDelegate:self];
-                            [_wardField setEnablesReturnKeyAutomatically:NO];
-                            [_wardField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-                            [_wardField setLeftViewMode:UITextFieldViewModeAlways];
-                            [_wardField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                            [_wardField setRightViewMode:UITextFieldViewModeAlways];
-                            [_wardField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]];
-                            if ([Utilities is5OrHigher])
-                                [_wardField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 12, 12, 12)]];
-                            else 
-                                [_wardField setBackground:[[UIImage imageNamed:@"TextFieldBackground.png"] stretchableImageWithLeftCapWidth:12 topCapHeight:12]];
-                            [cell addSubview:_wardField];
-                            
-                            
-                            
-                            
-                            
-                            
-                            //ward label
-                            UILabel *wLabel = [[UILabel alloc] initWithFrame:CGRectMake(_wardField.frame.origin.x - 40, 0, 40, 16)];
-                            [wLabel setText:@"Ward:"];
-                            [wLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
-                            [wLabel setBackgroundColor:[UIColor clearColor]];
-                            [wLabel setTextColor:kFontColorDarkBrown];
-                            [wLabel setCenter:CGPointMake(wLabel.center.x, _wardField.center.y)];
-                            [cell addSubview:wLabel];
-                            [wLabel release];
-
-                        }
-                        
-                        //if this is an update - set field text
-                        if (_art) {
-                            
-                            if (_neighborhoodField.text.length == 0 && _art.neighborhood.title.length != 0)
-                                _neighborhoodField.text = _art.neighborhood.title;
-                            
-                            if (_wardField.text.length == 0 && _art.ward != 0)
-                                _wardField.text = [_art.ward stringValue];
-                            
-                        }
-
-                        
-                        return cell;
-                        
-                    }
-                    else {
-                        UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"LocationDetailsCell"];
-                        
-                        if (cell == nil) {
-                            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LocationDetailsCell"];
-                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                            cell.contentView.backgroundColor = kBGlightBrown;
-                            cell.textLabel.font = kDetailFont;
-                            
-                            //neighborhood label & value
-                            UILabel *nLabel = [[UILabel alloc] init];
-                            nLabel.text = @"Neighborhood: ";
-                            nLabel.font = kBoldDetailFont;
-                            nLabel.backgroundColor = [UIColor clearColor];
-                            nLabel.frame = CGRectMake(kHorizontalPadding, 0, roundf([nLabel.text sizeWithFont:nLabel.font].width), 12);
-                            nLabel.textColor = kFontColorDarkBrown;
-                            [cell addSubview:nLabel];
-                            
-                            UILabel *nValue = [[UILabel alloc] initWithFrame:CGRectOffset(nLabel.frame, nLabel.frame.size.width, 0)];
-                            nValue.font = kDetailFont;
-                            nValue.backgroundColor = [UIColor clearColor];                        
-                            nValue.tag = 1;
-                            nValue.textColor = kFontColorDarkBrown;
-                            [cell addSubview:nValue];
-                            
-                            //ward label & value
-                            UILabel *wLabel = [[UILabel alloc] init];
-                            wLabel.text = @"Ward: ";
-                            wLabel.font = kBoldDetailFont;
-                            wLabel.backgroundColor = [UIColor clearColor];                        
-                            wLabel.tag = 2;
-                            wLabel.frame = CGRectMake(cell.frame.size.width - kHorizontalPadding - 80, 0, roundf([wLabel.text sizeWithFont:nLabel.font].width), 12);
-                            wLabel.textColor = kFontColorDarkBrown;
-                            [cell addSubview:wLabel];
-                            
-                            UILabel *wValue = [[UILabel alloc] initWithFrame:CGRectOffset(wLabel.frame, roundf(wLabel.frame.size.width), 0)];
-                            wValue.font = kDetailFont;
-                            wValue.backgroundColor = [UIColor clearColor];                        
-                            wValue.tag = 3;
-                            wValue.textColor = kFontColorDarkBrown;
-                            [cell addSubview:wValue];
-                            
-                            [nLabel release];
-                            [nValue release];
-                            [wLabel release];
-                            [wValue release];
-                        }
-                        
-                        UILabel *nValueLabel = (UILabel*)[cell viewWithTag:1];
-                        nValueLabel.text = _art.neighborhood.title;
-                        double nWidth = roundf([nValueLabel.text sizeWithFont:nValueLabel.font].width);
-                        double maxWidth = roundf(cell.frame.size.width - (2 * kHorizontalPadding) - 80);
-                        nValueLabel.frame = CGRectMake(nValueLabel.frame.origin.x, nValueLabel.frame.origin.y, ((nValueLabel.frame.origin.x + nWidth) > maxWidth) ? maxWidth : nWidth, nValueLabel.frame.size.height);
-                        
-                        UILabel *wDescLabel = (UILabel*)[cell viewWithTag:2];
-                        UILabel *wValueLabel = (UILabel*)[cell viewWithTag:3];                    
-                        wValueLabel.text = (_art.ward != nil && _art.ward != NULL) ? [_art.ward stringValue] : @"";
-                        double wWidth = roundf([wValueLabel.text sizeWithFont:wValueLabel.font].width + wDescLabel.frame.size.width);
-                        double maxwWidth = 80;
-                        wValueLabel.frame = CGRectMake(wValueLabel.frame.origin.x, wValueLabel.frame.origin.y, (wWidth > maxwWidth) ? (maxwWidth - wDescLabel.frame.size.width) : (wWidth - wDescLabel.frame.size.width), nValueLabel.frame.size.height);
-                        
-                        
-                        
-                        return cell;
-                    }
-                    break;
-                }
-                case 2:
                 //locaiton desc cell
                 {
                     
@@ -2423,7 +2231,7 @@ return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndex
                     
                     break;
                 }                    
-                case 3:
+                case 2:
                     //map cell
                 {
                     UITableViewCell *cell = [self.detailView.tableView dequeueReusableCellWithIdentifier:@"MapCell"];
