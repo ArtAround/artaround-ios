@@ -17,7 +17,7 @@
 {
 	NSMutableArray *_items;
 	NSMutableArray *_annotations;
-	BOOL _mapNeedsRefresh, _showingMap;
+	BOOL _mapNeedsRefresh, _showingMap, _foundUser;
     UIImageView *_listButton, *_mapButton;
     UIView *_initialLoadView;
 }

@@ -51,6 +51,9 @@ static const int _kAnnotationLimit = 9999;
         
         //init showingMap
         _showingMap = YES;
+        
+        //init found user
+        _foundUser = NO;
 		
     }
     return self;
@@ -122,11 +125,11 @@ static const int _kAnnotationLimit = 9999;
 
     
 	//default to dc map
-	MKCoordinateSpan spanDC = MKCoordinateSpanMake(0.09, 0.09);
+	MKCoordinateSpan spanDC = MKCoordinateSpanMake(40.0, 40.0);
 	CLLocationCoordinate2D centerDC;
 	centerDC.latitude = 38.895;
 	centerDC.longitude = -77.022;
-	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(centerDC, spanDC)]];
+	[self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(CLLocationCoordinate2DMake(39.707187, -97.734375), spanDC)]];
 	[self.mapView.map setShowsUserLocation:YES];
     
 	//setup button actions
@@ -764,6 +767,15 @@ static const int _kAnnotationLimit = 9999;
 	}
 }
 
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+   
+    if (!_foundUser) {
+        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
+        _foundUser = YES;
+    }
+    
+}
 
 #pragma mark - Listview delegate
 - (void)selectedArtAtIndex:(int)index
