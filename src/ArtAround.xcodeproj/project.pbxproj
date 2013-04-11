@@ -1175,6 +1175,7 @@
 		CA0554771410BE4300940D61 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -1184,6 +1185,7 @@
 					"\"$(SRCROOT)/ArtAround/Classes/ThirdParty/Google Analytics\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "8686C904-EC7D-4DB9-8FB8-4A639C468665";
 				WRAPPER_EXTENSION = app;
 			};
 			name = AdHoc;
