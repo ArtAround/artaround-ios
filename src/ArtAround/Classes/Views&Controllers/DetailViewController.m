@@ -1215,12 +1215,19 @@ static const float _kPhotoHeight = 140.0f;
 
 - (void)artUploadCompleted:(NSDictionary*)responseDict
 {
+    //flag to check if this was an edit or a new submission
+    BOOL newArt = NO;
+    
     if ([responseDict objectForKey:@"success"]) {
         
         //parse new art and update this controller instance's art
         //grab the newly created slug if this is a creation
-        if (!_art.slug)
+        if (!_art.slug) {
             [_newArtDictionary setObject:[responseDict objectForKey:@"success"] forKey:@"slug"];
+            
+            //it was new art
+            newArt = YES;
+        }
         
         //decode the objects
         for (NSString *thisKey in [_newArtDictionary allKeys]) {
@@ -1255,6 +1262,11 @@ static const float _kPhotoHeight = 140.0f;
         
         //dismiss loadign view
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+        
+        if (!newArt) {
+            UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your edit! Our moderators will approve it shortly" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [moderationComment show];
+        }
         
         //reload the map view so the updated/new art is there
         ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
