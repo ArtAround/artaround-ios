@@ -880,7 +880,7 @@ static const float _kPhotoHeight = 140.0f;
  
  - (NSString *)yearString
  {
-     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:4] text];
+     return [_yearField text];
  }
  
  - (NSString *)category
@@ -905,18 +905,18 @@ static const float _kPhotoHeight = 140.0f;
  
  - (NSString *)artistName
  {
-     return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:2] text];
+     return [_artistField text];
  }
 
 - (NSString *)artDesctiption
 {
-    return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] viewWithTag:5] text];
+    return [_artDescriptionView text];
 }
 
 - (NSString *)locationDescription
 {
 
-return [(UITextField*)[[self.detailView.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]] viewWithTag:1] text];
+    return [_locationDescriptionView text];
 }
 
 
