@@ -177,6 +177,7 @@
 	if (_art.photos && [_art.photos count] > 0) {
 		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
 		if (photo.mediumURL && ![photo.mediumURL isEqualToString:@""]) {
+            //DebugLog(@"%@", [NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.mediumURL]);
 			[self.imageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.mediumURL]]];
 		}
 	}
