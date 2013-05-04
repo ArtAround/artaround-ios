@@ -633,26 +633,42 @@ static const float _kPhotoHeight = 140.0f;
 
 
 #pragma mark - Action's
-- (void) artButtonPressed:(id)sender 
+- (void) artButtonPressed:(id)sender
 {
     EGOImageButton *button = (EGOImageButton*)sender;
+    int buttonTag = button.tag;
     
-    PhotoImageView *imgView = [[PhotoImageView alloc] init];
+    //get this photo
+    NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
+	NSArray * sortedPhotos = [_art.photos sortedArrayUsingDescriptors:sortDescriptors];
+    Photo *thisPhoto = [sortedPhotos objectAtIndex:buttonTag - 10];
+    
+    PhotoImageView *imgView = [[PhotoImageView alloc] initWithFrame:CGRectOffset(self.view.frame, 0, 0)];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
+    [imgView setBackgroundColor:kFontColorDarkBrown];
+    
     if (button.imageView.image)
         [imgView setImage:button.imageView.image];
     else {
-        [imgView setImageURL:button.imageURL];
+        if (thisPhoto.originalURL)
+            [imgView setImageURL:[NSURL URLWithString:thisPhoto.originalURL]];
     }
-    [imgView setBackgroundColor:kFontColorDarkBrown];
+
+    //set the photo attribution if they exist
+    if (thisPhoto.flickrName) {
+        imgView.photoAttributionLabel.text = thisPhoto.flickrName;
+    }
 
     UIViewController *viewController = [[UIViewController alloc] init];
     viewController.view = imgView;
 
+
     [self.navigationController pushViewController:viewController animated:YES];
-                                   
+    DebugLog(@"LABEL WIDTH: %f", imgView.photoAttributionLabel.frame.size.width);    
     [imgView release];
     [viewController release];
+    
+
                              
     
 }
@@ -2117,8 +2133,6 @@ static const float _kPhotoHeight = 140.0f;
                         
                         CGSize eventSize = [eLabel.text sizeWithFont:eLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
                         [eLabel setFrame:CGRectMake(eLabel.frame.origin.x, eLabel.frame.origin.y, maxWidth, eventSize.height)];
-                        DebugLog(@"EVENT: %@", _art.event.name);
-                        DebugLog(@"EVENT SIZE: %f", eventSize.height);
                         
                         //set the description label and arrange
                         UILabel *dLabel = (UILabel*)[cell viewWithTag:4];

@@ -24,16 +24,21 @@
         [attributionButton setFrame:CGRectMake(10.0f, frame.size.height - kLabelHeight - 10.0f, frame.size.width - 20.0f, kLabelHeight)];
         [attributionButton setTitle:@"Attr Button" forState:UIControlStateNormal];
         [attributionButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
+        [attributionButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         [self setPhotoAttributionButton:attributionButton];
         
         UILabel *attributionLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, attributionButton.frame.origin.y - kLabelHeight, frame.size.width - 20.0f, kLabelHeight)];
         [attributionLabel setBackgroundColor:[UIColor clearColor]];
         [attributionLabel setText:@"Att Label"];
-        [attributionLabel setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
+        [attributionLabel setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
+        [attributionLabel setTextColor:[UIColor whiteColor]];
+        [attributionLabel setTextAlignment:NSTextAlignmentLeft];
         [self setPhotoAttributionLabel:attributionLabel];
         
         [self addSubview:self.photoAttributionLabel];
         [self addSubview:self.photoAttributionButton];
+        
+        DebugLog(@"Label Width: %f", self.photoAttributionLabel.frame.size.width);
     }
     return self;
 }
