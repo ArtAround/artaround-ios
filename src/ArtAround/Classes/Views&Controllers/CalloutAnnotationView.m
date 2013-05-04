@@ -57,7 +57,7 @@
 		//title
 		UILabel *aTitleLabel = [[UILabel alloc] init];
 		[aTitleLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:13.0f]];
-		[aTitleLabel setMinimumFontSize:10.0f];
+		[aTitleLabel setMinimumFontSize:13.0f];
 		[aTitleLabel setAdjustsFontSizeToFitWidth:YES];
 		[aTitleLabel setBackgroundColor:[UIColor clearColor]];
 		[self setTitleLabel:aTitleLabel];
@@ -66,7 +66,7 @@
 	
 		//artist
 		UILabel *anArtistLabel = [[UILabel alloc] init];
-		[anArtistLabel setFont:[UIFont fontWithName:@"Helvetica" size:9.25f]];
+		[anArtistLabel setFont:[UIFont fontWithName:@"Helvetica" size:11.25f]];
 		[anArtistLabel setBackgroundColor:[UIColor clearColor]];
 		[self setArtistLabel:anArtistLabel];
 		[self addSubview:self.artistLabel];
@@ -74,7 +74,7 @@
 		
 		//category
 		UILabel *aCategoryLabel = [[UILabel alloc] init];
-		[aCategoryLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:9.25f]];
+		[aCategoryLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:11.25f]];
 		[aCategoryLabel setBackgroundColor:[UIColor clearColor]];
 		[self setCategoryLabel:aCategoryLabel];
 		[self addSubview:self.categoryLabel];
@@ -82,7 +82,7 @@
 		
 		//summary
 		UILabel *aSummaryLabel = [[UILabel alloc] init];
-		[aSummaryLabel setFont:[UIFont fontWithName:@"Helvetica" size:9.25f]];
+		[aSummaryLabel setFont:[UIFont fontWithName:@"Helvetica" size:11.25f]];
 		[aSummaryLabel setBackgroundColor:[UIColor clearColor]];
 		[aSummaryLabel setNumberOfLines:3];
 		[self setSummaryLabel:aSummaryLabel];

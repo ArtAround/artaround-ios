@@ -1541,7 +1541,7 @@ static const float _kPhotoHeight = 140.0f;
                             return (_art.event != nil) ? (90 + reqdSize.height) : (75 + reqdSize.height);
                         }
                         else
-                            return 70;
+                            return 80;
                     }
                     break;
                 }
@@ -2105,20 +2105,27 @@ static const float _kPhotoHeight = 140.0f;
                         aLabel.frame = CGRectMake(aLabel.frame.origin.x, aLabel.frame.origin.y, roundf((reqdWidth > maxWidth) ? maxWidth : reqdWidth), aLabel.frame.size.height);
                         yLabel.frame = CGRectMake(aLabel.frame.origin.x + aLabel.frame.size.width, yLabel.frame.origin.y, [yLabel.text sizeWithFont:aLabel.font].width, yLabel.frame.size.height);
                         
+                        //set the event label and arrange
+                        UILabel *eLabel = (UILabel*)[cell viewWithTag:6];
+                        
+                        if (_art.event != nil) {
+                            [eLabel setText:[NSString stringWithFormat:@"Part of the %@ event", _art.event.name]];
+                        }
+                        else {
+                            [eLabel setText:@""];
+                        }
+                        
+                        CGSize eventSize = [eLabel.text sizeWithFont:eLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                        [eLabel setFrame:CGRectMake(eLabel.frame.origin.x, eLabel.frame.origin.y, maxWidth, eventSize.height)];
+                        DebugLog(@"EVENT: %@", _art.event.name);
+                        DebugLog(@"EVENT SIZE: %f", eventSize.height);
                         
                         //set the description label and arrange
                         UILabel *dLabel = (UILabel*)[cell viewWithTag:4];
                         [dLabel setText:_art.artDescription];
                         CGSize reqdSize = [dLabel.text sizeWithFont:dLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
-                        [dLabel setFrame:CGRectMake(dLabel.frame.origin.x, dLabel.frame.origin.y, maxWidth, roundf(reqdSize.height))];
+                        [dLabel setFrame:CGRectMake(dLabel.frame.origin.x, eLabel.frame.origin.y + eLabel.frame.size.height + 4, maxWidth, roundf(reqdSize.height))];
                         
-                        if (_art.event != nil) {
-                            [(UILabel*)[cell viewWithTag:6] setText:[NSString stringWithFormat:@"Part of the %@ event", _art.event.name]];
-                        }
-                        else {
-                            [(UILabel*)[cell viewWithTag:6] setText:@""];                            
-                            [dLabel setFrame:CGRectOffset(dLabel.frame, 0, -aLabel.frame.size.height + 5)];
-                        }
                         
                         return cell;
                     }

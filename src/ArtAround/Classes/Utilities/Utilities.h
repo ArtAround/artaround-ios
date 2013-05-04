@@ -13,9 +13,9 @@
 //font types
 #define kH1Font [UIFont fontWithName:@"Georgia-Bold" size:16]
 #define kH2Font [UIFont fontWithName:@"Georgia-BoldItalic" size:14]
-#define kBoldDetailFont [UIFont fontWithName:@"Helvetica-Bold" size:11]
-#define kBoldItalicDetailFont [UIFont fontWithName:@"Helvetica-BoldOblique" size:11]
-#define kDetailFont [UIFont fontWithName:@"Helvetica" size:11]
+#define kBoldDetailFont [UIFont fontWithName:@"Helvetica-Bold" size:13]
+#define kBoldItalicDetailFont [UIFont fontWithName:@"Helvetica-BoldOblique" size:13]
+#define kDetailFont [UIFont fontWithName:@"Helvetica" size:13]
 
 //bg colors
 #define kBGdarkBrown [UIColor colorWithRed:82.0f/255.0f green:74.0f/255.0f blue:75.0f/255.0f alpha:1.0f]

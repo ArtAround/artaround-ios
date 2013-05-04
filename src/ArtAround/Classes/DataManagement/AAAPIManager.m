@@ -777,8 +777,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 		first = NO;
 	}
     
-    if ([urlString rangeOfString:@"photos.json"].location != NSNotFound)
-        urlString = [urlString stringByAppendingString:@"?attribution_text=attTextHere&attribution_url=google"];
+    //if ([urlString rangeOfString:@"photos.json"].location != NSNotFound)
+    //    urlString = [urlString stringByAppendingString:@"?attribution_text=attTextHere&attribution_url=google"];
 	
 	DebugLog(@"URL Requested: %@", urlString);
 	
