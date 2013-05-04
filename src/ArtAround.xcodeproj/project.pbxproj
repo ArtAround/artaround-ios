@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4604E0A617356D4F0019011B /* PhotoImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4604E0A517356D4F0019011B /* PhotoImageView.m */; };
 		46073BD8173352A400D9BCEE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46073BD7173352A400D9BCEE /* Default-568h@2x.png */; };
 		5F7A24A4150CF8A100101598 /* EventParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A3150CF8A100101598 /* EventParser.m */; };
 		5F7A24A8150CF98000101598 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A7150CF98000101598 /* Event.m */; };
@@ -171,6 +172,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4604E0A417356D4F0019011B /* PhotoImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoImageView.h; sourceTree = "<group>"; };
+		4604E0A517356D4F0019011B /* PhotoImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoImageView.m; sourceTree = "<group>"; };
 		46073BD7173352A400D9BCEE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5F7A24A2150CF8A100101598 /* EventParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParser.h; sourceTree = "<group>"; };
 		5F7A24A3150CF8A100101598 /* EventParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParser.m; sourceTree = "<group>"; };
@@ -429,6 +432,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4604E0A317356D040019011B /* ImageView */ = {
+			isa = PBXGroup;
+			children = (
+				4604E0A417356D4F0019011B /* PhotoImageView.h */,
+				4604E0A517356D4F0019011B /* PhotoImageView.m */,
+			);
+			name = ImageView;
+			sourceTree = "<group>";
+		};
 		5F7A24C2150D5E3300101598 /* Flagging */ = {
 			isa = PBXGroup;
 			children = (
@@ -906,6 +918,7 @@
 		CAFF2CB81409A51800C98C0E /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				4604E0A317356D040019011B /* ImageView */,
 				CAFF2CB21409A50400C98C0E /* DetailViewController.h */,
 				CAFF2CB31409A50400C98C0E /* DetailViewController.m */,
 				CAFF2CB51409A51400C98C0E /* DetailView.h */,
@@ -1136,6 +1149,7 @@
 				5F7A24A8150CF98000101598 /* Event.m in Sources */,
 				5F7A24C6150D5E8D00101598 /* FlagViewController.m in Sources */,
 				5FFEE4EC15391C5400C4C7BC /* FlickrNameViewController.m in Sources */,
+				4604E0A617356D4F0019011B /* PhotoImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

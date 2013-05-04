@@ -18,7 +18,7 @@
 @implementation FlickrNameViewController
 
 @synthesize delegate;
-@synthesize flickrHandleField;
+@synthesize flickrHandleField, attributionURLField;
 @synthesize flickrHandleImageLabel;
 @synthesize image;
 

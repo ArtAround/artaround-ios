@@ -15,6 +15,7 @@
 @property (nonatomic, retain) id <FlickrNameViewControllerDelegate> delegate;
 @property (nonatomic, retain) UIImage *image;
 @property (retain, nonatomic) IBOutlet UITextField *flickrHandleField;
+@property (retain, nonatomic) IBOutlet UITextField *attributionURLField;
 @property (retain, nonatomic) IBOutlet UILabel *flickrHandleImageLabel;
 
 - (IBAction)cancelButtonPressed:(id)sender;

@@ -17,8 +17,8 @@
 #import "Utilities.h"
 #import "FlickrAPIManager.h"
 #import "Photo.h"
-#import "EGOImageView.h"
 #import "EGOImageButton.h"
+#import "PhotoImageView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
 #import "ItemParser.h"
@@ -637,7 +637,7 @@ static const float _kPhotoHeight = 140.0f;
 {
     EGOImageButton *button = (EGOImageButton*)sender;
     
-    EGOImageView *imgView = [[EGOImageView alloc] init];
+    PhotoImageView *imgView = [[PhotoImageView alloc] init];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
     if (button.imageView.image)
         [imgView setImage:button.imageView.image];
