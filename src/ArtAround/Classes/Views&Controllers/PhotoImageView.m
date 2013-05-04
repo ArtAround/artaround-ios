@@ -25,8 +25,6 @@
 //        [attributionButton setFrame:CGRectMake(10.0f, frame.size.height - kLabelHeight - 10.0f, frame.size.width - 20.0f, kLabelHeight)];
 
         [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackgroundPressed.png"] forState:UIControlStateHighlighted];
-        [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackground.png"] forState:UIControlStateNormal];
-//        [attributionButton setBackgroundColor:[UIColor clearColor]];
         [attributionButton setTitleEdgeInsets:UIEdgeInsetsZero];
         [attributionButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
         [attributionButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
@@ -36,7 +34,7 @@
         
         //add label to button
         UILabel *attributionButtonLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, attributionButton.frame.size.width, attributionButton.frame.size.height)];
-        [attributionButtonLabel setBackgroundColor:[UIColor blueColor]];
+        [attributionButtonLabel setBackgroundColor:[UIColor clearColor]];
         [attributionButtonLabel setText:@"Att Button"];
         [attributionButtonLabel setTag:kAttributionButtonLabelTag];
         [attributionButtonLabel setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
@@ -62,8 +60,15 @@
 
 - (void) attributionButtonPressed {
 
-    if (self.photoImageViewDelegate && [(id)self.photoImageViewDelegate performSelector:@selector(attributionButtonPressed:)])
-        [(id)self.photoImageViewDelegate attributionButtonPressed:self];
+    NSString *urlString = [(UILabel*)[self.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] text];
+
+    if (urlString && urlString.length > 0) {
+    
+        NSURL *url = [NSURL URLWithString:urlString];
+        
+        [(id)self.photoImageViewDelegate attributionButtonPressed:self withTitle:self.photoAttributionLabel.text andURL:url];
+        
+    }
     
 }
 
@@ -77,13 +82,17 @@
 */
 
 - (UIView*) hitTest:(CGPoint)point withEvent:(UIEvent *)event{
+    NSString *urlString = [(UILabel*)[self.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] text];
     
-    CGPoint touchPoint = [self.photoAttributionButton convertPoint:point fromView:self];
-
-    if ([self.photoAttributionButton pointInside:touchPoint withEvent:event]) {
-        return self.photoAttributionButton;
+    if (urlString && urlString.length > 0) {
+        
+        CGPoint touchPoint = [self.photoAttributionButton convertPoint:point fromView:self];
+        
+        if ([self.photoAttributionButton pointInside:touchPoint withEvent:event]) {
+            return self.photoAttributionButton;
+        }
+        
     }
-    
     return [super hitTest:point withEvent:event];
     
     

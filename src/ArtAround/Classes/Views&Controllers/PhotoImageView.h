@@ -21,7 +21,7 @@
 
 @protocol PhotoImageViewDelegate
 
-- (void) attributionButtonPressed:(id)sender;
+- (void) attributionButtonPressed:(id)sender withTitle:(NSString*)title andURL:(NSURL*)url;
 
 @end
 

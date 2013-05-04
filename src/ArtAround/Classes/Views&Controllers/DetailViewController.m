@@ -660,7 +660,7 @@ static const float _kPhotoHeight = 140.0f;
     }
     if (thisPhoto.photoAttributionURL) {
         [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:thisPhoto.photoAttributionURL];
-        [imgView.photoAttributionButton addTarget:self action:@selector(test) forControlEvents:UIControlEventTouchUpInside];
+
     }
 
     UIViewController *viewController = [[UIViewController alloc] init];
@@ -854,6 +854,12 @@ static const float _kPhotoHeight = 140.0f;
     [self setInEditMode:NO];
 }
 
+- (void) closeModalViewController:(id)sender
+{
+    if (self.modalViewController) {
+        [self dismissModalViewControllerAnimated:YES];
+    }
+}
 
 #pragma mark - UIWebViewDelegate
 /*
@@ -2862,9 +2868,32 @@ static const float _kPhotoHeight = 140.0f;
 }
 
 #pragma mark - PhotoImageViewDelegate
-- (void) attributionButtonPressed:(id)sender
+- (void) attributionButtonPressed:(id)sender withTitle:(NSString*)title andURL:(NSURL*)url
 {
-    DebugLog(@"Presssssed");
+    //create request
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+    
+    //create webview
+    UIWebView *webView = [[UIWebView alloc] init];
+    [webView loadRequest:request];
+    
+    //create view controller
+    UIViewController *containerViewController = [[UIViewController alloc] init];
+    [containerViewController setView:webView];
+    [containerViewController setTitle:title];
+    
+    //create the navcontroller
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:containerViewController];
+    
+    //create close button and add to nav bar
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(closeModalViewController:)];
+    [containerViewController.navigationItem setLeftBarButtonItem:closeButton];
+    
+    
+    //present nav controller
+    [self presentModalViewController:navController animated:YES];
+    
+    
 }
 
 @end
