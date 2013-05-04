@@ -36,6 +36,8 @@
 @dynamic primary;
 @dynamic flickrName;
 @dynamic dateAdded;
+@dynamic photoAttribution;
+@dynamic photoAttributionURL;
 
 - (NSString*)description 
 {

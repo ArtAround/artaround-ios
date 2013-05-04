@@ -13,6 +13,8 @@
 #import "FBConnect.h"
 #import "FlagViewController.h"
 #import "FlickrNameViewController.h"
+#import "PhotoImageView.h"
+
 @class DetailView;
 @class Art;
 
@@ -24,7 +26,7 @@ typedef enum AAShareType {
 	AAShareTypeFacebook = 2
 } AAShareType;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, FBSessionDelegate, MFMailComposeViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UITextViewDelegate, FlagViewControllerDelegate, FlickrNameViewControllerDelegate>
+@interface DetailViewController : UIViewController <UIWebViewDelegate, MKMapViewDelegate, UIActionSheetDelegate, FBDialogDelegate, FBSessionDelegate, MFMailComposeViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UITextViewDelegate, FlagViewControllerDelegate, FlickrNameViewControllerDelegate, PhotoImageViewDelegate>
 {
 	ArtAroundAppDelegate*  _appDelegate;
 	Facebook*              _facebook;

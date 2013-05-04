@@ -38,6 +38,8 @@
 @property (nonatomic, retain) NSNumber * primary;
 @property (nonatomic, retain) NSString * flickrName;
 @property (nonatomic, retain) NSDate * dateAdded;
+@property (nonatomic, retain) NSString * photoAttribution;
+@property (nonatomic, retain) NSString * photoAttributionURL;
 @property (nonatomic, retain) Art *art;
 
 @end

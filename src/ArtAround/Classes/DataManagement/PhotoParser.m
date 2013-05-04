@@ -116,7 +116,9 @@
     NSString *originalURL = @"";
     NSString *mediumURL = @"";
     NSString *thumbnailURL = @"";
-    NSString *flickrName = @"";    
+    NSString *flickrName = @"";
+    NSString *photoAttribution = @"";
+    NSString *photoAttributionURL = @"";
     NSDate *addedDate = [NSDate date];
     
     if (![[photoDict objectForKey:@"primary"] isKindOfClass:[NSNull class]]) {
@@ -139,6 +141,14 @@
         flickrName = [AAAPIManager clean:[photoDict objectForKey:@"flickr_username"]];
     }
     
+    if (![[photoDict objectForKey:@"attribution_text"] isKindOfClass:[NSNull class]]) {
+        photoAttribution = [AAAPIManager clean:[photoDict objectForKey:@"attribution_text"]];
+    }
+    
+    if (![[photoDict objectForKey:@"attribution_url"] isKindOfClass:[NSNull class]]) {
+        photoAttributionURL = [AAAPIManager clean:[photoDict objectForKey:@"attribution_url"]];
+    }
+    
     if (!originalURL || originalURL.length <= 0)
         return nil;
     
@@ -156,6 +166,12 @@
         
         if (flickrName || flickrName.length > 0)
             photo.flickrName = flickrName;
+        
+        if (photoAttribution || photoAttribution.length > 0)
+            photo.photoAttribution = photoAttribution;
+        
+        if (photoAttributionURL || photoAttributionURL.length > 0)
+            photo.photoAttributionURL = photoAttributionURL;
         
         photo.dateAdded = addedDate;
             

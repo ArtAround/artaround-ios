@@ -18,7 +18,6 @@
 #import "FlickrAPIManager.h"
 #import "Photo.h"
 #import "EGOImageButton.h"
-#import "PhotoImageView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
 #import "ItemParser.h"
@@ -644,6 +643,7 @@ static const float _kPhotoHeight = 140.0f;
     Photo *thisPhoto = [sortedPhotos objectAtIndex:buttonTag - 10];
     
     PhotoImageView *imgView = [[PhotoImageView alloc] initWithFrame:CGRectOffset(self.view.frame, 0, 0)];
+    [imgView setPhotoImageViewDelegate:self];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
     [imgView setBackgroundColor:kFontColorDarkBrown];
     
@@ -651,12 +651,16 @@ static const float _kPhotoHeight = 140.0f;
         [imgView setImage:button.imageView.image];
     else {
         if (thisPhoto.originalURL)
-            [imgView setImageURL:[NSURL URLWithString:thisPhoto.originalURL]];
+            [imgView setImageURL:button.imageURL];
     }
 
     //set the photo attribution if they exist
-    if (thisPhoto.flickrName) {
-        imgView.photoAttributionLabel.text = thisPhoto.flickrName;
+    if (thisPhoto.photoAttribution) {
+        imgView.photoAttributionLabel.text = thisPhoto.photoAttribution;
+    }
+    if (thisPhoto.photoAttributionURL) {
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:thisPhoto.photoAttributionURL];
+        [imgView.photoAttributionButton addTarget:self action:@selector(test) forControlEvents:UIControlEventTouchUpInside];
     }
 
     UIViewController *viewController = [[UIViewController alloc] init];
@@ -664,7 +668,7 @@ static const float _kPhotoHeight = 140.0f;
 
 
     [self.navigationController pushViewController:viewController animated:YES];
-    DebugLog(@"LABEL WIDTH: %f", imgView.photoAttributionLabel.frame.size.width);    
+    DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
     [imgView release];
     [viewController release];
     
@@ -2855,6 +2859,12 @@ static const float _kPhotoHeight = 140.0f;
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];    
+}
+
+#pragma mark - PhotoImageViewDelegate
+- (void) attributionButtonPressed:(id)sender
+{
+    DebugLog(@"Presssssed");
 }
 
 @end

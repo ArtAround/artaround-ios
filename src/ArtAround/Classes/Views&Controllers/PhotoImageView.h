@@ -7,10 +7,21 @@
 //
 
 #import "EGOImageView.h"
+#define kAttributionButtonLabelTag 55
+
+@protocol PhotoImageViewDelegate;
 
 @interface PhotoImageView : EGOImageView
 
+@property (nonatomic, assign) id <PhotoImageViewDelegate> *photoImageViewDelegate;
 @property (nonatomic, retain) UILabel *photoAttributionLabel;
 @property (nonatomic, retain) UIButton *photoAttributionButton;
 
 @end
+
+@protocol PhotoImageViewDelegate
+
+- (void) attributionButtonPressed:(id)sender;
+
+@end
+
