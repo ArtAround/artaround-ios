@@ -505,6 +505,19 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[request setDidFailSelector:@selector(artUploadFailed:)];
 	[request startAsynchronous];
     
+    //    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    //    ASIFormDataRequest *formRequest = [ASIFormDataRequest requestWithURL:photoUploadURL];
+    //    [formRequest setUserInfo:userInfo];
+    //    [formRequest setNumberOfTimesToRetryOnTimeout:0];
+    //    [formRequest setTimeOutSeconds:45];
+    //    [formRequest appendPostData:imageData];
+    //    [formRequest setRequestMethod:@"POST"];
+    //    [formRequest addRequestHeader:@"Content-Type" value:@"image/jpeg"];
+    //    [formRequest setDelegate:self];
+    //    [formRequest setDidFinishSelector:@selector(artUploadCompleted:)];
+    //    [formRequest setDidFailSelector:@selector(artUploadFailed:)];
+    //    [formRequest startAsynchronous];
+    
     
     //[postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\";%@\r\n", filename, flickrHandleString] dataUsingEncoding:NSUTF8StringEncoding]];
     //[postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
