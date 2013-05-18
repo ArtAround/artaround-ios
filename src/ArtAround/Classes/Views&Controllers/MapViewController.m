@@ -18,6 +18,7 @@
 #import "DetailViewController.h"
 #import "AddDetailViewController.h"
 #import "QuartzCore/CALayer.h"
+#import "ArtDetailViewController.h"
 
 static const int _kAnnotationLimit = 9999;
 
@@ -441,15 +442,20 @@ static const int _kAnnotationLimit = 9999;
 		//get the selected art piece
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
-		//pass it along to a new detail controller and push it the navigation controller
-		DetailViewController *detailController = [[DetailViewController alloc] init];
-		[self.navigationController pushViewController:detailController animated:YES];
+        ArtDetailViewController *detailViewController = [[ArtDetailViewController alloc] initWithNibName:@"ArtDetailViewController" bundle:nil];
+        [self.navigationController pushViewController:detailViewController animated:YES];
+        [detailViewController setArt:selectedArt withTemplate:nil];        
+		
         
-        //set the location coord to the user's location and the art selected
-        detailController.currentLocation = self.mapView.map.userLocation.location;
-        [detailController setArt:selectedArt withTemplate:nil];
-        
-		[detailController release];
+//        //pass it along to a new detail controller and push it the navigation controller
+//		DetailViewController *detailController = [[DetailViewController alloc] init];
+//		[self.navigationController pushViewController:detailController animated:YES];
+//        
+//        //set the location coord to the user's location and the art selected
+//        detailController.currentLocation = self.mapView.map.userLocation.location;
+//        [detailController setArt:selectedArt withTemplate:nil];
+//        
+//		[detailController release];
 		
 	}
 }
