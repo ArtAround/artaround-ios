@@ -1,5 +1,5 @@
 //
-//  ArtDetailViewController.h
+//  AddArtViewController.h
 //  ArtAround
 //
 //  Created by Brian Singer on 5/18/13.
@@ -31,13 +31,14 @@ static const float _kPhotoHeight = 140.0f;
 #define _kShareActionSheet 101
 #define _kFlagActionSheet 102
 #define _kUserAddedImageTagBase 1000
+#define _kAddImageTagBase 2000
 
 
 
-@interface ArtDetailViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate>
+@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate>
 {
     int                    _addedImageCount;    
-    NSMutableArray*        _userAddedImages;
+    NSMutableArray*        _userAddedImages, *_imageButtons;
 }
 
 
@@ -54,10 +55,7 @@ static const float _kPhotoHeight = 140.0f;
 @property (retain, nonatomic) IBOutlet UIButton *eventButton;
 @property (retain, nonatomic) IBOutlet UITextView *descriptionTextView;
 
-- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName;
-- (void)setArt:(Art *)art withTemplate:(NSString*)templateFileName forceDownload:(BOOL)force;
-- (void)setInEditMode:(BOOL)editMode;
-- (void)bottomToolbarButtonTapped;
+
 - (void)userAddedImage:(UIImage*)image;
 - (void)setupImages;
 

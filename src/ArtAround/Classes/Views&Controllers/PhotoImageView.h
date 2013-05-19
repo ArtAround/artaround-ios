@@ -16,7 +16,6 @@
 @property (nonatomic, assign) id <PhotoImageViewDelegate> *photoImageViewDelegate;
 @property (nonatomic, retain) UILabel *photoAttributionLabel;
 @property (nonatomic, retain) UIButton *photoAttributionButton;
-
 @end
 
 @protocol PhotoImageViewDelegate

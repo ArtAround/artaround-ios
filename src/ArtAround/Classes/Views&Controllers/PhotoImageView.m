@@ -22,8 +22,6 @@
         // Initialization code
         
         UIButton *attributionButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0f, frame.size.height - kLabelHeight - 10.0f, frame.size.width - 20.0f, kLabelHeight)];
-//        [attributionButton setFrame:CGRectMake(10.0f, frame.size.height - kLabelHeight - 10.0f, frame.size.width - 20.0f, kLabelHeight)];
-
         [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackgroundPressed.png"] forState:UIControlStateHighlighted];
         [attributionButton setTitleEdgeInsets:UIEdgeInsetsZero];
         [attributionButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
@@ -50,6 +48,9 @@
         [attributionLabel setTextAlignment:NSTextAlignmentLeft];
         [self setPhotoAttributionLabel:attributionLabel];
         
+        
+        
+        
         [self addSubview:self.photoAttributionLabel];
         [self addSubview:self.photoAttributionButton];
         
@@ -71,6 +72,8 @@
     }
     
 }
+
+
 
 /*
 // Only override drawRect: if you perform custom drawing.

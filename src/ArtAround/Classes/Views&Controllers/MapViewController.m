@@ -18,7 +18,7 @@
 #import "DetailViewController.h"
 #import "AddDetailViewController.h"
 #import "QuartzCore/CALayer.h"
-#import "ArtDetailViewController.h"
+#import "AddArtViewController.h"
 
 static const int _kAnnotationLimit = 9999;
 
@@ -362,19 +362,13 @@ static const int _kAnnotationLimit = 9999;
 -(void)addButtonTapped 
 {
     //create the add controller
-    //AddDetailViewController *detailController = [[AddDetailViewController alloc] init];
-    DetailViewController *detailController = [[DetailViewController alloc] init];
+    AddArtViewController *detailViewController = [[AddArtViewController alloc] initWithNibName:@"AddArtViewController" bundle:nil];
+    [self.navigationController pushViewController:detailViewController animated:YES];
     
     //set the location coord to the user's location
-    detailController.currentLocation = self.mapView.map.userLocation.location;
+    //detailViewController.currentLocation = self.mapView.map.userLocation.location;
     
-    //push add controller onto nav 
-    [self.navigationController pushViewController:detailController animated:YES];
-    
-    //set the art for the controller & release
-    [detailController setArt:nil withTemplate:@"AddDetailView"];
-    [detailController setInEditMode:YES];
-    [detailController release];
+    [detailViewController release];
 }
 
 - (void)favoritesButtonTapped
@@ -442,20 +436,15 @@ static const int _kAnnotationLimit = 9999;
 		//get the selected art piece
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
-        ArtDetailViewController *detailViewController = [[ArtDetailViewController alloc] initWithNibName:@"ArtDetailViewController" bundle:nil];
-        [self.navigationController pushViewController:detailViewController animated:YES];
-        [detailViewController setArt:selectedArt withTemplate:nil];        
-		
+        //pass it along to a new detail controller and push it the navigation controller
+		DetailViewController *detailController = [[DetailViewController alloc] init];
+		[self.navigationController pushViewController:detailController animated:YES];
         
-//        //pass it along to a new detail controller and push it the navigation controller
-//		DetailViewController *detailController = [[DetailViewController alloc] init];
-//		[self.navigationController pushViewController:detailController animated:YES];
-//        
-//        //set the location coord to the user's location and the art selected
-//        detailController.currentLocation = self.mapView.map.userLocation.location;
-//        [detailController setArt:selectedArt withTemplate:nil];
-//        
-//		[detailController release];
+        //set the location coord to the user's location and the art selected
+        detailController.currentLocation = self.mapView.map.userLocation.location;
+        [detailController setArt:selectedArt withTemplate:nil];
+        
+		[detailController release];
 		
 	}
 }
