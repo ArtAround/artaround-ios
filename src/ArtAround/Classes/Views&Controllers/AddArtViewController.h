@@ -15,6 +15,7 @@
 #import "FlagViewController.h"
 #import "FlickrNameViewController.h"
 #import "PhotoImageView.h"
+#import "SearchTableViewController.h"
 
 @class Art;
 
@@ -35,7 +36,7 @@ static const float _kPhotoHeight = 140.0f;
 
 
 
-@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate>
+@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate>
 {
     int                    _addedImageCount;    
     NSMutableArray*        _userAddedImages, *_imageButtons;

@@ -17,6 +17,7 @@
 @synthesize searchBar;
 @synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems;
 @synthesize multiSelectionEnabled = _multiSelectionEnabled;
+@synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -35,17 +36,31 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    //add the save button if there's no back button
+    if (!self.navigationItem.backBarButtonItem) {
+        
+        UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)];
+        
+        self.navigationItem.rightBarButtonItem = saveButton;
+    }
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Svae Button
+- (void) saveButtonPressed:(id)sender
+{
+    
+    if (self.delegate && [(id)self.delegate canPerformAction:@selector(searchTableViewController:didFinishWithSelectedItems:) withSender:self]) {
+        
+        [self.delegate searchTableViewController:self didFinishWithSelectedItems:_selectedItems];
+        
+    }
+    
 }
 
 #pragma mark - Table view data source
@@ -159,8 +174,8 @@
         [self.searchBar resignFirstResponder];
         [self.searchDisplayController setActive:NO animated:YES];
         [self.tableView reloadData];
-
         
+        return;
     }
     
     if (_multiSelectionEnabled) {

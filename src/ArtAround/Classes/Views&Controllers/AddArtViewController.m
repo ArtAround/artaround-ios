@@ -17,7 +17,6 @@
 #import "ArtAnnotation.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Utilities.h"
-#import "SearchTableViewController.h"
 #import "SearchItem.h"
 
 @interface AddArtViewController ()
@@ -115,7 +114,6 @@
 - (void) categoryButtonPressed
 {
     SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
-    [self.navigationController pushViewController:searchTableController animated:YES];
     
     NSMutableArray *searchItems = [[NSMutableArray alloc] initWithObjects:
                              [SearchItem searchItemWithTitle:@"Painting" subtitle:@"subtitle1"],
@@ -130,6 +128,14 @@
     
     [searchTableController setSearchItems:searchItems];
     [searchTableController setMultiSelectionEnabled:YES];
+    [searchTableController setDelegate:self];
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(dismissModalViewControllerAnimated:)];
+    [searchTableController.navigationItem setLeftBarButtonItem:cancelButton];
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:searchTableController];
+    [self presentModalViewController:navController animated:YES];
+    
     
 }
 
@@ -591,6 +597,13 @@
 
 }
 
+#pragma mark - Search Table Delegate
+- (void) searchTableViewController:(SearchTableViewController *)searchController didFinishWithSelectedItems:(NSArray *)items
+{
+    
+    [self dismissModalViewControllerAnimated:YES];
+    
+}
 
 
 @end

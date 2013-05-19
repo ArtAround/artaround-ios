@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol SearchTableViewDelegate;
+
 @interface SearchTableViewController : UITableViewController <UISearchBarDelegate, UISearchDisplayDelegate>
 
 {
@@ -18,6 +20,13 @@
 @property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (nonatomic, retain) NSMutableArray *filteredSearchItems, *searchItems;
 @property BOOL multiSelectionEnabled;
+@property (nonatomic, assign) id <SearchTableViewDelegate> delegate;
 
+@end
+
+
+@protocol SearchTableViewDelegate
+
+- (void) searchTableViewController:(SearchTableViewController*)searchController didFinishWithSelectedItems:(NSArray*)items;
 
 @end
