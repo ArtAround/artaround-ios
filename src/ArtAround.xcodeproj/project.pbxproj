@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		4604E0A617356D4F0019011B /* PhotoImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4604E0A517356D4F0019011B /* PhotoImageView.m */; };
 		46073BD8173352A400D9BCEE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46073BD7173352A400D9BCEE /* Default-568h@2x.png */; };
+		4626F86F1749478400ECADC2 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4626F86D1749478400ECADC2 /* SearchTableViewController.m */; };
+		4626F8701749478400ECADC2 /* SearchTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4626F86E1749478400ECADC2 /* SearchTableViewController.xib */; };
+		4626F8781749481400ECADC2 /* SearchItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 4626F8771749481400ECADC2 /* SearchItem.m */; };
 		466406F41747CC720003CA8A /* AddArtViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 466406F21747CC720003CA8A /* AddArtViewController.m */; };
 		466406F51747CC720003CA8A /* AddArtViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 466406F31747CC720003CA8A /* AddArtViewController.xib */; };
 		466406F91747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 466406F81747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m */; };
@@ -178,6 +181,11 @@
 		4604E0A417356D4F0019011B /* PhotoImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoImageView.h; sourceTree = "<group>"; };
 		4604E0A517356D4F0019011B /* PhotoImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoImageView.m; sourceTree = "<group>"; };
 		46073BD7173352A400D9BCEE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		4626F86C1749478400ECADC2 /* SearchTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTableViewController.h; sourceTree = "<group>"; };
+		4626F86D1749478400ECADC2 /* SearchTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchTableViewController.m; sourceTree = "<group>"; };
+		4626F86E1749478400ECADC2 /* SearchTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchTableViewController.xib; sourceTree = "<group>"; };
+		4626F8761749481400ECADC2 /* SearchItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchItem.h; sourceTree = "<group>"; };
+		4626F8771749481400ECADC2 /* SearchItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchItem.m; sourceTree = "<group>"; };
 		466406F11747CC720003CA8A /* AddArtViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddArtViewController.h; sourceTree = "<group>"; };
 		466406F21747CC720003CA8A /* AddArtViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddArtViewController.m; sourceTree = "<group>"; };
 		466406F31747CC720003CA8A /* AddArtViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddArtViewController.xib; sourceTree = "<group>"; };
@@ -450,6 +458,44 @@
 			name = ImageView;
 			sourceTree = "<group>";
 		};
+		4626F86B1749475E00ECADC2 /* SearchTable */ = {
+			isa = PBXGroup;
+			children = (
+				4626F86C1749478400ECADC2 /* SearchTableViewController.h */,
+				4626F86D1749478400ECADC2 /* SearchTableViewController.m */,
+				4626F86E1749478400ECADC2 /* SearchTableViewController.xib */,
+			);
+			name = SearchTable;
+			sourceTree = "<group>";
+		};
+		4626F874174947F100ECADC2 /* Manual */ = {
+			isa = PBXGroup;
+			children = (
+				4626F8761749481400ECADC2 /* SearchItem.h */,
+				4626F8771749481400ECADC2 /* SearchItem.m */,
+			);
+			name = Manual;
+			sourceTree = "<group>";
+		};
+		4626F875174947F900ECADC2 /* Auto */ = {
+			isa = PBXGroup;
+			children = (
+				CA0093FD1409509A00E5001E /* Art.h */,
+				CA0093FE1409509A00E5001E /* Art.m */,
+				CA0093FF1409509A00E5001E /* Category.h */,
+				CA0094001409509A00E5001E /* Category.m */,
+				CA0094011409509A00E5001E /* Comment.h */,
+				CA0094021409509A00E5001E /* Comment.m */,
+				5F7A24A6150CF98000101598 /* Event.h */,
+				5F7A24A7150CF98000101598 /* Event.m */,
+				CA0094031409509A00E5001E /* Neighborhood.h */,
+				CA0094041409509A00E5001E /* Neighborhood.m */,
+				CA0094051409509A00E5001E /* Photo.h */,
+				CA0094061409509A00E5001E /* Photo.m */,
+			);
+			name = Auto;
+			sourceTree = "<group>";
+		};
 		466406F01747CC0C0003CA8A /* ArtDetailView */ = {
 			isa = PBXGroup;
 			children = (
@@ -561,18 +607,8 @@
 		CA0093FC1409509A00E5001E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				CA0093FD1409509A00E5001E /* Art.h */,
-				CA0093FE1409509A00E5001E /* Art.m */,
-				CA0093FF1409509A00E5001E /* Category.h */,
-				CA0094001409509A00E5001E /* Category.m */,
-				CA0094011409509A00E5001E /* Comment.h */,
-				CA0094021409509A00E5001E /* Comment.m */,
-				5F7A24A6150CF98000101598 /* Event.h */,
-				5F7A24A7150CF98000101598 /* Event.m */,
-				CA0094031409509A00E5001E /* Neighborhood.h */,
-				CA0094041409509A00E5001E /* Neighborhood.m */,
-				CA0094051409509A00E5001E /* Photo.h */,
-				CA0094061409509A00E5001E /* Photo.m */,
+				4626F875174947F900ECADC2 /* Auto */,
+				4626F874174947F100ECADC2 /* Manual */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -630,15 +666,16 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				466406F01747CC0C0003CA8A /* ArtDetailView */,
-				468A155117358C5A00DED13C /* WebViewContoller */,
-				5FFEE4E815391C1800C4C7BC /* Flickr Name */,
-				5F7A24C2150D5E3300101598 /* Flagging */,
-				5FAA82A3150BB32B005842BF /* List View */,
 				C9722EAE14CD115600FC42E9 /* Add */,
+				466406F01747CC0C0003CA8A /* ArtDetailView */,
 				CAFF2CB81409A51800C98C0E /* Detail */,
 				CAFF2CB11409A4C400C98C0E /* Filter */,
+				5F7A24C2150D5E3300101598 /* Flagging */,
+				5FFEE4E815391C1800C4C7BC /* Flickr Name */,
+				5FAA82A3150BB32B005842BF /* List View */,
 				CAFF2CB01409A4B600C98C0E /* Map */,
+				4626F86B1749475E00ECADC2 /* SearchTable */,
+				468A155117358C5A00DED13C /* WebViewContoller */,
 			);
 			path = "Views&Controllers";
 			sourceTree = "<group>";
@@ -1119,6 +1156,7 @@
 				5FFEE4EE15391C7300C4C7BC /* FlickrNameViewController.xib in Resources */,
 				46073BD8173352A400D9BCEE /* Default-568h@2x.png in Resources */,
 				466406F51747CC720003CA8A /* AddArtViewController.xib in Resources */,
+				4626F8701749478400ECADC2 /* SearchTableViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1191,6 +1229,8 @@
 				4604E0A617356D4F0019011B /* PhotoImageView.m in Sources */,
 				466406F41747CC720003CA8A /* AddArtViewController.m in Sources */,
 				466406F91747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m in Sources */,
+				4626F86F1749478400ECADC2 /* SearchTableViewController.m in Sources */,
+				4626F8781749481400ECADC2 /* SearchItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

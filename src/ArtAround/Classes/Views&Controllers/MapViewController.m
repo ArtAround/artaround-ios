@@ -367,8 +367,7 @@ static const int _kAnnotationLimit = 9999;
     
     //set the location coord to the user's location
     //detailViewController.currentLocation = self.mapView.map.userLocation.location;
-    
-    [detailViewController release];
+//    [detailViewController release];
 }
 
 - (void)favoritesButtonTapped

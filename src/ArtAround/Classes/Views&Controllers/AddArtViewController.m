@@ -17,9 +17,15 @@
 #import "ArtAnnotation.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Utilities.h"
+#import "SearchTableViewController.h"
+#import "SearchItem.h"
 
 @interface AddArtViewController ()
-
+- (void) buttonPressed:(id)sender;
+- (void) postButtonPressed;
+- (void) categoryButtonPressed;
+- (void) eventButtonPressed;
+- (void) locationButtonPressed;
 @end
 
 @implementation AddArtViewController
@@ -50,6 +56,15 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    //setup post button
+    UIBarButtonItem *postButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(postButtonPressed)];
+    [self.navigationItem setRightBarButtonItem:postButton];
+    
+    //add actions
+    [self.categoryButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.locationButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.eventButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     [self setupImages];
 }
@@ -82,6 +97,47 @@
     [self setDescriptionTextView:nil];
     [super viewDidUnload];
 }
+
+#pragma mark - Actions
+- (void) buttonPressed:(id)sender
+{
+    if (sender == self.locationButton) {
+        [self locationButtonPressed];
+    }
+    else if (sender == self.categoryButton) {
+        [self categoryButtonPressed];
+    }
+    else if (sender == self.locationButton) {
+        [self locationButtonPressed];
+    }
+}
+
+- (void) categoryButtonPressed
+{
+    SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
+    [self.navigationController pushViewController:searchTableController animated:YES];
+    
+    NSMutableArray *searchItems = [[NSMutableArray alloc] initWithObjects:
+                             [SearchItem searchItemWithTitle:@"Painting" subtitle:@"subtitle1"],
+                             [SearchItem searchItemWithTitle:@"Sculpture" subtitle:@"subtitle2"],
+                             [SearchItem searchItemWithTitle:@"Mosaic" subtitle:@"subtitle3"],
+                             [SearchItem searchItemWithTitle:@"Mural" subtitle:@"subtitle4"],
+                             [SearchItem searchItemWithTitle:@"Random" subtitle:@"subtitle5"],
+                             [SearchItem searchItemWithTitle:@"Chalk" subtitle:@"subtitle6"],
+                             [SearchItem searchItemWithTitle:@"Perfomance" subtitle:@"subtitle7"],
+                             [SearchItem searchItemWithTitle:@"Dance" subtitle:@"subtitle8"],
+                             nil];
+    
+    [searchTableController setSearchItems:searchItems];
+    [searchTableController setMultiSelectionEnabled:YES];
+    
+}
+
+- (void) locationButtonPressed
+{}
+
+- (void) eventButtonPressed
+{}
 
 #pragma mark - Art Handlers
 
@@ -278,6 +334,12 @@
 	[self.photosScrollView setContentSize:CGSizeMake(addImgButton.frame.origin.x + addImgButton.frame.size.width + _kPhotoSpacing, self.photosScrollView.frame.size.height)];
 	
 	
+}
+
+#pragma mark - Submission
+- (void) postButtonPressed
+{
+    
 }
 
 #pragma mark - Helpers
