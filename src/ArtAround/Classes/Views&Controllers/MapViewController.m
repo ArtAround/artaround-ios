@@ -363,7 +363,9 @@ static const int _kAnnotationLimit = 9999;
 {
     //create the add controller
     AddArtViewController *detailViewController = [[AddArtViewController alloc] initWithNibName:@"AddArtViewController" bundle:nil];
+    detailViewController.currentLocation = self.mapView.map.userLocation.location;
     [self.navigationController pushViewController:detailViewController animated:YES];
+    
     
     //set the location coord to the user's location
     //detailViewController.currentLocation = self.mapView.map.userLocation.location;

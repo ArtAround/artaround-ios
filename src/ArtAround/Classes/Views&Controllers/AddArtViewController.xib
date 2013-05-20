@@ -78,7 +78,7 @@
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">tempArtistName</string>
 								<int key="IBUIBorderStyle">1</int>
 								<string key="IBUIPlaceholder">Artist</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -117,7 +117,7 @@
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">tempTitle</string>
 								<int key="IBUIBorderStyle">1</int>
 								<string key="IBUIPlaceholder">Title</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -241,6 +241,7 @@
 								<string key="NSFrame">{{20, 332}, {280, 185}}</string>
 								<reference key="NSSuperview" ref="831243147"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">1</int>
@@ -249,12 +250,17 @@
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIMultipleTouchEnabled">YES</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Say more...</string>
+								<string key="IBUIText">This where the description gooes</string>
 								<object class="IBUITextInputTraits" key="IBUITextInputTraits">
 									<int key="IBUIAutocapitalizationType">2</int>
 									<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								</object>
-								<reference key="IBUIFontDescription" ref="736273315"/>
+								<object class="IBUIFontDescription" key="IBUIFontDescription">
+									<string key="name">Helvetica</string>
+									<string key="family">Helvetica</string>
+									<int key="traits">0</int>
+									<double key="pointSize">14</double>
+								</object>
 								<reference key="IBUIFont" ref="482349011"/>
 							</object>
 						</array>
@@ -876,9 +882,9 @@
 							<reference ref="113867912"/>
 							<reference ref="704657957"/>
 							<reference ref="915552103"/>
-							<reference ref="870016526"/>
 							<reference ref="969401974"/>
 							<reference ref="647733289"/>
+							<reference ref="870016526"/>
 						</array>
 						<reference key="parent" ref="191373211"/>
 					</object>
