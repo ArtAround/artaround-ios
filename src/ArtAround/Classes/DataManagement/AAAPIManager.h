@@ -21,7 +21,7 @@
 - (void)downloadConfigWithTarget:(id)target callback:(SEL)callback;
 - (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (void)updateArt:(NSMutableDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
-- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withFlickrHandle:(NSString*)flickrHandle withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
+- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withFlickrHandle:(NSString*)flickrHandle withPhotoAttributionURL:(NSString*)url withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (void)uploadComment:(NSDictionary*)commentDictionary forSlug:(NSString*)slug target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (void)submitFlagForSlug:(NSString*)slug withText:(NSString*)text target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (NSArray *)categories;

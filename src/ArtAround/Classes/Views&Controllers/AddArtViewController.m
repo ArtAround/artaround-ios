@@ -26,6 +26,8 @@
 - (void) categoryButtonPressed;
 - (void) eventButtonPressed;
 - (void) locationButtonPressed;
+- (void) doneButtonPressed;
+- (void) datePickerChanged:(id)sender;
 
 - (void)photoUploadCompleted;
 - (void)photoUploadFailed;
@@ -40,12 +42,16 @@
 @synthesize locationButton;
 @synthesize artistTextField;
 @synthesize titleTextField;
+@synthesize urlTextField;
 @synthesize categoryButton;
 @synthesize eventButton;
+@synthesize dateButton;
 @synthesize descriptionTextView;
+@synthesize locationDescriptionTextView;
 @synthesize currentLocation = _currentLocation;
 
 @synthesize art = _art;
+@synthesize scrollView = _scrollView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -54,12 +60,23 @@
         // Custom initialization
         
         _userAddedImages = [[NSMutableArray alloc] init];
+        _userAddedImagesAttribution = [[NSMutableDictionary alloc] init];
         _imageButtons = [[NSMutableArray alloc] init];
         _newArtDictionary = [[NSMutableDictionary alloc] init];
         
         _addedImageCount = 0;
     }
     return self;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    //set scroll view content frame
+    float bottomY = self.dateButton.frame.origin.y + self.dateButton.frame.size.height + 10.0f;
+    CGSize contentSize = CGSizeMake(self.view.frame.size.width, bottomY);
+    [self.scrollView setContentSize:contentSize];
 }
 
 - (void)viewDidLoad
@@ -75,6 +92,12 @@
     [self.categoryButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.locationButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.eventButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.dateButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //set listeners on text fields
+    [self.titleTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.artistTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.urlTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
     
     [self setupImages];
 }
@@ -94,6 +117,10 @@
     [eventButton release];
     [descriptionTextView release];
     [descriptionTextView release];
+    [dateButton release];
+    [locationDescriptionTextView release];
+    [urlTextField release];
+    [_scrollView release];
     [super dealloc];
 }
 - (void)viewDidUnload {
@@ -105,6 +132,10 @@
     [self setEventButton:nil];
     [self setDescriptionTextView:nil];
     [self setDescriptionTextView:nil];
+    [self setDateButton:nil];
+    [self setLocationDescriptionTextView:nil];
+    [self setUrlTextField:nil];
+    [self setScrollView:nil];
     [super viewDidUnload];
 }
 
@@ -120,6 +151,28 @@
     else if (sender == self.locationButton) {
         [self locationButtonPressed];
     }
+    else if (sender == self.dateButton) {
+        [self dateButtonPressed];
+    }
+    else if (sender == _doneButton) {
+        [self doneButtonPressed];
+    }
+}
+
+//remove the toolbar and picker and resize scrollview
+- (void) doneButtonPressed
+{
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        
+        [_dateToolbar setFrame:CGRectOffset(_datePicker.frame, 0, _datePicker.frame.size.height + _dateToolbar.frame.size.height)];
+        [_datePicker setFrame:CGRectOffset(_datePicker.frame, 0, _datePicker.frame.size.height + _dateToolbar.frame.size.height)];
+        [self.scrollView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        
+    } completion:^(BOOL finished) {
+        [_datePicker removeFromSuperview];
+        [_dateToolbar removeFromSuperview];
+    }];
 }
 
 - (void) categoryButtonPressed
@@ -156,16 +209,91 @@
 - (void) eventButtonPressed
 {}
 
+- (void) dateButtonPressed
+{
+    UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+    [datePicker setDatePickerMode:UIDatePickerModeDate];
+    [datePicker setDate:[NSDate date]];
+    
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(buttonPressed:)];
+    UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIToolbar *dateToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44.0f)];
+    
+    [dateToolbar setItems:[NSArray arrayWithObjects:space, doneButton, nil]];
+    
+    _datePicker = datePicker;
+    _doneButton = doneButton;
+    _dateToolbar = dateToolbar;
+    
+    CGRect datePickerFrame = datePicker.frame;
+    datePickerFrame.origin.y = self.view.frame.size.height + _dateToolbar.frame.size.height;
+    [_datePicker setFrame:datePickerFrame];
+    
+    [self.view addSubview:dateToolbar];
+    [self.view addSubview:datePicker];
+    
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        [_datePicker setFrame:CGRectOffset(_datePicker.frame, 0, -datePickerFrame.size.height - dateToolbar.frame.size.height)];
+        [_dateToolbar setFrame:CGRectOffset(_dateToolbar.frame, 0, -datePickerFrame.size.height - _dateToolbar.frame.size.height)];
+        [self.scrollView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - (_datePicker.frame.size.height + _dateToolbar.frame.size.height))];
+        [self.scrollView scrollRectToVisible:CGRectOffset(self.dateButton.frame, 0, 10.0f) animated:YES];
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+}
+
+- (void) textFieldChanged:(id)textField {
+    
+    
+    if ([textField isKindOfClass:[UITextField class]]) {
+        NSString *key = @"";
+        
+        if (textField == self.artistTextField)
+            key = @"artist";
+        else if (textField == self.titleTextField)
+            key = @"title";
+        else if (textField == self.urlTextField)
+            key = @"url";
+        
+        [_newArtDictionary setObject:[(UITextField*)textField text] forKey:key];
+    }
+}
+
+- (void) textFieldChanged:(UITextField*)textField withText:(NSString*)text
+{
+    
+    NSString *key = @"";
+    
+    if (textField == self.artistTextField)
+        key = @"artist";
+    else if (textField == self.titleTextField)
+        key = @"title";
+    else if (textField == self.urlTextField)
+        key = @"url";
+    
+    [_newArtDictionary setObject:text forKey:key];
+    
+}
+
+
 #pragma mark - Art Handlers
 
 - (void) artButtonPressed:(id)sender
 {
     EGOImageButton *button = (EGOImageButton*)sender;
     
+    NSArray *keys = [_userAddedImagesAttribution allKeys];
+    NSDictionary *attDict = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:(button.tag - _kUserAddedImageTagBase)]];
+    
     PhotoImageView *imgView = [[PhotoImageView alloc] initWithFrame:CGRectOffset(self.view.frame, 0, 0)];
     [imgView setPhotoImageViewDelegate:self];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
     [imgView setBackgroundColor:kFontColorDarkBrown];
+    [imgView.photoAttributionLabel setText:[attDict objectForKey:@"text"]];
+    [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[attDict objectForKey:@"url"]];
+
     
     if (button.imageView.image)
         [imgView setImage:button.imageView.image];
@@ -192,6 +320,9 @@
     
     [_userAddedImages removeObjectAtIndex:(buttonTag - _kUserAddedImageTagBase)];
     
+    NSArray *keys = [_userAddedImagesAttribution allKeys];
+    [_userAddedImagesAttribution removeObjectForKey:[keys objectAtIndex:(buttonTag - _kUserAddedImageTagBase)]];
+    
     [self.photosScrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     [self setupImages];
@@ -201,11 +332,19 @@
 
 - (void)userAddedImage:(UIImage*)image
 {
+    [self userAddedImage:image withAttributionText:@"" withAttributionURL:@""];
+}
+
+- (void)userAddedImage:(UIImage*)image withAttributionText:(NSString*)text withAttributionURL:(NSString*)url
+{
     //increment the number of new images
     _addedImageCount += 1;
     
     
     [_userAddedImages addObject:image];
+    
+    NSDictionary *attDict = [[NSDictionary alloc] initWithObjectsAndKeys:text, @"text", url, @"url", nil];
+    [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithInt:_userAddedImages.count] stringValue]];
     
     //reload the images to show the new image
     [self setupImages];
@@ -368,8 +507,23 @@
         if ([_newArtDictionary objectForKey:@"artist"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"artist"]] forKey:@"artist"];
         
+        if ([_newArtDictionary objectForKey:@"url"])
+            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"url"]] forKey:@"url"];
+        
         if ([_newArtDictionary objectForKey:@"description"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
+        
+        if ([_newArtDictionary objectForKey:@"location_description"])
+            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"location_description"]] forKey:@"location_description"];
+        
+        if (_datePicker) {
+            
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy"];
+            NSString *dateString = [Utilities urlEncode:[dateFormatter stringFromDate:_datePicker.date]];
+            
+            [_newArtDictionary setObject:dateString forKey:@"year"];
+        }
         
 #warning TEMPORARILY only grabbing the first category and removing the plural obejct from the dictionary. Waiting on API Update to change. in the future we'll need to urlencode each category
 #warning ALSO - setting the key to category as opposed to categories plural
@@ -431,8 +585,13 @@
     
     
     //if there are user added images upload them
-    for (UIImage *thisImage in _userAddedImages) {
-        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[Utilities instance].flickrHandle withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+    NSArray *keys = [_userAddedImagesAttribution allKeys];
+    for (int index = 0; index < _userAddedImages.count; index++) {
+        
+        UIImage *thisImage = [_userAddedImages objectAtIndex:index];
+        NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
+        
+        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"url"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
     }
 
     
@@ -500,10 +659,19 @@
         //reload the map view so the updated/new art is there
         ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
         [appDelegate saveContext];
-        [appDelegate.mapViewController updateArt];
+        
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        
+        if (self.art)
+            [appDelegate.mapViewController updateAndShowArt:self.art];
+        else
+            [appDelegate.mapViewController updateArt];
+
         
         //clear the user added images array
         [_userAddedImages removeAllObjects];
+        [_userAddedImagesAttribution removeAllObjects];
     }
     
     
@@ -562,8 +730,16 @@
         [self.artistTextField resignFirstResponder];
         return YES;
     }
+    else if (self.urlTextField.isFirstResponder) {
+        [self.urlTextField resignFirstResponder];
+        return YES;
+    }
     else if (self.descriptionTextView.isFirstResponder) {
         [self.descriptionTextView resignFirstResponder];
+        return YES;
+    }
+    else if (self.locationDescriptionTextView.isFirstResponder) {
+        [self.locationDescriptionTextView resignFirstResponder];
         return YES;
     }
     
@@ -576,8 +752,10 @@
 {
     NSString* newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
     
-    [_newArtDictionary setObject:newText forKey:@"description"];
-    
+    if (textView == self.descriptionTextView)
+        [_newArtDictionary setObject:newText forKey:@"description"];
+    else if (textView == self.locationDescriptionTextView)
+        [_newArtDictionary setObject:newText forKey:@"location_description"];    
     
     return YES;
 }
@@ -588,7 +766,6 @@
 
 - (BOOL) textViewShouldBeginEditing:(UITextView *)textView
 {
-    self.navigationItem.rightBarButtonItem.enabled = YES;
     return YES;
 }
 
@@ -612,15 +789,18 @@
     return YES;
 }
 
-- (void) textFieldDidBeginEditing:(UITextField *)textField
+- (BOOL) textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    NSString* newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    [self textFieldChanged:textField withText:newText];
+    return YES;
 }
 
 - (void) textFieldDidEndEditing:(UITextField *)textField
 {
-    self.navigationItem.rightBarButtonItem.enabled = YES;
-    [_newArtDictionary setObject:textField.text forKey:(textField == self.artistTextField) ? @"artist" : @"title"];
+    
+    [self textFieldChanged:textField];
 }
 
 #pragma mark - PhotoImageViewDelegate
@@ -642,7 +822,7 @@
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:containerViewController];
     
     //create close button and add to nav bar
-    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(closeModalViewController:)];
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(dismissModalViewControllerAnimated:)];
     [containerViewController.navigationItem setLeftBarButtonItem:closeButton];
     
     
@@ -764,18 +944,34 @@
     }];
 }
 
+#pragma mark - UIScrollViewDelegate
+- (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if (scrollView == self.scrollView) {
+        if ([self.descriptionTextView isFirstResponder])
+            [self.descriptionTextView resignFirstResponder];
+        else if ([self.locationDescriptionTextView isFirstResponder])
+            [self.locationDescriptionTextView resignFirstResponder];
+    }
+}
 
 #pragma mark - FlickrNameViewControllerDelegate
 //submit flag
 - (void)flickrNameViewControllerPressedSubmit:(id)controller
 {
-    [Utilities instance].flickrHandle = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
-    [self userAddedImage:[(FlickrNameViewController*)controller image]];
+    NSString *text = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    NSString *url = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    
+    [Utilities instance].photoAttributionText = text;
+    [Utilities instance].photoAttributionURL = url;
+    
+    [self userAddedImage:[(FlickrNameViewController*)controller image] withAttributionText:text withAttributionURL:url];
     
     
     
     [[controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     
 }
@@ -784,11 +980,11 @@
 - (void) flickrNameViewControllerPressedCancel:(id)controller
 {
     
-    [self userAddedImage:[(FlickrNameViewController*)controller image]];
+    [self userAddedImage:[(FlickrNameViewController*)controller image] withAttributionText:@"" withAttributionURL:@""];
     
-    //[[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
     [[(FlickrNameViewController*)controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
 
 }
@@ -798,6 +994,7 @@
 {
     [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
 
 }
@@ -807,6 +1004,7 @@
 {
     [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
 
 }

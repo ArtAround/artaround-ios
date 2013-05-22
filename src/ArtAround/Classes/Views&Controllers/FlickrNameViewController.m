@@ -38,13 +38,17 @@
 	// Do any additional setup after loading the view.
     [self.flickrHandleField becomeFirstResponder];    
 
-    if ([Utilities instance].flickrHandle && [Utilities instance].flickrHandle.length > 0)
-        self.flickrHandleField.text = [Utilities instance].flickrHandle;
+    if ([Utilities instance].photoAttributionText && [Utilities instance].photoAttributionText.length > 0) {
+        self.flickrHandleField.text = [Utilities instance].photoAttributionText;
+    }
+    
+    if ([Utilities instance].photoAttributionURL && [Utilities instance].photoAttributionURL.length > 0) {
+        self.attributionURLField.text = [Utilities instance].photoAttributionURL;
+    }
 }
 
 - (void)viewDidUnload
 {
-    [self setFlickrHandleField:nil];    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }

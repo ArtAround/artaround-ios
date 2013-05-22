@@ -486,7 +486,14 @@ static const int _kAnnotationLimit = 9999;
 
 //queries core data for art and adds them to the map
 - (void)updateArt
-{	
+{
+    [self updateAndShowArt:nil];
+}
+
+
+//should update art and then focus on specified art
+-(void)updateAndShowArt:(Art*)showArt
+{
 	//get art from core data
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
 	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -504,9 +511,9 @@ static const int _kAnnotationLimit = 9999;
         else if ([Utilities instance].selectedFilterType == FilterTypeNone && _showFavorites)
             [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Favorites"];
         else
-            [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Filtered"];        
+            [(UILabel*)[self.mapView.headerView viewWithTag:1] setText:@"Filtered"];
     }
-
+    
 	//setup the proper delegate for the selected filter
 	switch ([Utilities instance].selectedFilterType) {
 			
@@ -524,14 +531,14 @@ static const int _kAnnotationLimit = 9999;
 				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND title IN %@" : @"title IN %@", titles]];
 			}
             
-			break;            
+			break;
 		}
 		case FilterTypeCategory: {
 			NSArray *categoriesTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeCategory];
 			if (categoriesTitles) {
 				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND category.title IN %@" : @"category.title IN %@", categoriesTitles]];
 			}
-
+            
             break;
 		}
 		case FilterTypeNeighborhood: {
@@ -540,11 +547,11 @@ static const int _kAnnotationLimit = 9999;
 				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND neighborhood.title IN %@" : @"neighborhood.title IN %@", neighborhoodTitles]];
 			}
             
-			break;            
+			break;
 		}
         case FilterTypeRank: {
             [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND rank > 0" : @"rank > 0"]];
-			break;            
+			break;
 		}
         case FilterTypeEvent: {
 			NSArray *eventTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeEvent];
@@ -562,7 +569,7 @@ static const int _kAnnotationLimit = 9999;
             if (_showFavorites) {
 				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"favorite == TRUE"]];
 			}
-        
+            
 			break;
         }
 	}
@@ -584,6 +591,7 @@ static const int _kAnnotationLimit = 9999;
     for (Art *thisArt in _items) {
         CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
         [thisArt setDistance:[NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)]];
+    
     }
     
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
@@ -601,6 +609,10 @@ static const int _kAnnotationLimit = 9999;
 		return;
 	}
 	
+    //look for prevously added art
+    NSString *artSlug = (showArt) ? [showArt slug] : nil;
+    int annotationIndex = -1;
+    
 	//add annotations
 	for (int i = 0; i < [_items count]; i++) {
 		
@@ -620,12 +632,25 @@ static const int _kAnnotationLimit = 9999;
 			[annotation release];
 			
 		}
+        
+        if (art.slug == artSlug)
+            annotationIndex = i;
 		
 	}
 	
 	//add annotations
 	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
 	_mapNeedsRefresh = NO;
+    
+    
+    if (_showingMap && annotationIndex != -1) {
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
+        NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
+        
+        if (filteredAnnotations.count > 0)
+            [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]];
+    }
 }
 
 #pragma mark - MKMapViewDelegate

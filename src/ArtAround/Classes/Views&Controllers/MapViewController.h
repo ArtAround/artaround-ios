@@ -27,6 +27,7 @@
 @property (nonatomic, retain) ListViewController *listViewController;
 @property (nonatomic, retain) CalloutAnnotationView *callout;
 
+-(void)updateAndShowArt:(Art*)showArt;
 -(void)updateArt;
 -(void)refreshArt;
 

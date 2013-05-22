@@ -19,7 +19,7 @@ static Utilities *_kSharedInstance = nil;
 @end
 
 @implementation Utilities
-@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, flickrHandle = _flickrHandle;
+@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, photoAttributionText = _photoAttributionText, photoAttributionURL = _photoAttributionURL;
 
 //singleton
 + (Utilities *)instance
@@ -79,6 +79,8 @@ static Utilities *_kSharedInstance = nil;
 	return [string stringByReplacingPercentEscapesUsingEncoding:kCFStringEncodingUTF8];	
 }
 
+
+
 #pragma mark - Map Methods
 
 + (void)zoomToFitMapAnnotations:(MKMapView *)mapView {
@@ -128,15 +130,32 @@ static Utilities *_kSharedInstance = nil;
     return _lastFlickrUpdate;
 }
 
-- (void) setFlickrHandle:(NSString *)flickrHandle
+- (void) setPhotoAttributionText:(NSString*)text
 {
-    _flickrHandle = flickrHandle;
-	[_defaults setObject:flickrHandle forKey:@"AAFlickrHandle"];    
+    _photoAttributionText = text;
+	[_defaults setObject:text forKey:@"AAPhotoAttributionText"];
+    [_defaults synchronize];
+    
 }
 
-- (NSString*)flickrHandle
+- (NSString*)photoAttributionText
 {
-    return _flickrHandle;
+    return [_defaults objectForKey:@"AAPhotoAttributionText"];
+
+}
+
+
+- (void) setPhotoAttributionURL:(NSString*)url
+{
+    _photoAttributionURL = url;
+	[_defaults setObject:url forKey:@"AAPhotoAttributionURL"];
+    [_defaults synchronize];
+    
+}
+
+- (NSString*)photoAttributionURL
+{
+    return [_defaults objectForKey:@"AAPhotoAttributionURL"];
 }
 
 #pragma mark - Filter Methods

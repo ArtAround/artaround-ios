@@ -449,7 +449,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 //adds an image to a piece of art
 // -- a slug is required
-- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withFlickrHandle:(NSString*)flickrHandle withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback {  
+- (void)uploadImage:(UIImage*)image forSlug:(NSString*)slug withFlickrHandle:(NSString*)flickrHandle withPhotoAttributionURL:(NSString*)photoAttributionURL withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback {
+    
     //get the photo upload url
     NSURL *photoUploadURL = [AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@/photos", slug]];
     
@@ -479,18 +480,18 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
    
-    NSString *attString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"photo_attribution_text\"\r\n\r\n%@", @"Brian"];
+    NSString *attString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"photo_attribution_text\"\r\n\r\n%@", flickrHandle];
     [postbody appendData:[attString dataUsingEncoding:NSUTF8StringEncoding]];
 
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
-    NSString *attURLString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"photo_attribution_url\"\r\n\r\n%@", @"brianannnURL"];
+    NSString *attURLString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"photo_attribution_url\"\r\n\r\n%@", photoAttributionURL];
     [postbody appendData:[attURLString dataUsingEncoding:NSUTF8StringEncoding]];
-//    [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
     
     //create the flickr param if it exists
-    if (flickrHandle && flickrHandle.length > 0) {
+    /*if (flickrHandle && flickrHandle.length > 0) {
         //NSString *flickrHandleString;
         //        flickrHandleString = [[NSString alloc] initWithFormat:@" new_photo_username=\"%@\";", flickrHandle];
         [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -501,7 +502,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     }
     else {
         [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    }
+    }*/
 
     
     

@@ -806,7 +806,7 @@ static const float _kPhotoHeight = 140.0f;
     else {
         
         //upload image
-        [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withFlickrHandle:[Utilities instance].flickrHandle withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
         
         [self showLoadingView:@"Uploading Photo\nPlease Wait..."];
     }
@@ -1279,7 +1279,7 @@ static const float _kPhotoHeight = 140.0f;
     //if there are user added images upload them
     if (_userAddedImages.count > 0) {
         for (UIImage *thisImage in _userAddedImages) {
-            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[Utilities instance].flickrHandle withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
         }
     }
     else {
@@ -2816,7 +2816,8 @@ static const float _kPhotoHeight = 140.0f;
 //submit flag
 - (void)flickrNameViewControllerPressedSubmit:(id)controller
 {
-    [Utilities instance].flickrHandle = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    [Utilities instance].photoAttributionText = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    [Utilities instance].photoAttributionURL = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller attributionURLField] text]];
     [self userAddedImage:[(FlickrNameViewController*)controller image]];
     
     
