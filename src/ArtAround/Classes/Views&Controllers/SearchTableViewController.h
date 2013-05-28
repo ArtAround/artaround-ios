@@ -14,11 +14,11 @@
 
 {
     BOOL _isFiltered;
-    NSMutableArray *_selectedItems, *_createdItems;
+    NSMutableArray *_createdItems;
 }
 
 @property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (nonatomic, retain) NSMutableArray *filteredSearchItems, *searchItems;
+@property (nonatomic, retain) NSMutableArray *filteredSearchItems, *searchItems, *selectedItems;
 @property BOOL multiSelectionEnabled;
 @property (nonatomic, assign) id <SearchTableViewDelegate> delegate;
 

@@ -194,11 +194,19 @@
     [searchTableController setMultiSelectionEnabled:YES];
     [searchTableController setDelegate:self];
     
+    //add the categories if they exist
+    if ([_newArtDictionary objectForKey:@"categories"]) {
+        NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithArray:[_newArtDictionary objectForKey:@"categories"]];
+        [searchTableController setSelectedItems:selectedItems];
+    }
+    
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(dismissModalViewControllerAnimated:)];
     [searchTableController.navigationItem setLeftBarButtonItem:cancelButton];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:searchTableController];
     [self presentModalViewController:navController animated:YES];
+    
+    
     
     
 }
@@ -1013,18 +1021,22 @@
 - (void) searchTableViewController:(SearchTableViewController *)searchController didFinishWithSelectedItems:(NSArray *)items
 {
  
-    //add the cateogries to the new art
-    
-    //if cats don't exist create the array and add to newArtDict
-    if (![_newArtDictionary objectForKey:@"categories"]) {
-        NSMutableArray *categories = [[NSMutableArray alloc] init];
-        [_newArtDictionary setObject:categories forKey:@"categories"];
-        
-    }
+    //reset and add the cateogries to the new art
+    NSMutableArray *categories = [[NSMutableArray alloc] init];
+    [_newArtDictionary setObject:categories forKey:@"categories"];
     
     for (SearchItem *thisItem in items) {
-        if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
-            [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+        
+        if ([thisItem isKindOfClass:[SearchItem class]]) {
+        
+            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
+                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+            }
+        }
+        else if ([thisItem isKindOfClass:[NSString class]]) {
+            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem]) {
+                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem];
+            }
         }
     }
     

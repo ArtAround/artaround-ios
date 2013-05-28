@@ -15,7 +15,7 @@
 
 @implementation SearchTableViewController
 @synthesize searchBar;
-@synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems;
+@synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems, selectedItems = _selectedItems;
 @synthesize multiSelectionEnabled = _multiSelectionEnabled;
 @synthesize delegate;
 
@@ -49,6 +49,128 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void) setSelectedItems:(NSMutableArray *)newSelectedItems
+{
+    _selectedItems = [[NSMutableArray alloc] initWithArray:newSelectedItems];
+    
+    for (NSObject *thisItem in _selectedItems) {
+        
+        SearchItem *newItem = nil;
+        
+        //String
+        if ([thisItem isKindOfClass:[NSString class]]) {
+            
+            newItem = [SearchItem searchItemWithTitle:(NSString*)thisItem subtitle:@""];
+            
+            
+        }
+        //Search Item
+        else if ([thisItem isKindOfClass:[SearchItem class]]) {
+            
+            newItem = [SearchItem searchItemWithTitle:[(SearchItem*)thisItem title] subtitle:[(SearchItem*)thisItem subtitle]];
+            
+        }
+        
+        //check if the newItem is in the search items list and add if not
+        if (newItem && ![self items:_searchItems containsItem:newItem]) {
+            [_searchItems addObject:newItem];
+        }
+        
+        
+    }
+    
+    [self.tableView reloadData];
+}
+
+#pragma mark - Helpers
+- (BOOL) items:(NSArray*)items containsItem:(NSObject*)item
+{
+    //grab the item title
+    NSString *itemTitle = @"";
+    if ([item isKindOfClass:[NSString class]]) {
+        itemTitle = (NSString*)item;
+    }
+    //Search Item
+    else if ([item isKindOfClass:[SearchItem class]]) {
+        itemTitle = [(SearchItem*)item title];
+    }
+    
+    for (NSObject *thisItem in items) {
+        
+        //String
+        if ([thisItem isKindOfClass:[NSString class]]) {
+            if ([itemTitle isEqualToString:(NSString*)thisItem])
+                return YES;
+        }
+        //Search Item
+        else if ([thisItem isKindOfClass:[SearchItem class]]) {
+            if ([itemTitle isEqualToString:[(SearchItem*)thisItem title]])
+                return YES;
+        }
+    }
+    
+    return NO;
+}
+
+- (BOOL) selectedItemsContainsItem:(NSObject*)item
+{
+        
+    for (NSObject *thisItem in _selectedItems) {
+        
+        //String
+        if ([thisItem isKindOfClass:[NSString class]]) {
+            if ([[(SearchItem*)item title] isEqualToString:(NSString*)thisItem]) return YES;
+        }
+        //Search Item
+        else if ([thisItem isKindOfClass:[SearchItem class]]) {
+            return [_selectedItems containsObject:item];
+        }
+    }
+    
+    return NO;
+}
+
+- (void) removeItemFromSelectedItems:(NSObject*)item
+{
+    NSString *itemTitle = @"";
+    
+    //String
+    if ([item isKindOfClass:[NSString class]]) {
+        itemTitle = (NSString*)item;
+    }
+    //Search Item
+    else if ([item isKindOfClass:[SearchItem class]]) {
+        itemTitle = [(SearchItem*)item title];
+    }
+    
+    int index = -1;
+    for (NSObject *thisItem in _selectedItems) {
+        
+        //String
+        if ([thisItem isKindOfClass:[NSString class]]) {
+            
+            if ([(NSString*)thisItem isEqualToString:itemTitle]) {
+                index = [_selectedItems indexOfObject:thisItem];
+                break;
+            }
+            
+        }
+        //Search Item
+        else if ([thisItem isKindOfClass:[SearchItem class]]) {
+            
+            if ([[(SearchItem*)thisItem title] isEqualToString:itemTitle]) {
+                index = [_selectedItems indexOfObject:thisItem];
+                break;
+            }
+        }
+        
+    }
+    
+    if (index != -1)
+        [_selectedItems removeObjectAtIndex:index];
+    
 }
 
 #pragma mark - Svae Button
@@ -87,20 +209,27 @@
     }
     
     // Configure the cell...
-    SearchItem *thisItem = (tableView == self.searchDisplayController.searchResultsTableView) ? [_filteredSearchItems objectAtIndex:indexPath.row] : [_searchItems  objectAtIndex:indexPath.row];
-    [cell.textLabel setText:thisItem.title];
-    [cell.detailTextLabel setText:thisItem.subtitle];
+    NSObject *thisItem = (tableView == self.searchDisplayController.searchResultsTableView) ? [_filteredSearchItems objectAtIndex:indexPath.row] : [_searchItems  objectAtIndex:indexPath.row];
+    
+    if ([thisItem isKindOfClass:[SearchItem class]]) {
+        [cell.textLabel setText:[(SearchItem*)thisItem title]];
+        [cell.detailTextLabel setText:[(SearchItem*)thisItem subtitle]];
+    }
+    else if ([thisItem isKindOfClass:[NSString class]]) {
+        [cell.textLabel setText:(NSString*)thisItem];
+        [cell.detailTextLabel setText:@""];
+    }
     
     //if multi selection is enabled and this index is in the selected
     //items then add accessory
     //otherwise remove accesory
     if (_multiSelectionEnabled) {
         
-        if ([_selectedItems containsObject:thisItem]) {
+        if ([self selectedItemsContainsItem:thisItem]) {
             [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
         }
         else {
-            [cell setAccessoryType:nil];
+            [cell setAccessoryType:UITableViewCellAccessoryNone];
         }
             
         
@@ -164,10 +293,12 @@
         SearchItem *newItem = [SearchItem searchItemWithTitle:categoryName subtitle:nil];
         
         //add the new item to search items
-        [_searchItems addObject:newItem];
+        if (![self items:_searchItems containsItem:newItem])
+            [_searchItems addObject:newItem];
         
         //add the new item to the selected items
-        [_selectedItems addObject:newItem];
+        if (![self items:_selectedItems containsItem:newItem])
+            [_selectedItems addObject:newItem];
         
         //remove search results
         [self.searchBar setText:@""];
@@ -180,8 +311,8 @@
     
     if (_multiSelectionEnabled) {
         
-        if ([_selectedItems containsObject:thisItem])
-            [_selectedItems removeObject:thisItem];
+        if ([self selectedItemsContainsItem:thisItem])
+            [self removeItemFromSelectedItems:thisItem];
         else
             [_selectedItems addObject:thisItem];
         

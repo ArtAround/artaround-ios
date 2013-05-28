@@ -475,7 +475,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     NSString *formDataString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpeg\"\r\n", filename];
     [postbody appendData:[formDataString dataUsingEncoding:NSUTF8StringEncoding]];
     DebugLog(@"Form Data: %@", formDataString);
-    [postbody appendData:[[NSString stringWithString:@"Content-Type: image/jpeg\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postbody appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     [postbody appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.5)]];
     
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -490,19 +490,6 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
     
-    //create the flickr param if it exists
-    /*if (flickrHandle && flickrHandle.length > 0) {
-        //NSString *flickrHandleString;
-        //        flickrHandleString = [[NSString alloc] initWithFormat:@" new_photo_username=\"%@\";", flickrHandle];
-        [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        formDataString = [[NSString alloc] initWithFormat:@"Content-Disposition: form-data; name=\"photo_attribution_text\"\r\n\r\n%@", flickrHandle];
-        [postbody appendData:[formDataString dataUsingEncoding:NSUTF8StringEncoding]];
-        [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        DebugLog(@"Form Data: %@", formDataString);
-    }
-    else {
-        [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    }*/
 
     
     
@@ -517,27 +504,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[request setDidFailSelector:@selector(artUploadFailed:)];
 	[request startAsynchronous];
 
-    
-    
-//    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
-//    ASIFormDataRequest *formRequest = [ASIFormDataRequest requestWithURL:photoUploadURL];
-//    [formRequest setUserInfo:userInfo];
-//    [formRequest setNumberOfTimesToRetryOnTimeout:0];
-//    [formRequest setTimeOutSeconds:45];
-//    [formRequest addPostValue:@"filename.jpg" forKey:@"filename"];
-//    [formRequest setData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.5)] withFileName:@"filename.jpg" andContentType:@"image/jpeg" forKey:@"file"];
-//    [formRequest setData:[@"brian" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"photo_attribution_text" ];
-//    [formRequest setData:[@"brianURL" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"photo_attribution_url" ];
-//    [formRequest setRequestMethod:@"POST"];
-//    [formRequest setDelegate:self];
-//    [formRequest setDidFinishSelector:@selector(artUploadCompleted:)];
-//    [formRequest setDidFailSelector:@selector(artUploadFailed:)];
-//    [formRequest startAsynchronous];
-    
-    
-    //[postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\";%@\r\n", filename, flickrHandleString] dataUsingEncoding:NSUTF8StringEncoding]];
-    //[postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@.jpg\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
-    //[postbody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+
        
 }
 
