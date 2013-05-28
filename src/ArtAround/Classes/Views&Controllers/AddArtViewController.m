@@ -542,6 +542,7 @@
         //call the submit request
         [[AAAPIManager instance] submitArt:_newArtDictionary withTarget:self callback:@selector(artUploadCompleted:) failCallback:@selector(artUploadFailed:)];
         
+        [self showLoadingView:@"Uploading Art..."];
         
     }
     else {
