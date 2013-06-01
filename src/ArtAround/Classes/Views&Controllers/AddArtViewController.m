@@ -64,7 +64,7 @@
         _userAddedImagesAttribution = [[NSMutableDictionary alloc] init];
         _imageButtons = [[NSMutableArray alloc] init];
         _newArtDictionary = [[NSMutableDictionary alloc] init];
-        
+
         _addedImageCount = 0;
     }
     return self;
@@ -213,7 +213,13 @@
 }
 
 - (void) locationButtonPressed
-{}
+{
+
+    UIActionSheet *locationActionSheet = [[UIActionSheet alloc] initWithTitle:@"Location" delegate:self cancelButtonTitle:@"Cacnel" destructiveButtonTitle:nil otherButtonTitles:@"Current Location", (_imageLocation) ? @"Image Geotag" : nil, nil];
+    [locationActionSheet setTag:_kLocationActionSheet];
+    [locationActionSheet showInView:self.view];
+    
+}
 
 - (void) eventButtonPressed
 {}
@@ -518,7 +524,10 @@
         _addedImageCount > 0) {
     
         //set the location
-        [_newArtDictionary setObject:self.currentLocation forKey:@"location[]"];
+        if (_selectedLocation)
+            [_newArtDictionary setObject:_selectedLocation forKey:@"location[]"];
+        else
+            [_newArtDictionary setObject:self.currentLocation forKey:@"location[]"];
         
         //make sure strings are url encoded
         [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"title"]] forKey:@"title"];
@@ -871,28 +880,53 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
 
-    //decide what the picker's source is
-    switch (buttonIndex) {
+    switch (actionSheet.tag) {
+        case _kAddImageActionSheet:
             
-        case 0:
-        {
-            UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
-            imgPicker.delegate = self;
-            imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-            [self presentModalViewController:imgPicker animated:YES];
+            //decide what the picker's source is
+            switch (buttonIndex) {
+                    
+                case 0:
+                {
+                    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+                    imgPicker.delegate = self;
+                    imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                    [self presentModalViewController:imgPicker animated:YES];
+                    break;
+                }
+                case 1:
+                {
+                    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+                    imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                    imgPicker.delegate = self;
+                    [self presentModalViewController:imgPicker animated:YES];
+                    break;
+                }
+                default:
+                    break;
+            }
+            
             break;
-        }
-        case 1:
-        {
-            UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
-            imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-            imgPicker.delegate = self;
-            [self presentModalViewController:imgPicker animated:YES];
+            
+        case _kLocationActionSheet:
+            
+            switch (buttonIndex) {
+                case 0:
+                    _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+                    break;
+                case 1:
+                    if ([actionSheet cancelButtonIndex] != 1 && _imageLocation)
+                        _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
+                default:
+                    break;
+            }
+            
             break;
-        }
+            
         default:
             break;
     }
+    
 
 
 }
@@ -908,53 +942,45 @@
         // Get the image from the result
         UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
         
+        NSMutableDictionary *newInfo = [[NSMutableDictionary alloc] initWithDictionary:info];
+        [newInfo setObject:_currentLocation forKey:ALAssetPropertyLocation];
+        
         //create asset library
         ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
         
         //if its from the camera we have to save it first
         if (picker.sourceType == UIImagePickerControllerSourceTypeCamera && [info valueForKey:@"UIImagePickerControllerMediaMetadata"]) {
             
-            //add the image to the asset library
-            [assetLibrary writeImageToSavedPhotosAlbum:image.CGImage metadata:[info valueForKey:@"UIImagePickerControllerMediaMetadata"] completionBlock:^(NSURL *assetURL, NSError *error) {
-                
-                    [assetLibrary assetForURL:assetURL
-                                  resultBlock:^(ALAsset *asset) {
-                                      
-                                      //check for location
-                                      if ([asset valueForProperty:@"ALAssetPropertyLocation"]) {
-                                          
-                                          _imageLocation = [[asset valueForProperty:@"ALAssetPropertyLocation"] retain];
-                                          
-                                      }
-                        
-                    }
-                                 failureBlock:^(NSError *error) {
-                                     
-                                     //TODO: Failure case
-                        
-                    }];
-                
-            }];
+            _imageLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
             
         }
         else {
-            NSString *assetUrlString = [info valueForKey:UIImagePickerControllerReferenceURL];
-            NSURL *assetURL = [NSURL URLWithString:assetUrlString];
+
+            NSURL *assetURL = [info valueForKey:UIImagePickerControllerReferenceURL];
             
             [assetLibrary assetForURL:assetURL
                           resultBlock:^(ALAsset *asset) {
                               
+                              ALAssetRepresentation *rep = [asset defaultRepresentation];
+                              NSDictionary *metadata = rep.metadata;
+                              DebugLog(@"%@", metadata);
+                              
+                              //DebugLog(@"%@", [asset description]);
                               //check for location
-                              if ([asset valueForProperty:@"ALAssetPropertyLocation"]) {
+                              if ([asset valueForProperty:ALAssetPropertyLocation]) {
                                   
-                                  _imageLocation = [[asset valueForProperty:@"ALAssetPropertyLocation"] retain];
+                                  _imageLocation = [[asset valueForProperty:ALAssetPropertyLocation] retain];
                                   
+                              }
+                              else {
+                                   DebugLog(@"No location for image");
                               }
                               
                           }
                          failureBlock:^(NSError *error) {
                              
                              //TODO: Failure case
+                             DebugLog(@"Failed to get asset");
                              
                          }];
             

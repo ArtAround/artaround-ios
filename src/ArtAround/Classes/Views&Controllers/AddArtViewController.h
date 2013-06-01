@@ -32,6 +32,7 @@ static const float _kPhotoHeight = 140.0f;
 #define _kAddImageActionSheet 100
 #define _kShareActionSheet 101
 #define _kFlagActionSheet 102
+#define _kLocationActionSheet 103
 #define _kUserAddedImageTagBase 1000
 #define _kAddImageTagBase 2000
 
@@ -47,7 +48,7 @@ static const float _kPhotoHeight = 140.0f;
     UIDatePicker*           _datePicker;
     UIToolbar*              _dateToolbar;
     UIBarButtonItem*        _doneButton;
-    CLLocation*             _imageLocation;
+    CLLocation*             _imageLocation, *_selectedLocation;
 }
 
 
