@@ -47,6 +47,7 @@ static const float _kPhotoHeight = 140.0f;
     UIDatePicker*           _datePicker;
     UIToolbar*              _dateToolbar;
     UIBarButtonItem*        _doneButton;
+    CLLocation*             _imageLocation;
 }
 
 

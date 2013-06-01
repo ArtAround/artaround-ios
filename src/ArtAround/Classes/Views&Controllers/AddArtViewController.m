@@ -16,6 +16,7 @@
 #import "AAAPIManager.h"
 #import "ArtAnnotation.h"
 #import <QuartzCore/QuartzCore.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 #import "Utilities.h"
 #import "SearchItem.h"
 #import "ArtParser.h"
@@ -904,11 +905,60 @@
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
         
-        
-        
         // Get the image from the result
         UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
         
+        //create asset library
+        ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
+        
+        //if its from the camera we have to save it first
+        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera && [info valueForKey:@"UIImagePickerControllerMediaMetadata"]) {
+            
+            //add the image to the asset library
+            [assetLibrary writeImageToSavedPhotosAlbum:image.CGImage metadata:[info valueForKey:@"UIImagePickerControllerMediaMetadata"] completionBlock:^(NSURL *assetURL, NSError *error) {
+                
+                    [assetLibrary assetForURL:assetURL
+                                  resultBlock:^(ALAsset *asset) {
+                                      
+                                      //check for location
+                                      if ([asset valueForProperty:@"ALAssetPropertyLocation"]) {
+                                          
+                                          _imageLocation = [[asset valueForProperty:@"ALAssetPropertyLocation"] retain];
+                                          
+                                      }
+                        
+                    }
+                                 failureBlock:^(NSError *error) {
+                                     
+                                     //TODO: Failure case
+                        
+                    }];
+                
+            }];
+            
+        }
+        else {
+            NSString *assetUrlString = [info valueForKey:UIImagePickerControllerReferenceURL];
+            NSURL *assetURL = [NSURL URLWithString:assetUrlString];
+            
+            [assetLibrary assetForURL:assetURL
+                          resultBlock:^(ALAsset *asset) {
+                              
+                              //check for location
+                              if ([asset valueForProperty:@"ALAssetPropertyLocation"]) {
+                                  
+                                  _imageLocation = [[asset valueForProperty:@"ALAssetPropertyLocation"] retain];
+                                  
+                              }
+                              
+                          }
+                         failureBlock:^(NSError *error) {
+                             
+                             //TODO: Failure case
+                             
+                         }];
+            
+        }
         //if the user has already been asked for a flickr handle just add image
         if ([Utilities instance].lastFlickrUpdate) {
             
