@@ -649,7 +649,7 @@ static const int _kAnnotationLimit = 9999;
         NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
         
         if (filteredAnnotations.count > 0)
-            [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]];
+            [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
     }
 }
 
