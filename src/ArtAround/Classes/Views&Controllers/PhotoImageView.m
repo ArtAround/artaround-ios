@@ -7,13 +7,16 @@
 //
 
 #import "PhotoImageView.h"
+#import "Utilities.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define kLabelHeight 25.0f
 
 @implementation PhotoImageView
 
-@synthesize photoAttributionButton, photoAttributionLabel;
+@synthesize photoAttributionButton;
 @synthesize photoImageViewDelegate;
+@synthesize url = _url;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -21,53 +24,42 @@
     if (self) {
         // Initialization code
         
-        UIButton *attributionButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0f, frame.size.height - kLabelHeight - 10.0f, frame.size.width - 20.0f, kLabelHeight)];
-        [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackgroundPressed.png"] forState:UIControlStateHighlighted];
+        UIImage *buttonArrowImage = [UIImage imageNamed:@"buttonArrow.png"];
+        UIImage *buttonArrowImageWhite = [UIImage imageNamed:@"buttonArrowWhite.png"];
+        UIButton *attributionButton = [[UIButton alloc] initWithFrame:CGRectMake(-2.0f, frame.size.height - kLabelHeight - 20.0f, frame.size.width + 2.0f   , kLabelHeight + 20)];
+        [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackgroundPressed.png"] forState:UIControlStateNormal];
         [attributionButton setTitleEdgeInsets:UIEdgeInsetsZero];
+        [attributionButton setAdjustsImageWhenHighlighted:NO];
         [attributionButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
         [attributionButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         [attributionButton addTarget:self action:@selector(attributionButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [attributionButton setImageEdgeInsets:UIEdgeInsetsMake(0, self.frame.size.width - buttonArrowImage.size.width, 0, 0.0f)];
 
         [self setPhotoAttributionButton:attributionButton];
         
         //add label to button
-        UILabel *attributionButtonLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, attributionButton.frame.size.width, attributionButton.frame.size.height)];
+        UILabel *attributionButtonLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, 0, attributionButton.frame.size.width - buttonArrowImage.size.width, attributionButton.frame.size.height)];
         [attributionButtonLabel setBackgroundColor:[UIColor clearColor]];
-        [attributionButtonLabel setText:@"Att Button"];
+        [attributionButtonLabel setText:@"Photo by"];
+        [attributionButtonLabel setFont:kButtonFont];
+        [attributionButtonLabel setTextColor:kButtonColorNormal];
+        [attributionButtonLabel setHighlightedTextColor:kButtonColorHighlighted];
         [attributionButtonLabel setTag:kAttributionButtonLabelTag];
         [attributionButtonLabel setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
-        [attributionButtonLabel setTextColor:[UIColor whiteColor]];
         [attributionButtonLabel setTextAlignment:NSTextAlignmentLeft];
         [attributionButton addSubview:attributionButtonLabel];
-        
-        UILabel *attributionLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, attributionButton.frame.origin.y - kLabelHeight, frame.size.width - 20.0f, kLabelHeight)];
-        [attributionLabel setBackgroundColor:[UIColor clearColor]];
-        [attributionLabel setText:@"Att Label"];
-        [attributionLabel setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
-        [attributionLabel setTextColor:[UIColor whiteColor]];
-        [attributionLabel setTextAlignment:NSTextAlignmentLeft];
-        [self setPhotoAttributionLabel:attributionLabel];
-        
-        
-        
-        
-        [self addSubview:self.photoAttributionLabel];
+
         [self addSubview:self.photoAttributionButton];
         
-        DebugLog(@"Label Width: %f", self.photoAttributionLabel.frame.size.width);
     }
     return self;
 }
 
 - (void) attributionButtonPressed {
 
-    NSString *urlString = [(UILabel*)[self.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] text];
-
-    if (urlString && urlString.length > 0) {
-    
-        NSURL *url = [NSURL URLWithString:urlString];
+    if (_url && _url.absoluteString.length > 0) {
         
-        [(id)self.photoImageViewDelegate attributionButtonPressed:self withTitle:self.photoAttributionLabel.text andURL:url];
+        [(id)self.photoImageViewDelegate attributionButtonPressed:self withTitle:self.photoAttributionButton.titleLabel.text andURL:_url];
         
     }
     
@@ -99,5 +91,26 @@
     return [super hitTest:point withEvent:event];
     
     
+}
+
+- (void) setUrl:(NSURL *)newUrl
+{
+    if (!newUrl) return;
+    
+    if (newUrl.absoluteString.length > 0) {
+        
+        _url = [newUrl retain];
+        
+        UIImage *buttonArrowImage = [UIImage imageNamed:@"buttonArrow.png"];
+        UIImage *buttonArrowImageWhite = [UIImage imageNamed:@"buttonArrowWhite.png"];
+        
+        [self.photoAttributionButton setImage:buttonArrowImage forState:UIControlStateNormal];
+        [self.photoAttributionButton setImage:buttonArrowImageWhite forState:UIControlStateHighlighted];
+        [self.photoAttributionButton setAdjustsImageWhenHighlighted:YES];
+    }
+}
+
+- (NSURL*) url {
+    return _url;
 }
 @end

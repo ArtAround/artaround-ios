@@ -16,6 +16,7 @@
 #define kBoldDetailFont [UIFont fontWithName:@"Helvetica-Bold" size:13]
 #define kBoldItalicDetailFont [UIFont fontWithName:@"Helvetica-BoldOblique" size:13]
 #define kDetailFont [UIFont fontWithName:@"Helvetica" size:13]
+#define kButtonFont [UIFont fontWithName:@"Verdana-Bold" size:12.0]
 
 //bg colors
 #define kBGdarkBrown [UIColor colorWithRed:82.0f/255.0f green:74.0f/255.0f blue:75.0f/255.0f alpha:1.0f]
@@ -27,6 +28,9 @@
 #define kFontColorDarkBrown [UIColor colorWithRed:49.0f/255.0f green:45.0f/255.0f blue:45.0f/255.0f alpha:1.0f]
 #define kFontColorBrown [UIColor colorWithRed:82.0f/255.0f green:74.0f/255.0f blue:74.0f/255.0f alpha:1.0f]
 
+//button colors
+#define kButtonColorNormal [UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1]
+#define kButtonColorHighlighted [UIColor colorWithWhite:1.0f alpha:1.0f]
 
 //System Versioning Preprocessor Macros
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)

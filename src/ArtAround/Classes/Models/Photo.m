@@ -42,7 +42,7 @@
 - (NSString*)description 
 {
     
-    NSString *desc = [NSString stringWithFormat:@"originalURL: %@", self.originalURL];
+    NSString *desc = [NSString stringWithFormat:@"originalURL: %@\nattribution: %@\nattribution url: %@", self.originalURL, self.photoAttribution, self.photoAttributionURL];
     return desc;
     
 }

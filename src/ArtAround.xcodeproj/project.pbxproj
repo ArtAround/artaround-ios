@@ -15,6 +15,10 @@
 		466406F41747CC720003CA8A /* AddArtViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 466406F21747CC720003CA8A /* AddArtViewController.m */; };
 		466406F51747CC720003CA8A /* AddArtViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 466406F31747CC720003CA8A /* AddArtViewController.xib */; };
 		466406F91747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 466406F81747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m */; };
+		46745F6F175A641B00403810 /* buttonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F6D175A641B00403810 /* buttonArrow.png */; };
+		46745F70175A641B00403810 /* buttonArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F6E175A641B00403810 /* buttonArrow@2x.png */; };
+		46745F73175A64EC00403810 /* buttonArrowWhite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F71175A64EC00403810 /* buttonArrowWhite@2x.png */; };
+		46745F74175A64EC00403810 /* buttonArrowWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F72175A64EC00403810 /* buttonArrowWhite.png */; };
 		5F7A24A4150CF8A100101598 /* EventParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A3150CF8A100101598 /* EventParser.m */; };
 		5F7A24A8150CF98000101598 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A7150CF98000101598 /* Event.m */; };
 		5F7A24BD150D501400101598 /* PinEvent.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F7A24B9150D500F00101598 /* PinEvent.png */; };
@@ -191,6 +195,10 @@
 		466406F31747CC720003CA8A /* AddArtViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddArtViewController.xib; sourceTree = "<group>"; };
 		466406F71747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingScrollView.h; sourceTree = "<group>"; };
 		466406F81747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingScrollView.m; sourceTree = "<group>"; };
+		46745F6D175A641B00403810 /* buttonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonArrow.png; sourceTree = "<group>"; };
+		46745F6E175A641B00403810 /* buttonArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "buttonArrow@2x.png"; sourceTree = "<group>"; };
+		46745F71175A64EC00403810 /* buttonArrowWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "buttonArrowWhite@2x.png"; sourceTree = "<group>"; };
+		46745F72175A64EC00403810 /* buttonArrowWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonArrowWhite.png; sourceTree = "<group>"; };
 		468A155017357F4900DED13C /* ArtAround5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround5.xcdatamodel; sourceTree = "<group>"; };
 		5F7A24A2150CF8A100101598 /* EventParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParser.h; sourceTree = "<group>"; };
 		5F7A24A3150CF8A100101598 /* EventParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParser.m; sourceTree = "<group>"; };
@@ -683,16 +691,14 @@
 		CA0094391409509B00E5001E /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				5F7A24CA150DA55900101598 /* popularIcon.png */,
-				5F7A24D8150DA5B400101598 /* flagIcon@2x.png */,
-				5F7A24D9150DA5B700101598 /* flagIcon.png */,
-				5F7A24CB150DA55A00101598 /* popularIcon@2x.png */,
-				5F7A24CC150DA56100101598 /* commissionedIcon.png */,
-				5F7A24CD150DA56400101598 /* commissionedIcon@2x.png */,
-				5F7A24CE150DA56700101598 /* fiveByFiveIcon.png */,
-				5F7A24CF150DA56800101598 /* fiveByFiveIcon@2x.png */,
 				CA1AE9D8140C906200C56C4D /* ArtAroundLogo.png */,
 				CA1AE9D9140C906200C56C4D /* ArtAroundLogo@2x.png */,
+				46745F6D175A641B00403810 /* buttonArrow.png */,
+				46745F6E175A641B00403810 /* buttonArrow@2x.png */,
+				46745F72175A64EC00403810 /* buttonArrowWhite.png */,
+				46745F71175A64EC00403810 /* buttonArrowWhite@2x.png */,
+				5F7A24CC150DA56100101598 /* commissionedIcon.png */,
+				5F7A24CD150DA56400101598 /* commissionedIcon@2x.png */,
 				5FF9639E151030FF0030FD95 /* Default.png */,
 				5FF9639F151030FF0030FD95 /* Default@2x.png */,
 				CA0F4924140F2D2B0064F072 /* DetailBackground.jpg */,
@@ -715,6 +721,10 @@
 				CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */,
 				CAC02B85140DBFE10032C4E5 /* FilterBackgroundPressed.png */,
 				CAC02B86140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png */,
+				5F7A24CE150DA56700101598 /* fiveByFiveIcon.png */,
+				5F7A24CF150DA56800101598 /* fiveByFiveIcon@2x.png */,
+				5F7A24D9150DA5B700101598 /* flagIcon.png */,
+				5F7A24D8150DA5B400101598 /* flagIcon@2x.png */,
 				CAE7E17C141071380046890F /* Icon-72.png */,
 				CAE7E17D141071380046890F /* Icon-Small-50.png */,
 				CAE7E17E141071380046890F /* Icon-Small.png */,
@@ -738,8 +748,8 @@
 				CA1AE9EC140C906200C56C4D /* PinArtPressed.png */,
 				CA1AE9ED140C906200C56C4D /* PinArtPressed@2x.png */,
 				5F7A24B9150D500F00101598 /* PinEvent.png */,
-				5F7A24BA150D501000101598 /* PinEventPressed.png */,
 				5F7A24BB150D501100101598 /* PinEvent@2x.png */,
+				5F7A24BA150D501000101598 /* PinEventPressed.png */,
 				5F7A24BC150D501200101598 /* PinEventPressed@2x.png */,
 				CA1AE9EE140C906200C56C4D /* PinGeneral.png */,
 				CA1AE9EF140C906200C56C4D /* PinGeneral@2x.png */,
@@ -749,6 +759,8 @@
 				CA1AE9F3140C906200C56C4D /* PinVenue@2x.png */,
 				CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */,
 				CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */,
+				5F7A24CA150DA55900101598 /* popularIcon.png */,
+				5F7A24CB150DA55A00101598 /* popularIcon@2x.png */,
 				CA1AE9E6140C906200C56C4D /* ShareArt.png */,
 				CA1AE9E7140C906200C56C4D /* ShareArt@2x.png */,
 				CA1AE9E8140C906200C56C4D /* ShareArtPressed.png */,
@@ -1157,6 +1169,10 @@
 				46073BD8173352A400D9BCEE /* Default-568h@2x.png in Resources */,
 				466406F51747CC720003CA8A /* AddArtViewController.xib in Resources */,
 				4626F8701749478400ECADC2 /* SearchTableViewController.xib in Resources */,
+				46745F6F175A641B00403810 /* buttonArrow.png in Resources */,
+				46745F70175A641B00403810 /* buttonArrow@2x.png in Resources */,
+				46745F73175A64EC00403810 /* buttonArrowWhite@2x.png in Resources */,
+				46745F74175A64EC00403810 /* buttonArrowWhite.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

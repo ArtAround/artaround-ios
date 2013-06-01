@@ -641,7 +641,7 @@ static const float _kPhotoHeight = 140.0f;
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
 	NSArray * sortedPhotos = [_art.photos sortedArrayUsingDescriptors:sortDescriptors];
     Photo *thisPhoto = [sortedPhotos objectAtIndex:buttonTag - 10];
-    
+
     PhotoImageView *imgView = [[PhotoImageView alloc] initWithFrame:CGRectOffset(self.view.frame, 0, 0)];
     [imgView setPhotoImageViewDelegate:self];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
@@ -656,24 +656,24 @@ static const float _kPhotoHeight = 140.0f;
 
     //set the photo attribution if they exist
     if (thisPhoto.photoAttribution) {
-        imgView.photoAttributionLabel.text = thisPhoto.photoAttribution;
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@", thisPhoto.photoAttribution]];
     }
-    if (thisPhoto.photoAttributionURL) {
-        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:thisPhoto.photoAttributionURL];
-
+    else {
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:@"Photo by anonymous user"];
+    }
+    
+    if (thisPhoto.photoAttributionURL && [thisPhoto.photoAttributionURL isKindOfClass:[NSString class]] && thisPhoto.photoAttributionURL.length > 0) {
+        [imgView setUrl:[NSURL URLWithString:thisPhoto.photoAttributionURL]];
     }
 
     UIViewController *viewController = [[UIViewController alloc] init];
     viewController.view = imgView;
 
-
     [self.navigationController pushViewController:viewController animated:YES];
     DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
     [imgView release];
     [viewController release];
-    
-
-                             
+             
     
 }
 
@@ -2881,8 +2881,8 @@ static const float _kPhotoHeight = 140.0f;
     //create view controller
     UIViewController *containerViewController = [[UIViewController alloc] init];
     [containerViewController setView:webView];
-    [containerViewController setTitle:title];
     
+    /*
     //create the navcontroller
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:containerViewController];
     
@@ -2893,7 +2893,8 @@ static const float _kPhotoHeight = 140.0f;
     
     //present nav controller
     [self presentModalViewController:navController animated:YES];
-    
+    */
+    [self.navigationController pushViewController:containerViewController animated:YES];
     
 }
 

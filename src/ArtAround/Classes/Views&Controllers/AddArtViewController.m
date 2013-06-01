@@ -299,9 +299,19 @@
     [imgView setPhotoImageViewDelegate:self];
     [imgView setContentMode:UIViewContentModeScaleAspectFit];
     [imgView setBackgroundColor:kFontColorDarkBrown];
-    [imgView.photoAttributionLabel setText:[attDict objectForKey:@"text"]];
-    [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[attDict objectForKey:@"url"]];
+    
+    //set the photo attribution if they exist
+    if ([attDict objectForKey:@"text"] && [[attDict objectForKey:@"text"] length] > 0) {
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@", [attDict objectForKey:@"text"]]];
+    }
+    else {
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:@"Photo by anonymous user"];
+    }
+    
 
+    if ([attDict objectForKey:@"url"] && [[attDict objectForKey:@"url"] isKindOfClass:[NSString class]] && [[attDict objectForKey:@"url"] length] > 0) {
+        [imgView setUrl:[NSURL URLWithString:[attDict objectForKey:@"url"]]];
+    }
     
     if (button.imageView.image)
         [imgView setImage:button.imageView.image];
@@ -827,6 +837,7 @@
     [containerViewController setView:webView];
     [containerViewController setTitle:title];
     
+    /*
     //create the navcontroller
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:containerViewController];
     
@@ -837,7 +848,8 @@
     
     //present nav controller
     [self presentModalViewController:navController animated:YES];
-    
+    */
+    [self.navigationController pushViewController:containerViewController animated:YES];
     
 }
 
