@@ -31,7 +31,16 @@
 	Category *category = [ItemParser existingEntity:@"Category" inContext:context uniqueKey:@"title" uniqueValue:title];
 	if (!category) {
 		category = (Category *)[NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
-		category.title = [AAAPIManager clean:title];
+        
+        #warning temporarily creating array string
+        //TODO: need to make categories one to many
+        NSString *arrayTitle = @"";
+        if ([title isKindOfClass:[NSArray class]])
+            arrayTitle = [(NSArray*)title componentsJoinedByString:@", "];
+        else
+            arrayTitle = title;
+        
+		category.title = [AAAPIManager clean:arrayTitle];
 	}
 	return category;
 }
