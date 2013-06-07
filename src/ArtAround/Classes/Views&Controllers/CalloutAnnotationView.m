@@ -157,7 +157,7 @@
 	//set label text
 	[self.titleLabel setText:_art.title];
 	[self.artistLabel setText:artist];
-	[self.categoryLabel setText:_art.category.title];
+	[self.categoryLabel setText:[_art categoriesString]];
 	[self.summaryLabel setText:_art.locationDescription];
 	
 	//update frames

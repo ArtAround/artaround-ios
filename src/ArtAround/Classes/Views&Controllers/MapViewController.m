@@ -678,7 +678,7 @@ static const int _kAnnotationLimit = 9999;
 			Art *art = [_items objectAtIndex:index];
 			
 			//setup the pin image and reuse identifier
-			NSString *title = [art.category.title lowercaseString];
+			NSString *title = [[art categoriesString] lowercaseString];
 			NSString *reuseIdentifier = nil;
 			UIImage *pinImage = nil;
 			/*if (art.event != nil) {

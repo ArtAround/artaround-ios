@@ -96,16 +96,11 @@
     if ([artDict objectForKey:@"created_at"] && ![[artDict objectForKey:@"created_at"] isKindOfClass:[NSNull class]])
         art.createdAt = [[ItemParser dateFormatter] dateFromString:[artDict objectForKey:@"created_at"]];
     
-    #warning temporarily creating array string
-    //TODO: need to make categories one to many
-    NSString *cat = [artDict objectForKey:@"category"];
-    NSString *arrayTitle = @"";
-    if ([cat isKindOfClass:[NSArray class]])
-        arrayTitle = [(NSArray*)cat componentsJoinedByString:@", "];
-    else
-        arrayTitle = cat;
+    //categories    
+    if ([artDict objectForKey:@"category"] && [[artDict objectForKey:@"category"] isKindOfClass:[NSArray class]])
+        art.categories = [CategoryParser setForTitles:[artDict objectForKey:@"category"] inContext:context];
     
-	art.category = [CategoryParser categoryForTitle:arrayTitle inContext:context];
+    //neighborhood
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
     
     //photos

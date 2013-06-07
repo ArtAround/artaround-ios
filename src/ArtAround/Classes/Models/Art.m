@@ -24,7 +24,7 @@
 @dynamic title;
 @dynamic ward;
 @dynamic year;
-@dynamic category;
+@dynamic categories;
 @dynamic comments;
 @dynamic neighborhood;
 @dynamic photos;
@@ -33,5 +33,22 @@
 @dynamic rank;
 @dynamic commissioned;
 @dynamic event;
+
+- (NSString*)categoriesString
+{
+    NSString *catString = @"";
+    NSArray *catArray = [self.categories allObjects];
+
+    NSMutableArray *catTitlesArray = [[NSMutableArray alloc] initWithCapacity:catArray.count];
+    
+    for (Category *thisCat in catArray) {
+        [catTitlesArray addObject:thisCat.title];
+    }
+    
+    if (catTitlesArray.count > 0)
+        catString = [catTitlesArray componentsJoinedByString:@", "];
+    
+    return catString;
+}
 
 @end

@@ -555,10 +555,8 @@
             [_newArtDictionary setObject:dateString forKey:@"year"];
         }
         
-#warning TEMPORARILY only grabbing the first category and removing the plural obejct from the dictionary. Waiting on API Update to change. in the future we'll need to urlencode each category
-#warning ALSO - setting the key to category as opposed to categories plural
-        NSString *firstCat = [[_newArtDictionary objectForKey:@"categories"] objectAtIndex:0];
-        [_newArtDictionary setObject:[Utilities urlEncode:firstCat] forKey:@"category"];
+        NSString *catsString = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@","];
+        [_newArtDictionary setObject:[Utilities urlEncode:catsString] forKey:@"category"];
         [_newArtDictionary removeObjectForKey:@"categories"];
         
         //call the submit request

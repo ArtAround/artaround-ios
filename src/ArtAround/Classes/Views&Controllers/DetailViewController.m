@@ -544,7 +544,7 @@ static const float _kPhotoHeight = 140.0f;
     NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
     NSString *artTitle = (_art.title) ? _art.title : @"";
     NSString *artist = (_art.artist) ? _art.artist : @"";
-    NSString *category = (_art.category && _art.category.title) ? _art.category.title : @"";
+    NSString *category = (_art.categories && [_art categoriesString]) ? [_art categoriesString] : @"";
     NSString *neighborhood = (_art.neighborhood && _art.neighborhood.title) ? _art.neighborhood.title : @"";
     NSString *ward = (_art.ward) ? [_art.ward stringValue] : @"";
     NSString *locationDesc = (_art.locationDescription) ? _art.locationDescription : @"";    
@@ -1943,8 +1943,8 @@ static const float _kPhotoHeight = 140.0f;
                         if (_art) {
                             [(UILabel*)[cell viewWithTag:1] setText:_art.title];
                          
-                            if (_categoryField.text.length == 0 && _art.category.title.length != 0)
-                                _categoryField.text = _art.category.title;
+                            if (_categoryField.text.length == 0 && [_art categoriesString].length != 0)
+                                _categoryField.text = [_art categoriesString];
                             
                             if (_artistField.text.length == 0 && _art.artist.length != 0)
                                 _artistField.text = _art.artist;
@@ -2105,7 +2105,7 @@ static const float _kPhotoHeight = 140.0f;
                                                   20);
                         
                         //set category label text
-                        [(UILabel*)[cell viewWithTag:3] setText:[_art.category.title uppercaseString]];
+                        [(UILabel*)[cell viewWithTag:3] setText:[[_art categoriesString] uppercaseString]];
                         
                         //arrange the artist & year label                        
                         UILabel *aLabel = (UILabel*)[cell viewWithTag:2];

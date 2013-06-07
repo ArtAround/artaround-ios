@@ -27,7 +27,7 @@
 @property (nonatomic, retain) NSNumber * rank;
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) NSNumber * commissioned;
-@property (nonatomic, retain) Category *category;
+@property (nonatomic, retain) NSSet *categories;
 @property (nonatomic, retain) NSSet *comments;
 @property (nonatomic, retain) Neighborhood *neighborhood;
 @property (nonatomic, retain) NSSet *photos;
@@ -39,6 +39,11 @@
 
 @interface Art (CoreDataGeneratedAccessors)
 
+- (void)addCategoriesObject:(Category *)value;
+- (void)removeCategoriesObject:(Category *)value;
+- (void)addCategories:(NSSet *)values;
+- (void)removeCategories:(NSSet *)values;
+
 - (void)addCommentsObject:(Comment *)value;
 - (void)removeCommentsObject:(Comment *)value;
 - (void)addComments:(NSSet *)values;
@@ -48,5 +53,7 @@
 - (void)removePhotosObject:(Photo *)value;
 - (void)addPhotos:(NSSet *)values;
 - (void)removePhotos:(NSSet *)values;
+
+- (NSString*)categoriesString;
 
 @end

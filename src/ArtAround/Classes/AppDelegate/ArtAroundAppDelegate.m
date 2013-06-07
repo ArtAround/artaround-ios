@@ -26,6 +26,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //delete old db
+    [self deleteOldDB];
     
     [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
                                            dispatchPeriod:kGANDispatchPeriodSec
@@ -209,7 +211,7 @@
         return __persistentStoreCoordinator;
     }
 
-	NSURL *storeURL = [NSURL fileURLWithPath:[(NSString *)[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ArtAround.sqlite"]];
+	NSURL *storeURL = [NSURL fileURLWithPath:[(NSString *)[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ArtAroundV2.sqlite"]];
     
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
     
@@ -292,4 +294,22 @@
 	}
 }
 
+
+#pragma mark - Delete Old DB
+- (void) deleteOldDB
+{
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"aa_deletioncomplete"]) return;
+    
+    NSError *error = nil;
+    NSURL *storeURL = [NSURL fileURLWithPath:[(NSString *)[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ArtAround.sqlite"]];
+    
+    if ([[NSFileManager defaultManager] removeItemAtURL:storeURL error:&error]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:@"aa_deletioncomplete"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    else {
+        DebugLog(@"DB Deletion Failed. Error: %@", error.description);
+    }
+    
+}
 @end

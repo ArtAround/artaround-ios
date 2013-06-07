@@ -203,6 +203,7 @@
 		46745F75175A725100403810 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		468A0674175BCDD600F697A5 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		468A155017357F4900DED13C /* ArtAround5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround5.xcdatamodel; sourceTree = "<group>"; };
+		46B357A717623CE9006663AA /* ArtAround6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = file; path = ArtAround6.xcdatamodel; sourceTree = "<group>"; };
 		5F7A24A2150CF8A100101598 /* EventParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParser.h; sourceTree = "<group>"; };
 		5F7A24A3150CF8A100101598 /* EventParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParser.m; sourceTree = "<group>"; };
 		5F7A24A6150CF98000101598 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
@@ -1431,11 +1432,12 @@
 			children = (
 				5F871D7D158C0F3600F60348 /* ArtAround4.xcdatamodel */,
 				468A155017357F4900DED13C /* ArtAround5.xcdatamodel */,
+				46B357A717623CE9006663AA /* ArtAround6.xcdatamodel */,
 				5F814486153B6A7A008FF1A0 /* ArtAround3.xcdatamodel */,
 				C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */,
 				CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */,
 			);
-			currentVersion = 468A155017357F4900DED13C /* ArtAround5.xcdatamodel */;
+			currentVersion = 46B357A717623CE9006663AA /* ArtAround6.xcdatamodel */;
 			path = ArtAround.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

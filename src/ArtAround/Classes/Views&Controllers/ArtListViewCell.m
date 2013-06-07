@@ -141,7 +141,7 @@
 	
 	//set label text
 	[self.artNameLabel setText:self.art.title];
-	[self.artPropertyLabel setText:self.art.category.title];
+	[self.artPropertyLabel setText:[self.art categoriesString]];
 	[self.artDescriptionLabel setText:self.art.locationDescription];
     
     if (self.art.distance) {
