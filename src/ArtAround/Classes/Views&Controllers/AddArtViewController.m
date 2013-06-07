@@ -472,6 +472,8 @@
 		
 	}
 	
+    
+    
     //get the add button's offset
     float prevOffset = _kPhotoPadding;
     if (prevView) {
@@ -491,6 +493,7 @@
     
     //setup the add image button
     UIButton *addImgButton = (UIButton*)[self.photosScrollView viewWithTag:_kAddImageTagBase];
+    
     if (!addImgButton) {
         addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
@@ -503,6 +506,8 @@
         [self.photosScrollView addSubview:addImgButton];
     }
     
+    if (_userAddedImages.count == 0) {
+    
     [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
     
     //adjust the button's autoresizing mask when there are fewer than 3 images so that it stays centered
@@ -510,6 +515,7 @@
         [addImgButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
     }
     
+    }
     
     
 	//set the content size
