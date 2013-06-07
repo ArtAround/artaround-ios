@@ -192,6 +192,7 @@ static const int _kAnnotationLimit = 9999;
                 img1 = @"PinArt.png";
                 img2 = @"PinArt.png";
                 
+                
                 /*
                 switch (index) {
                     case 0:
