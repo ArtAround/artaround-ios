@@ -226,6 +226,8 @@
 
 - (void) dateButtonPressed
 {
+    [self findAndResignFirstResponder];
+    
     UIDatePicker *datePicker = [[UIDatePicker alloc] init];
     [datePicker setDatePickerMode:UIDatePickerModeDate];
     [datePicker setDate:[NSDate date]];
