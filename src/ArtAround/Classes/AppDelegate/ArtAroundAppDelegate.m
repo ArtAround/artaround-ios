@@ -47,7 +47,11 @@
 	
 	//setup the main navigation controller with a map view controller as the root controller	
 	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.mapViewController];
-	[navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
+    [navController.navigationBar setBackgroundColor:[UIColor colorWithRed:67.0f/255.0f green:67.0f/255.0f blue:61.0f/255.0f alpha:1.0f]];
+    [navController.navigationBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
+    [navController.navigationBar setShadowImage:[[UIImage alloc] init]];
+    [navController.navigationBar setBarStyle:UIBarStyleBlack];
+	[navController.navigationBar setTintColor:[UIColor clearColor]];
 	[self setNavigationController:navController];
 	[navController release];
 	

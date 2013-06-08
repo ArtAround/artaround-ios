@@ -61,11 +61,12 @@
         artPropertyLabel.textColor = kFontColorDarkBrown;
         
         //desc
-        artDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 40, 220, 33)];
+        artDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 30, 220, 43)];
         artDescriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;        
         artDescriptionLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10];
         artDescriptionLabel.numberOfLines = 3;
         artDescriptionLabel.backgroundColor = [UIColor clearColor];
+        artDescriptionLabel.contentMode = UIViewContentModeTop;
         artDescriptionLabel.textColor = kFontColorDarkBrown;
         
         //dist
@@ -78,7 +79,7 @@
         [self.contentView addSubview:artImageBackView];
         [self.contentView addSubview:artImageView];
         [self.contentView addSubview:artNameLabel];
-        [self.contentView addSubview:artPropertyLabel];        
+        //[self.contentView addSubview:artPropertyLabel];
         [self.contentView addSubview:artDescriptionLabel];        
         [self.contentView addSubview:artDistanceLabel];        
         
@@ -141,7 +142,7 @@
 	
 	//set label text
 	[self.artNameLabel setText:self.art.title];
-	[self.artPropertyLabel setText:[self.art categoriesString]];
+//	[self.artPropertyLabel setText:[self.art categoriesString]];
 	[self.artDescriptionLabel setText:self.art.locationDescription];
     
     if (self.art.distance) {
