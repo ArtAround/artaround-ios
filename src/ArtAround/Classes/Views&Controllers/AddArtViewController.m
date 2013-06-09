@@ -438,14 +438,16 @@
 			[imageView.imageView setContentMode:UIViewContentModeScaleAspectFill];
             [imageView setImage:thisUserImage forState:UIControlStateNormal];
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
-			[imageView.layer setBorderColor:[UIColor whiteColor].CGColor];
-			[imageView.layer setBorderWidth:6.0f];
+//			[imageView.layer setBorderColor:[UIColor whiteColor].CGColor];
+//			[imageView.layer setBorderWidth:6.0f];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             
             deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [deleteButton setFrame:CGRectMake(0, 0, 30.0f, 30.0f)];
-            [deleteButton setBackgroundColor:[UIColor colorWithWhite:1.0f alpha:0.6f]];
-            [deleteButton setTitle:@"X" forState:UIControlStateNormal];
+            [deleteButton setFrame:CGRectMake(2.0f, 2.0f, 20.0f, 20.0f)];
+            [deleteButton setBackgroundColor:[UIColor clearColor]];
+            [deleteButton.imageView setContentMode:UIViewContentModeScaleAspectFit];
+            [deleteButton setBackgroundImage:[UIImage imageNamed:@"closeIcon.png"] forState:UIControlStateNormal];
+            [deleteButton setAdjustsImageWhenHighlighted:YES];
             [deleteButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
             [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
             [deleteButton addTarget:self action:@selector(photoDeleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -503,9 +505,9 @@
         [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
         [addImgButton setTag:_kAddImageTagBase];
         [addImgButton.imageView setContentMode:UIViewContentModeCenter];
-        [addImgButton.layer setBorderColor:[UIColor whiteColor].CGColor];
-        [addImgButton.layer setBorderWidth:6.0f];
-        [addImgButton setBackgroundColor:[UIColor lightGrayColor]];
+//        [addImgButton.layer setBorderColor:[UIColor whiteColor].CGColor];
+//        [addImgButton.layer setBorderWidth:6.0f];
+        [addImgButton setBackgroundColor:[UIColor colorWithRed:(170.0f/255.0f) green:(170.0f/255.0f) blue:(170.0f/255.0f) alpha:1.0f]];
         [addImgButton addTarget:self action:@selector(addImageButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.photosScrollView addSubview:addImgButton];
     }

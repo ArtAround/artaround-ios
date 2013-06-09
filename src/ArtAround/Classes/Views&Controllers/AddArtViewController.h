@@ -21,14 +21,14 @@
 
 @class Art;
 
-static const float _kPhotoPadding = 5.0f;
+static const float _kPhotoPadding = 13.0f;
 static const float _kPhotoSpacing = 15.0f;
-static const float _kPhotoInitialPaddingPortait = 64.0f;
+static const float _kPhotoInitialPaddingPortait = 81.5f;
 static const float _kPhotoInitialPaddingForOneLandScape = 144.0f;
 static const float _kPhotoInitialPaddingForTwoLandScape = 40.0f;
 static const float _kPhotoInitialPaddingForThreeLandScape = 15.0f;
-static const float _kPhotoWidth = 192.0f;
-static const float _kPhotoHeight = 140.0f;
+static const float _kPhotoWidth = 157.0f;
+static const float _kPhotoHeight = 96.5f;
 
 #define _kAddImageActionSheet 100
 #define _kShareActionSheet 101
