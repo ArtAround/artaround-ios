@@ -17,6 +17,7 @@
 #import "PhotoImageView.h"
 #import "SearchTableViewController.h"
 #import "TPKeyboardAvoidingScrollView.h"
+#import "ArtLocationSelectionViewViewController.h"
 
 @class Art;
 
@@ -38,9 +39,10 @@ static const float _kPhotoHeight = 140.0f;
 
 
 
-@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate>
+@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate>
 {
     int                     _addedImageCount;
+    BOOL                    _usingPhotoGeotag;
     NSDate*                 _date;
     NSMutableArray*         _userAddedImages, *_imageButtons;
     NSMutableDictionary*    _newArtDictionary, *_userAddedImagesAttribution;
@@ -72,7 +74,6 @@ static const float _kPhotoHeight = 140.0f;
 - (void)userAddedImage:(UIImage*)image;
 - (void)userAddedImage:(UIImage*)image withAttributionText:(NSString*)text withAttributionURL:(NSString*)url;
 - (void)setupImages;
-- (void)findAndResignFirstResponder;
 
 
 

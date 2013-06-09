@@ -21,6 +21,8 @@
 		46745F74175A64EC00403810 /* buttonArrowWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F72175A64EC00403810 /* buttonArrowWhite.png */; };
 		46745F76175A725100403810 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46745F75175A725100403810 /* AssetsLibrary.framework */; };
 		468A0675175BCDD600F697A5 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 468A0674175BCDD600F697A5 /* Event.m */; };
+		46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */; };
+		46B357AD1763E407006663AA /* ArtLocationSelectionViewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */; };
 		5F7A24A4150CF8A100101598 /* EventParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A3150CF8A100101598 /* EventParser.m */; };
 		5F7A24BD150D501400101598 /* PinEvent.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F7A24B9150D500F00101598 /* PinEvent.png */; };
 		5F7A24BE150D501400101598 /* PinEventPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F7A24BA150D501000101598 /* PinEventPressed.png */; };
@@ -203,6 +205,9 @@
 		46745F75175A725100403810 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		468A0674175BCDD600F697A5 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		468A155017357F4900DED13C /* ArtAround5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround5.xcdatamodel; sourceTree = "<group>"; };
+		46B357A91763E407006663AA /* ArtLocationSelectionViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtLocationSelectionViewViewController.h; sourceTree = "<group>"; };
+		46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtLocationSelectionViewViewController.m; sourceTree = "<group>"; };
+		46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArtLocationSelectionViewViewController.xib; sourceTree = "<group>"; };
 		5F7A24A2150CF8A100101598 /* EventParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParser.h; sourceTree = "<group>"; };
 		5F7A24A3150CF8A100101598 /* EventParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParser.m; sourceTree = "<group>"; };
 		5F7A24A6150CF98000101598 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
@@ -510,6 +515,7 @@
 		466406F01747CC0C0003CA8A /* ArtDetailView */ = {
 			isa = PBXGroup;
 			children = (
+				46B357A81763E3C0006663AA /* ArtLocationSelectionView */,
 				466406F11747CC720003CA8A /* AddArtViewController.h */,
 				466406F21747CC720003CA8A /* AddArtViewController.m */,
 				466406F31747CC720003CA8A /* AddArtViewController.xib */,
@@ -531,6 +537,16 @@
 			children = (
 			);
 			name = WebViewContoller;
+			sourceTree = "<group>";
+		};
+		46B357A81763E3C0006663AA /* ArtLocationSelectionView */ = {
+			isa = PBXGroup;
+			children = (
+				46B357A91763E407006663AA /* ArtLocationSelectionViewViewController.h */,
+				46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */,
+				46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */,
+			);
+			name = ArtLocationSelectionView;
 			sourceTree = "<group>";
 		};
 		5F7A24C2150D5E3300101598 /* Flagging */ = {
@@ -1177,6 +1193,7 @@
 				46745F70175A641B00403810 /* buttonArrow@2x.png in Resources */,
 				46745F73175A64EC00403810 /* buttonArrowWhite@2x.png in Resources */,
 				46745F74175A64EC00403810 /* buttonArrowWhite.png in Resources */,
+				46B357AD1763E407006663AA /* ArtLocationSelectionViewViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1251,6 +1268,7 @@
 				4626F86F1749478400ECADC2 /* SearchTableViewController.m in Sources */,
 				4626F8781749481400ECADC2 /* SearchItem.m in Sources */,
 				468A0675175BCDD600F697A5 /* Event.m in Sources */,
+				46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

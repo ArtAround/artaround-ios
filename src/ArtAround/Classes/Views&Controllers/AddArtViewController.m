@@ -28,12 +28,15 @@
 - (void) eventButtonPressed;
 - (void) locationButtonPressed;
 - (void) doneButtonPressed;
-- (void) datePickerChanged:(id)sender;
+- (void) dateButtonPressed;
+- (void) showLoadingView:(NSString*)msg;
 
 - (void)photoUploadCompleted;
 - (void)photoUploadFailed;
 - (void)photoUploadCompleted:(NSDictionary*)responseDict;
 - (void)photoUploadFailed:(NSDictionary*)responseDict;
+
+- (BOOL)findAndResignFirstResponder;
 
 @end
 
@@ -64,8 +67,10 @@
         _userAddedImagesAttribution = [[NSMutableDictionary alloc] init];
         _imageButtons = [[NSMutableArray alloc] init];
         _newArtDictionary = [[NSMutableDictionary alloc] init];
-
+        
         _addedImageCount = 0;
+        _usingPhotoGeotag = NO;
+        
     }
     return self;
 }
@@ -214,10 +219,9 @@
 
 - (void) locationButtonPressed
 {
-
-    UIActionSheet *locationActionSheet = [[UIActionSheet alloc] initWithTitle:@"Location" delegate:self cancelButtonTitle:@"Cacnel" destructiveButtonTitle:nil otherButtonTitles:@"Current Location", (_imageLocation) ? @"Image Geotag" : nil, nil];
-    [locationActionSheet setTag:_kLocationActionSheet];
-    [locationActionSheet showInView:self.view];
+    
+    ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:(_usingPhotoGeotag) ? LocationSelectionPhotoLocation : LocationSelectionUserLocation currentLocation:_currentLocation];
+    [self.navigationController pushViewController:locationController animated:YES];
     
 }
 
@@ -752,7 +756,7 @@
     [activityView setFrame:CGRectMake(roundf(activityView.frame.origin.x), roundf(activityView.frame.origin.y), activityView.frame.size.width, activityView.frame.size.height)];
 }
 
-- (BOOL)findAndResignFirstResponder
+- (BOOL) findAndResignFirstResponder
 {
     if (self.isFirstResponder) {
         [self resignFirstResponder];
@@ -921,10 +925,12 @@
             switch (buttonIndex) {
                 case 0:
                     _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+                    _usingPhotoGeotag = NO;
                     break;
                 case 1:
                     if ([actionSheet cancelButtonIndex] != 1 && _imageLocation)
                         _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
+                    _usingPhotoGeotag = YES;
                 default:
                     break;
             }
@@ -1141,5 +1147,23 @@
     
 }
 
+#pragma mark - ArtLocationSelectionDelegate
+- (void) locationSelectionViewController:(ArtLocationSelectionViewViewController *)controller selected:(LocationSelection)selection
+{
+    switch (selection) {
+        case LocationSelectionUserLocation:
+            _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+            _usingPhotoGeotag = NO;
+            break;
+        case LocationSelectionPhotoLocation:
+            _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
+            _usingPhotoGeotag = YES;
+            break;
+        default:
+            break;
+    }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 @end
