@@ -43,8 +43,12 @@
 	[self setMapViewController:aMapViewController];
 	[aMapViewController release];
 	
+    //toolbar bg
+    UIImage *toolbarImage = [UIImage imageNamed:@"toolbarBackground.png"];
+    
 	//setup the main navigation controller with a map view controller as the root controller	
 	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.mapViewController];
+    [navController.navigationBar setBackgroundImage:toolbarImage forBarMetrics:UIBarMetricsDefault];
 	[navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
 	[self setNavigationController:navController];
 	[navController release];

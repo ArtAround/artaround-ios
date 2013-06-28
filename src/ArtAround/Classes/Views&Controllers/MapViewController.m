@@ -681,16 +681,6 @@ static const int _kAnnotationLimit = 9999;
 			NSString *title = [art.category.title lowercaseString];
 			NSString *reuseIdentifier = nil;
 			UIImage *pinImage = nil;
-			/*if (art.event != nil) {
-                pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinEvent.png" : @"PinEventPressed.png"];
-            }
-            else if ([title isEqualToString:@"gallery"] || [title isEqualToString:@"market"] || [title isEqualToString:@"Museum"]) {
-				reuseIdentifier = title;
-				pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinVenue.png" : @"PinVenuePressed.png"];
-			} else {
-				reuseIdentifier = @"art";
-				pinImage = [UIImage imageNamed:([art.rank intValue] < 0) ? @"PinArt.png" : @"PinArtPressed.png"];
-			}*/
 			
             //new single pinart
             reuseIdentifier = @"art";

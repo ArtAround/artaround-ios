@@ -66,10 +66,10 @@ static const float _kPhotoHeight = 96.5f;
 @property (retain, nonatomic) IBOutlet UITextField *titleTextField;
 @property (retain, nonatomic) IBOutlet UITextField *urlTextField;
 @property (retain, nonatomic) IBOutlet UIButton *categoryButton;
-@property (retain, nonatomic) IBOutlet UIButton *eventButton;
 @property (retain, nonatomic) IBOutlet UIButton *dateButton;
 @property (retain, nonatomic) IBOutlet UITextView *descriptionTextView;
 @property (retain, nonatomic) IBOutlet UITextView *locationDescriptionTextView;
+@property (retain, nonatomic) IBOutlet UIButton *submitButton;
 
 - (void)userAddedImage:(UIImage*)image;
 - (void)userAddedImage:(UIImage*)image withAttributionText:(NSString*)text withAttributionURL:(NSString*)url;

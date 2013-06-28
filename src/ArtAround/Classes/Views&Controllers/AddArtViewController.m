@@ -25,7 +25,6 @@
 - (void) buttonPressed:(id)sender;
 - (void) postButtonPressed;
 - (void) categoryButtonPressed;
-- (void) eventButtonPressed;
 - (void) locationButtonPressed;
 - (void) doneButtonPressed;
 - (void) dateButtonPressed;
@@ -48,8 +47,8 @@
 @synthesize titleTextField;
 @synthesize urlTextField;
 @synthesize categoryButton;
-@synthesize eventButton;
 @synthesize dateButton;
+@synthesize submitButton;
 @synthesize descriptionTextView;
 @synthesize locationDescriptionTextView;
 @synthesize currentLocation = _currentLocation;
@@ -80,7 +79,7 @@
     [super viewDidAppear:animated];
     
     //set scroll view content frame
-    float bottomY = self.dateButton.frame.origin.y + self.dateButton.frame.size.height + 10.0f;
+    float bottomY = self.submitButton.frame.origin.y + self.submitButton.frame.size.height + 10.0f;
     CGSize contentSize = CGSizeMake(self.view.frame.size.width, bottomY);
     [self.scrollView setContentSize:contentSize];
 }
@@ -90,20 +89,24 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    //setup post button
-    UIBarButtonItem *postButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(postButtonPressed)];
-    [self.navigationItem setRightBarButtonItem:postButton];
+    //setup back button
+    UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width, backButtonImage.size.height)];
+    [backButton addTarget:self.navigationController action:@selector(popToRootViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setBackgroundImage:backButtonImage forState:UIControlStateNormal];
+    UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backButtonItem];
     
     //add actions
     [self.categoryButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.locationButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.eventButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.dateButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     //set listeners on text fields
     [self.titleTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
     [self.artistTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
     [self.urlTextField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventValueChanged];
+    
     
     [self setupImages];
 }
@@ -120,7 +123,6 @@
     [artistTextField release];
     [titleTextField release];
     [categoryButton release];
-    [eventButton release];
     [descriptionTextView release];
     [descriptionTextView release];
     [dateButton release];
@@ -135,7 +137,6 @@
     [self setArtistTextField:nil];
     [self setTitleTextField:nil];
     [self setCategoryButton:nil];
-    [self setEventButton:nil];
     [self setDescriptionTextView:nil];
     [self setDescriptionTextView:nil];
     [self setDateButton:nil];
@@ -224,9 +225,6 @@
     [self.navigationController pushViewController:locationController animated:YES];
     
 }
-
-- (void) eventButtonPressed
-{}
 
 - (void) dateButtonPressed
 {
@@ -438,8 +436,6 @@
 			[imageView.imageView setContentMode:UIViewContentModeScaleAspectFill];
             [imageView setImage:thisUserImage forState:UIControlStateNormal];
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
-//			[imageView.layer setBorderColor:[UIColor whiteColor].CGColor];
-//			[imageView.layer setBorderWidth:6.0f];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             
             deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
