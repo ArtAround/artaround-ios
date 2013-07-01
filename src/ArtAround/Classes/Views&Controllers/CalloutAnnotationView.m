@@ -24,7 +24,7 @@
 
 @implementation CalloutAnnotationView
 @synthesize coordinate = _coordinate, art = _art, parentAnnotationView = _parentAnnotationView, mapView = _mapView;
-@synthesize button = _button, imageView = _imageView, titleLabel = _titleLabel, artistLabel = _artistLabel, categoryLabel = _categoryLabel, summaryLabel = _summaryLabel;
+@synthesize button = _button, imageView = _imageView, titleLabel = _titleLabel, artistLabel = _artistLabel, summaryLabel = _summaryLabel;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)theCoordinate frame:(CGRect)frame
 {
@@ -72,14 +72,6 @@
 		[self addSubview:self.artistLabel];
 		[anArtistLabel release];
 		
-		//category
-		UILabel *aCategoryLabel = [[UILabel alloc] init];
-		[aCategoryLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12.25f]];
-		[aCategoryLabel setBackgroundColor:[UIColor clearColor]];
-		[self setCategoryLabel:aCategoryLabel];
-		[self addSubview:self.categoryLabel];
-		[aCategoryLabel release];
-		
 		//summary
 		UILabel *aSummaryLabel = [[UILabel alloc] init];
 		[aSummaryLabel setFont:[UIFont fontWithName:@"Helvetica" size:12.25f]];
@@ -100,7 +92,6 @@
 	[self setImageView:nil];
 	[self setTitleLabel:nil];
 	[self setArtistLabel:nil];
-	[self setCategoryLabel:nil];
 	[self setSummaryLabel:nil];
 	[super dealloc];
 }
@@ -120,7 +111,6 @@
 		[self.imageView setImageURL:nil];
 		[self.titleLabel setText:@""];
 		[self.artistLabel setText:@""];
-		[self.categoryLabel setText:@""];
 		[self.summaryLabel setText:@""];
 		return;
 	}
@@ -157,7 +147,6 @@
 	//set label text
 	[self.titleLabel setText:_art.title];
 	[self.artistLabel setText:artist];
-	[self.categoryLabel setText:_art.category.title];
 	[self.summaryLabel setText:_art.locationDescription];
 	
 	//update frames
@@ -167,8 +156,7 @@
 	yOffset = (showTitle) ? self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height : yOffset;
 	[self.artistLabel setFrame:CGRectMake(self.titleLabel.frame.origin.x, yOffset, self.titleLabel.frame.size.width, 15.0f)];
 	yOffset = (showArtist || showYear) ? self.artistLabel.frame.origin.y + self.artistLabel.frame.size.height : yOffset;
-	[self.categoryLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, yOffset, self.titleLabel.frame.size.width, 15.0f)];
-	[self.summaryLabel setFrame:CGRectMake(self.categoryLabel.frame.origin.x, 63.0f, self.titleLabel.frame.size.width, 50.0f)];
+	[self.summaryLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, 63.0f, self.titleLabel.frame.size.width, 60.0f)];
 	
 }
 

@@ -21,7 +21,6 @@
 @synthesize artImageBackView;
 @synthesize artImageView;
 @synthesize artDistanceLabel;
-@synthesize artPropertyLabel;
 @synthesize art = _art;
 @synthesize artDescriptionLabel;
 
@@ -53,15 +52,8 @@
         artNameLabel.backgroundColor = [UIColor clearColor];
         artNameLabel.textColor = kFontColorDarkBrown;
         
-        //category
-        artPropertyLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 25, 185, 15)];
-        artPropertyLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:10];
-        artPropertyLabel.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth;        
-        artPropertyLabel.backgroundColor = [UIColor clearColor];
-        artPropertyLabel.textColor = kFontColorDarkBrown;
-        
         //desc
-        artDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 40, 220, 33)];
+        artDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 25, 220, 43)];
         artDescriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;        
         artDescriptionLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10];
         artDescriptionLabel.numberOfLines = 3;
@@ -78,7 +70,6 @@
         [self.contentView addSubview:artImageBackView];
         [self.contentView addSubview:artImageView];
         [self.contentView addSubview:artNameLabel];
-        [self.contentView addSubview:artPropertyLabel];        
         [self.contentView addSubview:artDescriptionLabel];        
         [self.contentView addSubview:artDistanceLabel];        
         
@@ -108,7 +99,6 @@
 		[self.artImageView setImageURL:nil];
 		[self.artNameLabel setText:@""];
 		[self.artDistanceLabel setText:@""];
-		[self.artPropertyLabel setText:@""];
 		[self.artDescriptionLabel setText:@""];
         
 		return;
@@ -141,7 +131,6 @@
 	
 	//set label text
 	[self.artNameLabel setText:self.art.title];
-	[self.artPropertyLabel setText:self.art.category.title];
 	[self.artDescriptionLabel setText:self.art.locationDescription];
     
     if (self.art.distance) {
@@ -165,7 +154,6 @@
     [artNameLabel release];
     [artImageView release];
     [artDistanceLabel release];
-    [artPropertyLabel release];
     [artDescriptionLabel release];
     [artImageBackView release];
     [super dealloc];

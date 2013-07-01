@@ -23,7 +23,6 @@
 
 @interface AddArtViewController ()
 - (void) buttonPressed:(id)sender;
-- (void) postButtonPressed;
 - (void) categoryButtonPressed;
 - (void) locationButtonPressed;
 - (void) doneButtonPressed;
@@ -187,16 +186,35 @@
     SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
     
     NSMutableArray *searchItems = [[NSMutableArray alloc] initWithObjects:
-                             [SearchItem searchItemWithTitle:@"Painting" subtitle:@"subtitle1"],
-                             [SearchItem searchItemWithTitle:@"Sculpture" subtitle:@"subtitle2"],
-                             [SearchItem searchItemWithTitle:@"Mosaic" subtitle:@"subtitle3"],
-                             [SearchItem searchItemWithTitle:@"Mural" subtitle:@"subtitle4"],
-                             [SearchItem searchItemWithTitle:@"Random" subtitle:@"subtitle5"],
-                             [SearchItem searchItemWithTitle:@"Chalk" subtitle:@"subtitle6"],
-                             [SearchItem searchItemWithTitle:@"Perfomance" subtitle:@"subtitle7"],
-                             [SearchItem searchItemWithTitle:@"Dance" subtitle:@"subtitle8"],
+                            [SearchItem searchItemWithTitle:@"Architecture" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Digital" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Drawing" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Gallery" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Graffiti" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Installation" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Interactive" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Kinetic" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Lighting installation" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Market" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Memorial" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Mixed media" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Mosaic" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Mural" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Museum" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Painting" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Performance" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Paste" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Photograph" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Print" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Projection" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Sculpture" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Statue" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Stained glass" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Temporary" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Textile" subtitle:@""],
+                            [SearchItem searchItemWithTitle:@"Video" subtitle:@""],
                              nil];
-    
+    [searchTableController setCreationEnabled:NO];
     [searchTableController setSearchItems:searchItems];
     [searchTableController setMultiSelectionEnabled:YES];
     [searchTableController setDelegate:self];
@@ -265,7 +283,6 @@
 
 - (void) textFieldChanged:(id)textField {
     
-    
     if ([textField isKindOfClass:[UITextField class]]) {
         NSString *key = @"";
         
@@ -274,9 +291,22 @@
         else if (textField == self.titleTextField)
             key = @"title";
         else if (textField == self.urlTextField)
-            key = @"url";
+            key = @"website";
         
         [_newArtDictionary setObject:[(UITextField*)textField text] forKey:key];
+    }
+    
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
     }
 }
 
@@ -290,9 +320,22 @@
     else if (textField == self.titleTextField)
         key = @"title";
     else if (textField == self.urlTextField)
-        key = @"url";
+        key = @"website";
     
     [_newArtDictionary setObject:text forKey:key];
+    
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
     
 }
 
@@ -320,8 +363,8 @@
     }
     
 
-    if ([attDict objectForKey:@"url"] && [[attDict objectForKey:@"url"] isKindOfClass:[NSString class]] && [[attDict objectForKey:@"url"] length] > 0) {
-        [imgView setUrl:[NSURL URLWithString:[attDict objectForKey:@"url"]]];
+    if ([attDict objectForKey:@"website"] && [[attDict objectForKey:@"website"] isKindOfClass:[NSString class]] && [[attDict objectForKey:@"website"] length] > 0) {
+        [imgView setUrl:[NSURL URLWithString:[attDict objectForKey:@"website"]]];
     }
     
     if (button.imageView.image)
@@ -352,9 +395,24 @@
     NSArray *keys = [_userAddedImagesAttribution allKeys];
     [_userAddedImagesAttribution removeObjectForKey:[keys objectAtIndex:(buttonTag - _kUserAddedImageTagBase)]];
     
+    _addedImageCount = [_userAddedImages count];
+    
     [self.photosScrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     [self setupImages];
+    
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
     
     
 }
@@ -372,7 +430,7 @@
     
     [_userAddedImages addObject:image];
     
-    NSDictionary *attDict = [[NSDictionary alloc] initWithObjectsAndKeys:text, @"text", url, @"url", nil];
+    NSDictionary *attDict = [[NSDictionary alloc] initWithObjectsAndKeys:text, @"text", url, @"website", nil];
     [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithInt:_userAddedImages.count] stringValue]];
     
     //reload the images to show the new image
@@ -527,10 +585,10 @@
 }
 
 #pragma mark - Submission
-- (void) postButtonPressed
+- (IBAction)postButtonPressed:(id)sender
 {
     
-    if ([_newArtDictionary objectForKey:@"title"] && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
         _addedImageCount > 0) {
     
         //set the location
@@ -545,8 +603,8 @@
         if ([_newArtDictionary objectForKey:@"artist"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"artist"]] forKey:@"artist"];
         
-        if ([_newArtDictionary objectForKey:@"url"])
-            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"url"]] forKey:@"url"];
+        if ([_newArtDictionary objectForKey:@"website"])
+            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"website"]] forKey:@"website"];
         
         if ([_newArtDictionary objectForKey:@"description"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
@@ -562,11 +620,10 @@
             
             [_newArtDictionary setObject:dateString forKey:@"year"];
         }
-        
-#warning TEMPORARILY only grabbing the first category and removing the plural obejct from the dictionary. Waiting on API Update to change. in the future we'll need to urlencode each category
-#warning ALSO - setting the key to category as opposed to categories plural
-        NSString *firstCat = [[_newArtDictionary objectForKey:@"categories"] objectAtIndex:0];
-        [_newArtDictionary setObject:[Utilities urlEncode:firstCat] forKey:@"category"];
+
+        NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@","];
+        //cats = [cats stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+        [_newArtDictionary setObject:[Utilities urlEncode:cats] forKey:@"category"];
         [_newArtDictionary removeObjectForKey:@"categories"];
         
         //call the submit request
@@ -630,7 +687,7 @@
         UIImage *thisImage = [_userAddedImages objectAtIndex:index];
         NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
         
-        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"url"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"website"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
     }
 
     
@@ -791,9 +848,9 @@
 {
     NSString* newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
     
-    if (textView == self.descriptionTextView)
+    if (textView == self.descriptionTextView && ![textView.text isEqualToString:@"Share what you know about this art..."])
         [_newArtDictionary setObject:newText forKey:@"description"];
-    else if (textView == self.locationDescriptionTextView)
+    else if (textView == self.locationDescriptionTextView && ![textView.text isEqualToString:@"Add extra location details..."])
         [_newArtDictionary setObject:newText forKey:@"location_description"];    
     
     return YES;
@@ -808,7 +865,14 @@
     return YES;
 }
 
-- (void) textViewDidBeginEditing:(UITextView *)textView {}
+- (void) textViewDidBeginEditing:(UITextView *)textView {
+    
+    if ([textView.text isEqualToString:@"Share what you know about this art..."] || [textView.text isEqualToString:@"Add extra location details..."]) {
+        [textView setText:@""];
+        [textView setTextColor:[UIColor blackColor]];
+    }
+    
+}
 
 - (BOOL) textViewShouldEndEditing:(UITextView *)textView
 {
@@ -817,7 +881,16 @@
 
 - (void) textViewDidEndEditing:(UITextView *)textView
 {
-
+    if (textView.text.length == 0) {
+        if (textView == self.descriptionTextView) {
+            [textView setText:@"Share what you know about this art..."];
+        }
+        else {
+            [textView setText:@"Add extra location details..."];
+        }
+        
+        [textView setTextColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+    }
 }
 
 #pragma mark - Text Field Delegate
@@ -1082,6 +1155,18 @@
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
     
 }
 
@@ -1095,6 +1180,18 @@
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
 
 }
 
@@ -1105,6 +1202,18 @@
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
 
 }
 
@@ -1115,6 +1224,18 @@
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
 
 }
 
@@ -1141,7 +1262,27 @@
         }
     }
     
+    if (categories.count > 0) {
+        [self.categoryButton setTitle:[categories componentsJoinedByString:@", "] forState:UIControlStateNormal];
+    }
+    else {
+        [self.categoryButton setTitle:@"Category(s)" forState:UIControlStateNormal];
+    }
+    
     [self dismissModalViewControllerAnimated:YES];
+    
+    //setup add art button
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
+        _addedImageCount > 0) {
+        
+        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+        self.submitButton.enabled = YES;
+        
+    }
+    else {
+        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+        self.submitButton.enabled = NO;
+    }
     
 }
 

@@ -74,6 +74,7 @@ static const float _kPhotoHeight = 96.5f;
 - (void)userAddedImage:(UIImage*)image;
 - (void)userAddedImage:(UIImage*)image withAttributionText:(NSString*)text withAttributionURL:(NSString*)url;
 - (void)setupImages;
+- (IBAction)postButtonPressed:(id)sender;
 
 
 
