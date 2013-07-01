@@ -251,7 +251,9 @@
 {
     
     ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:(_usingPhotoGeotag) ? LocationSelectionPhotoLocation : LocationSelectionUserLocation currentLocation:_currentLocation];
+    
     [self.navigationController pushViewController:locationController animated:YES];
+    
     
 }
 
@@ -1305,10 +1307,12 @@
     switch (selection) {
         case LocationSelectionUserLocation:
             _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+            [self.locationButton setTitle:@"Current Location" forState:UIControlStateNormal];
             _usingPhotoGeotag = NO;
             break;
         case LocationSelectionPhotoLocation:
             _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
+            [self.locationButton setTitle:@"Photo Location" forState:UIControlStateNormal];            
             _usingPhotoGeotag = YES;
             break;
         default:

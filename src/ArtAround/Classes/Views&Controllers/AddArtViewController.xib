@@ -132,13 +132,13 @@
 								<int key="IBUIContentVerticalAlignment">0</int>
 								<double key="IBUIContentEdgeInsets.top">0.0</double>
 								<double key="IBUIContentEdgeInsets.bottom">0.0</double>
-								<double key="IBUIContentEdgeInsets.left">-99</double>
+								<double key="IBUIContentEdgeInsets.left">-88</double>
 								<double key="IBUIContentEdgeInsets.right">0.0</double>
 								<double key="IBUIImageEdgeInsets.top">0.0</double>
 								<double key="IBUIImageEdgeInsets.bottom">0.0</double>
 								<double key="IBUIImageEdgeInsets.left">-23</double>
 								<double key="IBUIImageEdgeInsets.right">0.0</double>
-								<string key="IBUINormalTitle">Name location</string>
+								<string key="IBUINormalTitle">Current location</string>
 								<object class="NSColor" key="IBUIHighlightedTitleColor">
 									<int key="NSColorSpace">1</int>
 									<bytes key="NSRGB">MC44NzQ1MDk4MDM5IDAuMjg2Mjc0NTA5OCAwLjI3NDUwOTgwMzkAA</bytes>
@@ -490,6 +490,7 @@
 								<string key="NSFrame">{{103, 656}, {113, 40}}</string>
 								<reference key="NSSuperview" ref="831243147"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
@@ -896,7 +897,7 @@
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="121.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<real value="2" key="121.IBUIButtonInspectorSelectedEdgeInsetMetadataKey"/>
+				<real value="0.0" key="121.IBUIButtonInspectorSelectedEdgeInsetMetadataKey"/>
 				<real value="0.0" key="121.IBUIButtonInspectorSelectedStateConfigurationMetadataKey"/>
 				<string key="18.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="215.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
