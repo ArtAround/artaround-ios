@@ -69,6 +69,12 @@
         _addedImageCount = 0;
         _usingPhotoGeotag = NO;
         
+        NSDateFormatter *yearFormatter = [[NSDateFormatter alloc] init];
+        [yearFormatter setDateFormat:@"yyyy"];
+        NSString *yearString = [yearFormatter stringFromDate:[NSDate date]];
+        _currentYear = [yearString intValue];
+
+        
     }
     return self;
 }
@@ -228,7 +234,12 @@
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(dismissModalViewControllerAnimated:)];
     [searchTableController.navigationItem setLeftBarButtonItem:cancelButton];
     
+    //toolbar bg
+    UIImage *toolbarImage = [UIImage imageNamed:@"toolbarBackground.png"];
+    
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:searchTableController];
+    [navController.navigationBar setBackgroundImage:toolbarImage forBarMetrics:UIBarMetricsDefault];
+    [navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
     [self presentModalViewController:navController animated:YES];
     
     
@@ -248,13 +259,20 @@
 {
     [self findAndResignFirstResponder];
     
-    UIDatePicker *datePicker = [[UIDatePicker alloc] init];
-    [datePicker setDatePickerMode:UIDatePickerModeDate];
-    [datePicker setDate:[NSDate date]];
+    UIPickerView *datePicker = [[UIPickerView alloc] init];
+    [datePicker setShowsSelectionIndicator:YES];
+    [datePicker setDataSource:self];
+    [datePicker setDelegate:self];
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(buttonPressed:)];
     UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIToolbar *dateToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44.0f)];
+    [dateToolbar setBackgroundColor:[UIColor colorWithRed:67.0f/255.0f green:67.0f/255.0f blue:61.0f/255.0f alpha:1.0f]];
+    [dateToolbar setBackgroundImage:[[UIImage alloc] init] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+    [dateToolbar setShadowImage:[[UIImage alloc] init] forToolbarPosition:UIToolbarPositionAny];
+    [dateToolbar setBarStyle:UIBarStyleBlack];
+	[dateToolbar setTintColor:[UIColor clearColor]];
+
     
     [dateToolbar setItems:[NSArray arrayWithObjects:space, doneButton, nil]];
     
@@ -612,13 +630,8 @@
         if ([_newArtDictionary objectForKey:@"location_description"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"location_description"]] forKey:@"location_description"];
         
-        if (_datePicker) {
-            
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"yyyy"];
-            NSString *dateString = [Utilities urlEncode:[dateFormatter stringFromDate:_datePicker.date]];
-            
-            [_newArtDictionary setObject:dateString forKey:@"year"];
+        if (_yearString) {
+            [_newArtDictionary setObject:_yearString forKey:@"year"];
         }
 
         NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@","];
@@ -1304,5 +1317,36 @@
     
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+#pragma mark - Picker Data Source
+- (NSInteger) pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return 114;
+}
+
+- (NSInteger) numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSString*) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    NSString *title = @"";
+    
+    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    title = [yearNumber stringValue];
+    
+    return title;
+}
+
+#pragma mark - Picker View Delegate
+- (void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    _yearString = [[NSString alloc] initWithString:[yearNumber stringValue]];
+    [self.dateButton setTitle:_yearString forState:UIControlStateNormal];
+    
+}
+
 
 @end

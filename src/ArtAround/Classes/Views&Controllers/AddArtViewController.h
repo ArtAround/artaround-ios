@@ -39,15 +39,16 @@ static const float _kPhotoHeight = 96.5f;
 
 
 
-@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate>
+@interface AddArtViewController : UIViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 {
-    int                     _addedImageCount;
+    int                     _addedImageCount, _currentYear;
+    NSString*               _yearString;
     BOOL                    _usingPhotoGeotag;
     NSDate*                 _date;
     NSMutableArray*         _userAddedImages, *_imageButtons;
     NSMutableDictionary*    _newArtDictionary, *_userAddedImagesAttribution;
     UIAlertView*            _loadingAlertView;
-    UIDatePicker*           _datePicker;
+    UIPickerView*           _datePicker;
     UIToolbar*              _dateToolbar;
     UIBarButtonItem*        _doneButton;
     CLLocation*             _imageLocation, *_selectedLocation;
