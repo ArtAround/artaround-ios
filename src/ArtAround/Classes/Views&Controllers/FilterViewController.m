@@ -64,9 +64,12 @@ static NSArray *_kFilterTypes = nil;
 		switch (filterType) {
 				
 			case FilterTypeCategory:
-				_titles = [[[AAAPIManager instance] categories] copy];
+            {
+                NSMutableArray *catsWithNone = [[NSMutableArray alloc] initWithObjects:@"None", nil];
+                [catsWithNone addObjectsFromArray:[[AAAPIManager instance] categories]];
+				_titles = [[NSArray alloc] initWithArray:catsWithNone];
 				break;
-				
+			}
 			case FilterTypeTitle:
 				_titles = [[[AAAPIManager instance] titles] copy];
 				break;
