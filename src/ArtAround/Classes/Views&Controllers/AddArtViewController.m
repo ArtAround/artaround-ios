@@ -1256,7 +1256,7 @@
         [self.categoryButton setTitle:[categories componentsJoinedByString:@", "] forState:UIControlStateNormal];
     }
     else {
-        [self.categoryButton setTitle:@"Category(s)" forState:UIControlStateNormal];
+        [self.categoryButton setTitle:@"Categories" forState:UIControlStateNormal];
     }
     
     [self dismissModalViewControllerAnimated:YES];
