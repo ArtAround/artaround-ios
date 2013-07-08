@@ -20,7 +20,7 @@ static NSArray *_kFilterTypes = nil;
 + (NSArray *)filterTypeTitles
 {
 	if (!_kFilterTypes) {
-		_kFilterTypes = [[NSArray alloc] initWithObjects:@"Don't Filter", @"Popular", @"Category", @"Neighborhood", @"Title", @"Artist", @"Event", nil];
+		_kFilterTypes = [[NSArray alloc] initWithObjects:@"Don't Filter", @"Category", @"Title", @"Artist", nil];
 	}
 	return _kFilterTypes;
 }
@@ -67,21 +67,13 @@ static NSArray *_kFilterTypes = nil;
 				_titles = [[[AAAPIManager instance] categories] copy];
 				break;
 				
-			case FilterTypeNeighborhood:
-				_titles = [[[AAAPIManager instance] neighborhoods] copy];
-				break;
-				
 			case FilterTypeTitle:
 				_titles = [[[AAAPIManager instance] titles] copy];
 				break;
 				
 			case FilterTypeArtist:
 				_titles = [[[AAAPIManager instance] artists] copy];
-				break;
-                
-            case FilterTypeEvent:
-				_titles = [[[AAAPIManager instance] events] copy];
-				break;    
+				break;   
 				
 			default:
 				break;
@@ -182,7 +174,7 @@ static NSArray *_kFilterTypes = nil;
 		if (indexPath.row == [[Utilities instance] selectedFilterType]) {
 			cell.accessoryType = UITableViewCellAccessoryCheckmark;
 		} else {
-			if (indexPath.row <= 1) {
+			if (indexPath.row < 1) {
 				cell.accessoryType = UITableViewCellAccessoryNone;
 			} else {
 				cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -262,7 +254,7 @@ static NSArray *_kFilterTypes = nil;
 	}
 
 	//if this is the top level?
-	if (_isTopLevel && indexPath.row > 1) {
+	if (_isTopLevel && indexPath.row > 0) {
 			
 		//dig deeper based on the filter type selected
 		FilterViewController *filterController = [[FilterViewController alloc] initWithFilterType:indexPath.row];

@@ -16,7 +16,7 @@
 @implementation SearchTableViewController
 @synthesize searchBar;
 @synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems, selectedItems = _selectedItems;
-@synthesize multiSelectionEnabled = _multiSelectionEnabled;
+@synthesize multiSelectionEnabled = _multiSelectionEnabled, creationEnabled = _creationEnabled;
 @synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -27,7 +27,7 @@
         _filteredSearchItems = [[NSMutableArray alloc] init];
         _selectedItems = [[NSMutableArray alloc] init];
         _createdItems = [[NSMutableArray alloc] init];
-        
+        _creationEnabled = YES;
     }
     return self;
 }
@@ -356,7 +356,7 @@
     _filteredSearchItems = [[NSMutableArray alloc] initWithArray:[_searchItems filteredArrayUsingPredicate:predicate]];
     
     //create the "add" row if there are not items
-    if (_filteredSearchItems.count == 0) {
+    if (_filteredSearchItems.count == 0 && _creationEnabled) {
         
         SearchItem *addItem = [SearchItem searchItemWithTitle:[NSString stringWithFormat:@"Create \"%@\"", searchText, nil] subtitle:@"Add a new category"];
         [_filteredSearchItems addObject:addItem];

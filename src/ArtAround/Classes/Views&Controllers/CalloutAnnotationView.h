@@ -22,7 +22,6 @@
 @property (nonatomic, retain) EGOImageView *imageView;
 @property (nonatomic, retain) UILabel *titleLabel;
 @property (nonatomic, retain) UILabel *artistLabel;
-@property (nonatomic, retain) UILabel *categoryLabel;
 @property (nonatomic, retain) UILabel *summaryLabel;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)theCoordinate frame:(CGRect)frame;

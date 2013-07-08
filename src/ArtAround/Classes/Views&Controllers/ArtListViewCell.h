@@ -17,7 +17,6 @@
 @property (retain, nonatomic) IBOutlet UIView *artImageBackView;
 @property (retain, nonatomic) IBOutlet EGOImageView *artImageView;
 @property (retain, nonatomic) IBOutlet UILabel *artDistanceLabel;
-@property (retain, nonatomic) IBOutlet UILabel *artPropertyLabel;
 @property (retain, nonatomic) IBOutlet UILabel *artDescriptionLabel;
 
 - (void)setArt:(Art *)theArt;
