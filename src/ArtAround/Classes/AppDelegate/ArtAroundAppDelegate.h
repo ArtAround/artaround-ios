@@ -26,5 +26,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+- (void)deleteOldDB;
 
 @end

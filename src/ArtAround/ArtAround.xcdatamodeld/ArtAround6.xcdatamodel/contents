@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12D78" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Art" representedClassName="Art">
+        <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artist" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="commissioned" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date">
+            <userInfo/>
+        </attribute>
+        <attribute name="distance" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="favorite" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Decimal" defaultValueString="0.0">
+            <userInfo/>
+        </attribute>
+        <attribute name="locationDescription" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="longitude" optional="YES" attributeType="Decimal" defaultValueString="0.0">
+            <userInfo/>
+        </attribute>
+        <attribute name="rank" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="slug" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="title" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="ward" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="year" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category">
+            <userInfo/>
+        </relationship>
+        <relationship name="comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Comment" inverseName="art" inverseEntity="Comment">
+            <userInfo/>
+        </relationship>
+        <relationship name="event" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="arts" inverseEntity="Event" syncable="YES"/>
+        <relationship name="neighborhood" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Neighborhood" inverseName="arts" inverseEntity="Neighborhood">
+            <userInfo/>
+        </relationship>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Photo" inverseName="art" inverseEntity="Photo">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <entity name="Category" representedClassName="Category">
+        <attribute name="title" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="categories" inverseEntity="Art">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <entity name="Comment" representedClassName="Comment">
+        <attribute name="approved" optional="YES" attributeType="Boolean">
+            <userInfo/>
+        </attribute>
+        <attribute name="commentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date">
+            <userInfo/>
+        </attribute>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="text" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="url" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="comments" inverseEntity="Art">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <entity name="Event" representedClassName="Event" syncable="YES">
+        <attribute name="ends" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="eventDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iconURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iconURLSmall" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slug" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="starts" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="event" inverseEntity="Art" syncable="YES"/>
+    </entity>
+    <entity name="Neighborhood" representedClassName="Neighborhood">
+        <attribute name="title" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="neighborhood" inverseEntity="Art">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <entity name="Photo" representedClassName="Photo">
+        <attribute name="dateAdded" optional="YES" attributeType="Date" defaultDateTimeInterval="315594000" defaultValueString="1/1/11" syncable="YES"/>
+        <attribute name="flickrID" optional="YES" attributeType="Integer 64" defaultValueString="0">
+            <userInfo/>
+        </attribute>
+        <attribute name="flickrName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mediumHeight" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="mediumSource" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="mediumURL" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="mediumWidth" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="originalHeight" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="originalSource" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="originalURL" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="originalWidth" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="photoAttribution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photoAttributionURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="smallHeight" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="smallSource" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="smallURL" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="smallWidth" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="squareHeight" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="squareSource" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="squareURL" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="squareWidth" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="thumbnailHeight" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <attribute name="thumbnailSource" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="thumbnailURL" optional="YES" attributeType="String">
+            <userInfo/>
+        </attribute>
+        <attribute name="thumbnailWidth" optional="YES" attributeType="Integer 32">
+            <userInfo/>
+        </attribute>
+        <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <elements>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="330"/>
+        <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
+        <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
+        <element name="Event" positionX="160" positionY="192" width="128" height="150"/>
+        <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
+        <element name="Photo" positionX="-108" positionY="213" width="128" height="435"/>
+    </elements>
+</model>

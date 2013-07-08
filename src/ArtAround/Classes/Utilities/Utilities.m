@@ -68,6 +68,7 @@ static Utilities *_kSharedInstance = nil;
 {
     NSNumber *firstLoad = [[NSNumber alloc] initWithBool:hasLoadedBefore];
     [_defaults setObject:firstLoad forKey:@"aa_firstLoad"];
+    [_defaults synchronize];
 }
 
 #pragma mark - Helper Methods
