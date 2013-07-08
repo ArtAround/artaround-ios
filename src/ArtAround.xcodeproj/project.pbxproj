@@ -251,6 +251,7 @@
 		46745F75175A725100403810 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		468A0674175BCDD600F697A5 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		468A155017357F4900DED13C /* ArtAround5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround5.xcdatamodel; sourceTree = "<group>"; };
+		4693FC09178A547600912638 /* ArtAround7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = file; path = ArtAround7.xcdatamodel; sourceTree = "<group>"; };
 		46B357A91763E407006663AA /* ArtLocationSelectionViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtLocationSelectionViewViewController.h; sourceTree = "<group>"; };
 		46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtLocationSelectionViewViewController.m; sourceTree = "<group>"; };
 		46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArtLocationSelectionViewViewController.xib; sourceTree = "<group>"; };
@@ -1543,13 +1544,14 @@
 		CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				4693FC09178A547600912638 /* ArtAround7.xcdatamodel */,
 				5F871D7D158C0F3600F60348 /* ArtAround4.xcdatamodel */,
 				468A155017357F4900DED13C /* ArtAround5.xcdatamodel */,
 				5F814486153B6A7A008FF1A0 /* ArtAround3.xcdatamodel */,
 				C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */,
 				CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */,
 			);
-			currentVersion = 468A155017357F4900DED13C /* ArtAround5.xcdatamodel */;
+			currentVersion = 4693FC09178A547600912638 /* ArtAround7.xcdatamodel */;
 			path = ArtAround.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
