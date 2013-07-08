@@ -597,6 +597,15 @@ static const int _kAnnotationLimit = 9999;
     NSString *artSlug = (showArt) ? [showArt slug] : nil;
     int annotationIndex = -1;
     
+    //track minimum and and max lat and long to set the map bounds
+    CLLocationCoordinate2D topLeftCoord;
+    topLeftCoord.latitude = -90;
+    topLeftCoord.longitude = 180;
+    
+    CLLocationCoordinate2D bottomRightCoord;
+    bottomRightCoord.latitude = 90;
+    bottomRightCoord.longitude = -180;
+    
 	//add annotations
 	for (int i = 0; i < [_items count]; i++) {
 		
@@ -614,6 +623,23 @@ static const int _kAnnotationLimit = 9999;
 			annotation.index = i; //used when tapping the callout accessory button
 			[_annotations addObject:annotation];
 			[annotation release];
+            
+            //check for min and max lat/lon
+            if (i == 0) {
+                topLeftCoord.longitude = artLocation.longitude;
+                topLeftCoord.latitude = artLocation.latitude;
+                bottomRightCoord.longitude = artLocation.longitude;
+                bottomRightCoord.latitude = artLocation.latitude;
+            }
+            else {
+                
+                topLeftCoord.longitude = fmin(topLeftCoord.longitude, artLocation.longitude);
+                topLeftCoord.latitude = fmax(topLeftCoord.latitude, artLocation.latitude);
+                
+                bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, artLocation.longitude);
+                bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, artLocation.latitude);
+                
+            }
 			
 		}
         
@@ -622,6 +648,27 @@ static const int _kAnnotationLimit = 9999;
 		
 	}
 	
+    //find center of annotations
+    if (_items.count > 0) {
+        
+        MKCoordinateRegion region;
+		region.center.latitude = topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5;
+		region.center.longitude = topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5;
+        
+		//adjust the annotation padding depending on the zoom level
+		int offset = bottomRightCoord.longitude - topLeftCoord.longitude;
+		float multiplier = (offset > 30) ? 1.1 : 1.4;
+		
+		region.span.latitudeDelta = fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier; // Add a little extra space on the sides
+		region.span.longitudeDelta = fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier; // Add a little extra space on the sides
+		
+		region = [_mapView.map regionThatFits:region];
+        if (offset < 200)
+            [_mapView.map setRegion:region animated:YES];
+    }
+    
+    //setup map region
+    
 	//add annotations
 	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
 	_mapNeedsRefresh = NO;
