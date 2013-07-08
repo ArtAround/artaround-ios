@@ -190,36 +190,11 @@
 - (void) categoryButtonPressed
 {
     SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
+    NSMutableArray *searchItems = [[NSMutableArray alloc] initWithCapacity:[[[AAAPIManager instance] categories] count]];
+    for (NSString * cat in [[AAAPIManager instance] categories]) {
+        [searchItems addObject:[SearchItem searchItemWithTitle:cat subtitle:@""]];
+    }
     
-    NSMutableArray *searchItems = [[NSMutableArray alloc] initWithObjects:
-                            [SearchItem searchItemWithTitle:@"Architecture" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Digital" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Drawing" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Gallery" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Graffiti" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Installation" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Interactive" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Kinetic" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Lighting installation" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Market" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Memorial" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Mixed media" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Mosaic" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Mural" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Museum" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Painting" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Performance" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Paste" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Photograph" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Print" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Projection" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Sculpture" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Statue" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Stained glass" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Temporary" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Textile" subtitle:@""],
-                            [SearchItem searchItemWithTitle:@"Video" subtitle:@""],
-                             nil];
     [searchTableController setCreationEnabled:NO];
     [searchTableController setSearchItems:searchItems];
     [searchTableController setMultiSelectionEnabled:YES];

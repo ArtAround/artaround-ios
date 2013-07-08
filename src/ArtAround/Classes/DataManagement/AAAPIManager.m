@@ -125,7 +125,35 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 - (NSArray *)categories
 {
-	return [self arrayForSQL:"SELECT DISTINCT ZTITLE FROM ZCATEGORY WHERE ZTITLE IS NOT NULL ORDER BY ZTITLE"];
+    NSArray *categories = [[NSArray alloc] initWithObjects:
+                                    @"Architecture",
+                                    @"Digital",
+                                    @"Drawing",
+                                    @"Gallery",
+                                    @"Graffiti",
+                                    @"Installation",
+                                    @"Interactive",
+                                    @"Kinetic",
+                                    @"Lighting installation",
+                                    @"Market",
+                                    @"Memorial",
+                                    @"Mixed media",
+                                    @"Mosaic",
+                                    @"Mural",
+                                    @"Museum",
+                                    @"Painting",
+                                    @"Performance",
+                                    @"Paste",
+                                    @"Photograph",
+                                    @"Print",
+                                    @"Projection",
+                                    @"Sculpture",
+                                    @"Statue",
+                                    @"Stained glass",
+                                    @"Temporary",
+                                    @"Textile",
+                           @"Video", nil];
+    return categories;
 }
 
 - (NSArray *)neighborhoods

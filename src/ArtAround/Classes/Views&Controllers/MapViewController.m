@@ -547,29 +547,6 @@ static const int _kAnnotationLimit = 9999;
             
             break;
 		}
-		case FilterTypeNeighborhood: {
-			NSArray *neighborhoodTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeNeighborhood];
-			if (neighborhoodTitles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND neighborhood.title IN %@" : @"neighborhood.title IN %@", neighborhoodTitles]];
-			}
-            
-			break;
-		}
-        case FilterTypeRank: {
-            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND rank > 0" : @"rank > 0"]];
-			break;
-		}
-        case FilterTypeEvent: {
-			NSArray *eventTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeEvent];
-			if (eventTitles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND event.name IN %@" : @"event.name IN %@", eventTitles]];
-			}
-            else {
-                [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND event.name <> NULL" : @"event.name <> NULL"]];
-            }
-            
-            break;
-		}
 		default: {
             
             if (_showFavorites) {
