@@ -73,7 +73,10 @@
 
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context
 {
-    
+    if ([[artDict objectForKey:@"slug"] isEqualToString:@"the-pressure-to-hold-together-that-which-held-things-back-part-2"]) {
+        NSLog(@"%@", artDict);
+    }
+
 	//create a new art if one doesn't exist yet
 	NSString *slug = [artDict objectForKey:@"slug"];
 	Art *art = [ItemParser existingEntity:@"Art" inContext:context uniqueKey:@"slug" uniqueValue:slug];

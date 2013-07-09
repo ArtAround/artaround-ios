@@ -10,6 +10,7 @@
 #import "Art.h"
 #import "DetailViewController.h"
 #import "Utilities.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface ListViewController ()
 
@@ -118,7 +119,7 @@
     //filter label 
     UILabel *filterLabel = [[UILabel alloc] initWithFrame:CGRectInset(headerView.frame, 0, 5)];
     [filterLabel setBackgroundColor:[UIColor clearColor]];
-    [filterLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:14]];
+    [filterLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
     [filterLabel setText:@"Filtered"];
     [filterLabel setTextAlignment:UITextAlignmentCenter];
     [filterLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
@@ -217,7 +218,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 80;
+    return 86;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -253,10 +254,11 @@
  
         //reset the normal seperator style
         tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        tableView.separatorColor = [UIColor colorWithRed:(235.0f/255.0f) green:(235.0f/255.0f) blue:(235.0f/255.0f) alpha:0.7f];
         
         if (indexPath.row == _itemsShowing) {
             UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-            cell.contentView.backgroundColor = kBGoffWhite;
+            cell.contentView.backgroundColor = [UIColor whiteColor];
             cell.textLabel.text = @"Load More Art";
             cell.textLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:14];
             cell.textLabel.textColor = kBGdarkBrown;
@@ -274,7 +276,14 @@
                 cell = [[ArtListViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             }
             
+            //set bg color
+            cell.contentView.backgroundColor = (indexPath.row % 2 == 0) ? [UIColor colorWithRed:(244.0f/255.0f) green:(244.0f/255.0f) blue:(244.0f/255.0f) alpha:1.0f] : [UIColor whiteColor];
             
+            //set border color
+            [cell.artImageView.layer setBorderColor:(indexPath.row % 2 == 0) ? [UIColor whiteColor].CGColor : [UIColor colorWithRed:(224.0f/255.0f) green:(224.0f/255.0f) blue:(224.0f/255.0f) alpha:1.0f].CGColor];
+            [cell.artImageView.layer setBorderWidth:2.0f];
+            
+            //set art
             [cell setArt:[_items objectAtIndex:indexPath.row]];
             
             return cell;

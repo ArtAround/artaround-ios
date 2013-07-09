@@ -49,7 +49,7 @@
         //filter label 
         UILabel *filterLabel = [[UILabel alloc] initWithFrame:CGRectInset(_headerView.frame, 0, 5)];
         [filterLabel setBackgroundColor:[UIColor clearColor]];
-        [filterLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:14]];
+        [filterLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
         [filterLabel setText:@"Filtered"];
         [filterLabel setTag:1];
         [filterLabel setTextAlignment:UITextAlignmentCenter];

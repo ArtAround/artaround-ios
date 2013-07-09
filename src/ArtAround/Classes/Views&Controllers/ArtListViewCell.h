@@ -14,10 +14,11 @@
 
 @property (nonatomic, assign) Art *art;
 @property (retain, nonatomic) IBOutlet UILabel *artNameLabel;
-@property (retain, nonatomic) IBOutlet UIView *artImageBackView;
 @property (retain, nonatomic) IBOutlet EGOImageView *artImageView;
 @property (retain, nonatomic) IBOutlet UILabel *artDistanceLabel;
-@property (retain, nonatomic) IBOutlet UILabel *artDescriptionLabel;
+@property (retain, nonatomic) IBOutlet UILabel *artistLabel;
+@property (retain, nonatomic) IBOutlet UILabel *yearLabel;
+
 
 - (void)setArt:(Art *)theArt;
 - (void)setupImage;

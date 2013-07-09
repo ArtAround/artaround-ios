@@ -12,17 +12,18 @@
 #import "Category.h"
 #import "Utilities.h"
 #import "AAAPIManager.h"
+#import <QuartzCore/QuartzCore.h>
 
 //#define kArtAroundURL @"http://www.theartaround.us"
 #define kArtAroundURL @"http://staging.theartaround.us"
 
 @implementation ArtListViewCell
 @synthesize artNameLabel;
-@synthesize artImageBackView;
 @synthesize artImageView;
 @synthesize artDistanceLabel;
+@synthesize artistLabel;
+@synthesize yearLabel;
 @synthesize art = _art;
-@synthesize artDescriptionLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -30,35 +31,43 @@
     if (self) {
         
         //cell props
-        self.contentView.backgroundColor = kBGoffWhite;
+        //self.contentView.backgroundColor = [UIColor colorWithRed:(204.0f/255.0f) green:(204.0f/255.0f) blue:(204.0f/255.0f) alpha:1.0f];
         self.selectionStyle = UITableViewCellSelectionStyleGray;
         
         
         
         //image
-        artImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 10, 60, 60)];
+        artImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(7, 7, 72, 72)];
         [artImageView setContentMode:UIViewContentModeScaleAspectFill];
-        [artImageView setBackgroundColor:[UIColor lightGrayColor]];
+        [artImageView setBackgroundColor:[UIColor grayColor]];
         [artImageView setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin];
         [artImageView setClipsToBounds:YES];
-        artImageBackView = [[UIView alloc] initWithFrame:CGRectMake(6, 6, 68, 68)];
-        [artImageBackView setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin];
-        [artImageBackView setBackgroundColor:[UIColor whiteColor]];
+        [artImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
+        [artImageView.layer setBorderWidth:2.0f];
+
         
         //name label
-        artNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 10, 185, 17)];
+        artNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(86, 7, 175, 38)];
         artNameLabel.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth;        
-        artNameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:14];
+        artNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
+        artNameLabel.numberOfLines = 2;
         artNameLabel.backgroundColor = [UIColor clearColor];
         artNameLabel.textColor = kFontColorDarkBrown;
         
-        //desc
-        artDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 25, 220, 43)];
-        artDescriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;        
-        artDescriptionLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10];
-        artDescriptionLabel.numberOfLines = 3;
-        artDescriptionLabel.backgroundColor = [UIColor clearColor];
-        artDescriptionLabel.textColor = kFontColorDarkBrown;
+        //name label
+        artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(86, 43, 181, 15)];
+        artistLabel.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth;
+        artistLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11];
+        artistLabel.backgroundColor = [UIColor clearColor];
+        artistLabel.textColor = [UIColor grayColor];
+        
+        //name label
+        yearLabel = [[UILabel alloc] initWithFrame:CGRectMake(86, 58, 181, 15)];
+        yearLabel.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth;
+        yearLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11];
+        yearLabel.backgroundColor = [UIColor clearColor];
+        yearLabel.textColor = [UIColor grayColor];
+        
         
         //dist
         artDistanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(267, 10, 44, 11)];
@@ -67,10 +76,10 @@
         artDistanceLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         artDistanceLabel.textColor = kFontColorDarkBrown;
         
-        [self.contentView addSubview:artImageBackView];
         [self.contentView addSubview:artImageView];
         [self.contentView addSubview:artNameLabel];
-        [self.contentView addSubview:artDescriptionLabel];        
+        [self.contentView addSubview:artistLabel];
+        [self.contentView addSubview:yearLabel];
         [self.contentView addSubview:artDistanceLabel];        
         
     }
@@ -99,7 +108,6 @@
 		[self.artImageView setImageURL:nil];
 		[self.artNameLabel setText:@""];
 		[self.artDistanceLabel setText:@""];
-		[self.artDescriptionLabel setText:@""];
         
 		return;
 	}
@@ -112,14 +120,10 @@
 		Photo *photo = [[self.art.photos allObjects] objectAtIndex:0];
 		if (photo.mediumURL && ![photo.mediumURL isEqualToString:@""]) {
 			
-//            if (art.photos && [art.photos count] > 0) {
-//                Photo *photo = [[art.photos allObjects] objectAtIndex:0];
-//                if (photo.smallSource && ![photo.smallSource isEqualToString:@""]) {
-                    [self.artImageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.mediumURL]]];
-//                }
-//            }
+            [self.artImageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.mediumURL]]];
+            
 		} else {
-			//[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
+			
 			[[AAAPIManager instance] downloadArtForSlug:self.art.slug target:self callback:@selector(setupImage) forceDownload:YES];
 		}
 	}
@@ -131,7 +135,23 @@
 	
 	//set label text
 	[self.artNameLabel setText:self.art.title];
-	[self.artDescriptionLabel setText:self.art.locationDescription];
+    
+    CGSize titleSize = [self.art.title sizeWithFont:self.artNameLabel.font constrainedToSize:CGSizeMake(self.artNameLabel.frame.size.width, (self.artNameLabel.font.lineHeight * 2.0f)) lineBreakMode:NSLineBreakByWordWrapping];
+    DebugLog(@"titleSize: %f, %f", titleSize.width, titleSize.height);
+    DebugLog(@"lineHeight: %f", artNameLabel.font.lineHeight);
+    
+    [self.artNameLabel setFrame:CGRectMake(self.artNameLabel.frame.origin.x, self.artNameLabel.frame.origin.y, self.artNameLabel.frame.size.width, titleSize.height)];
+    
+    //set artist and year text and set frames
+    NSString *artistString = ([self.art.artist isEqualToString:@"Unknown"]) ? @"" : self.art.artist;
+    [self.artistLabel setText:artistString];
+    CGSize artistSize = [artistString sizeWithFont:self.artistLabel.font constrainedToSize:self.artistLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    [self.artistLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, self.artNameLabel.frame.origin.y + self.artNameLabel.frame.size.height + 3.0f, self.artistLabel.frame.size.width, artistSize.height)];
+    
+    NSString *yearString = ([[self.art.year stringValue] isEqualToString:@"0"]) ? @"" : [self.art.year stringValue];
+    [self.yearLabel setText:yearString];
+    CGSize yearSize = [yearString sizeWithFont:self.yearLabel.font constrainedToSize:self.yearLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    [self.yearLabel setFrame:CGRectMake(self.yearLabel.frame.origin.x, self.artistLabel.frame.origin.y + self.artistLabel.frame.size.height, self.yearLabel.frame.size.width, yearSize.height)];
     
     if (self.art.distance) {
         [self.artDistanceLabel setText:[NSString stringWithFormat:@"%0.2f mi", [self.art.distance doubleValue]]];
@@ -154,8 +174,8 @@
     [artNameLabel release];
     [artImageView release];
     [artDistanceLabel release];
-    [artDescriptionLabel release];
-    [artImageBackView release];
+    [artistLabel release];
+    [yearLabel release];
     [super dealloc];
 }
 @end

@@ -79,30 +79,37 @@ static const int _kAnnotationLimit = 9999;
     UIBarButtonItem *addButton= [[UIBarButtonItem alloc] initWithTitle:@"Add Art" style:UIBarButtonItemStylePlain target:self action:@selector(addButtonTapped)];
     
     //refresh button
-    UIImage *mapButtonImage = [UIImage imageNamed:@"MapButton.png"];
-    UIImage *listButtonImage = [UIImage imageNamed:@"ListButton.png"];
+    UIImage *mapButtonImage = [UIImage imageNamed:@"MapIcon.png"];
+    UIImage *listButtonImage = [UIImage imageNamed:@"ListIcon.png"];
     _listButton = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, mapButtonImage.size.width, mapButtonImage.size.height)];
     [_listButton setImage:listButtonImage];
     _mapButton = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, listButtonImage.size.width, listButtonImage.size.height)];
     [_mapButton setImage:mapButtonImage];
     _listButton.backgroundColor = [UIColor clearColor];
     _mapButton.backgroundColor = [UIColor clearColor];
+    
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn addTarget:self action:@selector(flipMap) forControlEvents:UIControlEventTouchUpInside];
-    btn.frame = CGRectMake(0, 0, 30, 30);    
+    btn.frame = CGRectMake(0, 0, listButtonImage.size.width, listButtonImage.size.height + 10.0);
     
-    UIView *buttonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mapButtonImage.size.width, mapButtonImage.size.height)];
+    UIView *buttonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mapButtonImage.size.width + 5.0f, mapButtonImage.size.height + 15.0f)];
     buttonView.backgroundColor = [UIColor clearColor];
-
-    [buttonView addSubview:_mapButton];
+    
+    UILabel *btnLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, btn.frame.size.height - 5.0f, btn.frame.size.width, 10.0f)];
+    [btnLabel setText:@"List"];
+    [btnLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:10.0f]];
+    [btnLabel setTextColor:[UIColor colorWithRed:(180.0f/255.0f) green:(174.0f/255.0f) blue:(174.0f/255.0f) alpha:1.0]];
+    [btnLabel setBackgroundColor:[UIColor clearColor]];
+    [btnLabel setTextAlignment:NSTextAlignmentCenter];
+    [btnLabel setTag:10];
+    
     [buttonView addSubview:_listButton];
     [buttonView addSubview:btn];
+    [buttonView addSubview:btnLabel];
     
     UIBarButtonItem *flipButton = [[UIBarButtonItem alloc] initWithCustomView:buttonView];
     [flipButton setTarget:self];
     [flipButton setAction:@selector(flipMap)];
-    
-    UIBarButtonItem *refreshButton= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(flipMap)];
     
     
     [self.navigationItem setLeftBarButtonItem:addButton];
@@ -460,16 +467,23 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)flipMap 
 {
+    UILabel *flipButtonLabel = (UILabel*)[[(UIBarButtonItem*)[self.navigationItem rightBarButtonItem] customView] viewWithTag:10];
     
     if (_showingMap) {
         [UIView transitionFromView:self.mapView toView:_listViewController.tableView duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
         [UIView transitionFromView:_listButton toView:_mapButton duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
         
         [_listViewController.favoriteButton setSelected:_showFavorites];
+        
+        //set the button text
+        [flipButtonLabel setText:@"Map"];
     }
     else {
         [UIView transitionFromView:_listViewController.tableView toView:self.mapView duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];
-        [UIView transitionFromView:_mapButton  toView:_listButton duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];        
+        [UIView transitionFromView:_mapButton  toView:_listButton duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];
+        
+        //set the button text
+        [flipButtonLabel setText:@"List"];
     }
     
     _showingMap = !_showingMap;
