@@ -64,8 +64,7 @@
 		[aFavoritesButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateHighlighted];
 		[aFavoritesButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateSelected];  
         [aFavoritesButton setBackgroundColor:[UIColor darkGrayColor]];
-        //[aFavoritesButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
-		//[aFavoritesButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
+
 		[aFavoritesButton setFrame:CGRectMake(0.0f, frame.size.height - aFavoritesButton.imageView.image.size.height + 1, aFavoritesButton.imageView.image.size.width, aFavoritesButton.imageView.image.size.height)];
 		[aFavoritesButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin];
 		[self setFavoritesButton:aFavoritesButton];
