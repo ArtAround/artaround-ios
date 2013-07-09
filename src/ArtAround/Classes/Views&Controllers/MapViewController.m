@@ -557,7 +557,7 @@ static const int _kAnnotationLimit = 9999;
 			NSArray *categoriesTitles = [[Utilities instance] getFiltersForFilterType:FilterTypeCategory];
             
 			if (categoriesTitles) {
-				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND categories.@count >= %d AND ANY categories.title IN %@" : @"categories.@count >= %d AND ANY categories.title IN %@", categoriesTitles.count, categoriesTitles]];
+				[fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND ANY categories.title IN %@" : @"ANY categories.title IN %@", categoriesTitles]];
 			}
             
             break;
