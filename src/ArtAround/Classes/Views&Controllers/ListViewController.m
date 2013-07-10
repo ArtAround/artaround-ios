@@ -57,7 +57,8 @@
     //sort items by distance
     for (Art *thisArt in _items) {
         CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
-        [thisArt setDistance:[NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)]];
+        NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
+        [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
     }
     
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];

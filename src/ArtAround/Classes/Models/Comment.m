@@ -18,5 +18,6 @@
 @dynamic url;
 @dynamic email;
 @dynamic art;
+@dynamic commentID;
 
 @end

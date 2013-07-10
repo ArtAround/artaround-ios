@@ -5,8 +5,9 @@
         <attribute name="artist" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
-        <attribute name="commisionedBy" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="commissioned" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="commissionedBy" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commissionedByLink" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date">
             <userInfo/>
         </attribute>
@@ -175,7 +176,7 @@
         <userInfo/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="345"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="360"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
         <element name="Event" positionX="160" positionY="192" width="128" height="150"/>

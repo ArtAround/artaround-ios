@@ -33,7 +33,7 @@
 - (void)photoUploadFailed;
 - (void)photoUploadCompleted:(NSDictionary*)responseDict;
 - (void)photoUploadFailed:(NSDictionary*)responseDict;
-
+- (void)artUploadFailed:(NSDictionary*)responseDict;
 - (BOOL)findAndResignFirstResponder;
 
 @end

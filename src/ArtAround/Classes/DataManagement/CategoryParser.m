@@ -32,8 +32,6 @@
 	if (!category) {
 		category = (Category *)[NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
         
-        #warning temporarily creating array string
-        //TODO: need to make categories one to many
         NSString *arrayTitle = @"";
         if ([title isKindOfClass:[NSArray class]])
             arrayTitle = [(NSArray*)title componentsJoinedByString:@", "];

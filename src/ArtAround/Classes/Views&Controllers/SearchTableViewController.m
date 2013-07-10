@@ -11,6 +11,7 @@
 
 @interface SearchTableViewController ()
 -(void)filterContentForSearchText:(NSString*)searchText;
+- (BOOL) items:(NSArray*)items containsItem:(NSObject*)item;
 @end
 
 @implementation SearchTableViewController

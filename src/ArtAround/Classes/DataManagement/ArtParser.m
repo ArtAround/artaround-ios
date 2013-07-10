@@ -73,9 +73,6 @@
 
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context
 {
-    if ([[artDict objectForKey:@"slug"] isEqualToString:@"the-pressure-to-hold-together-that-which-held-things-back-part-2"]) {
-        NSLog(@"%@", artDict);
-    }
 
 	//create a new art if one doesn't exist yet
 	NSString *slug = [artDict objectForKey:@"slug"];
@@ -119,6 +116,18 @@
         art.commissioned = [NSNumber numberWithBool:NO];
     }
 
+    //commissioned by
+    if ([artDict objectForKey:@"commissioned_by"] && ![[artDict objectForKey:@"commissioned_by"] isKindOfClass:[NSNull class]] && [[artDict objectForKey:@"commissioned_by"] isKindOfClass:[NSDictionary class]])
+    {
+        NSDictionary *commisionedByDict = (NSDictionary*)[artDict objectForKey:@"commissioned_by"];
+        
+        if (commisionedByDict) {
+            if ([commisionedByDict objectForKey:@"name"])
+                art.commissionedBy = [AAAPIManager clean:[commisionedByDict objectForKey:@"name"]];
+            if ([commisionedByDict objectForKey:@"url"])
+                art.commissionedByLink = [AAAPIManager clean:[commisionedByDict objectForKey:@"url"]];
+        }
+    }
     
     //get the event if it exists
     if ([artDict objectForKey:@"event"] && [[artDict objectForKey:@"event"] isKindOfClass:[NSDictionary class]])

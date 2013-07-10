@@ -25,7 +25,6 @@
         // Initialization code
         
         UIImage *buttonArrowImage = [UIImage imageNamed:@"buttonArrow.png"];
-        UIImage *buttonArrowImageWhite = [UIImage imageNamed:@"buttonArrowWhite.png"];
         UIButton *attributionButton = [[UIButton alloc] initWithFrame:CGRectMake(-2.0f, frame.size.height - kLabelHeight - 20.0f, frame.size.width + 2.0f   , kLabelHeight + 20)];
         [attributionButton setBackgroundImage:[UIImage imageNamed:@"FilterBackgroundPressed.png"] forState:UIControlStateNormal];
         [attributionButton setTitleEdgeInsets:UIEdgeInsetsZero];

@@ -203,7 +203,7 @@
     //if there are user added images upload them
     if (_userAddedImages.count > 0) {
         for (UIImage *thisImage in _userAddedImages) {
-            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+            //[[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
         }
     }
     else {

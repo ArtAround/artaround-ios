@@ -806,7 +806,7 @@ static const float _kPhotoHeight = 140.0f;
     else {
         
         //upload image
-        [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        [[AAAPIManager instance] uploadImage:image forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withPhotoAttributionURL:@"" withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
         
         [self showLoadingView:@"Uploading Photo\nPlease Wait..."];
     }
@@ -1279,7 +1279,7 @@ static const float _kPhotoHeight = 140.0f;
     //if there are user added images upload them
     if (_userAddedImages.count > 0) {
         for (UIImage *thisImage in _userAddedImages) {
-            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[Utilities instance].photoAttributionText withPhotoAttributionURL:@"" withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
         }
     }
     else {
@@ -1563,11 +1563,19 @@ static const float _kPhotoHeight = 140.0f;
                     }
                     else {
                         if (_art.artDescription.length > 0) {
+                            
                             CGSize reqdSize = [_art.artDescription sizeWithFont:kDetailFont constrainedToSize:CGSizeMake(_detailView.frame.size.width - (2 * kHorizontalPadding), MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
-                            return (_art.event != nil) ? (90 + reqdSize.height) : (75 + reqdSize.height);
+                            float height = reqdSize.height;
+                            
+                            if (_art.commissionedBy && _art.commissionedBy.length > 0)
+                                height += 20;
+                            
+                            height += (_art.event != nil) ? 90 : 75;
+                            
+                            return height;
                         }
                         else
-                            return 80;
+                            return 100;
                     }
                     break;
                 }
@@ -2027,8 +2035,17 @@ static const float _kPhotoHeight = 140.0f;
                             [cell addSubview:catLabel];
                             [catLabel release];
                             
+                            //commisioned by label
+                            UILabel *commissionedByLabel = [[UILabel alloc] initWithFrame:CGRectOffset(catLabel.frame, 0, catLabel.frame.size.height + 2)];
+                            commissionedByLabel.tag = 7;
+                            commissionedByLabel.textColor = kFontColorDarkBrown;
+                            commissionedByLabel.font = kDetailFont;
+                            commissionedByLabel.backgroundColor = [UIColor clearColor];
+                            [cell addSubview:commissionedByLabel];
+                            [commissionedByLabel release];
+                            
                             //event label
-                            UILabel *eventLabel = [[UILabel alloc] initWithFrame:CGRectOffset(catLabel.frame, 0, catLabel.frame.size.height + 2)];
+                            UILabel *eventLabel = [[UILabel alloc] initWithFrame:CGRectOffset(commissionedByLabel.frame, 0, commissionedByLabel.frame.size.height + 2)];
                             eventLabel.tag = 6;
                             eventLabel.textColor = kFontColorDarkBrown;
                             eventLabel.font = [UIFont fontWithName:@"Helvetica-Oblique" size:11];
@@ -2131,6 +2148,19 @@ static const float _kPhotoHeight = 140.0f;
                         aLabel.frame = CGRectMake(aLabel.frame.origin.x, aLabel.frame.origin.y, roundf((reqdWidth > maxWidth) ? maxWidth : reqdWidth), aLabel.frame.size.height);
                         yLabel.frame = CGRectMake(aLabel.frame.origin.x + aLabel.frame.size.width, yLabel.frame.origin.y, [yLabel.text sizeWithFont:aLabel.font].width, yLabel.frame.size.height);
                         
+                        //set the commissionedBy label and arrange
+                        UILabel *cLabel = (UILabel*)[cell viewWithTag:7];
+                        
+                        if (_art.commissionedBy != nil) {
+                            [cLabel setText:[NSString stringWithFormat:@"Commissioned by %@", _art.commissionedBy]];
+                        }
+                        else {
+                            [cLabel setText:@""];
+                        }
+                        
+                        CGSize cSize = [cLabel.text sizeWithFont:cLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+                        [cLabel setFrame:CGRectMake(cLabel.frame.origin.x, cLabel.frame.origin.y, maxWidth, cSize.height)];
+                        
                         //set the event label and arrange
                         UILabel *eLabel = (UILabel*)[cell viewWithTag:6];
                         
@@ -2142,7 +2172,7 @@ static const float _kPhotoHeight = 140.0f;
                         }
                         
                         CGSize eventSize = [eLabel.text sizeWithFont:eLabel.font constrainedToSize:CGSizeMake(maxWidth, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
-                        [eLabel setFrame:CGRectMake(eLabel.frame.origin.x, eLabel.frame.origin.y, maxWidth, eventSize.height)];
+                        [eLabel setFrame:CGRectMake(eLabel.frame.origin.x, cLabel.frame.origin.y + cLabel.frame.size.height + 4, maxWidth, eventSize.height)];
                         
                         //set the description label and arrange
                         UILabel *dLabel = (UILabel*)[cell viewWithTag:4];
@@ -2194,7 +2224,7 @@ static const float _kPhotoHeight = 140.0f;
                         cell.contentView.backgroundColor = kBGlightBrown;
                         cell.textLabel.font = kH2Font;
                         cell.textLabel.backgroundColor = [UIColor clearColor];
-                        cell.textLabel.textColor = kFontColorBrown;
+                        cell.textLabel.textColor = kFontColorDarkBrown;
                     }
                     
                     cell.textLabel.text = @"Location";
@@ -2322,7 +2352,7 @@ static const float _kPhotoHeight = 140.0f;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.contentView.backgroundColor = kBGlightBrown;                        
                         cell.textLabel.font = kH2Font;
-                        cell.textLabel.textColor = kFontColorBrown;
+                        cell.textLabel.textColor = kFontColorDarkBrown;
                         cell.textLabel.backgroundColor = [UIColor clearColor];
                     }
                     
@@ -2816,8 +2846,8 @@ static const float _kPhotoHeight = 140.0f;
 //submit flag
 - (void)flickrNameViewControllerPressedSubmit:(id)controller
 {
-    [Utilities instance].photoAttributionText = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller flickrHandleField] text]];
-    [Utilities instance].photoAttributionURL = [[NSString alloc] initWithFormat:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    [Utilities instance].photoAttributionText = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    [Utilities instance].photoAttributionURL = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
     [self userAddedImage:[(FlickrNameViewController*)controller image]];
     
     

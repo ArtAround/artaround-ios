@@ -588,7 +588,8 @@ static const int _kAnnotationLimit = 9999;
     //sort items by distance
     for (Art *thisArt in _items) {
         CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
-        [thisArt setDistance:[NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)]];
+        NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
+        [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
     
     }
     
@@ -713,11 +714,7 @@ static const int _kAnnotationLimit = 9999;
 		int index = [(ArtAnnotation *)annotation index];
 		if ([_items count] > index) {
 			
-			//get the art piece for this annotation view
-			Art *art = [_items objectAtIndex:index];
-			
 			//setup the pin image and reuse identifier
-			NSString *title = [[art categoriesString] lowercaseString];
 			NSString *reuseIdentifier = nil;
 			UIImage *pinImage = nil;
 			
