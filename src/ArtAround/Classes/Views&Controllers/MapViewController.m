@@ -19,6 +19,7 @@
 #import "AddDetailViewController.h"
 #import "QuartzCore/CALayer.h"
 #import "AddArtViewController.h"
+#import "DetailTableControllerViewController.h"
 
 static const int _kAnnotationLimit = 9999;
 
@@ -450,16 +451,21 @@ static const int _kAnnotationLimit = 9999;
 		//get the selected art piece
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
-        //pass it along to a new detail controller and push it the navigation controller
-		DetailViewController *detailController = [[DetailViewController alloc] init];
-		[self.navigationController pushViewController:detailController animated:YES];
+//        //pass it along to a new detail controller and push it the navigation controller
+//		DetailViewController *detailController = [[DetailViewController alloc] init];
+//		[self.navigationController pushViewController:detailController animated:YES];
+//        
+//        //set the location coord to the user's location and the art selected
+//        detailController.currentLocation = self.mapView.map.userLocation.location;
+//        [detailController setArt:selectedArt withTemplate:nil];
+//        
+//		[detailController release];
+
+		//pass it along to a new detail controller and push it the navigation controller
+        DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+        [self.navigationController pushViewController:detailController animated:YES];
+        [detailController release];
         
-        //set the location coord to the user's location and the art selected
-        detailController.currentLocation = self.mapView.map.userLocation.location;
-        [detailController setArt:selectedArt withTemplate:nil];
-        
-		[detailController release];
-		
 	}
 }
 
@@ -841,15 +847,21 @@ static const int _kAnnotationLimit = 9999;
     //get the selected art piece
     Art *selectedArt = [_items objectAtIndex:index];
     
+//    //pass it along to a new detail controller and push it the navigation controller
+//    DetailViewController *detailController = [[DetailViewController alloc] init];
+//    [self.navigationController pushViewController:detailController animated:YES];
+//    
+//    //set the location coord to the user's location and the art selected
+//    detailController.currentLocation = self.mapView.map.userLocation.location;
+//    [detailController setArt:selectedArt withTemplate:nil];
+//    
+//    [detailController release];
+    
     //pass it along to a new detail controller and push it the navigation controller
-    DetailViewController *detailController = [[DetailViewController alloc] init];
-    [self.navigationController pushViewController:detailController animated:YES];
-    
-    //set the location coord to the user's location and the art selected
-    detailController.currentLocation = self.mapView.map.userLocation.location;
-    [detailController setArt:selectedArt withTemplate:nil];
-    
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+    [self.navigationController pushViewController:detailController animated:YES];    
     [detailController release];
+    
     
 }
 
