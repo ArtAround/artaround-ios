@@ -73,7 +73,7 @@
 
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context
 {
-
+    
 	//create a new art if one doesn't exist yet
 	NSString *slug = [artDict objectForKey:@"slug"];
 	Art *art = [ItemParser existingEntity:@"Art" inContext:context uniqueKey:@"slug" uniqueValue:slug];

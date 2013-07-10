@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
-#import "PhotoImageView.h"
-
 #import "FBConnect.h"
 #import "FlagViewController.h"
 #import "FlickrNameViewController.h"
@@ -44,7 +42,6 @@ static const float _kPhotoHeight = 96.5f;
     int                     _addedImageCount, _currentYear;
     NSString*               _yearString;
     BOOL                    _usingPhotoGeotag;
-    NSDate*                 _date;
     NSMutableArray*         _userAddedImages, *_imageButtons;
     NSMutableDictionary*    _newArtDictionary, *_userAddedImagesAttribution;
     UIAlertView*            _loadingAlertView;

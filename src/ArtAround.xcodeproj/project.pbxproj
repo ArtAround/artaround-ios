@@ -42,6 +42,7 @@
 		4667B278178B92ED0010C449 /* ListIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4667B274178B92EC0010C449 /* ListIcon.png */; };
 		4667B279178B92ED0010C449 /* ListIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4667B275178B92ED0010C449 /* ListIcon@2x.png */; };
 		466B5E82178CDE6E0000CF66 /* Art.m in Sources */ = {isa = PBXBuildFile; fileRef = 466B5E81178CDE6E0000CF66 /* Art.m */; };
+		466B5E86178D04E70000CF66 /* DetailTableControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 466B5E85178D04E70000CF66 /* DetailTableControllerViewController.m */; };
 		46745F6F175A641B00403810 /* buttonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F6D175A641B00403810 /* buttonArrow.png */; };
 		46745F70175A641B00403810 /* buttonArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F6E175A641B00403810 /* buttonArrow@2x.png */; };
 		46745F73175A64EC00403810 /* buttonArrowWhite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F71175A64EC00403810 /* buttonArrowWhite@2x.png */; };
@@ -255,6 +256,8 @@
 		4667B275178B92ED0010C449 /* ListIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ListIcon@2x.png"; sourceTree = "<group>"; };
 		466B5E80178CDE6E0000CF66 /* Art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Art.h; path = Classes/Models/Art.h; sourceTree = "<group>"; };
 		466B5E81178CDE6E0000CF66 /* Art.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Art.m; path = Classes/Models/Art.m; sourceTree = "<group>"; };
+		466B5E84178D04E70000CF66 /* DetailTableControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailTableControllerViewController.h; sourceTree = "<group>"; };
+		466B5E85178D04E70000CF66 /* DetailTableControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailTableControllerViewController.m; sourceTree = "<group>"; };
 		46745F6D175A641B00403810 /* buttonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonArrow.png; sourceTree = "<group>"; };
 		46745F6E175A641B00403810 /* buttonArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "buttonArrow@2x.png"; sourceTree = "<group>"; };
 		46745F71175A64EC00403810 /* buttonArrowWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "buttonArrowWhite@2x.png"; sourceTree = "<group>"; };
@@ -572,7 +575,7 @@
 			name = Auto;
 			sourceTree = "<group>";
 		};
-		466406F01747CC0C0003CA8A /* ArtDetailView */ = {
+		466406F01747CC0C0003CA8A /* AddArtView */ = {
 			isa = PBXGroup;
 			children = (
 				46B357A81763E3C0006663AA /* ArtLocationSelectionView */,
@@ -580,7 +583,7 @@
 				466406F21747CC720003CA8A /* AddArtViewController.m */,
 				466406F31747CC720003CA8A /* AddArtViewController.xib */,
 			);
-			name = ArtDetailView;
+			name = AddArtView;
 			sourceTree = "<group>";
 		};
 		466406F61747D6AB0003CA8A /* AvoidScrolling */ = {
@@ -590,6 +593,15 @@
 				466406F81747D6AB0003CA8A /* TPKeyboardAvoidingScrollView.m */,
 			);
 			path = AvoidScrolling;
+			sourceTree = "<group>";
+		};
+		466B5E83178D04370000CF66 /* DetailView */ = {
+			isa = PBXGroup;
+			children = (
+				466B5E84178D04E70000CF66 /* DetailTableControllerViewController.h */,
+				466B5E85178D04E70000CF66 /* DetailTableControllerViewController.m */,
+			);
+			name = DetailView;
 			sourceTree = "<group>";
 		};
 		468A155117358C5A00DED13C /* WebViewContoller */ = {
@@ -753,8 +765,9 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				466B5E83178D04370000CF66 /* DetailView */,
 				C9722EAE14CD115600FC42E9 /* Add */,
-				466406F01747CC0C0003CA8A /* ArtDetailView */,
+				466406F01747CC0C0003CA8A /* AddArtView */,
 				CAFF2CB81409A51800C98C0E /* Detail */,
 				CAFF2CB11409A4C400C98C0E /* Filter */,
 				5F7A24C2150D5E3300101598 /* Flagging */,
@@ -1387,6 +1400,7 @@
 				468A0675175BCDD600F697A5 /* Event.m in Sources */,
 				46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */,
 				466B5E82178CDE6E0000CF66 /* Art.m in Sources */,
+				466B5E86178D04E70000CF66 /* DetailTableControllerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

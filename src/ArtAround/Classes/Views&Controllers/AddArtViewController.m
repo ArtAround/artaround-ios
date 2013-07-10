@@ -7,14 +7,12 @@
 //
 
 #import "AddArtViewController.h"
-#import "PhotoImageView.h"
 #import "EGOImageButton.h"
 #import "Photo.h"
 #import "PhotoImageView.h"
 #import "Art.h"
 #import "ArtAroundAppDelegate.h"
 #import "AAAPIManager.h"
-#import "ArtAnnotation.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "Utilities.h"
@@ -554,8 +552,6 @@
         [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
         [addImgButton setTag:_kAddImageTagBase];
         [addImgButton.imageView setContentMode:UIViewContentModeCenter];
-//        [addImgButton.layer setBorderColor:[UIColor whiteColor].CGColor];
-//        [addImgButton.layer setBorderWidth:6.0f];
         [addImgButton setBackgroundColor:[UIColor colorWithRed:(170.0f/255.0f) green:(170.0f/255.0f) blue:(170.0f/255.0f) alpha:1.0f]];
         [addImgButton addTarget:self action:@selector(addImageButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.photosScrollView addSubview:addImgButton];
