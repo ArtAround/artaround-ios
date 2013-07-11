@@ -203,18 +203,9 @@
         NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithArray:[_newArtDictionary objectForKey:@"categories"]];
         [searchTableController setSelectedItems:selectedItems];
     }
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(dismissModalViewControllerAnimated:)];
-    [searchTableController.navigationItem setLeftBarButtonItem:cancelButton];
-    
-    //toolbar bg
-    UIImage *toolbarImage = [UIImage imageNamed:@"toolbarBackground.png"];
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:searchTableController];
-    [navController.navigationBar setBackgroundImage:toolbarImage forBarMetrics:UIBarMetricsDefault];
-    [navController.navigationBar setTintColor:[UIColor colorWithRed:47.0f/255.0f green:47.0f/255.0f blue:41.0f/255.0f alpha:1.0f]];
-    [self presentModalViewController:navController animated:YES];
-    
+
+
+    [self.navigationController pushViewController:searchTableController animated:YES];
     
     
     
@@ -1255,7 +1246,7 @@
         [self.categoryButton setTitle:@"Categories" forState:UIControlStateNormal];
     }
     
-    [self dismissModalViewControllerAnimated:YES];
+    [self.navigationController popToViewController:self animated:YES];
     
     //setup add art button
     if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&

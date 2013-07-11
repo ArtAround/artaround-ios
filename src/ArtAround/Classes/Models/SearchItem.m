@@ -21,4 +21,8 @@
     return item;
 }
 
+- (NSString*) description {
+    return [NSString stringWithString:self.title];
+}
+
 @end

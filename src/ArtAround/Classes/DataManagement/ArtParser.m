@@ -99,6 +99,9 @@
     //categories    
     if ([artDict objectForKey:@"category"] && [[artDict objectForKey:@"category"] isKindOfClass:[NSArray class]])
         art.categories = [CategoryParser setForTitles:[artDict objectForKey:@"category"] inContext:context];
+    else if ([artDict objectForKey:@"category"] && [[artDict objectForKey:@"category"] isKindOfClass:[NSString class]]) {
+        art.categories = [CategoryParser setForTitles:[[artDict objectForKey:@"category"] componentsSeparatedByString:@","] inContext:context];
+    }
     
     //neighborhood
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];

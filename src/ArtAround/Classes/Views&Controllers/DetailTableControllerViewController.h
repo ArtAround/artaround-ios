@@ -22,6 +22,7 @@
 #define _kLocationActionSheet 103
 #define _kUserAddedImageTagBase 1000
 #define _kAddImageTagBase 2000
+#define _kAddImageButtonTag 3333
 
 typedef enum _ArtDetailRow {
     ArtDetailRowPhotos = 0,
@@ -37,27 +38,32 @@ typedef enum _ArtDetailRow {
     ArtDetailRowCommissioned = 10
 } ArtDetailRow;
 
-@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate>
 {
+    int                     _addedImageCount;
     BOOL                    _inEditMode, _usingPhotoGeotag;
     UIAlertView*            _loadingAlertView;
     NSMutableArray*         _userAddedImages, *_imageButtons;
-    NSMutableDictionary*    _newCommentDictionary;
+    NSMutableDictionary*    _newCommentDictionary, *_newArtDictionary;
     UIPickerView*           _datePicker;
     UIToolbar*              _dateToolbar;
     UIBarButtonItem*        _dateDoneButton;
     NSDateFormatter*        _yearFormatter;
     MKMapView*              _mapView;
+    NSString*               _yearString;
+    CLLocation*             _selectedLocation;
     
     //inputs
     UIScrollView*           _photosScrollView;
-    UITextField*            _artistTextField, *_titleTextField, *_urlTextField, *_commissionedTextField;
+    UITextField*            _artistTextField, *_titleTextField, *_urlTextField;
     UIButton*               _locationButton, *_categoryButton, *_dateButton, *_editButton, *_cancelEditButton, *_submitEditButton;
     UIView*                 _footerView;
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
     
     Art*                    _art;
 }
+
+@property (nonatomic, retain) CLLocation *currentLocation;
 
 - (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt;
 
