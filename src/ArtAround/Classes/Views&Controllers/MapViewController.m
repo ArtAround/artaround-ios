@@ -75,10 +75,6 @@ static const int _kAnnotationLimit = 9999;
 	//the map needs to be refreshed
 	_mapNeedsRefresh = YES;
     
-    
-    //add button
-    UIBarButtonItem *addButton= [[UIBarButtonItem alloc] initWithTitle:@"Add Art" style:UIBarButtonItemStylePlain target:self action:@selector(addButtonTapped)];
-    
     //refresh button
     UIImage *mapButtonImage = [UIImage imageNamed:@"MapIcon.png"];
     UIImage *listButtonImage = [UIImage imageNamed:@"ListIcon.png"];
@@ -112,8 +108,6 @@ static const int _kAnnotationLimit = 9999;
     [flipButton setTarget:self];
     [flipButton setAction:@selector(flipMap)];
     
-    
-    [self.navigationItem setLeftBarButtonItem:addButton];
     [self.navigationItem setRightBarButtonItem:flipButton];
 
     
@@ -142,7 +136,7 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.map setShowsUserLocation:YES];
     
 	//setup button actions
-	[self.mapView.favoritesButton addTarget:self action:@selector(favoritesButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+	[self.mapView.addArtButton addTarget:self action:@selector(addButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	
@@ -392,7 +386,7 @@ static const int _kAnnotationLimit = 9999;
 	_showFavorites = !_showFavorites;
     
     //update the button image
-    [self.mapView.favoritesButton setSelected:_showFavorites];
+    [self.mapView.addArtButton setSelected:_showFavorites];
     [_listViewController.favoriteButton setSelected:_showFavorites];
     
     //update art

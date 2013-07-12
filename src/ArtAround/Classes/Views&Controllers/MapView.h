@@ -12,7 +12,7 @@
 @interface MapView : UIView
 
 @property (nonatomic, retain) MKMapView *map;
-@property (nonatomic, retain) UIButton *favoritesButton;
+@property (nonatomic, retain) UIButton *addArtButton;
 @property (nonatomic, retain) UIButton *filterButton;
 @property (nonatomic, retain) UIButton *locateButton;
 @property (nonatomic, retain) UIView *headerView;
