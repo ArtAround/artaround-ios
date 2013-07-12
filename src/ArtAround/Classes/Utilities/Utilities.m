@@ -185,7 +185,8 @@ static Utilities *_kSharedInstance = nil;
 	//if no filters, remove all other filters
 	//else set the filters
 	if (filterType == FilterTypeNone) {
-		[_defaults setObject:nil forKey:[self keyForFilterType:FilterTypeCategory]];
+		[_defaults setObject:nil forKey:[self keyForFilterType:FilterTypeFavorites]];
+        [_defaults setObject:nil forKey:[self keyForFilterType:FilterTypeCategory]];
 		[_defaults setObject:nil forKey:[self keyForFilterType:FilterTypeArtist]];
 		[_defaults setObject:nil forKey:[self keyForFilterType:FilterTypeTitle]];
 	} else {

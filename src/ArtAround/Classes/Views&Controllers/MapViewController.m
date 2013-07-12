@@ -537,6 +537,11 @@ static const int _kAnnotationLimit = 9999;
 	//setup the proper delegate for the selected filter
 	switch ([Utilities instance].selectedFilterType) {
 			
+        case FilterTypeFavorites: {
+			[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"favorite == TRUE"]];
+            
+			break;
+		}
         case FilterTypeArtist: {
 			NSArray *artists = [[Utilities instance] getFiltersForFilterType:FilterTypeArtist];
 			if (artists) {
@@ -674,7 +679,7 @@ static const int _kAnnotationLimit = 9999;
 		int offset = bottomRightCoord.longitude - topLeftCoord.longitude;
 		float multiplier = (offset > 30) ? 1.1 : 1.4;
 		
-		region.span.latitudeDelta = fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier; // Add a little extra space on the sides
+		region.span.latitudeDelta = fabsf(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier; // Add a little extra space on the sides
 		region.span.longitudeDelta = fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier; // Add a little extra space on the sides
 		
 		region = [_mapView.map regionThatFits:region];

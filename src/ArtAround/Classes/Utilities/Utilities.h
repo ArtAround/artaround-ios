@@ -41,9 +41,10 @@
 
 typedef enum {
 	FilterTypeNone = 0,
-	FilterTypeCategory = 1,
-	FilterTypeTitle = 2,
-	FilterTypeArtist = 3
+    FilterTypeFavorites = 1,
+	FilterTypeCategory = 2,
+	FilterTypeTitle = 3,
+	FilterTypeArtist = 4
 } FilterType;
 
 @interface Utilities : NSObject
