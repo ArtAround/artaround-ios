@@ -31,10 +31,10 @@ static const float _kPhotoHeight = 183.5f;
 static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
 static const float _kPhotoScrollerHeight = 209.0f;
+static const float _kRowBufffer = 20.0f;
 
 @interface DetailTableControllerViewController ()
 - (void)setupImages;
-- (CGFloat)heightForRow:(ArtDetailRow)detailRow;
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row;
 - (void)editButtonPressed:(id)sender;
 - (void)editSubmitButtonPressed:(id)sender;
@@ -485,14 +485,20 @@ static const float _kPhotoScrollerHeight = 209.0f;
             }
             case ArtDetailRowDescription:
             {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+                cell.textLabel.numberOfLines = 1;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                cell.detailTextLabel.numberOfLines = 0;
+                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                 break;
             }
             case ArtDetailRowLocationDescription:
             {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+                cell.textLabel.numberOfLines = 1;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                cell.detailTextLabel.numberOfLines = 0;
+                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                 break;
             }
             default:
@@ -733,12 +739,14 @@ static const float _kPhotoScrollerHeight = 209.0f;
         }
         case ArtDetailRowDescription:
         {
-            cell.textLabel.text = _art.artDescription;
+            cell.textLabel.text = @"About";
+            cell.detailTextLabel.text = _art.artDescription;
             break;
         }
         case ArtDetailRowLocationDescription:
         {
-            cell.textLabel.text = _art.locationDescription;
+            cell.textLabel.text = @"Where?";
+            cell.detailTextLabel.text = _art.locationDescription;
             break;
         }
         default:
@@ -818,83 +826,111 @@ static const float _kPhotoScrollerHeight = 209.0f;
     
 }
 
-- (CGFloat)heightForRow:(ArtDetailRow)detailRow
-{
-    CGFloat height = 40.0f;
-    
-    switch (detailRow) {
-        case ArtDetailRowCategory:
-        {
-            break;
-        }
-            
-        case ArtDetailRowDescription:
-        {
-            break;
-        }
-            
-        case ArtDetailRowLocationDescription:
-        {
-            break;
-        }
-            
-        case ArtDetailRowPhotos:
-        {
-            height = _kPhotoScrollerHeight;
-            break;
-        }
-            
-        case ArtDetailRowLocationMap:
-        {
-            height = _kMapHeight + (_kMapPadding * 2.0);
-            break;
-        }
-            
-        default:
-            break;
-    }
-    
-    return height;
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = 40.0f;
 
-    switch (indexPath.row) {
-        case ArtDetailRowPhotos:
-            height = _kPhotoScrollerHeight;
-            break;
-        
-        case ArtDetailRowCategory:
-            
-            break;
-            
-        case ArtDetailRowDescription:
-        {
-            if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
-                CGSize labelSize = CGSizeMake(210.0f, 300.0f);
-                CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByTruncatingTail];
-                height = requiredLabelSize.height;
+    if (_inEditMode) {
+        switch (indexPath.row) {
+            case ArtDetailRowPhotos:
+            {
+                height = _kPhotoScrollerHeight;
+                break;
             }
-            else if ([_art.title length] > 0) {
-                CGSize labelSize = CGSizeMake(210.0f, 300.0f);
-                CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByTruncatingTail];
-                height = requiredLabelSize.height;
+            case ArtDetailRowDescription:
+            {
+                height = 60.0f;
+                
+                break;
             }
-            
-            break;
+            case ArtDetailRowLocationDescription:
+            {
+                height = 60.0f;
+                
+                break;
+            }
+            case ArtDetailRowLocationMap:
+            {
+                height = _kMapHeight + (_kMapPadding * 2.0f);
+                break;
+            }
+            default:
+                break;
         }
-        case ArtDetailRowLocationDescription:
+    }
+    else {
+        switch (indexPath.row) {
+            case ArtDetailRowTitle:
+            {
+                if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
+                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer;
+                }
+                else if ([_art.title length] > 0) {
+                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer;
+                }
+                
+                break;
+            }
+            case ArtDetailRowPhotos:
+                height = _kPhotoScrollerHeight;
+                break;
             
-            break;
-            
-        case ArtDetailRowLocationMap:
-            height = _kMapHeight + (_kMapPadding * 2.0f);
-            break;
-            
-        default:
-            break;
+            case ArtDetailRowCategory:
+            {
+                if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
+                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer;
+                }
+                else if ([_art.categoriesString length] > 0) {
+                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer;
+                }
+                
+                break;
+            }
+            case ArtDetailRowDescription:
+            {
+                if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
+                    CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                }
+                else if ([_art.artDescription length] > 0) {
+                    CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                }
+                
+                break;
+            }
+            case ArtDetailRowLocationDescription:
+            {
+                if ([[_newArtDictionary objectForKey:@"location_description"] length] > 0) {
+                    CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"location_description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                }
+                else if ([_art.locationDescription length] > 0) {
+                    CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                    CGSize requiredLabelSize = [_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                }
+                
+                break;
+            }
+            case ArtDetailRowLocationMap:
+                height = _kMapHeight + (_kMapPadding * 2.0f);
+                break;
+                
+            default:
+                break;
+        }
     }
     
     return height;
