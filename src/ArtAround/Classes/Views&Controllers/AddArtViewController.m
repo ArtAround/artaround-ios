@@ -281,8 +281,7 @@
     }
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -309,8 +308,7 @@
     [_newArtDictionary setObject:text forKey:key];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -386,8 +384,7 @@
     [self setupImages];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -570,8 +567,7 @@
 - (IBAction)postButtonPressed:(id)sender
 {
     
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
     
         //set the location
         if (_selectedLocation)
@@ -597,11 +593,12 @@
         if (_yearString) {
             [_newArtDictionary setObject:_yearString forKey:@"year"];
         }
-
-        NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@","];
-        //cats = [cats stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-        [_newArtDictionary setObject:[Utilities urlEncode:cats] forKey:@"category"];
-        [_newArtDictionary removeObjectForKey:@"categories"];
+        
+        if ([_newArtDictionary objectForKey:@"categories"]) {
+            NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@","];
+            [_newArtDictionary setObject:[Utilities urlEncode:cats] forKey:@"category"];
+            [_newArtDictionary removeObjectForKey:@"categories"];
+        }
         
         //call the submit request
         [[AAAPIManager instance] submitArt:_newArtDictionary withTarget:self callback:@selector(artUploadCompleted:) failCallback:@selector(artUploadFailed:)];
@@ -1133,8 +1130,7 @@
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -1158,8 +1154,7 @@
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -1180,8 +1175,7 @@
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -1202,8 +1196,7 @@
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
@@ -1249,8 +1242,7 @@
     [self.navigationController popToViewController:self animated:YES];
     
     //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && [_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0 &&
-        _addedImageCount > 0) {
+    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
         
         [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
         self.submitButton.enabled = YES;
