@@ -28,6 +28,7 @@
 - (void)submitFlagForSlug:(NSString*)slug withText:(NSString*)text target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 
 - (NSArray *)categories;
+- (NSArray *)commissioners;
 - (NSArray *)neighborhoods;
 - (NSArray *)titles;
 - (NSArray *)artists;

@@ -156,6 +156,10 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     return categories;
 }
 
+- (NSArray *)commissioners
+{
+	return [self arrayForSQL:"SELECT DISTINCT ZCOMMISSIONEDBY FROM ZART WHERE ZCOMMISSIONEDBY IS NOT NULL ORDER BY ZCOMMISSIONEDBY"];
+}
 - (NSArray *)neighborhoods
 {
 	return [self arrayForSQL:"SELECT DISTINCT ZTITLE FROM ZNEIGHBORHOOD WHERE ZTITLE IS NOT NULL ORDER BY ZTITLE"];

@@ -93,11 +93,18 @@ static const float _kRowBufffer = 20.0f;
 {
     [super viewDidLoad];
     
+    for (NSString *c in [[AAAPIManager instance] commissioners]) {
+        DebugLog(@"Commissioner: %@", c);
+    }
+    
+    
     //setup the map view
     _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, _kMapPadding, self.tableView.frame.size.width - (_kMapPadding * 2), _kMapHeight)];
     [_mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [_mapView setShowsUserLocation:YES];
     [_mapView setDelegate:self];
+    [_mapView.layer setBorderColor:[UIColor whiteColor].CGColor];
+    [_mapView.layer setBorderWidth:5.0f];
     
     //location
     _locationString = @"";
@@ -393,6 +400,8 @@ static const float _kRowBufffer = 20.0f;
         [_datePicker removeFromSuperview];
         [_dateToolbar removeFromSuperview];
     }];
+    
+    [self.tableView reloadData];
 }
 
 - (void)artButtonPressed:(id)sender
@@ -533,7 +542,7 @@ static const float _kRowBufffer = 20.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 11;
+    return 12;
 }
 
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row
@@ -544,6 +553,10 @@ static const float _kRowBufffer = 20.0f;
         NSString *cellIdentifier = @"photosCell";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell addSubview:_photosScrollView];
+    }
+    else if (row == ArtDetailRowBuffer) {
+        NSString *cellIdentifier = @"bufferCell";
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
     if (!_inEditMode) {
@@ -556,19 +569,18 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowYear:
             case ArtDetailRowLocationType:
             case ArtDetailRowLink:
-            case ArtDetailRowCategory:            
+            case ArtDetailRowCategory:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.textLabel.numberOfLines = 0;
-                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                 cell.detailTextLabel.backgroundColor = [UIColor whiteColor];
                 cell.textLabel.textColor = [UIColor whiteColor];
                 
-                UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(105.0f, 6.0f, 205.0f, cell.frame.size.height - 12.0f)];
+                UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(105.0f, 0.0f, 205.0f, cell.frame.size.height)];
                 [backView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
                 [backView setBackgroundColor:[UIColor whiteColor]];
-                
                 [cell addSubview:backView];
                 [cell sendSubviewToBack:backView];
                 
@@ -579,8 +591,10 @@ static const float _kRowBufffer = 20.0f;
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
                 cell.textLabel.numberOfLines = 1;
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                cell.textLabel.textColor = [UIColor whiteColor];
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell.detailTextLabel.textColor = [UIColor blackColor];
                 
                 break;
             }
@@ -589,8 +603,10 @@ static const float _kRowBufffer = 20.0f;
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
                 cell.textLabel.numberOfLines = 1;
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                cell.textLabel.textColor = [UIColor whiteColor];
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell.detailTextLabel.textColor = [UIColor blackColor];
                 break;
             }
             case ArtDetailRowLocationMap:
@@ -620,19 +636,26 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.numberOfLines = 1;
                 cell.textLabel.numberOfLines = 0;
                 cell.textLabel.textColor = [UIColor whiteColor];
+                cell.detailTextLabel.backgroundColor = [UIColor whiteColor];
+                
+                UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(105.0f, 0.0f, 210.0f, cell.frame.size.height)];
+                [backView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
+                [backView setBackgroundColor:[UIColor whiteColor]];
+                [cell addSubview:backView];
+                [cell sendSubviewToBack:backView];
                 
                 switch (row) {
                     case ArtDetailRowTitle:
                     {
                         if (!_titleTextField) {
-                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
+                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
                             _titleTextField.delegate = self;
                             _titleTextField.placeholder = @"Title";
                             _titleTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
                             _titleTextField.returnKeyType = UIReturnKeyDone;
                             _titleTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
                             _titleTextField.backgroundColor = [UIColor whiteColor];
-                            _titleTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                            _titleTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                             _titleTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
                             _titleTextField.text = _art.title;
                             _titleTextField.tag = 5;
@@ -644,14 +667,14 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowArtist:
                     {
                         if (!_artistTextField) {
-                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
+                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
                             _artistTextField.delegate = self;
                             _artistTextField.placeholder = @"Artist";
                             _artistTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
                             _artistTextField.returnKeyType = UIReturnKeyDone;
                             _artistTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
                             _artistTextField.backgroundColor = [UIColor whiteColor];
-                            _artistTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                            _artistTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                             _artistTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
                             if (_art.artist && _art.artist.length)
                                 _artistTextField.text = _art.artist;
@@ -663,18 +686,18 @@ static const float _kRowBufffer = 20.0f;
                     }
                     case ArtDetailRowCommissioned:
                     {
-                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                         break;
                     }
                     case ArtDetailRowYear:
                     {
-                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                         break;
                     }
                     case ArtDetailRowLocationType:
                     {
-                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
-                        
+                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
+                        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
                         
                         
                         break;
@@ -682,14 +705,14 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowLink:
                     {
                         if (!_urlTextField) {
-                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
+                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
                             _urlTextField.delegate = self;
                             _urlTextField.placeholder = @"Website";
                             _urlTextField.returnKeyType = UIReturnKeyDone;
                             _urlTextField.keyboardType = UIKeyboardTypeURL;
                             _urlTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
                             _urlTextField.backgroundColor = [UIColor whiteColor];
-                            _urlTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                            _urlTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                             _urlTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 //                            if (_art.artist && _art.artist.length)
 //                                _urlTextField.text = _art.artist;
@@ -701,7 +724,7 @@ static const float _kRowBufffer = 20.0f;
                     }
                     case ArtDetailRowCategory:
                     {
-                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                         break;
                     }
                     default:
@@ -730,6 +753,7 @@ static const float _kRowBufffer = 20.0f;
                 label.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
                 label.backgroundColor = [UIColor clearColor];
                 label.text = @"About";
+                label.textColor = [UIColor whiteColor];
                 [cell addSubview:label];
                 
                 break;
@@ -753,6 +777,7 @@ static const float _kRowBufffer = 20.0f;
                 UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, 5.0f, 300.0f, 20.0f)];
                 label.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
                 label.backgroundColor = [UIColor clearColor];
+                label.textColor = [UIColor whiteColor];
                 label.text = @"Where?";
                 [cell addSubview:label];
                 
@@ -831,7 +856,10 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"year";
             
-            if (_art.year && _art.year != [NSNumber numberWithInt:0])
+            if (_yearString) {
+                cell.detailTextLabel.text = _yearString;
+            }
+            else if (_art.year && _art.year != [NSNumber numberWithInt:0])
                 cell.detailTextLabel.text = [_art.year stringValue];
             else {
                 cell.detailTextLabel.text = @"Unkown";
@@ -1030,10 +1058,15 @@ static const float _kRowBufffer = 20.0f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 40.0f;
+    CGFloat height = 30.0f;
 
     if (_inEditMode) {
         switch (indexPath.row) {
+            case ArtDetailRowBuffer:
+            {
+                height = 5.0f;
+                break;
+            }
             case ArtDetailRowPhotos:
             {
                 height = _kPhotoScrollerHeight;
@@ -1062,17 +1095,22 @@ static const float _kRowBufffer = 20.0f;
     }
     else {
         switch (indexPath.row) {
+            case ArtDetailRowBuffer:
+            {
+                height = 5.0f;
+                break;
+            }
             case ArtDetailRowTitle:
             {
                 if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + _kRowBufffer;
+                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
                 }
                 else if ([_art.title length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + _kRowBufffer;
+                    CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
                 }
                 
                 break;
@@ -1085,13 +1123,13 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + _kRowBufffer;
+                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
                 }
                 else if ([_art.categoriesString length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + _kRowBufffer;
+                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
                 }
                 
                 break;
@@ -1100,15 +1138,15 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
-                
+                height += 30.0f;
                 break;
             }
             case ArtDetailRowLocationDescription:
