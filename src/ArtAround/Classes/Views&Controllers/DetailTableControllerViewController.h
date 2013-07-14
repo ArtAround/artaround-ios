@@ -38,7 +38,7 @@ typedef enum _ArtDetailRow {
     ArtDetailRowCommissioned = 10
 } ArtDetailRow;
 
-@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate>
+@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate>
 {
     int                     _addedImageCount;
     BOOL                    _inEditMode, _usingPhotoGeotag;
@@ -50,13 +50,14 @@ typedef enum _ArtDetailRow {
     UIBarButtonItem*        _dateDoneButton;
     NSDateFormatter*        _yearFormatter;
     MKMapView*              _mapView;
-    NSString*               _yearString;
+    NSString*               _yearString, *_locationString;
     CLLocation*             _selectedLocation;
     
     //inputs
     UIScrollView*           _photosScrollView;
     UITextField*            _artistTextField, *_titleTextField, *_urlTextField;
-    UIButton*               _locationButton, *_categoryButton, *_dateButton, *_editButton, *_cancelEditButton, *_submitEditButton;
+    UIButton*               _locationButton, *_categoryButton, *_dateButton, *_editButton, *_cancelEditButton, *_submitEditButton, *_textDoneButton;
+    UIBarButtonItem         *_doneButton;
     UIView*                 _footerView;
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
     
@@ -69,3 +70,4 @@ typedef enum _ArtDetailRow {
 
 
 @end
+

@@ -18,6 +18,7 @@
 #import "PhotoParser.h"
 #import "CommentParser.h"
 #import "EventParser.h"
+#import <MapKit/MapKit.h>
 
 @implementation ArtParser
 
@@ -174,6 +175,12 @@
             art.longitude = [AAAPIManager clean:[location objectAtIndex:1]];
         
 	}
+    else if ([artDict objectForKey:@"location[]"]) {
+        NSNumber *lon = [NSNumber numberWithFloat:[(CLLocation*)[artDict objectForKey:@"location[]"] coordinate].longitude];
+        NSNumber *lat = [NSNumber numberWithFloat:[(CLLocation*)[artDict objectForKey:@"location[]"] coordinate].latitude];
+        art.longitude = [NSDecimalNumber decimalNumberWithDecimal:[lon decimalValue]];
+        art.latitude = [NSDecimalNumber decimalNumberWithDecimal:[lat decimalValue]];
+    }
 
 	
 	return art;

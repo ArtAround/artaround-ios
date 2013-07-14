@@ -19,6 +19,8 @@
 #import "Utilities.h"
 #import "SearchItem.h"
 #import "ArtParser.h"
+#import "ArtAnnotationView.h"
+#import "ArtAroundAppDelegate.h"
 
 static const float _kPhotoPadding = 3.0f;
 static const float _kPhotoSpacing = 5.0f;
@@ -30,8 +32,9 @@ static const float _kPhotoWidth = 314.0f;
 static const float _kPhotoHeight = 183.5f;
 static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
-static const float _kPhotoScrollerHeight = 209.0f;
+static const float _kPhotoScrollerHeight = 190.0f;
 static const float _kRowBufffer = 20.0f;
+
 
 @interface DetailTableControllerViewController ()
 - (void)setupImages;
@@ -39,6 +42,8 @@ static const float _kRowBufffer = 20.0f;
 - (void)editButtonPressed:(id)sender;
 - (void)editSubmitButtonPressed:(id)sender;
 - (void)editCancelButtonPressed:(id)sender;
+- (void)doneButtonPressed:(id)sender;
+- (void)dateDoneButtonPressed;
 - (void)artButtonPressed:(id)sender;
 - (void)addImageButtonTapped;
 - (void)userAddedImage:(UIImage*)image withAttribution:(BOOL)withAtt;
@@ -73,7 +78,12 @@ static const float _kRowBufffer = 20.0f;
         
         //initialize artDict
         _newArtDictionary = [[NSMutableDictionary alloc] init];
-
+        
+        //bg color
+        self.tableView.backgroundColor = kLightGray;
+        
+        //sep color
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
     }
     return self;
@@ -82,13 +92,32 @@ static const float _kRowBufffer = 20.0f;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
     
     //setup the map view
     _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, _kMapPadding, self.tableView.frame.size.width - (_kMapPadding * 2), _kMapHeight)];
     [_mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [_mapView setShowsUserLocation:YES];
+    [_mapView setDelegate:self];
     
+    //location
+    _locationString = @"";
+    _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
+    _currentLocation = [_mapView.userLocation.location retain];
+    
+    //add the annotation for the art
+	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
+		
+		//setup the coordinate
+		CLLocationCoordinate2D artLocation;
+		artLocation.latitude = [_art.latitude doubleValue];
+		artLocation.longitude = [_art.longitude doubleValue];
+		
+		//create an annotation, add it to the map, and store it in the array
+		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
+		[_mapView addAnnotation:annotation];
+		[annotation release];
+
+	}
     
     //setup the images scroll view
     _photosScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, _kPhotoScrollerHeight)];
@@ -96,6 +125,8 @@ static const float _kRowBufffer = 20.0f;
     [_photosScrollView setBackgroundColor:[UIColor colorWithRed:111.0f/255.0f green:101.0f/255.0f blue:103.0f/255.0f alpha:1.0f]];
     [_photosScrollView setShowsVerticalScrollIndicator:NO];
     [_photosScrollView setShowsHorizontalScrollIndicator:NO];
+    [_photosScrollView setPagingEnabled:YES];
+    
     
     //year formatter
     _yearFormatter = [[NSDateFormatter alloc] init];
@@ -105,7 +136,7 @@ static const float _kRowBufffer = 20.0f;
     [self setupImages];
     
     //footer view
-    _footerView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 45.0f)];
+    _footerView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 35.0f)];
     [_footerView setBackgroundColor:[UIColor clearColor]];
     
     //footer buttons
@@ -133,11 +164,44 @@ static const float _kRowBufffer = 20.0f;
     [_submitEditButton setFrame:CGRectMake((_footerView.frame.size.width / 2.0f), 0.0f, (_footerView.frame.size.width / 2.0f), _footerView.frame.size.height)];
     [_submitEditButton addTarget:self action:@selector(editSubmitButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
+    UIImage *toolbarImage = [UIImage imageNamed:@"toolbarBackground.png"];
+    _textDoneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_textDoneButton setBackgroundImage:toolbarImage forState:UIControlStateNormal];
+    [_textDoneButton setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:0.9]];
+    [_textDoneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_textDoneButton setTitle:@"Done" forState:UIControlStateNormal];
+    [_textDoneButton setAlpha:0.0f];
+    [_textDoneButton setFrame:CGRectMake(0.0f, 0.0f, _footerView.frame.size.width, _footerView.frame.size.height)];
+    [_textDoneButton addTarget:self action:@selector(doneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
     [_footerView addSubview:_editButton];
     [_footerView addSubview:_cancelEditButton];
     [_footerView addSubview:_submitEditButton];
+    [_footerView addSubview:_textDoneButton];
 
 
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    //location
+    if (_locationString.length == 0) {
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
+        [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+            if (error){
+                DebugLog(@"Error durring reverse geocode");
+            }
+            
+            if (placemarks.count > 0) {
+                _locationString = [[NSString alloc] initWithString:[[placemarks objectAtIndex:0] name]];
+                [self.tableView reloadData];
+            }
+            
+        }];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -205,6 +269,8 @@ static const float _kRowBufffer = 20.0f;
     
     return NO;
 }
+
+
 
 #pragma mark - Button Pressed
 - (void)editButtonPressed:(id)sender
@@ -310,6 +376,25 @@ static const float _kRowBufffer = 20.0f;
     [self setupImages];
 }
 
+- (void)doneButtonPressed:(id)sender
+{
+    [self findAndResignFirstResponder];
+}
+
+- (void) dateDoneButtonPressed
+{
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        
+        [_datePicker setFrame:CGRectMake(0.0f, self.tableView.frame.size.height, _datePicker.frame.size.width, _datePicker.frame.size.height)];
+        [_dateToolbar setFrame:CGRectMake(0.0f, self.tableView.frame.size.height, _dateToolbar.frame.size.width, _dateToolbar.frame.size.height)];
+        
+    } completion:^(BOOL finished) {
+        [_datePicker removeFromSuperview];
+        [_dateToolbar removeFromSuperview];
+    }];
+}
+
 - (void)artButtonPressed:(id)sender
 {
     EGOImageButton *button = (EGOImageButton*)sender;
@@ -398,6 +483,8 @@ static const float _kRowBufffer = 20.0f;
         [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
         [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
+        [[(ArtAroundAppDelegate*)[[UIApplication sharedApplication] delegate] mapViewController] updateArt];
+        
     }
     else {
         [self artUploadFailed:responseDict];
@@ -458,12 +545,6 @@ static const float _kRowBufffer = 20.0f;
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell addSubview:_photosScrollView];
     }
-    else if (row == ArtDetailRowLocationMap) {
-        NSString *cellIdentifier = @"mapCell";
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        [cell addSubview:_mapView];
-        return cell;
-    }
     
     if (!_inEditMode) {
     
@@ -481,6 +562,16 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.textLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell.detailTextLabel.backgroundColor = [UIColor whiteColor];
+                cell.textLabel.textColor = [UIColor whiteColor];
+                
+                UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(105.0f, 6.0f, 205.0f, cell.frame.size.height - 12.0f)];
+                [backView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
+                [backView setBackgroundColor:[UIColor whiteColor]];
+                
+                [cell addSubview:backView];
+                [cell sendSubviewToBack:backView];
+                
                 break;
             }
             case ArtDetailRowDescription:
@@ -490,6 +581,7 @@ static const float _kRowBufffer = 20.0f;
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                
                 break;
             }
             case ArtDetailRowLocationDescription:
@@ -499,6 +591,13 @@ static const float _kRowBufffer = 20.0f;
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                break;
+            }
+            case ArtDetailRowLocationMap:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+                [cell addSubview:_mapView];
+                
                 break;
             }
             default:
@@ -520,16 +619,19 @@ static const float _kRowBufffer = 20.0f;
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
                 cell.detailTextLabel.numberOfLines = 1;
                 cell.textLabel.numberOfLines = 0;
+                cell.textLabel.textColor = [UIColor whiteColor];
                 
                 switch (row) {
                     case ArtDetailRowTitle:
                     {
                         if (!_titleTextField) {
-                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
+                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
                             _titleTextField.delegate = self;
                             _titleTextField.placeholder = @"Title";
+                            _titleTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+                            _titleTextField.returnKeyType = UIReturnKeyDone;
                             _titleTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-                            _titleTextField.backgroundColor = [UIColor clearColor];
+                            _titleTextField.backgroundColor = [UIColor whiteColor];
                             _titleTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                             _titleTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
                             _titleTextField.text = _art.title;
@@ -542,11 +644,13 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowArtist:
                     {
                         if (!_artistTextField) {
-                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
+                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
                             _artistTextField.delegate = self;
                             _artistTextField.placeholder = @"Artist";
+                            _artistTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+                            _artistTextField.returnKeyType = UIReturnKeyDone;
                             _artistTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-                            _artistTextField.backgroundColor = [UIColor clearColor];
+                            _artistTextField.backgroundColor = [UIColor whiteColor];
                             _artistTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                             _artistTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
                             if (_art.artist && _art.artist.length)
@@ -570,16 +674,21 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowLocationType:
                     {
                         cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                        
+                        
+                        
                         break;
                     }
                     case ArtDetailRowLink:
                     {
                         if (!_urlTextField) {
-                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 0.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height)];
+                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 3.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 6.0f)];
                             _urlTextField.delegate = self;
                             _urlTextField.placeholder = @"Website";
+                            _urlTextField.returnKeyType = UIReturnKeyDone;
+                            _urlTextField.keyboardType = UIKeyboardTypeURL;
                             _urlTextField.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-                            _urlTextField.backgroundColor = [UIColor clearColor];
+                            _urlTextField.backgroundColor = [UIColor whiteColor];
                             _urlTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                             _urlTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 //                            if (_art.artist && _art.artist.length)
@@ -604,12 +713,55 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowDescription:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-                cell.textLabel.numberOfLines = 0;
+                
+                if (!_descriptionTextView) {
+                    _descriptionTextView = [[UITextView alloc] initWithFrame:CGRectMake(10.0f, 25.0f, 300.0f, 85.0f)];
+                    _descriptionTextView.delegate = self;
+                    _descriptionTextView.autoresizingMask = UIViewAutoresizingNone;
+                    _descriptionTextView.backgroundColor = [UIColor lightGrayColor];
+                    _descriptionTextView.textColor = [UIColor whiteColor];
+                    _descriptionTextView.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                    _descriptionTextView.text = _art.artDescription;
+                }
+                
+                [cell addSubview:_descriptionTextView];
+                
+                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, 5.0f, 300.0f, 20.0f)];
+                label.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                label.backgroundColor = [UIColor clearColor];
+                label.text = @"About";
+                [cell addSubview:label];
+                
                 break;
             }
             case ArtDetailRowLocationDescription:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+                
+                if (!_locationDescriptionTextView) {
+                    _locationDescriptionTextView = [[UITextView alloc] initWithFrame:CGRectMake(10.0f, 25.0f, 300.0f, 85.0f)];
+                    _locationDescriptionTextView.delegate = self;
+                    _locationDescriptionTextView.autoresizingMask = UIViewAutoresizingNone;
+                    _locationDescriptionTextView.backgroundColor = [UIColor lightGrayColor];
+                    _locationDescriptionTextView.textColor = [UIColor whiteColor];
+                    _locationDescriptionTextView.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                    _locationDescriptionTextView.text = _art.locationDescription;
+                }
+                
+                [cell addSubview:_locationDescriptionTextView];
+                
+                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, 5.0f, 300.0f, 20.0f)];
+                label.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+                label.backgroundColor = [UIColor clearColor];
+                label.text = @"Where?";
+                [cell addSubview:label];
+                
+                break;
+            }
+            case ArtDetailRowLocationMap:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+                
                 break;
             }
             default:
@@ -670,6 +822,7 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowArtist:
         {
             cell.textLabel.text = @"artist";
+            
             if (_art.artist && _art.artist.length)
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
             break;
@@ -677,6 +830,7 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowYear:
         {
             cell.textLabel.text = @"year";
+            
             if (_art.year && _art.year != [NSNumber numberWithInt:0])
                 cell.detailTextLabel.text = [_art.year stringValue];
             else {
@@ -694,8 +848,8 @@ static const float _kRowBufffer = 20.0f;
         }
         case ArtDetailRowLocationType:
         {
-            cell.textLabel.text = @"";
-            cell.detailTextLabel.text = (_inEditMode) ? @"" : @"";
+            cell.textLabel.text = @"location";
+            cell.detailTextLabel.text = _locationString;
             
             if (_inEditMode) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -711,6 +865,7 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowLink:
         {
             cell.textLabel.text = @"website";
+            
             break;
         }
         case ArtDetailRowCategory:
@@ -739,14 +894,18 @@ static const float _kRowBufffer = 20.0f;
         }
         case ArtDetailRowDescription:
         {
-            cell.textLabel.text = @"About";
-            cell.detailTextLabel.text = _art.artDescription;
+            if (!_inEditMode) {
+                cell.textLabel.text = @"About";
+                cell.detailTextLabel.text = _art.artDescription;
+            }
             break;
         }
         case ArtDetailRowLocationDescription:
         {
-            cell.textLabel.text = @"Where?";
-            cell.detailTextLabel.text = _art.locationDescription;
+            if (!_inEditMode) {
+                cell.textLabel.text = @"Where?";
+                cell.detailTextLabel.text = _art.locationDescription;
+            }
             break;
         }
         default:
@@ -778,13 +937,56 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowYear:
             {
+                [self findAndResignFirstResponder];
                 
+                UIPickerView *datePicker = [[UIPickerView alloc] init];
+                [datePicker setShowsSelectionIndicator:YES];
+                [datePicker setDataSource:self];
+                [datePicker setDelegate:self];
+                
+                UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(dateDoneButtonPressed)];
+                UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+                UIToolbar *dateToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, 44.0f)];
+                [dateToolbar setBackgroundColor:[UIColor colorWithRed:67.0f/255.0f green:67.0f/255.0f blue:61.0f/255.0f alpha:1.0f]];
+                [dateToolbar setBackgroundImage:[[UIImage alloc] init] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+                [dateToolbar setShadowImage:[[UIImage alloc] init] forToolbarPosition:UIToolbarPositionAny];
+                [dateToolbar setBarStyle:UIBarStyleBlack];
+                [dateToolbar setTintColor:[UIColor clearColor]];
+                
+                
+                [dateToolbar setItems:[NSArray arrayWithObjects:space, doneButton, nil]];
+                
+                _datePicker = datePicker;
+                _doneButton = doneButton;
+                _dateToolbar = dateToolbar;
+                
+                CGRect datePickerFrame = datePicker.frame;
+                datePickerFrame.origin.y = self.view.frame.size.height + _dateToolbar.frame.size.height;
+                [_datePicker setFrame:datePickerFrame];
+                
+                [[[[UIApplication sharedApplication] delegate] window] addSubview:dateToolbar];
+                [[[[UIApplication sharedApplication] delegate] window] addSubview:datePicker];
+                
+                
+                
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+                
+                [UIView animateWithDuration:0.5f animations:^{
+                    [_datePicker setFrame:CGRectMake(0.0f, [[[UIApplication sharedApplication] delegate] window].frame.size.height - _datePicker.frame.size.height, _datePicker.frame.size.width, _datePicker.frame.size.height)];
+                    [_dateToolbar setFrame:CGRectMake(0.0f, [[[UIApplication sharedApplication] delegate] window].frame.size.height - _datePicker.frame.size.height - _dateToolbar.frame.size.height, _dateToolbar.frame.size.width, _dateToolbar.frame.size.height)];
+                    
+                    
+                } completion:^(BOOL finished) {
+                    
+                }];
                 
                 break;
             }
             case ArtDetailRowLocationType:
             {
+                ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
                 
+                [self.navigationController pushViewController:locationController animated:YES];
                 
                 break;
             }
@@ -839,19 +1041,19 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowDescription:
             {
-                height = 60.0f;
+                height = 120.0f;
                 
                 break;
             }
             case ArtDetailRowLocationDescription:
             {
-                height = 60.0f;
+                height = 120.0f;
                 
                 break;
             }
             case ArtDetailRowLocationMap:
             {
-                height = _kMapHeight + (_kMapPadding * 2.0f);
+                height = 0.0f;
                 break;
             }
             default:
@@ -938,7 +1140,7 @@ static const float _kRowBufffer = 20.0f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 45.0f;
+    return 35.0f;
 }
 
 #pragma mark - Image Scroll View
@@ -1145,6 +1347,8 @@ static const float _kRowBufffer = 20.0f;
         [_photosScrollView setContentSize:CGSizeMake(prevOffset + _kPhotoSpacing, _photosScrollView.frame.size.height)];
         [addImgButton setAlpha:0.0f];
     }
+    
+    _photosScrollView.backgroundColor = kDarkGray;
 	
 }
 
@@ -1384,10 +1588,19 @@ static const float _kRowBufffer = 20.0f;
         [textView setTextColor:[UIColor blackColor]];
     }
     
+    _textDoneButton.alpha = 1.0f;
+    _submitEditButton.alpha = 0.0f;
+    _cancelEditButton.alpha = 0.0f;
+
+
 }
 
 - (BOOL) textViewShouldEndEditing:(UITextView *)textView
 {
+    _textDoneButton.alpha = 0.0f;
+    _submitEditButton.alpha = 1.0f;
+    _cancelEditButton.alpha = 1.0f;
+    
     return YES;
 }
 
@@ -1537,8 +1750,42 @@ static const float _kRowBufffer = 20.0f;
 {
     switch (selection) {
         case LocationSelectionUserLocation:
+        {
             _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+            
+            //add the annotation for the art
+            if (_selectedLocation.coordinate.latitude && _selectedLocation.coordinate.longitude) {
+                
+                [_mapView removeAnnotations:_mapView.annotations];
+                
+                //setup the coordinate
+                CLLocationCoordinate2D artLocation;
+                artLocation.latitude = _selectedLocation.coordinate.latitude;
+                artLocation.longitude = _selectedLocation.coordinate.longitude;
+                
+                //create an annotation, add it to the map, and store it in the array
+                ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
+                [_mapView addAnnotation:annotation];
+                [annotation release];
+                
+                CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+                CLLocation *location = [[CLLocation alloc] initWithLatitude:artLocation.latitude longitude:artLocation.longitude];
+                [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+                    if (error){
+                        DebugLog(@"Error durring reverse geocode");
+                    }
+                    
+                    if (placemarks.count > 0) {
+                        _locationString = [[NSString alloc] initWithString:[[placemarks objectAtIndex:0] name]];
+                        [self.tableView reloadData];
+                    }
+                    
+                }];
+                
+            }
+            
             break;
+        }
         default:
             break;
     }
@@ -1598,4 +1845,29 @@ static const float _kRowBufffer = 20.0f;
     
 }
 
+#pragma mark - MKMapViewDelegate
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+	[Utilities zoomToFitMapAnnotations:mapView];
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
+{
+    //if it's the user location, just return nil.
+	if ([annotation isKindOfClass:[MKUserLocation class]]) {
+		return nil;
+	}
+    
+    //new single pinart
+    NSString *reuseIdentifier = @"art";
+    UIImage *pinImage = [UIImage imageNamed:@"PinArt.png"];
+
+    //setup the annotation view
+    ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+    [pin setImage:pinImage];
+    [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
+    [pin setCanShowCallout:NO];
+    
+    return pin;
+}
 @end

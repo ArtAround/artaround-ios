@@ -23,6 +23,8 @@
 #define kBGBrown [UIColor colorWithRed:112.0f/255.0f green:101.0f/255.0f blue:103.0f/255.0f alpha:1.0f]
 #define kBGlightBrown [UIColor colorWithRed:192.0f/255.0f green:185.0f/255.0f blue:183.0f/255.0f alpha:1.0f]
 #define kBGoffWhite [UIColor colorWithRed:(210.0/255.0) green:(210.0/255.0) blue:(210.0/255.0) alpha:1]
+#define kLightGray [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1]
+#define kDarkGray [UIColor colorWithRed:(125.0/255.0) green:(126.0/255.0) blue:(121.0/255.0) alpha:1]
 
 //font colors
 #define kFontColorDarkBrown [UIColor blackColor]
