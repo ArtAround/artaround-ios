@@ -22,7 +22,7 @@
 #import "ArtAnnotationView.h"
 #import "ArtAroundAppDelegate.h"
 
-static const float _kPhotoPadding = 3.0f;
+static const float _kPhotoPadding = 8.0f;
 static const float _kPhotoSpacing = 5.0f;
 static const float _kPhotoInitialPaddingPortait = 3.0f;
 static const float _kPhotoInitialPaddingForOneLandScape = 144.0f;
@@ -32,7 +32,7 @@ static const float _kPhotoWidth = 314.0f;
 static const float _kPhotoHeight = 183.5f;
 static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
-static const float _kPhotoScrollerHeight = 190.0f;
+static const float _kPhotoScrollerHeight = 200.0f;
 static const float _kRowBufffer = 20.0f;
 
 
@@ -92,11 +92,6 @@ static const float _kRowBufffer = 20.0f;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    for (NSString *c in [[AAAPIManager instance] commissioners]) {
-        DebugLog(@"Commissioner: %@", c);
-    }
-    
     
     //setup the map view
     _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, _kMapPadding, self.tableView.frame.size.width - (_kMapPadding * 2), _kMapHeight)];
@@ -542,7 +537,7 @@ static const float _kRowBufffer = 20.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 12;
+    return 13;
 }
 
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row
@@ -552,6 +547,10 @@ static const float _kRowBufffer = 20.0f;
     if (row == ArtDetailRowPhotos) {
         NSString *cellIdentifier = @"photosCell";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        
+        UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, -400.0f, self.tableView.frame.size.width, 400 + _photosScrollView.frame.size.height)];
+        [backView setBackgroundColor:kDarkGray];
+        [cell addSubview:backView];
         [cell addSubview:_photosScrollView];
     }
     else if (row == ArtDetailRowBuffer) {
@@ -577,13 +576,7 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0f];
                 cell.detailTextLabel.backgroundColor = [UIColor whiteColor];
                 cell.textLabel.textColor = [UIColor whiteColor];
-                
-                UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(105.0f, 0.0f, 205.0f, cell.frame.size.height)];
-                [backView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
-                [backView setBackgroundColor:[UIColor whiteColor]];
-                [cell addSubview:backView];
-                [cell sendSubviewToBack:backView];
-                
+                cell.detailTextLabel.contentMode = UIViewContentModeCenter;
                 break;
             }
             case ArtDetailRowDescription:
@@ -607,6 +600,14 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.numberOfLines = 0;
                 cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
                 cell.detailTextLabel.textColor = [UIColor blackColor];
+                break;
+            }
+            case ArtDetailRowComments:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+                cell.textLabel.numberOfLines = 1;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+                cell.textLabel.textColor = [UIColor whiteColor];
                 break;
             }
             case ArtDetailRowLocationMap:
@@ -783,6 +784,12 @@ static const float _kRowBufffer = 20.0f;
                 
                 break;
             }
+            case ArtDetailRowComments:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+                
+                break;
+            }
             case ArtDetailRowLocationMap:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
@@ -829,9 +836,15 @@ static const float _kRowBufffer = 20.0f;
         }
         case ArtDetailRowCommissioned:
         {
-            cell.textLabel.text = @"commissioned by";
-            if (_art.commissionedBy && _art.commissionedBy.length)
+            cell.textLabel.text = @"commissioner";
+            if (_art.commissionedBy && _art.commissionedBy.length > 0)
                 cell.detailTextLabel.text = _art.commissionedBy;
+            else if ([_newArtDictionary objectForKey:@"commissionedBy"] && [[_newArtDictionary objectForKey:@"commissionedBy"] length] > 0)
+                cell.detailTextLabel.text = [_newArtDictionary objectForKey:@"commissionedBy"];
+            else {
+                cell.detailTextLabel.text = @"";
+                cell.textLabel.text = (_inEditMode) ? @"commissioner" : @"";
+            }
             
             if (_inEditMode) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -848,7 +861,7 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"artist";
             
-            if (_art.artist && _art.artist.length)
+            if (_art.artist && _art.artist.length > 0)
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
             break;
         }
@@ -862,7 +875,8 @@ static const float _kRowBufffer = 20.0f;
             else if (_art.year && _art.year != [NSNumber numberWithInt:0])
                 cell.detailTextLabel.text = [_art.year stringValue];
             else {
-                cell.detailTextLabel.text = @"Unkown";
+                cell.detailTextLabel.text = (_inEditMode) ? @"Unkown" : @"";
+                cell.textLabel.text = (_inEditMode) ? @"year" : @"";
             }
             
             if (_inEditMode) {
@@ -893,6 +907,9 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowLink:
         {
             cell.textLabel.text = @"website";
+            cell.textLabel.text = @"";
+            
+            cell.textLabel.text = (_inEditMode) ? @"website" : @"";
             
             break;
         }
@@ -900,14 +917,16 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"categories";
             
-            if ([_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count]) {
+            if ([_newArtDictionary objectForKey:@"categories"] && [[_newArtDictionary objectForKey:@"categories"] count] > 0) {
                 NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "];
                 cell.detailTextLabel.text = cats;
             }
             else if (_art.categories && [_art.categories count] > 0)
                 cell.detailTextLabel.text = [_art categoriesString];
-            else
-                cell.detailTextLabel.text = @"Categories";
+            else {
+                cell.detailTextLabel.text = (_inEditMode) ? @"Categories" : @"";
+                cell.textLabel.text = (_inEditMode) ? @"categories" : @"";
+            }
             
             if (_inEditMode) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -923,16 +942,40 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowDescription:
         {
             if (!_inEditMode) {
-                cell.textLabel.text = @"About";
-                cell.detailTextLabel.text = _art.artDescription;
+                if (_art.artDescription && _art.artDescription.length > 0) {
+                    cell.textLabel.text = @"About";
+                    cell.detailTextLabel.text = _art.artDescription;
+                }
+                else {
+                    cell.textLabel.text = @"";
+                    cell.detailTextLabel.text = @"";
+                }
             }
             break;
         }
         case ArtDetailRowLocationDescription:
         {
             if (!_inEditMode) {
-                cell.textLabel.text = @"Where?";
-                cell.detailTextLabel.text = _art.locationDescription;
+                if (_art.locationDescription && _art.locationDescription.length > 0) {
+                    cell.textLabel.text = @"Where?";
+                    cell.detailTextLabel.text = _art.locationDescription;
+                }
+                else {
+                    cell.textLabel.text = @"";
+                    cell.detailTextLabel.text = @"";
+                }
+            }
+            break;
+        }
+        case ArtDetailRowComments:
+        {
+            if (_inEditMode) {
+                cell.textLabel.text = @"";
+            }
+            else {
+                cell.textLabel.text = [NSString stringWithFormat:@"Comments (%i)", _art.comments.count];
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                cell.selectionStyle = UITableViewCellSelectionStyleGray;
             }
             break;
         }
@@ -959,7 +1002,35 @@ static const float _kRowBufffer = 20.0f;
         switch (indexPath.row) {
             case ArtDetailRowCommissioned:
             {
+                SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
+                NSMutableArray *searchItems = [[NSMutableArray alloc] initWithCapacity:[[[AAAPIManager instance] categories] count]];
+                [searchItems addObject:[SearchItem searchItemWithTitle:@"None" subtitle:@""]];
+                for (NSString * com in [[AAAPIManager instance] commissioners]) {
+                    if (![com isEqualToString:@"All"])
+                        [searchItems addObject:[SearchItem searchItemWithTitle:com subtitle:@""]];
+                }
                 
+                [searchTableController setCreationEnabled:YES];
+                [searchTableController setSearchItems:searchItems];
+                [searchTableController setMultiSelectionEnabled:NO];
+                [searchTableController setDelegate:self];
+                [searchTableController setItemName:@"commissioner"];
+                [searchTableController.tableView setTag:10];
+                
+                //add the categories if they exist
+                if ([_newArtDictionary objectForKey:@"commissionedBy"]) {
+                    SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissionedBy"] subtitle:@""];
+                    NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
+                    [searchTableController setSelectedItems:selectedItems];
+                }
+                else if (_art.commissionedBy) {
+                    SearchItem *item = [SearchItem searchItemWithTitle:_art.commissionedBy subtitle:@""];
+                    NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
+                    [searchTableController setSelectedItems:selectedItems];
+                }
+                
+                
+                [self.navigationController pushViewController:searchTableController animated:YES];
                 
                 break;
             }
@@ -1030,6 +1101,7 @@ static const float _kRowBufffer = 20.0f;
                 [searchTableController setSearchItems:searchItems];
                 [searchTableController setMultiSelectionEnabled:YES];
                 [searchTableController setDelegate:self];
+                [searchTableController.tableView setTag:20];
                 
                 //add the categories if they exist
                 if ([_newArtDictionary objectForKey:@"categories"]) {
@@ -1058,9 +1130,12 @@ static const float _kRowBufffer = 20.0f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 30.0f;
-
+    CGFloat height = 0.0f;
+    
     if (_inEditMode) {
+        
+        height = 25.0f;
+        
         switch (indexPath.row) {
             case ArtDetailRowBuffer:
             {
@@ -1089,12 +1164,21 @@ static const float _kRowBufffer = 20.0f;
                 height = 0.0f;
                 break;
             }
+            case ArtDetailRowComments:
+            {
+                height = 0.0f;
+                break;
+            }
             default:
                 break;
         }
     }
     else {
+        
+        height = 20.0f;
+        
         switch (indexPath.row) {
+                
             case ArtDetailRowBuffer:
             {
                 height = 5.0f;
@@ -1116,6 +1200,47 @@ static const float _kRowBufffer = 20.0f;
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
                     CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
+                }
+                
+                break;
+            }
+            case ArtDetailRowYear:
+            {
+                if ([_newArtDictionary objectForKey:@"year"] && [_newArtDictionary objectForKey:@"year"] == [NSNumber numberWithInt:0]) {
+                    height = 0.0f;
+                }
+                else if (_art.year == [NSNumber numberWithInt:0]) {
+                    height = 0.0f;
+                }
+                
+                break;
+            }
+            case ArtDetailRowLink:
+            {
+                height = 0.0f;
+                break;
+            }
+            case ArtDetailRowArtist:
+            {
+                if (_art.artist.length == 0 && [[_newArtDictionary objectForKey:@"artist"] length] == 0)
+                    height = 0.0f;
+                break;
+            }
+            case ArtDetailRowCommissioned:
+            {
+                if (_art.commissionedBy.length == 0 && [[_newArtDictionary objectForKey:@"commissionedBy"] length] == 0)
+                    height = 0.0f;
+                else {
+                    if ([[_newArtDictionary objectForKey:@"commissionedBy"] length] > 0) {
+                        CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                        CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"commissionedBy"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        height = requiredLabelSize.height;
+                    }
+                    else if ([_art.commissionedBy length] > 0) {
+                        CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                        CGSize requiredLabelSize = [_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        height = requiredLabelSize.height;
+                    }
                 }
                 
                 break;
@@ -1144,13 +1269,23 @@ static const float _kRowBufffer = 20.0f;
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
                     CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                    height += 30.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
                     CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                    height += 30.0f;
                 }
-                height += 30.0f;
+                else {
+                    height = 0.0f;
+                }
+                
+                break;
+            }
+            case ArtDetailRowLocationType:
+            {
+                
                 break;
             }
             case ArtDetailRowLocationDescription:
@@ -1165,19 +1300,24 @@ static const float _kRowBufffer = 20.0f;
                     CGSize requiredLabelSize = [_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
+                else {
+                    height = 0.0f;
+                }
                 
                 break;
             }
             case ArtDetailRowLocationMap:
                 height = _kMapHeight + (_kMapPadding * 2.0f);
                 break;
-                
+            case ArtDetailRowComments:
+                height = 45.0f;
+                break;
             default:
                 break;
         }
     }
     
-    return height;
+    return (indexPath.row != ArtDetailRowBuffer && height != 0.0f && height < 20.0f) ? 20.0f : height;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -1760,24 +1900,37 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - Search Table Delegate
 - (void) searchTableViewController:(SearchTableViewController *)searchController didFinishWithSelectedItems:(NSArray *)items
 {
-    
-    //reset and add the cateogries to the new art
-    NSMutableArray *categories = [[NSMutableArray alloc] init];
-    [_newArtDictionary setObject:categories forKey:@"categories"];
-    
-    for (SearchItem *thisItem in items) {
+    if (searchController.tableView.tag == 10) {
+        if (items.count > 0) {
+            if ([[[items objectAtIndex:0] title] isEqualToString:@"None"]) {
+                [_newArtDictionary removeObjectForKey:@"commissionedBy"];
+            }
+            else {
+                NSString *com = [[NSString alloc] initWithString:[[items objectAtIndex:0] title]];
+                [_newArtDictionary setObject:com forKey:@"commissionedBy"];
+            }
+        }
+    }
+    else {
+        //reset and add the cateogries to the new art
+        NSMutableArray *categories = [[NSMutableArray alloc] init];
+        [_newArtDictionary setObject:categories forKey:@"categories"];
         
-        if ([thisItem isKindOfClass:[SearchItem class]]) {
+        for (SearchItem *thisItem in items) {
             
-            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
-                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+            if ([thisItem isKindOfClass:[SearchItem class]]) {
+                
+                if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
+                    [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+                }
+            }
+            else if ([thisItem isKindOfClass:[NSString class]]) {
+                if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem]) {
+                    [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem];
+                }
             }
         }
-        else if ([thisItem isKindOfClass:[NSString class]]) {
-            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem]) {
-                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem];
-            }
-        }
+    
     }
     
     [self.tableView reloadData];

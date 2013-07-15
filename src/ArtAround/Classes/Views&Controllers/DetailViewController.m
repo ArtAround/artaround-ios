@@ -2481,8 +2481,8 @@ static const float _kPhotoHeight = 140.0f;
             break;
         }
         case 3:
-            //Add Comment
         {
+            //Add Comment
             switch (indexPath.row) {
                 case 0:
                 {

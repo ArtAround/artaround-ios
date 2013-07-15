@@ -19,6 +19,7 @@
 
 @property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (nonatomic, retain) NSMutableArray *filteredSearchItems, *searchItems, *selectedItems;
+@property (nonatomic, retain) NSString *itemName;
 @property BOOL multiSelectionEnabled, creationEnabled;
 @property (nonatomic, assign) id <SearchTableViewDelegate> delegate;
 

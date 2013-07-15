@@ -19,6 +19,7 @@
 @synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems, selectedItems = _selectedItems;
 @synthesize multiSelectionEnabled = _multiSelectionEnabled, creationEnabled = _creationEnabled;
 @synthesize delegate;
+@synthesize itemName = _itemName;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -29,6 +30,7 @@
         _selectedItems = [[NSMutableArray alloc] init];
         _createdItems = [[NSMutableArray alloc] init];
         _creationEnabled = YES;
+        _itemName = @"category";
     }
     return self;
 }
@@ -126,7 +128,7 @@
         }
         //Search Item
         else if ([thisItem isKindOfClass:[SearchItem class]]) {
-            return [_selectedItems containsObject:item];
+            return [self items:_selectedItems containsItem:item];
         }
     }
     
@@ -221,20 +223,19 @@
         [cell.detailTextLabel setText:@""];
     }
     
-    //if multi selection is enabled and this index is in the selected
-    //items then add accessory
-    //otherwise remove accesory
-    if (_multiSelectionEnabled) {
-        
-        if ([self selectedItemsContainsItem:thisItem]) {
-            [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
-        }
-        else {
-            [cell setAccessoryType:UITableViewCellAccessoryNone];
-        }
-            
-        
+    
+    if ([self selectedItemsContainsItem:thisItem]) {
+        [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
     }
+    else if (_selectedItems.count == 0 && (([thisItem isKindOfClass:[SearchItem class]] && [[(SearchItem*)thisItem title] isEqualToString:@"None"]) || ([thisItem isKindOfClass:[NSString class]] && [(NSString*)thisItem isEqualToString:@"None"]))) {
+        [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+    }
+    else {
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+    }
+    
+        
+    
     
     return cell;
 }
@@ -298,8 +299,12 @@
             [_searchItems addObject:newItem];
         
         //add the new item to the selected items
-        if (![self items:_selectedItems containsItem:newItem])
+        if (![self items:_selectedItems containsItem:newItem]) {
+            if (!_multiSelectionEnabled)
+                [_selectedItems removeAllObjects];
+            
             [_selectedItems addObject:newItem];
+        }
         
         //remove search results
         [self.searchBar setText:@""];
@@ -311,16 +316,24 @@
     }
     
     if (_multiSelectionEnabled) {
-        
         if ([self selectedItemsContainsItem:thisItem])
             [self removeItemFromSelectedItems:thisItem];
         else
             [_selectedItems addObject:thisItem];
+    }
+    else {
         
-        [tableView reloadData];
-        
+        if ([self selectedItemsContainsItem:thisItem])
+            [_selectedItems removeAllObjects];
+        else {
+            [_selectedItems removeAllObjects];
+            [_selectedItems addObject:thisItem];
+        }
     }
     
+    [tableView reloadData];
+    
+
 
     
 }
@@ -359,7 +372,7 @@
     //create the "add" row if there are not items
     if (_filteredSearchItems.count == 0 && _creationEnabled) {
         
-        SearchItem *addItem = [SearchItem searchItemWithTitle:[NSString stringWithFormat:@"Create \"%@\"", searchText, nil] subtitle:@"Add a new category"];
+        SearchItem *addItem = [SearchItem searchItemWithTitle:[NSString stringWithFormat:@"Create \"%@\"", searchText, nil] subtitle:[NSString stringWithFormat:@"Add a new %@", _itemName]];
         [_filteredSearchItems addObject:addItem];
         
     }

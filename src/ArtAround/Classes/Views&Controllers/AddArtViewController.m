@@ -22,6 +22,7 @@
 @interface AddArtViewController ()
 - (void) buttonPressed:(id)sender;
 - (void) categoryButtonPressed;
+- (void) commissionedButtonPressed;
 - (void) locationButtonPressed;
 - (void) doneButtonPressed;
 - (void) dateButtonPressed;
@@ -167,6 +168,7 @@
     else if (sender == _doneButton) {
         [self doneButtonPressed];
     }
+
 }
 
 //remove the toolbar and picker and resize scrollview
@@ -209,6 +211,39 @@
     
     
     
+}
+
+- (void) commissionedButtonPressed
+{
+    SearchTableViewController *searchTableController = [[SearchTableViewController alloc] initWithStyle:UITableViewStylePlain];
+    NSMutableArray *searchItems = [[NSMutableArray alloc] initWithCapacity:[[[AAAPIManager instance] categories] count]];
+    [searchItems addObject:[SearchItem searchItemWithTitle:@"None" subtitle:@""]];
+    for (NSString * com in [[AAAPIManager instance] commissioners]) {
+        if (![com isEqualToString:@"All"])
+            [searchItems addObject:[SearchItem searchItemWithTitle:com subtitle:@""]];
+    }
+    
+    [searchTableController setCreationEnabled:YES];
+    [searchTableController setSearchItems:searchItems];
+    [searchTableController setMultiSelectionEnabled:NO];
+    [searchTableController setDelegate:self];
+    [searchTableController setItemName:@"commissioner"];
+    [searchTableController.tableView setTag:10];
+    
+    //add the categories if they exist
+    if ([_newArtDictionary objectForKey:@"commissionedBy"]) {
+        SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissionedBy"] subtitle:@""];
+        NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
+        [searchTableController setSelectedItems:selectedItems];
+    }
+    else if (_art.commissionedBy) {
+        SearchItem *item = [SearchItem searchItemWithTitle:_art.commissionedBy subtitle:@""];
+        NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
+        [searchTableController setSelectedItems:selectedItems];
+    }
+    
+    
+    [self.navigationController pushViewController:searchTableController animated:YES];
 }
 
 - (void) locationButtonPressed

@@ -23,6 +23,7 @@
 #define _kUserAddedImageTagBase 1000
 #define _kAddImageTagBase 2000
 #define _kAddImageButtonTag 3333
+#define kHorizontalPadding 10.0f
 
 typedef enum _ArtDetailRow {
     ArtDetailRowPhotos = 0,
@@ -32,11 +33,12 @@ typedef enum _ArtDetailRow {
     ArtDetailRowYear = 4,
     ArtDetailRowCategory = 5,
     ArtDetailRowLink = 6,
-    ArtDetailRowCommissioned = 7,
-    ArtDetailRowLocationType = 8,
+    ArtDetailRowLocationType = 7,
+    ArtDetailRowCommissioned = 8,
     ArtDetailRowDescription = 9,
     ArtDetailRowLocationDescription = 10,
-    ArtDetailRowLocationMap = 11
+    ArtDetailRowLocationMap = 11,
+    ArtDetailRowComments = 12
 } ArtDetailRow;
 
 @interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate>
