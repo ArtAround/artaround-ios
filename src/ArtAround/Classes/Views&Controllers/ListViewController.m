@@ -12,13 +12,15 @@
 #import "Utilities.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define kButtonColor [UIColor colorWithRed:(67.0f/255.0f) green:(67.0f/255.0f) blue:(61.0f/255.0f) alpha:1.0]
+
 @interface ListViewController ()
 
 @end
 
 @implementation ListViewController
 
-@synthesize customCell = _customCell, favoriteButton = _favoriteButton;
+@synthesize customCell = _customCell, addArtButton = _addArtButton, filterButton = _filterButton;
 @synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -140,13 +142,13 @@
     
     //if there are 5 or more items set at 35
     if (_items.count >= 5) {
-        height = 35;
+        height = 56;
     }
     else if (_items.count > 0) {     //else account for number of items and header
         height = self.tableView.frame.size.height;
         
         //if we have a filtered header -30
-        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 30;
+        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 41;
         
         height -= (_items.count * 80);
     }
@@ -154,7 +156,7 @@
         height = self.tableView.frame.size.height;
         
         //if we have a filtered header -30
-        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 30;
+        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 41;
         
         height -= 80;
     }
@@ -169,13 +171,13 @@
     
     //if there are 5 or more items set at 35
     if (_items.count >= 5) {
-        height = 35;
+        height = 56;
     }
     else if (_items.count > 0) {     //else account for number of items and header
         height = self.tableView.frame.size.height;
     
         //if we have a filtered header -30
-        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 30;
+        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 41;
         
         height -= (_items.count * 80);
     }
@@ -183,7 +185,7 @@
         height = self.tableView.frame.size.height;
         
         //if we have a filtered header -30
-        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 30;
+        height -= ([Utilities instance].selectedFilterType == FilterTypeNone) ? 0 : 41;
         
         height -= 80;
     }
@@ -192,27 +194,38 @@
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, height)];
     [footerView setClipsToBounds:YES];
     
+    UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, footerView.frame.size.height - 56.0f, footerView.frame.size.width, 56.0f)];
+    [backView setBackgroundColor:kLightGray];
+    [footerView addSubview:backView];
+    
     //initialize the share button
-    _favoriteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-    [_favoriteButton setImage:[UIImage imageNamed:@"Favorite.png"] forState:UIControlStateNormal];
-    [_favoriteButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateHighlighted];
-    [_favoriteButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateSelected];    
-    [_favoriteButton setFrame:CGRectMake(0.0f, footerView.frame.size.height - 35, _favoriteButton.imageView.image.size.width, _favoriteButton.imageView.image.size.height)];
-    [_favoriteButton addTarget:delegate action:@selector(listViewFavoritesButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    [_favoriteButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
-    [_favoriteButton setSelected:[delegate showFavorites]];
-    [footerView addSubview:_favoriteButton];
+    UIButton *newAddArtButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    //		[newAddArtButton setImage:[UIImage imageNamed:@"Favorite.png"] forState:UIControlStateNormal];
+    //		[newAddArtButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateHighlighted];
+    [newAddArtButton addTarget:self.delegate action:@selector(listViewAddArtButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [newAddArtButton setBackgroundColor:kButtonColor];
+    [newAddArtButton setTitle:@"+" forState:UIControlStateNormal];
+    [newAddArtButton setFrame:CGRectMake(footerView.frame.size.width - 67.0f, footerView.frame.size.height - 51.0f, 62.0f, 46.0f)];
+    [newAddArtButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
+    [self setAddArtButton:newAddArtButton];
+    [footerView addSubview:self.addArtButton];
+
     
     //initialize the filter button
     UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
-    [aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
-    [aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
-    [aFilterButton setFrame:CGRectMake(_favoriteButton.frame.size.width, footerView.frame.size.height - 35, footerView.frame.size.width - _favoriteButton.frame.size.width, aFilterButton.imageView.image.size.height)];
-    [aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth];
+    //		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
+    //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
+    //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
+    [aFilterButton setBackgroundColor:kButtonColor];
+    [aFilterButton addTarget:self.delegate action:@selector(listViewFilterButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [aFilterButton setFrame:CGRectMake(5.0f, footerView.frame.size.height - 51.0f, footerView.frame.size.width - newAddArtButton.frame.size.width - 11.0, 46.0f)];
+    [aFilterButton setTitle:@"Filter" forState:UIControlStateNormal];
+    [aFilterButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:20.0f]];
+    [aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
+    
     [aFilterButton setAdjustsImageWhenHighlighted:NO];
-    [aFilterButton addTarget:delegate action:@selector(listViewFilterButtonPressed) forControlEvents:UIControlEventTouchUpInside];    
-    [footerView addSubview:aFilterButton];
+    [self setFilterButton:aFilterButton];
+    [footerView addSubview:self.filterButton];
     
     return footerView;
     

@@ -20,7 +20,7 @@
     id <ListViewControllerDelegate> delegate;
 }
 
-@property (nonatomic, retain) UIButton *favoriteButton;
+@property (nonatomic, retain) UIButton *addArtButton, *filterButton;
 @property (nonatomic, retain) ArtListViewCell *customCell;
 @property (nonatomic, retain) id <ListViewControllerDelegate> delegate;
 
@@ -34,6 +34,5 @@
 - (void) selectedArtAtIndex:(int)index;
 - (NSDictionary*) currentLocation;
 - (void)listViewFilterButtonPressed;
-- (void)listViewFavoritesButtonPressed;
-- (BOOL) showFavorites;
+- (void)listViewAddArtButtonPressed;
 @end

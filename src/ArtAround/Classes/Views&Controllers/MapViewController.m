@@ -27,7 +27,6 @@ static const int _kAnnotationLimit = 9999;
 -(void)artUpdated;
 -(void)filterButtonTapped;
 -(void)addButtonTapped;
--(void)favoritesButtonTapped;
 -(void)closeButtonPressed;
 @end
 
@@ -115,7 +114,6 @@ static const int _kAnnotationLimit = 9999;
     [_listViewController.tableView setFrame:CGRectMake(0.0f, 0.0f, [[self view] frame].size.width, [[self view] frame].size.height)];
     _listViewController.delegate = self;
     [_listViewController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-    [_listViewController.favoriteButton setSelected:_showFavorites];    
     [self.view addSubview:_listViewController.tableView];	
 	
     //setup the map view
@@ -380,18 +378,6 @@ static const int _kAnnotationLimit = 9999;
 //    [detailViewController release];
 }
 
-- (void)favoritesButtonTapped
-{
-    //reverser favs flag
-	_showFavorites = !_showFavorites;
-    
-    //update the button image
-    [self.mapView.addArtButton setSelected:_showFavorites];
-    [_listViewController.favoriteButton setSelected:_showFavorites];
-    
-    //update art
-    [self updateArt];
-}
 
 -(void)filterButtonTapped
 {
@@ -472,8 +458,6 @@ static const int _kAnnotationLimit = 9999;
     if (_showingMap) {
         [UIView transitionFromView:self.mapView toView:_listViewController.tableView duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
         [UIView transitionFromView:_listButton toView:_mapButton duration:1 options:UIViewAnimationOptionTransitionFlipFromRight completion:nil];
-        
-        [_listViewController.favoriteButton setSelected:_showFavorites];
         
         //set the button text
         [flipButtonLabel setText:@"Map"];
@@ -876,8 +860,9 @@ static const int _kAnnotationLimit = 9999;
     [self filterButtonTapped];
 }
 
-- (void) listViewFavoritesButtonPressed {
-    [self favoritesButtonTapped];
+- (void) listViewAddArtButtonPressed {
+    [self addButtonTapped];
 }
+
 
 @end

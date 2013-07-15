@@ -1100,6 +1100,11 @@ static const float _kRowBufffer = 20.0f;
                 height = 5.0f;
                 break;
             }
+            case ArtDetailRowPhotos:
+            {
+                height = _kPhotoScrollerHeight;
+                break;
+            }
             case ArtDetailRowTitle:
             {
                 if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
@@ -1115,10 +1120,6 @@ static const float _kRowBufffer = 20.0f;
                 
                 break;
             }
-            case ArtDetailRowPhotos:
-                height = _kPhotoScrollerHeight;
-                break;
-            
             case ArtDetailRowCategory:
             {
                 if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
@@ -1130,6 +1131,9 @@ static const float _kRowBufffer = 20.0f;
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
                     CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
+                }
+                else {
+                    height = 0;
                 }
                 
                 break;
