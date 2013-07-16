@@ -7,6 +7,7 @@
 //
 
 #import "MapView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation MapView
 @synthesize map = _map;
@@ -62,39 +63,45 @@
 		
 		//initialize the share button
 		UIButton *newAddArtButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//		[newAddArtButton setImage:[UIImage imageNamed:@"Favorite.png"] forState:UIControlStateNormal];
-//		[newAddArtButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateHighlighted]; 
+		[newAddArtButton setImage:[UIImage imageNamed:@"addIcon.png"] forState:UIControlStateNormal];
         [newAddArtButton setBackgroundColor:kButtonColor];
-        [newAddArtButton setTitle:@"+" forState:UIControlStateNormal];
-		[newAddArtButton setFrame:CGRectMake(frame.size.width - 67.0f, frame.size.height - 51.0f, 62.0f, 46.0f)];
+		[newAddArtButton setFrame:CGRectMake(frame.size.width - 65.0f, frame.size.height - 51.0f, 60.0f, 46.0f)];
 		[newAddArtButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
+        [newAddArtButton.layer setShadowColor:[UIColor blackColor].CGColor];
+        [newAddArtButton.layer setShadowOffset:CGSizeZero];
+        [newAddArtButton.layer setShadowRadius:2.0f];
+        [newAddArtButton.layer setShadowOpacity:0.4f];
+        
 		[self setAddArtButton:newAddArtButton];
 		[self addSubview:self.addArtButton];
 
 
         //initialize the locate button
 		UIButton *aLocateButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//		[aLocateButton setImage:[UIImage imageNamed:@"Locate.png"] forState:UIControlStateNormal];
-//		[aLocateButton setImage:[UIImage imageNamed:@"LocatePressed.png"] forState:UIControlStateHighlighted];
+		[aLocateButton setImage:[UIImage imageNamed:@"locateIcon.png"] forState:UIControlStateNormal];
         [aLocateButton setBackgroundColor:kButtonColor];
-		[aLocateButton setFrame:CGRectMake(5.0f, frame.size.height - 51.0f, 62.0f, 46.0f)];
-        [aLocateButton setTitle:@"o" forState:UIControlStateNormal];
+		[aLocateButton setFrame:CGRectMake(5.0f, frame.size.height - 51.0f, 60.0f, 46.0f)];
 		[aLocateButton setAutoresizingMask: UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin];
+        [aLocateButton.layer setShadowColor:[UIColor blackColor].CGColor];
+        [aLocateButton.layer setShadowOffset:CGSizeZero];
+        [aLocateButton.layer setShadowRadius:2.0f];
+        [aLocateButton.layer setShadowOpacity:0.4f];
+        
         [self setLocateButton:aLocateButton];
 		[self addSubview:self.locateButton];
 
         //initialize the filter button
 		UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        //		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
-        //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
-        //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
-        float filterWidth = newAddArtButton.frame.origin.x - aLocateButton.frame.origin.x - aLocateButton.frame.size.width - 2.0f;
+        float filterWidth = newAddArtButton.frame.origin.x - aLocateButton.frame.origin.x - aLocateButton.frame.size.width - 10.0f;
         [aFilterButton setBackgroundColor:kButtonColor];
-		[aFilterButton setFrame:CGRectMake(68.0f, frame.size.height - 51.0f, filterWidth, 46.0f)];
+		[aFilterButton setFrame:CGRectMake(70.0f, frame.size.height - 51.0f, filterWidth, 46.0f)];
         [aFilterButton setTitle:@"Filter" forState:UIControlStateNormal];
-        [aFilterButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:20.0f]];
+        [aFilterButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0f]];
 		[aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
-
+        [aFilterButton.layer setShadowColor:[UIColor blackColor].CGColor];
+        [aFilterButton.layer setShadowOffset:CGSizeZero];
+        [aFilterButton.layer setShadowRadius:2.0f];
+        [aFilterButton.layer setShadowOpacity:0.4f];
 		[aFilterButton setAdjustsImageWhenHighlighted:NO];
 		[self setFilterButton:aFilterButton];
 		[self addSubview:self.filterButton];

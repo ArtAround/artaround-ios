@@ -200,12 +200,10 @@
     
     //initialize the share button
     UIButton *newAddArtButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    //		[newAddArtButton setImage:[UIImage imageNamed:@"Favorite.png"] forState:UIControlStateNormal];
-    //		[newAddArtButton setImage:[UIImage imageNamed:@"FavoritePressed.png"] forState:UIControlStateHighlighted];
+    [newAddArtButton setImage:[UIImage imageNamed:@"addIcon.png"] forState:UIControlStateNormal];
     [newAddArtButton addTarget:self.delegate action:@selector(listViewAddArtButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [newAddArtButton setBackgroundColor:kButtonColor];
-    [newAddArtButton setTitle:@"+" forState:UIControlStateNormal];
-    [newAddArtButton setFrame:CGRectMake(footerView.frame.size.width - 67.0f, footerView.frame.size.height - 51.0f, 62.0f, 46.0f)];
+    [newAddArtButton setFrame:CGRectMake(footerView.frame.size.width - 65.0f, footerView.frame.size.height - 51.0f, 60.0f, 46.0f)];
     [newAddArtButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
     [self setAddArtButton:newAddArtButton];
     [footerView addSubview:self.addArtButton];
@@ -213,14 +211,11 @@
     
     //initialize the filter button
     UIButton *aFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    //		[aFilterButton setImage:[UIImage imageNamed:@"Filter.png"] forState:UIControlStateNormal];
-    //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackground.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
-    //		[aFilterButton setBackgroundImage:[[UIImage imageNamed:@"FilterBackgroundPressed.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
     [aFilterButton setBackgroundColor:kButtonColor];
     [aFilterButton addTarget:self.delegate action:@selector(listViewFilterButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    [aFilterButton setFrame:CGRectMake(5.0f, footerView.frame.size.height - 51.0f, footerView.frame.size.width - newAddArtButton.frame.size.width - 11.0, 46.0f)];
+    [aFilterButton setFrame:CGRectMake(5.0f, footerView.frame.size.height - 51.0f, footerView.frame.size.width - newAddArtButton.frame.size.width - 15.0f, 46.0f)];
     [aFilterButton setTitle:@"Filter" forState:UIControlStateNormal];
-    [aFilterButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:20.0f]];
+    [aFilterButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0f]];
     [aFilterButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
     
     [aFilterButton setAdjustsImageWhenHighlighted:NO];
