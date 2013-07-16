@@ -23,10 +23,10 @@
 #import "JSONKit.h"
 
 static AAAPIManager *_sharedInstance = nil;
-//static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
-//static const NSString *_kFlagAPIRoot = @"http://theartaround.us/arts";
-static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
-static const NSString *_kFlagAPIRoot = @"http://staging.theartaround.us/arts";
+static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
+static const NSString *_kFlagAPIRoot = @"http://theartaround.us/arts";
+//static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
+//static const NSString *_kFlagAPIRoot = @"http://staging.theartaround.us/arts";
 static const NSString *_kAPIFormat = @"json";
 static const NSString *_kTargetKey = @"target";
 static const NSString *_kCallbackKey = @"callback";

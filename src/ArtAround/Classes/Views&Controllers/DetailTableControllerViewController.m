@@ -21,6 +21,7 @@
 #import "ArtParser.h"
 #import "ArtAnnotationView.h"
 #import "ArtAroundAppDelegate.h"
+#import "CommentsTableViewController.h"
 
 static const float _kPhotoPadding = 5.0f;
 static const float _kPhotoSpacing = 10.0f;
@@ -1156,6 +1157,18 @@ static const float _kRowBufffer = 20.0f;
                 
                 [self.navigationController pushViewController:searchTableController animated:YES];
                 
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    else {
+        switch (indexPath.row) {
+            case ArtDetailRowComments:
+            {
+                CommentsTableViewController *commentsVC = [[CommentsTableViewController alloc] initWithStyle:UITableViewStylePlain comments:[_art.comments allObjects]];
+                [self.navigationController pushViewController:commentsVC animated:YES];
                 break;
             }
             default:

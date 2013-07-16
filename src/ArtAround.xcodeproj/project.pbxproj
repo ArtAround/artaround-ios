@@ -40,6 +40,7 @@
 		464C9AD51795040200387F58 /* addIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 464C9AD11795040200387F58 /* addIcon@2x.png */; };
 		464C9AD61795040200387F58 /* locateIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 464C9AD21795040200387F58 /* locateIcon.png */; };
 		464C9AD71795040200387F58 /* locateIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 464C9AD31795040200387F58 /* locateIcon@2x.png */; };
+		464C9ADB17951FC600387F58 /* CommentsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 464C9ADA17951FC600387F58 /* CommentsTableViewController.m */; };
 		464F69FF178110D40030022A /* phoneIconDisabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 464F69F7178110D40030022A /* phoneIconDisabled.png */; };
 		464F6A00178110D40030022A /* phoneIconDisabled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 464F69F8178110D40030022A /* phoneIconDisabled@2x.png */; };
 		464F6A01178110D40030022A /* phoneIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 464F69F9178110D40030022A /* phoneIcon.png */; };
@@ -265,6 +266,8 @@
 		464C9AD11795040200387F58 /* addIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "addIcon@2x.png"; sourceTree = "<group>"; };
 		464C9AD21795040200387F58 /* locateIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = locateIcon.png; sourceTree = "<group>"; };
 		464C9AD31795040200387F58 /* locateIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "locateIcon@2x.png"; sourceTree = "<group>"; };
+		464C9AD917951FC600387F58 /* CommentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentsTableViewController.h; sourceTree = "<group>"; };
+		464C9ADA17951FC600387F58 /* CommentsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentsTableViewController.m; sourceTree = "<group>"; };
 		464F69F7178110D40030022A /* phoneIconDisabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phoneIconDisabled.png; sourceTree = "<group>"; };
 		464F69F8178110D40030022A /* phoneIconDisabled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "phoneIconDisabled@2x.png"; sourceTree = "<group>"; };
 		464F69F9178110D40030022A /* phoneIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phoneIcon.png; sourceTree = "<group>"; };
@@ -610,6 +613,15 @@
 			name = IntroViewController;
 			sourceTree = "<group>";
 		};
+		464C9AD817951F5300387F58 /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				464C9AD917951FC600387F58 /* CommentsTableViewController.h */,
+				464C9ADA17951FC600387F58 /* CommentsTableViewController.m */,
+			);
+			name = Comments;
+			sourceTree = "<group>";
+		};
 		466406F01747CC0C0003CA8A /* AddArtView */ = {
 			isa = PBXGroup;
 			children = (
@@ -800,6 +812,7 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				464C9AD817951F5300387F58 /* Comments */,
 				464C9ABC1794EB5B00387F58 /* IntroViewController */,
 				466B5E83178D04370000CF66 /* DetailView */,
 				C9722EAE14CD115600FC42E9 /* Add */,
@@ -1459,6 +1472,7 @@
 				466B5E86178D04E70000CF66 /* DetailTableControllerViewController.m in Sources */,
 				464C9ABB1794D09600387F58 /* Art.m in Sources */,
 				464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */,
+				464C9ADB17951FC600387F58 /* CommentsTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
