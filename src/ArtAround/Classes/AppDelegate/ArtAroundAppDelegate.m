@@ -68,7 +68,7 @@
 	[self setFacebook:theFacebook];
 	[theFacebook release];
     
-    if (YES || ![Utilities instance].hasLoadedBefore) {
+    if (![Utilities instance].hasLoadedBefore) {
         _introVC = [[IntroViewController alloc] initWithNibName:@"IntroViewController" bundle:nil];
         [_introVC.view setFrame:CGRectMake(0.0f, 20.0f, self.navigationController.view.frame.size.width, self.navigationController.view.frame.size.height - 20.0f)];
         [_introVC.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
