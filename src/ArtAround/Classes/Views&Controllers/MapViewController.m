@@ -137,138 +137,7 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.addArtButton addTarget:self action:@selector(addButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.filterButton addTarget:self action:@selector(filterButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 	[self.mapView.locateButton addTarget:self action:@selector(locateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-	
-    //inital load view
-    if (![[Utilities instance] hasLoadedBefore]) {
-        _initialLoadView = [[UIView alloc] initWithFrame:CGRectInset(_mapView.frame, 20, 50)];
-        _initialLoadView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.9];
-        _initialLoadView.alpha = 0;
-        _initialLoadView.center = CGPointMake(_initialLoadView.center.x, _initialLoadView.center.y - 20);
-        _initialLoadView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
-        _initialLoadView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
-        _initialLoadView.layer.shadowRadius = 3.0f;
-        _initialLoadView.layer.shadowOffset = CGSizeMake(0, 1.0);
-        _initialLoadView.layer.shadowOpacity = 0.9f;
-        
-        UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 4, _initialLoadView.frame.size.width, 20)];
-        [topLabel setText:@"A hint before you start..."];
-        [topLabel setTextAlignment:UITextAlignmentCenter];
-        [topLabel setBackgroundColor:[UIColor clearColor]];
-        [topLabel setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:15]];
-        [topLabel setTextColor:kFontColorDarkBrown];
-        [_initialLoadView addSubview:topLabel];
-        [topLabel release];
 
-        UILabel *secondLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 24, _initialLoadView.frame.size.width, 14)];
-        [secondLabel setText:@"(We'll only show this once. We promise.)"];
-        [secondLabel setBackgroundColor:[UIColor clearColor]];
-        [secondLabel setTextAlignment:UITextAlignmentCenter];
-        [secondLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:10]];
-        [secondLabel setTextColor:kFontColorDarkBrown];
-        [_initialLoadView addSubview:secondLabel];
-        [secondLabel release]; 
-        
-        
-        float yVal = 44;
-        for (int index = 0; index < 4; index++) {
-
-            //add divider
-            UIView *line1 = [[UIView alloc] initWithFrame:CGRectMake(0, yVal, _initialLoadView.frame.size.width, 1)];
-            UIView *line2 = [[UIView alloc] initWithFrame:CGRectMake(0, 1+yVal, _initialLoadView.frame.size.width, 1)];
-            line1.backgroundColor = [UIColor whiteColor];
-            line2.backgroundColor = kBGlightBrown;
-            line1.alpha = 0.2;
-            line2.alpha = 0.2;
-            [_initialLoadView addSubview:line1];
-            [_initialLoadView addSubview:line2];
-            [line1 release];
-            [line2 release];
-            
-            if (index < 3) {
-                
-                NSString *text1, *text2, *img1, *img2;
-                text1 = @"Art";
-                text2 = @"Art";
-                img1 = @"PinArt.png";
-                img2 = @"PinArt.png";
-                
-                
-                /*
-                switch (index) {
-                    case 0:
-                        text1 = @"Art";
-                        text2 = @"Popular Art";
-                        img1 = @"PinArt.png";
-                        img2 = @"PinArtPressed.png";
-                        break;
-                        
-                    case 1:
-                        text1 = @"Venue";
-                        text2 = @"Popular Venue";
-                        img1 = @"PinVenue.png";
-                        img2 = @"PinVenuePressed.png";
-                        break;
-                        
-                    case 2:
-                        text1 = @"Event";
-                        text2 = @"Popular Event";
-                        img1 = @"PinEvent.png";
-                        img2 = @"PinEventPressed.png";
-                        break;                    
-                    default:
-                        break;
-                }*/
-                
-                float sectionCenter = yVal + 38;
-                
-                //add pins
-                UIImageView *pin1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:img1]];
-                [pin1 setCenter:CGPointMake(35, sectionCenter)];
-                [_initialLoadView addSubview:pin1];
-                UIImageView *pin2 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:img2]];
-                [pin2 setCenter:CGPointMake(135, sectionCenter)];
-                [_initialLoadView addSubview:pin2];
-                [pin1 release];
-                [pin2 release];
-                
-                //add labels
-                UILabel *regular = [[UILabel alloc] initWithFrame:CGRectMake(pin1.image.size.width + pin1.frame.origin.x, 0, 60, 20)];
-                UILabel *popular = [[UILabel alloc] initWithFrame:CGRectMake(pin2.image.size.width + pin2.frame.origin.x, 0, 160, 20)];
-                [regular setCenter:CGPointMake(regular.center.x, sectionCenter)];
-                [popular setCenter:CGPointMake(popular.center.x, sectionCenter)];
-                [regular setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:14.0f]];
-                [popular setFont:[UIFont fontWithName:@"Georgia-BoldItalic" size:14.0f]];
-                [regular setBackgroundColor:[UIColor clearColor]];
-                [popular setBackgroundColor:[UIColor clearColor]];
-                [regular setText:text1];
-                [popular setText:text2];
-                [regular setTextColor:kFontColorDarkBrown];
-                [popular setTextColor:kFontColorDarkBrown]; 
-                [_initialLoadView addSubview:regular];
-                [_initialLoadView addSubview:popular];
-                [regular release];
-                [popular release];
-                
-                
-            }
-            
-            yVal += 76;
-        }
-        
-        UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, _initialLoadView.frame.size.height - 46, _initialLoadView.frame.size.width, 48)];
-        [closeButton addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        [closeButton setTitle:@"LET ME SEE THE ART!" forState:UIControlStateNormal];
-        closeButton.titleLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16.0];
-        [closeButton setTitleColor:[UIColor colorWithRed:(196.0/255.0) green:(199.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateNormal];
-        [closeButton setTitleColor:[UIColor colorWithRed:(170.0/255.0) green:(173.0/255.0) blue:(47.0/255.0) alpha:1] forState:UIControlStateHighlighted];
-        [closeButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
-        [_initialLoadView addSubview:closeButton];
-        [closeButton release];
-        
-        [self.view addSubview:_initialLoadView];
-    }
-    
-    
     //bg color
     [self.view setBackgroundColor:[UIColor blackColor]];
 }
@@ -287,6 +156,7 @@ static const int _kAnnotationLimit = 9999;
 {
 	//show the logo view
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
+
 }
 
 
@@ -297,12 +167,6 @@ static const int _kAnnotationLimit = 9999;
 	
 	//clear out the navigation controller possibly set by another view controller
 	[self.navigationController setDelegate:nil];
-	
-    if (_initialLoadView) {
-        [UIView animateWithDuration:0.3 animations:^{
-            [_initialLoadView setAlpha:1.0];
-        }];
-    }
     
 	//update the map if needed
 	if (_mapNeedsRefresh) {
@@ -352,18 +216,6 @@ static const int _kAnnotationLimit = 9999;
 }
 
 #pragma mark - Button Actions
--(void)closeButtonPressed 
-{
-    
-    float scale = 0.1f;
-    [_initialLoadView setAlpha:0.0];
-    [_initialLoadView setTransform:CGAffineTransformMakeScale(scale, scale)];
-    [_initialLoadView release];
-    _initialLoadView = nil;
-    
-    [[Utilities instance] setHasLoadedBefore:YES];
-    
-}
 
 -(void)addButtonTapped 
 {

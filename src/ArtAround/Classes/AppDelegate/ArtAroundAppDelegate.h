@@ -9,12 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "MapViewController.h"
 #import "FBConnect.h"
+#import "IntroViewController.h"
 
 #define kGoogleAnalyticsAccountID @"UA-19074200-1"
 // Dispatch period in seconds
 static const NSInteger kGANDispatchPeriodSec = 10;
 
 @interface ArtAroundAppDelegate : NSObject <UIApplicationDelegate, FBSessionDelegate>
+{
+    IntroViewController *_introVC;
+}
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) UINavigationController *navigationController;
@@ -26,5 +30,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+- (void) closeIntro;
 
 @end

@@ -13,6 +13,7 @@
 #import "Utilities.h"
 #import "FBConnect.h"
 #import "GANTracker.h"
+#import "IntroViewController.h"
 
 @implementation ArtAroundAppDelegate
 
@@ -66,8 +67,35 @@
 	Facebook* theFacebook = [[Facebook alloc] initWithAppId:[[Utilities instance].keysDict objectForKey:@"FacebookAppID"] andDelegate:self];
 	[self setFacebook:theFacebook];
 	[theFacebook release];
+    
+    if (YES || ![Utilities instance].hasLoadedBefore) {
+        _introVC = [[IntroViewController alloc] initWithNibName:@"IntroViewController" bundle:nil];
+        [_introVC.view setFrame:CGRectMake(0.0f, 20.0f, self.navigationController.view.frame.size.width, self.navigationController.view.frame.size.height - 20.0f)];
+        [_introVC.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
+        [_introVC.view setAlpha:0.0f];
+        [self.navigationController.view addSubview:_introVC.view];
+        
+        [_introVC.closeButton addTarget:self action:@selector(closeIntro) forControlEvents:UIControlEventTouchUpInside];
+        [_introVC.doneButton addTarget:self action:@selector(closeIntro) forControlEvents:UIControlEventTouchUpInside];
+        
+        [UIView animateWithDuration:0.3f delay:0.4f options:UIViewAnimationOptionCurveEaseIn animations:^{
+            [_introVC.view setAlpha:1.0f];
+        } completion:^(BOOL finished) {
+            [[Utilities instance] setHasLoadedBefore:YES];
+        }];
+        
+    }
 	
     return YES;
+}
+
+- (void) closeIntro
+{
+    [UIView animateWithDuration:0.4f animations:^{
+        [_introVC.view setAlpha:0.0f];
+    } completion:^(BOOL finished) {
+        [_introVC.view removeFromSuperview];
+    }];
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url

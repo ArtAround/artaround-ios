@@ -60,14 +60,14 @@ static Utilities *_kSharedInstance = nil;
 
 - (BOOL) hasLoadedBefore
 {
-    NSNumber *firstLoad = [_defaults objectForKey:@"aa_firstLoad"];
+    NSNumber *firstLoad = [_defaults objectForKey:@"aa_newfirstLoad"];
     return [firstLoad boolValue];
 }
 
 - (void) setHasLoadedBefore:(BOOL)hasLoadedBefore
 {
     NSNumber *firstLoad = [[NSNumber alloc] initWithBool:hasLoadedBefore];
-    [_defaults setObject:firstLoad forKey:@"aa_firstLoad"];
+    [_defaults setObject:firstLoad forKey:@"aa_newfirstLoad"];
     [_defaults synchronize];
 }
 
