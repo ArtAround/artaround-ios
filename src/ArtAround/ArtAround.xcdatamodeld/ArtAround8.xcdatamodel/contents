@@ -32,6 +32,7 @@
         <attribute name="ward" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="year" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
@@ -176,7 +177,7 @@
         <userInfo/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="360"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="375"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
         <element name="Event" positionX="160" positionY="192" width="128" height="150"/>

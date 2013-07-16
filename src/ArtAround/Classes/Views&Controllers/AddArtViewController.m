@@ -47,6 +47,7 @@
 @synthesize categoryButton;
 @synthesize dateButton;
 @synthesize submitButton;
+@synthesize commissionedByButton = _commissionedByButton;
 @synthesize descriptionTextView;
 @synthesize locationDescriptionTextView;
 @synthesize currentLocation = _currentLocation;
@@ -103,6 +104,7 @@
     
     //add actions
     [self.categoryButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.commissionedByButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.locationButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.dateButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -133,6 +135,7 @@
     [locationDescriptionTextView release];
     [urlTextField release];
     [_scrollView release];
+    [_commissionedByButton release];
     [super dealloc];
 }
 - (void)viewDidUnload {
@@ -147,6 +150,7 @@
     [self setLocationDescriptionTextView:nil];
     [self setUrlTextField:nil];
     [self setScrollView:nil];
+    [self setCommissionedByButton:nil];
     [super viewDidUnload];
 }
 
@@ -167,6 +171,9 @@
     }
     else if (sender == _doneButton) {
         [self doneButtonPressed];
+    }
+    else if (sender == _commissionedByButton) {
+        [self commissionedButtonPressed];
     }
 
 }
@@ -618,6 +625,9 @@
         
         if ([_newArtDictionary objectForKey:@"website"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"website"]] forKey:@"website"];
+        
+        if ([_newArtDictionary objectForKey:@"commissionedBy"])
+            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissionedBy"]] forKey:@"commissionedBy"];
         
         if ([_newArtDictionary objectForKey:@"description"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
@@ -1248,46 +1258,61 @@
 - (void) searchTableViewController:(SearchTableViewController *)searchController didFinishWithSelectedItems:(NSArray *)items
 {
  
-    //reset and add the cateogries to the new art
-    NSMutableArray *categories = [[NSMutableArray alloc] init];
-    [_newArtDictionary setObject:categories forKey:@"categories"];
-    
-    for (SearchItem *thisItem in items) {
-        
-        if ([thisItem isKindOfClass:[SearchItem class]]) {
-        
-            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
-                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+    if (searchController.tableView.tag == 10) {
+        if (items.count > 0) {
+            if ([[[items objectAtIndex:0] title] isEqualToString:@"None"]) {
+                [_newArtDictionary removeObjectForKey:@"commissionedBy"];
+                [_commissionedByButton setTitle:@"Commissioned By" forState:UIControlStateNormal];
+            }
+            else {
+                NSString *com = [[NSString alloc] initWithString:[[items objectAtIndex:0] title]];
+                [_newArtDictionary setObject:com forKey:@"commissionedBy"];
+                [_commissionedByButton setTitle:com forState:UIControlStateNormal];
             }
         }
-        else if ([thisItem isKindOfClass:[NSString class]]) {
-            if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem]) {
-                [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem];
-            }
-        }
-    }
-    
-    if (categories.count > 0) {
-        [self.categoryButton setTitle:[categories componentsJoinedByString:@", "] forState:UIControlStateNormal];
     }
     else {
-        [self.categoryButton setTitle:@"Categories" forState:UIControlStateNormal];
+        //reset and add the cateogries to the new art
+        NSMutableArray *categories = [[NSMutableArray alloc] init];
+        [_newArtDictionary setObject:categories forKey:@"categories"];
+        
+        for (SearchItem *thisItem in items) {
+            
+            if ([thisItem isKindOfClass:[SearchItem class]]) {
+            
+                if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem.title]) {
+                    [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem.title];
+                }
+            }
+            else if ([thisItem isKindOfClass:[NSString class]]) {
+                if (![[_newArtDictionary objectForKey:@"categories"] containsObject:thisItem]) {
+                    [[_newArtDictionary objectForKey:@"categories"] addObject:thisItem];
+                }
+            }
+        }
+        
+        if (categories.count > 0) {
+            [self.categoryButton setTitle:[categories componentsJoinedByString:@", "] forState:UIControlStateNormal];
+        }
+        else {
+            [self.categoryButton setTitle:@"Categories" forState:UIControlStateNormal];
+        }
+        
+        
+        //setup add art button
+        if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
+            
+            [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
+            self.submitButton.enabled = YES;
+            
+        }
+        else {
+            [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
+            self.submitButton.enabled = NO;
+        }
     }
     
     [self.navigationController popToViewController:self animated:YES];
-    
-    //setup add art button
-    if ([_newArtDictionary objectForKey:@"title"] && [[_newArtDictionary objectForKey:@"title"] length] > 0 && _addedImageCount > 0) {
-        
-        [self.submitButton setBackgroundColor:[UIColor colorWithRed:(223.0f/255.0f) green:(73.0f/255.0f) blue:(70.0f/255.0f) alpha:1.0f]];
-        self.submitButton.enabled = YES;
-        
-    }
-    else {
-        [self.submitButton setBackgroundColor:[UIColor colorWithWhite:0.71f alpha:1.0f]];
-        self.submitButton.enabled = NO;
-    }
-    
 }
 
 #pragma mark - ArtLocationSelectionDelegate

@@ -26,6 +26,7 @@
 @property (nonatomic, retain) NSNumber * rank;
 @property (nonatomic, retain) NSString * slug;
 @property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) NSNumber * ward;
 @property (nonatomic, retain) NSNumber * year;
 @property (nonatomic, retain) NSString * commissionedByLink;

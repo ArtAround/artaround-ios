@@ -29,6 +29,7 @@
 @dynamic rank;
 @dynamic slug;
 @dynamic title;
+@dynamic website;
 @dynamic ward;
 @dynamic year;
 @dynamic commissionedByLink;

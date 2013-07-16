@@ -74,7 +74,7 @@
 
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context
 {
-    
+
 	//create a new art if one doesn't exist yet
 	NSString *slug = [artDict objectForKey:@"slug"];
 	Art *art = [ItemParser existingEntity:@"Art" inContext:context uniqueKey:@"slug" uniqueValue:slug];
@@ -87,6 +87,7 @@
 	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
     art.artDescription = [AAAPIManager clean:[artDict objectForKey:@"description"]];
 	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
+    art.website = [AAAPIManager clean:[artDict objectForKey:@"website"]];
 	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
     if ([artDict objectForKey:@"year"] && ![[artDict objectForKey:@"year"] isKindOfClass:[NSNull class]])
         art.year = [AAAPIManager clean:[NSNumber numberWithInt:[[artDict objectForKey:@"year"] intValue]]];
