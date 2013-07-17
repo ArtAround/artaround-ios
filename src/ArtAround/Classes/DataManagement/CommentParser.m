@@ -32,10 +32,10 @@
 + (Comment *)commentForDict:(NSDictionary *)dict inContext:(NSManagedObjectContext *)context
 {
 	//get or create a neighborhood with the given title
-	Comment *comment = [ItemParser existingEntity:@"Comment" inContext:context uniqueKey:@"commentID" uniqueValue:[dict objectForKey:@"_id"]];
+	Comment *comment = [ItemParser existingEntity:@"Comment" inContext:context uniqueKey:@"text" uniqueValue:[dict objectForKey:@"text"]];
 	if (!comment) {
 		comment = (Comment *)[NSEntityDescription insertNewObjectForEntityForName:@"Comment" inManagedObjectContext:context];
-		comment.commentID = [AAAPIManager clean:[dict objectForKey:@"_id"]];       
+		comment.text = [AAAPIManager clean:[dict objectForKey:@"text"]];
 	}
     
     comment.text = [AAAPIManager clean:[dict objectForKey:@"text"]];
