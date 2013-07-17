@@ -14,8 +14,8 @@
 #import "AAAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define kArtAroundURL @"http://www.theartaround.us"
-//#define kArtAroundURL @"http://staging.theartaround.us"
+//#define kArtAroundURL @"http://www.theartaround.us"
+#define kArtAroundURL @"http://staging.theartaround.us"
 
 @implementation ArtListViewCell
 @synthesize artNameLabel;

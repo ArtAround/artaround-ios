@@ -324,6 +324,11 @@ static const int _kAnnotationLimit = 9999;
     
     _showingMap = !_showingMap;
     
+    if (_items) {
+        //reset the list view
+        [_listViewController setItems:_items];
+    }
+    
 }
 
 //refersh art
@@ -676,6 +681,12 @@ static const int _kAnnotationLimit = 9999;
 }
 
 #pragma mark - Listview delegate
+- (void) selectedArt:(Art*)art
+{
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art];
+    [self.navigationController pushViewController:detailController animated:YES];
+    [detailController release];
+}
 - (void)selectedArtAtIndex:(int)index
 {
 

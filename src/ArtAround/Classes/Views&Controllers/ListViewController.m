@@ -355,7 +355,8 @@
     else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
-        [delegate selectedArtAtIndex:indexPath.row];
+        [delegate selectedArt:[_items objectAtIndex:indexPath.row]];
+        //[delegate selectedArtAtIndex:indexPath.row];
     }
 }
 

@@ -13,6 +13,7 @@
 #import "FlickrNameViewController.h"
 #import "SearchTableViewController.h"
 #import "ArtLocationSelectionViewViewController.h"
+#import "AddCommentViewController.h"
 
 @class Art;
 
@@ -38,16 +39,17 @@ typedef enum _ArtDetailRow {
     ArtDetailRowDescription = 9,
     ArtDetailRowLocationDescription = 10,
     ArtDetailRowLocationMap = 11,
-    ArtDetailRowComments = 12
+    ArtDetailRowComments = 12,
+    ArtDetailRowAddComment = 13
 } ArtDetailRow;
 
-@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate>
+@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate>
 {
     int                     _addedImageCount;
     BOOL                    _inEditMode, _usingPhotoGeotag;
     UIAlertView*            _loadingAlertView;
     NSMutableArray*         _userAddedImages, *_imageButtons;
-    NSMutableDictionary*    _newCommentDictionary, *_newArtDictionary;
+    NSMutableDictionary*    _newArtDictionary;
     UIPickerView*           _datePicker;
     UIToolbar*              _dateToolbar;
     UIBarButtonItem*        _dateDoneButton;

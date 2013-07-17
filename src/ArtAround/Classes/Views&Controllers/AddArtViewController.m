@@ -238,8 +238,8 @@
     [searchTableController.tableView setTag:10];
     
     //add the categories if they exist
-    if ([_newArtDictionary objectForKey:@"commissionedBy"]) {
-        SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissionedBy"] subtitle:@""];
+    if ([_newArtDictionary objectForKey:@"commissioned_by"]) {
+        SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissioned_by"] subtitle:@""];
         NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
         [searchTableController setSelectedItems:selectedItems];
     }
@@ -626,8 +626,8 @@
         if ([_newArtDictionary objectForKey:@"website"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"website"]] forKey:@"website"];
         
-        if ([_newArtDictionary objectForKey:@"commissionedBy"])
-            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissionedBy"]] forKey:@"commissionedBy"];
+        if ([_newArtDictionary objectForKey:@"commissioned_by"])
+            [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissioned_by"]] forKey:@"commissioned_by"];
         
         if ([_newArtDictionary objectForKey:@"description"])
             [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
@@ -1261,12 +1261,12 @@
     if (searchController.tableView.tag == 10) {
         if (items.count > 0) {
             if ([[[items objectAtIndex:0] title] isEqualToString:@"None"]) {
-                [_newArtDictionary removeObjectForKey:@"commissionedBy"];
+                [_newArtDictionary removeObjectForKey:@"commissioned_by"];
                 [_commissionedByButton setTitle:@"Commissioned By" forState:UIControlStateNormal];
             }
             else {
                 NSString *com = [[NSString alloc] initWithString:[[items objectAtIndex:0] title]];
-                [_newArtDictionary setObject:com forKey:@"commissionedBy"];
+                [_newArtDictionary setObject:com forKey:@"commissioned_by"];
                 [_commissionedByButton setTitle:com forState:UIControlStateNormal];
             }
         }

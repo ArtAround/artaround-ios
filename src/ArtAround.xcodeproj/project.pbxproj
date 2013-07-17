@@ -63,6 +63,8 @@
 		46745F74175A64EC00403810 /* buttonArrowWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 46745F72175A64EC00403810 /* buttonArrowWhite.png */; };
 		46745F76175A725100403810 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46745F75175A725100403810 /* AssetsLibrary.framework */; };
 		468A0675175BCDD600F697A5 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 468A0674175BCDD600F697A5 /* Event.m */; };
+		469527E11796376A000F8D36 /* AddCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 469527DF1796376A000F8D36 /* AddCommentViewController.m */; };
+		469527E21796376A000F8D36 /* AddCommentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 469527E01796376A000F8D36 /* AddCommentViewController.xib */; };
 		46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */; };
 		46B357AD1763E407006663AA /* ArtLocationSelectionViewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */; };
 		46B357B017641EC7006663AA /* closeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AE17641EC7006663AA /* closeIcon.png */; };
@@ -296,6 +298,9 @@
 		468A0674175BCDD600F697A5 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		468A155017357F4900DED13C /* ArtAround5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround5.xcdatamodel; sourceTree = "<group>"; };
 		4693FC09178A547600912638 /* ArtAround7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround7.xcdatamodel; sourceTree = "<group>"; };
+		469527DE1796376A000F8D36 /* AddCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddCommentViewController.h; sourceTree = "<group>"; };
+		469527DF1796376A000F8D36 /* AddCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddCommentViewController.m; sourceTree = "<group>"; };
+		469527E01796376A000F8D36 /* AddCommentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCommentViewController.xib; sourceTree = "<group>"; };
 		46B357A91763E407006663AA /* ArtLocationSelectionViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtLocationSelectionViewViewController.h; sourceTree = "<group>"; };
 		46B357AA1763E407006663AA /* ArtLocationSelectionViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtLocationSelectionViewViewController.m; sourceTree = "<group>"; };
 		46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArtLocationSelectionViewViewController.xib; sourceTree = "<group>"; };
@@ -618,6 +623,9 @@
 			children = (
 				464C9AD917951FC600387F58 /* CommentsTableViewController.h */,
 				464C9ADA17951FC600387F58 /* CommentsTableViewController.m */,
+				469527DE1796376A000F8D36 /* AddCommentViewController.h */,
+				469527DF1796376A000F8D36 /* AddCommentViewController.m */,
+				469527E01796376A000F8D36 /* AddCommentViewController.xib */,
 			);
 			name = Comments;
 			sourceTree = "<group>";
@@ -1395,6 +1403,7 @@
 				464C9AD51795040200387F58 /* addIcon@2x.png in Resources */,
 				464C9AD61795040200387F58 /* locateIcon.png in Resources */,
 				464C9AD71795040200387F58 /* locateIcon@2x.png in Resources */,
+				469527E21796376A000F8D36 /* AddCommentViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1473,6 +1482,7 @@
 				464C9ABB1794D09600387F58 /* Art.m in Sources */,
 				464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */,
 				464C9ADB17951FC600387F58 /* CommentsTableViewController.m in Sources */,
+				469527E11796376A000F8D36 /* AddCommentViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,6 +32,7 @@
 
 @protocol ListViewControllerDelegate
 - (void) selectedArtAtIndex:(int)index;
+- (void) selectedArt:(Art*)art;
 - (NSDictionary*) currentLocation;
 - (void)listViewFilterButtonPressed;
 - (void)listViewAddArtButtonPressed;

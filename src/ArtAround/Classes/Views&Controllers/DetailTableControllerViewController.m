@@ -54,6 +54,7 @@ static const float _kRowBufffer = 20.0f;
 - (void)artUploadFailed:(NSDictionary*)responseDict;
 - (void)photoUploadCompleted:(NSDictionary*)responseDict;
 - (void)photoUploadFailed:(NSDictionary*)responseDict;
+- (void)setArt:(Art *)art forceDownload:(BOOL)force;
 @end
 
 @implementation DetailTableControllerViewController
@@ -107,20 +108,26 @@ static const float _kRowBufffer = 20.0f;
     _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
     _currentLocation = [_mapView.userLocation.location retain];
     
+    //download the full art object
+//    if (_art) {
+//        //get the comments for this art
+//        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:NO];
+//    }
+    
     //add the annotation for the art
-	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
-		
-		//setup the coordinate
-		CLLocationCoordinate2D artLocation;
-		artLocation.latitude = [_art.latitude doubleValue];
-		artLocation.longitude = [_art.longitude doubleValue];
-		
-		//create an annotation, add it to the map, and store it in the array
-		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
-		[_mapView addAnnotation:annotation];
-		[annotation release];
-
-	}
+//	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
+//		
+//		//setup the coordinate
+//		CLLocationCoordinate2D artLocation;
+//		artLocation.latitude = [_art.latitude doubleValue];
+//		artLocation.longitude = [_art.longitude doubleValue];
+//		
+//		//create an annotation, add it to the map, and store it in the array
+//		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
+//		[_mapView addAnnotation:annotation];
+//		[annotation release];
+//
+//	}
     
     //setup the images scroll view
     _photosScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, _kPhotoScrollerHeight)];
@@ -136,7 +143,7 @@ static const float _kRowBufffer = 20.0f;
     [_yearFormatter setDateFormat:@"yyyy"];
     
     //setup images
-    [self setupImages];
+//    [self setupImages];
     
     //footer view
     _footerView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 35.0f)];
@@ -182,7 +189,8 @@ static const float _kRowBufffer = 20.0f;
     [_footerView addSubview:_submitEditButton];
     [_footerView addSubview:_textDoneButton];
 
-
+    if (_art)
+        [self setArt:_art forceDownload:NO];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -215,6 +223,52 @@ static const float _kRowBufffer = 20.0f;
 
 
 #pragma mark - Helpers
+- (void)setArt:(Art *)art forceDownload:(BOOL)force
+{
+	//assign the art
+	_art = [art retain];
+	
+	//load images that we already have a source for
+	[self setupImages];
+	
+	//get all the photo details for each photo that is missing the deets
+	for (Photo *photo in [_art.photos allObjects]) {
+		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
+			//[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
+            [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
+		}
+	}
+    
+    //download the full art object
+    if (art) {
+        //get the comments for this art
+        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
+    }
+	
+	//add the annotation for the art
+	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
+		
+		//setup the coordinate
+		CLLocationCoordinate2D artLocation;
+		artLocation.latitude = [art.latitude doubleValue];
+		artLocation.longitude = [art.longitude doubleValue];
+		
+		//create an annotation, add it to the map, and store it in the array
+		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+		[_mapView addAnnotation:annotation];
+		[annotation release];
+		
+	}
+    
+    //reload the table
+    [self.tableView reloadData];
+    
+    //check the favorite
+//    if (!_inEditMode)
+//        [self.detailView.leftButton setSelected:[_art.favorite boolValue]];
+    
+}
+
 //present the loading view
 - (void)showLoadingView:(NSString*)msg
 {
@@ -319,10 +373,10 @@ static const float _kRowBufffer = 20.0f;
     }
     
     //commissionedBy
-    if ([_newArtDictionary objectForKey:@"commissionedBy"])
-        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissionedBy"]] forKey:@"commissionedBy"];
+    if ([_newArtDictionary objectForKey:@"commissioned_by"])
+        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissioned_by"]] forKey:@"commissioned_by"];
     else if (_art.commissionedBy) {
-        [_newArtDictionary setObject:[Utilities urlEncode:_art.commissionedBy] forKey:@"commissionedBy"];
+        [_newArtDictionary setObject:[Utilities urlEncode:_art.commissionedBy] forKey:@"commissioned_by"];
         
     }
     
@@ -538,6 +592,29 @@ static const float _kRowBufffer = 20.0f;
     [failedAlertView release];
 }
 
+#pragma mark - Art Download Callback Methods
+- (void)artDownloadComplete
+{
+//    //get art from core data
+//	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
+//	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//	[fetchRequest setEntity:entity];
+//	[fetchRequest setFetchLimit:1];
+//	[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"slug == %@", _art.slug]];
+//
+//    //fetch art
+//	//execute fetch request
+//	NSError *error = nil;
+//	NSArray *queryItems = [[AAAPIManager managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+    
+    
+    if (_art) {
+        //reload the art
+        [self setArt:_art forceDownload:NO];
+    }
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -549,7 +626,7 @@ static const float _kRowBufffer = 20.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 13;
+    return 14;
 }
 
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row
@@ -617,6 +694,7 @@ static const float _kRowBufffer = 20.0f;
                 break;
             }
             case ArtDetailRowComments:
+            case ArtDetailRowAddComment:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
                 cell.textLabel.numberOfLines = 1;
@@ -802,6 +880,7 @@ static const float _kRowBufffer = 20.0f;
                 break;
             }
             case ArtDetailRowComments:
+            case ArtDetailRowAddComment:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
                 
@@ -857,8 +936,8 @@ static const float _kRowBufffer = 20.0f;
             cell.textLabel.text = @"commissioner";
             if (_art.commissionedBy && _art.commissionedBy.length > 0)
                 cell.detailTextLabel.text = _art.commissionedBy;
-            else if ([_newArtDictionary objectForKey:@"commissionedBy"] && [[_newArtDictionary objectForKey:@"commissionedBy"] length] > 0)
-                cell.detailTextLabel.text = [_newArtDictionary objectForKey:@"commissionedBy"];
+            else if ([_newArtDictionary objectForKey:@"commissioned_by"] && [[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0)
+                cell.detailTextLabel.text = [_newArtDictionary objectForKey:@"commissioned_by"];
             else {
                 cell.detailTextLabel.text = @"";
                 cell.textLabel.text = (_inEditMode) ? @"commissioner" : @"";
@@ -1017,6 +1096,18 @@ static const float _kRowBufffer = 20.0f;
             }
             break;
         }
+        case ArtDetailRowAddComment:
+        {
+            if (_inEditMode) {
+                cell.textLabel.text = @"";
+            }
+            else {
+                cell.textLabel.text = @"Add Comment";
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            }
+            break;
+        }
         default:
             break;
     }
@@ -1056,8 +1147,8 @@ static const float _kRowBufffer = 20.0f;
                 [searchTableController.tableView setTag:10];
                 
                 //add the categories if they exist
-                if ([_newArtDictionary objectForKey:@"commissionedBy"]) {
-                    SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissionedBy"] subtitle:@""];
+                if ([_newArtDictionary objectForKey:@"commissioned_by"]) {
+                    SearchItem *item = [SearchItem searchItemWithTitle:[_newArtDictionary objectForKey:@"commissioned_by"] subtitle:@""];
                     NSMutableArray *selectedItems = [[NSMutableArray alloc] initWithObjects:item, nil];
                     [searchTableController setSelectedItems:selectedItems];
                 }
@@ -1171,6 +1262,13 @@ static const float _kRowBufffer = 20.0f;
                 [self.navigationController pushViewController:commentsVC animated:YES];
                 break;
             }
+            case ArtDetailRowAddComment:
+            {
+                AddCommentViewController *addVC = [[AddCommentViewController alloc] initWithNibName:@"AddCommentViewController" bundle:nil artSlug:_art.slug];
+                [addVC setDelegate:self];
+                [self.navigationController pushViewController:addVC animated:YES];
+                break;
+            }
             default:
                 break;
         }
@@ -1210,11 +1308,8 @@ static const float _kRowBufffer = 20.0f;
                 break;
             }
             case ArtDetailRowLocationMap:
-            {
-                height = 0.0f;
-                break;
-            }
             case ArtDetailRowComments:
+            case ArtDetailRowAddComment:
             {
                 height = 0.0f;
                 break;
@@ -1301,12 +1396,12 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowCommissioned:
             {
-                if (_art.commissionedBy.length == 0 && [[_newArtDictionary objectForKey:@"commissionedBy"] length] == 0)
+                if (_art.commissionedBy.length == 0 && [[_newArtDictionary objectForKey:@"commissioned_by"] length] == 0)
                     height = 0.0f;
                 else {
-                    if ([[_newArtDictionary objectForKey:@"commissionedBy"] length] > 0) {
+                    if ([[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0) {
                         CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                        CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"commissionedBy"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                     else if ([_art.commissionedBy length] > 0) {
@@ -1388,6 +1483,7 @@ static const float _kRowBufffer = 20.0f;
                 height = _kMapHeight + (_kMapPadding * 2.0f);
                 break;
             case ArtDetailRowComments:
+            case ArtDetailRowAddComment:
                 height = 45.0f;
                 break;
             default:
@@ -1981,11 +2077,11 @@ static const float _kRowBufffer = 20.0f;
     if (searchController.tableView.tag == 10) {
         if (items.count > 0) {
             if ([[[items objectAtIndex:0] title] isEqualToString:@"None"]) {
-                [_newArtDictionary removeObjectForKey:@"commissionedBy"];
+                [_newArtDictionary removeObjectForKey:@"commissioned_by"];
             }
             else {
                 NSString *com = [[NSString alloc] initWithString:[[items objectAtIndex:0] title]];
-                [_newArtDictionary setObject:com forKey:@"commissionedBy"];
+                [_newArtDictionary setObject:com forKey:@"commissioned_by"];
             }
         }
     }
@@ -2143,4 +2239,16 @@ static const float _kRowBufffer = 20.0f;
     
     return pin;
 }
+
+#pragma mark - Comment Delegate
+- (void) commentSubmitted
+{
+
+    [self.navigationController popToViewController:self animated:YES];
+    
+    //get the comments for this art
+    [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:YES];
+    
+}
+
 @end
