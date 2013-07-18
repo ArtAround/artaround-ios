@@ -1216,6 +1216,13 @@ static const float _kRowBufffer = 20.0f;
                 
                 [self.navigationController pushViewController:locationController animated:YES];
                 
+                if (_selectedLocation) {
+                    [locationController setSelectedLocation:_selectedLocation];
+                    [locationController setSelection:LocationSelectionManualLocation];
+                }
+                else
+                    [locationController setSelectedLocation:_currentLocation];
+                
                 break;
             }
             case ArtDetailRowCategory:
@@ -2117,47 +2124,69 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - ArtLocationSelectionDelegate
 - (void) locationSelectionViewController:(ArtLocationSelectionViewViewController *)controller selected:(LocationSelection)selection
 {
-    switch (selection) {
-        case LocationSelectionUserLocation:
-        {
-            _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
-            
-            //add the annotation for the art
-            if (_selectedLocation.coordinate.latitude && _selectedLocation.coordinate.longitude) {
-                
-                [_mapView removeAnnotations:_mapView.annotations];
-                
-                //setup the coordinate
-                CLLocationCoordinate2D artLocation;
-                artLocation.latitude = _selectedLocation.coordinate.latitude;
-                artLocation.longitude = _selectedLocation.coordinate.longitude;
-                
-                //create an annotation, add it to the map, and store it in the array
-                ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
-                [_mapView addAnnotation:annotation];
-                [annotation release];
-                
-                CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-                CLLocation *location = [[CLLocation alloc] initWithLatitude:artLocation.latitude longitude:artLocation.longitude];
-                [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
-                    if (error){
-                        DebugLog(@"Error durring reverse geocode");
-                    }
-                    
-                    if (placemarks.count > 0) {
-                        _locationString = [[NSString alloc] initWithString:[[placemarks objectAtIndex:0] name]];
-                        [self.tableView reloadData];
-                    }
-                    
-                }];
-                
-            }
-            
-            break;
+    _selectedLocation = [[CLLocation alloc] initWithLatitude:controller.selectedLocation.coordinate.latitude longitude:controller.selectedLocation.coordinate.longitude];
+    
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
+    [geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (error){
+            DebugLog(@"Error durring reverse geocode");
         }
-        default:
-            break;
-    }
+        
+        if (placemarks.count > 0) {
+            _locationString = [[placemarks objectAtIndex:0] name];
+            [self.tableView reloadData];
+            
+            //create an annotation, add it to the map, and store it in the array
+            [_mapView removeAnnotations:_mapView.annotations];
+            ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:_selectedLocation.coordinate title:@"" subtitle:@""];
+            [_mapView addAnnotation:annotation];
+            [annotation release];
+        }
+        
+    }];
+    
+//    switch (selection) {
+//        case LocationSelectionUserLocation:
+//        {
+//            _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+//            
+//            //add the annotation for the art
+//            if (_selectedLocation.coordinate.latitude && _selectedLocation.coordinate.longitude) {
+//                
+//                [_mapView removeAnnotations:_mapView.annotations];
+//                
+//                //setup the coordinate
+//                CLLocationCoordinate2D artLocation;
+//                artLocation.latitude = _selectedLocation.coordinate.latitude;
+//                artLocation.longitude = _selectedLocation.coordinate.longitude;
+//                
+//                //create an annotation, add it to the map, and store it in the array
+//                ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
+//                [_mapView addAnnotation:annotation];
+//                [annotation release];
+//                
+//                CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+//                CLLocation *location = [[CLLocation alloc] initWithLatitude:artLocation.latitude longitude:artLocation.longitude];
+//                [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+//                    if (error){
+//                        DebugLog(@"Error durring reverse geocode");
+//                    }
+//                    
+//                    if (placemarks.count > 0) {
+//                        _locationString = [[NSString alloc] initWithString:[[placemarks objectAtIndex:0] name]];
+//                        [self.tableView reloadData];
+//                    }
+//                    
+//                }];
+//                
+//            }
+//            
+//            break;
+//        }
+//        default:
+//            break;
+//    }
     
     [self.navigationController popViewControllerAnimated:YES];
 }

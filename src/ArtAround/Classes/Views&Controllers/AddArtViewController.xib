@@ -138,6 +138,7 @@
 								<double key="IBUIImageEdgeInsets.bottom">0.0</double>
 								<double key="IBUIImageEdgeInsets.left">-23</double>
 								<double key="IBUIImageEdgeInsets.right">0.0</double>
+								<int key="IBUILineBreakMode">4</int>
 								<string key="IBUINormalTitle">Current location</string>
 								<object class="NSColor" key="IBUIHighlightedTitleColor">
 									<int key="NSColorSpace">1</int>

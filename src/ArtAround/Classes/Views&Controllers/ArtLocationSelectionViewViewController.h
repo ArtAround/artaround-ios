@@ -12,22 +12,24 @@
 
 typedef enum _LocationSelection {
     LocationSelectionUserLocation = 0,
-    LocationSelectionPhotoLocation = 1
+    LocationSelectionPhotoLocation = 1,
+    LocationSelectionManualLocation = 2
 } LocationSelection;
 
 @protocol ArtLocationSelectionViewViewControllerDelegate;
 
-@interface ArtLocationSelectionViewViewController : UIViewController
+@interface ArtLocationSelectionViewViewController : UIViewController <MKMapViewDelegate>
 {
     ArtAnnotation *_annotation;
 }
 @property LocationSelection selection;
-@property (assign, nonatomic) CLLocation *location, *geotagLocation;
+@property (assign, nonatomic) CLLocation *location, *geotagLocation, *selectedLocation;
 @property (assign, nonatomic) id <ArtLocationSelectionViewViewControllerDelegate> delegate;
 @property (retain, nonatomic) IBOutlet UIButton *currentLocationButton;
 @property (retain, nonatomic) IBOutlet UIButton *geotagButton;
 @property (retain, nonatomic) IBOutlet UIButton *doneButton;
 @property (retain, nonatomic) IBOutlet MKMapView *mapView;
+@property (retain, nonatomic) IBOutlet UILabel *locationLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil geotagLocation:(CLLocation*)newGeotagLocation;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil geotagLocation:(CLLocation*)newGeotagLocation delegate:(id <ArtLocationSelectionViewViewControllerDelegate>)myDelegate currentLocationSelection:(LocationSelection)selectedLocation;

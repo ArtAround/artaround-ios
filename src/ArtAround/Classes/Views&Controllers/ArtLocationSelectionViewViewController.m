@@ -8,6 +8,7 @@
 
 #import "ArtLocationSelectionViewViewController.h"
 #import "ArtAnnotationView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface ArtLocationSelectionViewViewController ()
 - (void) doneButonPressed;
@@ -20,9 +21,11 @@
 @synthesize geotagButton;
 @synthesize doneButton;
 @synthesize mapView;
+@synthesize locationLabel;
 @synthesize delegate;
 @synthesize location, geotagLocation;
 @synthesize selection = _selection;
+@synthesize selectedLocation = _selectedLocation;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -70,16 +73,20 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    [self.locationLabel.layer setShadowColor:[UIColor blackColor].CGColor];
+    
     if (self.geotagLocation) {
         self.geotagLocation = [[CLLocation alloc] initWithLatitude:geotagLocation.coordinate.latitude longitude:geotagLocation.coordinate.longitude];
         
         //enable/disable geotag button
         [self.geotagButton setEnabled:YES];
+        
     }
     else {
         self.geotagLocation = nil;
         //enable/disable geotag button
         [self.geotagButton setEnabled:NO];
+        [self.geotagButton setBackgroundColor:[UIColor colorWithWhite:0.95 alpha:0.7f]];
     }
     
     //setup save button
@@ -98,6 +105,9 @@
     [backButton setBackgroundImage:backButtonImage forState:UIControlStateNormal];
     UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
     [self.navigationItem setLeftBarButtonItem:backButtonItem];
+    
+    //map delegate
+    [self.mapView setDelegate:self];
 
 }
 
@@ -112,6 +122,7 @@
     [geotagButton release];
     [doneButton release];
     [mapView release];
+    [locationLabel release];
     [super dealloc];
 }
 - (void)viewDidUnload {
@@ -119,6 +130,7 @@
     [self setGeotagButton:nil];
     [self setDoneButton:nil];
     [self setMapView:nil];
+    [self setLocationLabel:nil];
     [super viewDidUnload];
 }
 - (IBAction)buttonPressed:(id)sender {
@@ -157,8 +169,6 @@
             self.currentLocationButton.selected = YES;
             
             if (self.location) {
-                _annotation = [[ArtAnnotation alloc] initWithCoordinate:self.location.coordinate title:@"" subtitle:@""];
-                [self.mapView addAnnotation:_annotation];
                 
                 //get the user location
                 CLLocationCoordinate2D theLocation = self.location.coordinate;
@@ -174,19 +184,17 @@
                 region.center=theLocation;
                 
                 //zoom/pan the map on the user location
-                [self.mapView setRegion:region animated:TRUE];
+                [self.mapView setRegion:region animated:YES];
                 [self.mapView regionThatFits:region];
                 
-                break;
             }
+            break;
         }
         case LocationSelectionPhotoLocation:
         {
             self.geotagButton.selected = YES;
             
             if (self.geotagLocation) {
-                _annotation = [[ArtAnnotation alloc] initWithCoordinate:self.geotagLocation.coordinate title:@"" subtitle:@""];
-                [self.mapView addAnnotation:_annotation];
                 
                 //get the user location
                 CLLocationCoordinate2D theLocation = self.geotagLocation.coordinate;
@@ -202,15 +210,58 @@
                 region.center=theLocation;
                 
                 //zoom/pan the map on the user location
-                [self.mapView setRegion:region animated:TRUE];
+                [self.mapView setRegion:region animated:YES];
                 [self.mapView regionThatFits:region];
+                
             }
             
+            break;
+        }
+        case LocationSelectionManualLocation:
+        {
+            //get the selected location
+            CLLocationCoordinate2D theLocation = self.selectedLocation.coordinate;
+            
+            //set the span
+            MKCoordinateSpan span;
+            span.latitudeDelta = 0.003f;
+            span.longitudeDelta = 0.003f;
+            
+            //set the region
+            MKCoordinateRegion region;
+            region.span=span;
+            region.center=theLocation;
+            
+            //zoom/pan the map on the user location
+            [self.mapView setRegion:region animated:NO];
+            [self.mapView regionThatFits:region];
+            
+            self.currentLocationButton.selected = NO;
+            self.currentLocationButton.selected = NO;
             break;
         }
         default:
             break;
     }
+    
+    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
+    [geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (error){
+            DebugLog(@"Error durring reverse geocode");
+        }
+        
+        if (placemarks.count > 0) {
+            [self.locationLabel setText:[[placemarks objectAtIndex:0] name]];
+            [self.locationLabel setAlpha:1.0f];
+        }
+        else {
+            [self.locationLabel setAlpha:0.0f];
+        }
+        
+    }];
     
 }
 
@@ -260,6 +311,30 @@
     
 	//something must have gone wrong
 	return nil;
+}
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    
+    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
+    [geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (error){
+            DebugLog(@"Error durring reverse geocode");
+        }
+        
+        if (placemarks.count > 0) {
+            [self.locationLabel setText:[[placemarks objectAtIndex:0] name]];
+            [self.locationLabel setAlpha:1.0f];
+        }
+        else {
+            [self.locationLabel setAlpha:0.0f];
+        }
+        
+    }];
+    
 }
 
 @end

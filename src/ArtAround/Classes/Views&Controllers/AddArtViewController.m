@@ -256,9 +256,16 @@
 - (void) locationButtonPressed
 {
     
-    ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:(_usingPhotoGeotag) ? LocationSelectionPhotoLocation : LocationSelectionUserLocation currentLocation:_currentLocation];
-    
+    ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
+
     [self.navigationController pushViewController:locationController animated:YES];
+    
+    if (_selectedLocation) {
+        [locationController setSelectedLocation:_selectedLocation];
+        [locationController setSelection:LocationSelectionManualLocation];
+    }
+    else
+        [locationController setSelectedLocation:_currentLocation];
     
     
 }
@@ -1318,20 +1325,39 @@
 #pragma mark - ArtLocationSelectionDelegate
 - (void) locationSelectionViewController:(ArtLocationSelectionViewViewController *)controller selected:(LocationSelection)selection
 {
-    switch (selection) {
-        case LocationSelectionUserLocation:
-            _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
-            [self.locationButton setTitle:@"Current Location" forState:UIControlStateNormal];
-            _usingPhotoGeotag = NO;
-            break;
-        case LocationSelectionPhotoLocation:
-            _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
-            [self.locationButton setTitle:@"Photo Location" forState:UIControlStateNormal];            
-            _usingPhotoGeotag = YES;
-            break;
-        default:
-            break;
-    }
+    _selectedLocation = [[CLLocation alloc] initWithLatitude:controller.selectedLocation.coordinate.latitude longitude:controller.selectedLocation.coordinate.longitude];
+    
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
+    [geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (error){
+            DebugLog(@"Error durring reverse geocode");
+        }
+        
+        if (placemarks.count > 0) {
+            [self.locationButton setTitle:[[placemarks objectAtIndex:0] name] forState:UIControlStateNormal];
+            [self.locationButton setImage:nil forState:UIControlStateNormal];
+            [self.locationButton setImageEdgeInsets:UIEdgeInsetsZero];
+            [self.locationButton setContentEdgeInsets:UIEdgeInsetsZero];
+            [self.locationButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 5.0f, 0, 20.0f)];
+        }
+        
+    }];
+
+//    switch (selection) {
+//        case LocationSelectionUserLocation:
+//            _selectedLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
+//            [self.locationButton setTitle:@"Current Location" forState:UIControlStateNormal];
+//            _usingPhotoGeotag = NO;
+//            break;
+//        case LocationSelectionPhotoLocation:
+//            _selectedLocation = [[CLLocation alloc] initWithLatitude:_imageLocation.coordinate.latitude longitude:_imageLocation.coordinate.longitude];
+//            [self.locationButton setTitle:@"Photo Location" forState:UIControlStateNormal];            
+//            _usingPhotoGeotag = YES;
+//            break;
+//        default:
+//            break;
+//    }
     
     [self.navigationController popViewControllerAnimated:YES];
 }
