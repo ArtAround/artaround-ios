@@ -115,8 +115,22 @@ static Utilities *_kSharedInstance = nil;
 
     region.span = MKCoordinateSpanMake(fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier, fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier);
     
+    //male sure lat and long delta aren't 0
+    if (region.span.longitudeDelta == 0) {
+        region.span.longitudeDelta = 0.001;
+    }
+    if (region.span.latitudeDelta == 0) {
+        region.span.latitudeDelta = 0.001;
+    }
+    
     if (region.span.longitudeDelta < 60)
         region = [mapView regionThatFits:region];
+    else {
+        region.center.latitude = 40;
+        region.center.longitude = -99;
+        region.span.longitudeDelta = 30.0f;
+        region.span.latitudeDelta = 30.0f;
+    }
     
     [mapView setRegion:region animated:YES];
 }

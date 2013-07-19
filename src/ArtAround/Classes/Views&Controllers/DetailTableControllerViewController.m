@@ -98,7 +98,7 @@ static const float _kRowBufffer = 20.0f;
     //setup the map view
     _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, _kMapPadding, self.tableView.frame.size.width - (_kMapPadding * 2), _kMapHeight)];
     [_mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-    [_mapView setShowsUserLocation:YES];
+    [_mapView setShowsUserLocation:NO];
     [_mapView setDelegate:self];
     [_mapView.layer setBorderColor:[UIColor colorWithWhite:0.8 alpha:1.0f].CGColor];
     [_mapView.layer setBorderWidth:5.0f];
