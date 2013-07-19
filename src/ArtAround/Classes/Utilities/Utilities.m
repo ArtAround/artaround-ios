@@ -290,6 +290,12 @@ static Utilities *_kSharedInstance = nil;
 	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0");
 }
 
+//determines if the current iOS is 5.0 or higher
++ (BOOL) is6OrHigher
+{
+	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0");
+}
+
 //determins if the screen is retina
 + (BOOL) isRetinaDisplay
 {

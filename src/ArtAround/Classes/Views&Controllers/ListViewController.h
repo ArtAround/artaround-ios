@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ArtListViewCell.h"
-//#import <CoreLocation/CoreLocation.h>
+#import <CoreLocation/CoreLocation.h>
 
 @protocol ListViewControllerDelegate;
 

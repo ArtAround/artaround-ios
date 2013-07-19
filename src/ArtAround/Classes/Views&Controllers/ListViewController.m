@@ -8,7 +8,6 @@
 
 #import "ListViewController.h"
 #import "Art.h"
-#import "DetailViewController.h"
 #import "Utilities.h"
 #import <QuartzCore/QuartzCore.h>
 

@@ -14,6 +14,9 @@
 #import "SearchTableViewController.h"
 #import "ArtLocationSelectionViewViewController.h"
 #import "AddCommentViewController.h"
+#import "FBConnect.h"
+#import "ArtAroundAppDelegate.h"
+#import <MessageUI/MessageUI.h>
 
 @class Art;
 
@@ -25,6 +28,12 @@
 #define _kAddImageTagBase 2000
 #define _kAddImageButtonTag 3333
 #define kHorizontalPadding 10.0f
+
+typedef enum AAShareType {
+	AAShareTypeEmail = 0,
+    AAShareTypeTwitter = 1,
+	AAShareTypeFacebook = 2
+} AAShareType;
 
 typedef enum _ArtDetailRow {
     ArtDetailRowPhotos = 0,
@@ -43,7 +52,7 @@ typedef enum _ArtDetailRow {
     ArtDetailRowAddComment = 13
 } ArtDetailRow;
 
-@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate>
+@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate, MFMailComposeViewControllerDelegate, FBDialogDelegate>
 {
     int                     _addedImageCount;
     BOOL                    _inEditMode, _usingPhotoGeotag;
@@ -57,6 +66,8 @@ typedef enum _ArtDetailRow {
     MKMapView*              _mapView;
     NSString*               _yearString, *_locationString;
     CLLocation*             _selectedLocation;
+    Facebook*               _facebook;
+    ArtAroundAppDelegate*   _appDelegate;
     
     //inputs
     UIScrollView*           _photosScrollView;

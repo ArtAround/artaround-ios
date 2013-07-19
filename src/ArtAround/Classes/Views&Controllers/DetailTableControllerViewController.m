@@ -7,7 +7,6 @@
 //
 
 #import "DetailTableControllerViewController.h"
-#import "ArtAroundAppDelegate.h"
 #import "Art.h"
 #import "Photo.h"
 #import "Category.h"
@@ -16,6 +15,7 @@
 #import "AAAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <Social/Social.h>
 #import "Utilities.h"
 #import "SearchItem.h"
 #import "ArtParser.h"
@@ -55,6 +55,13 @@ static const float _kRowBufffer = 20.0f;
 - (void)photoUploadCompleted:(NSDictionary*)responseDict;
 - (void)photoUploadFailed:(NSDictionary*)responseDict;
 - (void)setArt:(Art *)art forceDownload:(BOOL)force;
+- (NSString *)shareURL;
+- (NSString *)shareMessage;
+- (void)showFBDialog;
+- (void)shareOnFacebook;
+- (void)shareOnTwitter;
+- (void)shareViaEmail;
+- (void)shareButtonTapped;
 @end
 
 @implementation DetailTableControllerViewController
@@ -95,6 +102,23 @@ static const float _kRowBufffer = 20.0f;
 {
     [super viewDidLoad];
     
+    //nav bar buttons
+    UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];
+    [backButton addTarget:self.navigationController action:@selector(popToRootViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setContentMode:UIViewContentModeCenter];
+    [backButton setImage:backButtonImage forState:UIControlStateNormal];
+    UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backButtonItem];
+    
+    UIImage *shareButtonImage = [UIImage imageNamed:@"shareIcon.png"];
+    UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, shareButtonImage.size.width + 10.0f, shareButtonImage.size.height)];
+    [shareButton addTarget:self action:@selector(shareButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [shareButton setContentMode:UIViewContentModeCenter];
+    [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
+    UIBarButtonItem *shareButtonItem = [[UIBarButtonItem alloc] initWithCustomView:shareButton];
+    [self.navigationItem setRightBarButtonItem:shareButtonItem];
+    
     //setup the map view
     _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(_kMapPadding, _kMapPadding, self.tableView.frame.size.width - (_kMapPadding * 2), _kMapHeight)];
     [_mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
@@ -107,27 +131,7 @@ static const float _kRowBufffer = 20.0f;
     _locationString = @"";
     _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
     _currentLocation = [_mapView.userLocation.location retain];
-    
-    //download the full art object
-//    if (_art) {
-//        //get the comments for this art
-//        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:NO];
-//    }
-    
-    //add the annotation for the art
-//	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
-//		
-//		//setup the coordinate
-//		CLLocationCoordinate2D artLocation;
-//		artLocation.latitude = [_art.latitude doubleValue];
-//		artLocation.longitude = [_art.longitude doubleValue];
-//		
-//		//create an annotation, add it to the map, and store it in the array
-//		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:_art.title subtitle:_art.artist];
-//		[_mapView addAnnotation:annotation];
-//		[annotation release];
-//
-//	}
+
     
     //setup the images scroll view
     _photosScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, _kPhotoScrollerHeight)];
@@ -141,10 +145,7 @@ static const float _kRowBufffer = 20.0f;
     //year formatter
     _yearFormatter = [[NSDateFormatter alloc] init];
     [_yearFormatter setDateFormat:@"yyyy"];
-    
-    //setup images
-//    [self setupImages];
-    
+
     //footer view
     _footerView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 35.0f)];
     [_footerView setBackgroundColor:[UIColor clearColor]];
@@ -1882,6 +1883,32 @@ static const float _kRowBufffer = 20.0f;
             
             break;
         }
+        case _kShareActionSheet:
+        {
+            //decide what to do based on the button index
+            switch (buttonIndex) {
+                    
+                    //share via email
+                case AAShareTypeEmail:
+                    [self shareViaEmail];
+                    break;
+                    
+                    //share via twitter
+                case AAShareTypeTwitter:
+                    [self shareOnTwitter];
+                    break;
+                    
+                    //share via facebook
+                case AAShareTypeFacebook:
+                    [self shareOnFacebook];
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            break;
+        }
         default:
             break;
     }
@@ -2278,6 +2305,153 @@ static const float _kRowBufffer = 20.0f;
     //get the comments for this art
     [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:YES];
     
+}
+
+#pragma mark - Share
+
+- (void)shareButtonTapped
+{
+    if ([Utilities is6OrHigher]) {
+        
+        //get the share title and url
+        NSString *shareTitle = [self shareMessage];
+        NSURL *shareURL = [NSURL URLWithString:[self shareURL]];
+        NSArray *shareItems = nil;
+        if (shareTitle && shareURL) {
+            shareItems = [NSArray arrayWithObjects:shareTitle, shareURL, nil];
+        } else if (shareURL) {
+            shareItems = [NSArray arrayWithObjects:shareURL, nil];
+        }
+        
+        //show the share view
+        if (shareItems) {
+            UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
+            [activityController setExcludedActivityTypes:[NSArray arrayWithObject:UIActivityTypeSaveToCameraRoll]];
+            [self presentViewController:activityController animated:YES completion:nil];
+        }
+        
+    }
+    else {
+        //show an action sheet with the various sharing types
+        UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", @"Facebook", nil];
+        [shareSheet setTag:_kShareActionSheet];
+        [shareSheet showInView:self.view];
+        [shareSheet release];
+    }
+}
+
+- (void)shareViaEmail
+{
+	if ([MFMailComposeViewController canSendMail]) {
+		
+		//present the mail composer
+		MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
+		mailController.mailComposeDelegate = self;
+		[mailController setSubject:@"Art Around"];
+		[mailController setMessageBody:[self shareMessage] isHTML:NO];
+		[self presentModalViewController:mailController animated:YES];
+		[mailController release];
+		
+	} else {
+		
+		//this device can't send email
+		UIAlertView *emailAlert = [[UIAlertView alloc] initWithTitle:@"Email Error" message:@"This device is not configured to send email." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+		[emailAlert show];
+		[emailAlert release];
+		
+	}
+}
+
+- (void)shareOnTwitter
+{
+	//share on twitter in the browser
+	NSString *twitterShare = [NSString stringWithFormat:@"http://twitter.com/share?text=%@", [[self shareMessage] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:twitterShare]];
+}
+
+
+- (void)shareOnFacebook
+{
+	//do we have a reference to the facebook object?
+	if (!_facebook) {
+		
+		//get a reference to the facebook object
+		_facebook = _appDelegate.facebook;
+        
+		
+		//make sure the access token is properly set if we previously saved it
+		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+		NSString *accessToken = [prefs stringForKey:@"FBAccessTokenKey"];
+		NSDate *expirationDate = [prefs objectForKey:@"FBExpirationDateKey"];
+		[_facebook setAccessToken:accessToken];
+		[_facebook setExpirationDate:expirationDate];
+		
+	}
+	
+	//make sure we have a valid reference to the facebook object
+	if (!_facebook) {
+		[_appDelegate fbDidNotLogin:NO];
+		return;
+	}
+	
+	//make sure we are authorized
+	if (![_facebook isSessionValid]) {
+		NSArray* permissions =  [NSArray arrayWithObjects:@"publish_stream", nil];
+		[_facebook authorize:permissions];
+	} else {
+		[self showFBDialog];
+	}
+}
+
+- (void)showFBDialog
+{
+	//make sure we have a valid reference to the facebook object
+	if (!_facebook) {
+		[_appDelegate fbDidNotLogin:NO];
+		return;
+	}
+	
+	//grab the first photo
+	NSString *photoURL = @"";
+	if (_art.photos && [_art.photos count] > 0) {
+		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
+		photoURL = photo.thumbnailSource;
+	}
+	
+	//setup the parameters with info about this art
+	NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								   @"Share on Facebook",  @"user_message_prompt",
+								   [self shareURL], @"link",
+								   photoURL, @"picture",
+								   nil];
+	
+	//show the share dialog
+	[_facebook dialog:@"feed" andParams:params andDelegate:self];
+}
+
+- (NSString *)shareMessage
+{
+	return [NSString stringWithFormat:@"Art Around: %@", [self shareURL]];
+}
+
+- (NSString *)shareURL
+{
+	return [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug];
+}
+
+#pragma mark - FBDialogDelegate
+
+- (void)dialogDidSucceed:(FBDialog*)dialog
+{
+	if ([dialog class] == [FBLoginDialog class]) {
+		[self showFBDialog];
+	}
+}
+
+#pragma mark - MFMailComposerDelegate
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 @end

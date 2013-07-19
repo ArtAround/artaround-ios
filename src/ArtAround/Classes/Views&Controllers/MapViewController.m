@@ -15,8 +15,6 @@
 #import "ArtAnnotationView.h"
 #import "CalloutAnnotationView.h"
 #import "Category.h"
-#import "DetailViewController.h"
-#import "AddDetailViewController.h"
 #import "QuartzCore/CALayer.h"
 #import "AddArtViewController.h"
 #import "DetailTableControllerViewController.h"
@@ -278,21 +276,11 @@ static const int _kAnnotationLimit = 9999;
 {
 	//make sure there is an item to select in the array
 	//don't add another detail controller if one is already displayed
-	if ([_items count] > self.callout.tag && [self.navigationController.topViewController class] != [DetailViewController class]) {
+	if ([_items count] > self.callout.tag && [self.navigationController.topViewController class] != [DetailTableControllerViewController class]) {
 		
 		//get the selected art piece
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
-//        //pass it along to a new detail controller and push it the navigation controller
-//		DetailViewController *detailController = [[DetailViewController alloc] init];
-//		[self.navigationController pushViewController:detailController animated:YES];
-//        
-//        //set the location coord to the user's location and the art selected
-//        detailController.currentLocation = self.mapView.map.userLocation.location;
-//        [detailController setArt:selectedArt withTemplate:nil];
-//        
-//		[detailController release];
-
 		//pass it along to a new detail controller and push it the navigation controller
         DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
         [self.navigationController pushViewController:detailController animated:YES];
@@ -508,27 +496,6 @@ static const int _kAnnotationLimit = 9999;
             annotationIndex = i;
 		
 	}
-	
-    //find center of annotations
-    /*if (_items.count > 0) {
-        
-        MKCoordinateRegion region;
-		region.center.latitude = topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5;
-		region.center.longitude = topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5;
-        
-		//adjust the annotation padding depending on the zoom level
-		int offset = bottomRightCoord.longitude - topLeftCoord.longitude;
-		float multiplier = (offset > 30) ? 1.1 : 1.4;
-		
-		region.span.latitudeDelta = fabsf(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier; // Add a little extra space on the sides
-		region.span.longitudeDelta = fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier; // Add a little extra space on the sides
-		
-		region = [_mapView.map regionThatFits:region];
-        if (offset < 200)
-            [_mapView.map setRegion:region animated:YES];
-    }*/
-    
-    //setup map region
     
 	//add annotations
 	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];

@@ -69,6 +69,7 @@
 		46B357AD1763E407006663AA /* ArtLocationSelectionViewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */; };
 		46B357B017641EC7006663AA /* closeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AE17641EC7006663AA /* closeIcon.png */; };
 		46B357B117641EC7006663AA /* closeIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 46B357AF17641EC7006663AA /* closeIcon@2x.png */; };
+		46FE7DDA1798CF6B0073A550 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE7DD91798CF6B0073A550 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5F7A24A4150CF8A100101598 /* EventParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7A24A3150CF8A100101598 /* EventParser.m */; };
 		5F7A24BD150D501400101598 /* PinEvent.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F7A24B9150D500F00101598 /* PinEvent.png */; };
 		5F7A24BE150D501400101598 /* PinEventPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F7A24BA150D501000101598 /* PinEventPressed.png */; };
@@ -306,6 +307,7 @@
 		46B357AB1763E407006663AA /* ArtLocationSelectionViewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArtLocationSelectionViewViewController.xib; sourceTree = "<group>"; };
 		46B357AE17641EC7006663AA /* closeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeIcon.png; sourceTree = "<group>"; };
 		46B357AF17641EC7006663AA /* closeIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeIcon@2x.png"; sourceTree = "<group>"; };
+		46FE7DD91798CF6B0073A550 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		5F7A24A2150CF8A100101598 /* EventParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParser.h; sourceTree = "<group>"; };
 		5F7A24A3150CF8A100101598 /* EventParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParser.m; sourceTree = "<group>"; };
 		5F7A24A6150CF98000101598 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
@@ -541,6 +543,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46FE7DDA1798CF6B0073A550 /* Social.framework in Frameworks */,
 				46745F76175A725100403810 /* AssetsLibrary.framework in Frameworks */,
 				5FAA82A8150BB35B005842BF /* CoreLocation.framework in Frameworks */,
 				C9722EBA14CD19D600FC42E9 /* libz.1.2.5.dylib in Frameworks */,
@@ -1066,6 +1069,7 @@
 		CA5E10CB1405F0520075DAB8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				46FE7DD91798CF6B0073A550 /* Social.framework */,
 				46745F75175A725100403810 /* AssetsLibrary.framework */,
 				CAECF77814073D9100CD9A95 /* CFNetwork.framework */,
 				CA5E10D21405F0520075DAB8 /* CoreData.framework */,

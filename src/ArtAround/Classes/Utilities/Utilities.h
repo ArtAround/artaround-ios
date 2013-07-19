@@ -69,6 +69,7 @@ typedef enum {
 - (void)startActivity;
 - (void)stopActivity;
 + (BOOL) is5OrHigher;
++ (BOOL) is6OrHigher;
 + (BOOL) isRetinaDisplay;
 + (BOOL)isNewHardware;
 + (void)showLogoView:(BOOL)show inNavigationBar:(UINavigationBar *)navBar;
