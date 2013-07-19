@@ -71,14 +71,17 @@
     //setup saved field values
     if ([Utilities instance].commentName && [Utilities instance].commentName.length > 0) {
         self.nameField.text = [Utilities instance].commentName;
+        [_commentDictionary setObject:[Utilities instance].commentName forKey:@"name"];
     }
     
     if ([Utilities instance].commentEmail && [Utilities instance].commentEmail.length > 0) {
         self.emailField.text = [Utilities instance].commentEmail;
+        [_commentDictionary setObject:[Utilities instance].commentEmail forKey:@"email"];
     }
     
     if ([Utilities instance].commentUrl && [Utilities instance].commentUrl.length > 0) {
         self.urlField.text = [Utilities instance].commentUrl;
+        [_commentDictionary setObject:[Utilities instance].commentUrl forKey:@"url"];
     }
     
     //setup back button

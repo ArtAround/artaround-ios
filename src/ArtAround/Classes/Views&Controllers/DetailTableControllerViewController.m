@@ -1148,8 +1148,12 @@ static const float _kRowBufffer = 20.0f;
             }
             else {
                 cell.textLabel.text = [NSString stringWithFormat:@"Comments (%i)", _art.comments.count];
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                
+                if (_art.comments.count > 0) {
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                }
+                
             }
             break;
         }
@@ -1322,8 +1326,11 @@ static const float _kRowBufffer = 20.0f;
         switch (indexPath.row) {
             case ArtDetailRowComments:
             {
-                CommentsTableViewController *commentsVC = [[CommentsTableViewController alloc] initWithStyle:UITableViewStylePlain comments:[_art.comments allObjects]];
-                [self.navigationController pushViewController:commentsVC animated:YES];
+                if (_art.comments.count > 0) {
+                    CommentsTableViewController *commentsVC = [[CommentsTableViewController alloc] initWithStyle:UITableViewStylePlain comments:[_art.comments allObjects]];
+                    [self.navigationController pushViewController:commentsVC animated:YES];
+                }
+                
                 break;
             }
             case ArtDetailRowAddComment:

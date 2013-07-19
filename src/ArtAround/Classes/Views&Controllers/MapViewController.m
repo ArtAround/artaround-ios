@@ -644,7 +644,7 @@ static const int _kAnnotationLimit = 9999;
 {
    
     if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
-        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
+//        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
         _foundUser = YES;
     }
     

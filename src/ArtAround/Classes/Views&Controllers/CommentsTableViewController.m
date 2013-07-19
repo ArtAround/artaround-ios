@@ -24,7 +24,7 @@
         // Custom initialization
         _comments = [[NSArray alloc] initWithArray:theComments];
         _dateFormatter = [[NSDateFormatter alloc] init];
-        [_dateFormatter setDateFormat:@"M d, yyyy"];
+        [_dateFormatter setDateFormat:@"MMM d, yyyy"];
         
         [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     }
@@ -44,11 +44,7 @@
     UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
     [self.navigationItem setLeftBarButtonItem:backButtonItem];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
  
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -80,6 +76,12 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
         cell.detailTextLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.backgroundColor = [UIColor clearColor];
+        
+        cell.textLabel.textColor = [UIColor colorWithWhite:0.1 alpha:1.0];
+        cell.detailTextLabel.textColor = [UIColor grayColor];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:13.0f];
+        
     }
     else if (!cell && indexPath.row == 1) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -89,6 +91,10 @@
         [sep setBackgroundColor:[UIColor grayColor]];
         [sep setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
         [cell addSubview:sep];
+        
+        cell.textLabel.textColor = [UIColor colorWithWhite:0.2 alpha:1.0];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f];
+        cell.textLabel.numberOfLines = 0;
     }
     
     if (indexPath.row == 0) {
@@ -103,6 +109,24 @@
     cell.contentView.backgroundColor = (indexPath.section % 2 == 0) ? [UIColor colorWithRed:(244.0f/255.0f) green:(244.0f/255.0f) blue:(244.0f/255.0f) alpha:1.0f] : [UIColor whiteColor];
     
     return cell;
+}
+
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 0) {
+        
+        return 25.0f;
+        
+    }
+    else {
+        
+        NSString *text = [(Comment*)[_comments objectAtIndex:indexPath.section] text];
+        CGSize reqSize = [text sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f] constrainedToSize:CGSizeMake(300.0f, 1000.0f)];
+        return reqSize.height + 10.0f;
+        
+    }
+    
+    return 0;
 }
 
 /*
