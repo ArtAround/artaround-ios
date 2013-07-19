@@ -111,12 +111,13 @@ static Utilities *_kSharedInstance = nil;
 	
 	//adjust the annotation padding depending on the zoom level
 	int offset = bottomRightCoord.longitude - topLeftCoord.longitude;
-	float multiplier = (offset > 30) ? 1.1 : 1.4;
-	
-    region.span.latitudeDelta = fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier; // Add a little extra space on the sides
-    region.span.longitudeDelta = fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier; // Add a little extra space on the sides
+	float multiplier = (offset > 30) ? 1.1 : 1.4;    
+
+    region.span = MKCoordinateSpanMake(fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * multiplier, fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * multiplier);
     
-    region = [mapView regionThatFits:region];
+    if (region.span.longitudeDelta < 60)
+        region = [mapView regionThatFits:region];
+    
     [mapView setRegion:region animated:YES];
 }
 

@@ -510,7 +510,7 @@ static const int _kAnnotationLimit = 9999;
 	}
 	
     //find center of annotations
-    if (_items.count > 0) {
+    /*if (_items.count > 0) {
         
         MKCoordinateRegion region;
 		region.center.latitude = topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5;
@@ -526,7 +526,7 @@ static const int _kAnnotationLimit = 9999;
 		region = [_mapView.map regionThatFits:region];
         if (offset < 200)
             [_mapView.map setRegion:region animated:YES];
-    }
+    }*/
     
     //setup map region
     
@@ -543,6 +543,9 @@ static const int _kAnnotationLimit = 9999;
         if (filteredAnnotations.count > 0)
             [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
     }
+    
+    //set map region
+    [Utilities zoomToFitMapAnnotations:_mapView.map];
 }
 
 #pragma mark - MKMapViewDelegate
