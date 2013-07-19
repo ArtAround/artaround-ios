@@ -810,8 +810,8 @@ static const float _kRowBufffer = 20.0f;
                             _urlTextField.backgroundColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
                             _urlTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
                             _urlTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-//                            if (_art.artist && _art.artist.length)
-//                                _urlTextField.text = _art.artist;
+                            if (_art.website && _art.website.length)
+                                _urlTextField.text = _art.website;
                             _urlTextField.tag = 5;
                         }
                         
