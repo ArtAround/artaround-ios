@@ -80,6 +80,15 @@
     if ([Utilities instance].commentUrl && [Utilities instance].commentUrl.length > 0) {
         self.urlField.text = [Utilities instance].commentUrl;
     }
+    
+    //setup back button
+    UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];
+    [backButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setImage:backButtonImage forState:UIControlStateNormal];
+    [backButton setContentMode:UIViewContentModeCenter];
+    UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backButtonItem];
 }
 
 - (void)didReceiveMemoryWarning

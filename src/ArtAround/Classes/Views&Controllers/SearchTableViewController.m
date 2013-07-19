@@ -42,9 +42,27 @@
     //add the save button if there's no back button
     if (!self.navigationItem.backBarButtonItem) {
         
-        UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)];
+        //setup back button
+        UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
+        UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];
+        [backButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+        [backButton setImage:backButtonImage forState:UIControlStateNormal];
+        [backButton setContentMode:UIViewContentModeCenter];
+        UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+        [self.navigationItem setLeftBarButtonItem:backButtonItem];
         
-        self.navigationItem.rightBarButtonItem = saveButton;
+        //setup save button
+        UIButton *saveButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 55.0f, 30.0f)];
+        [saveButton addTarget:self action:@selector(saveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [saveButton setBackgroundColor:[UIColor colorWithRed:(241.0f/255.0f) green:(164.0f/255.0f) blue:(162.0f/255.0f) alpha:1.0f]];
+        [saveButton setTitle:@"Save" forState:UIControlStateNormal];
+        [saveButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f]];
+        UIBarButtonItem *saveButtonItem = [[UIBarButtonItem alloc] initWithCustomView:saveButton];
+        [self.navigationItem setRightBarButtonItem:saveButtonItem];
+        
+//        UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)];
+        
+        self.navigationItem.rightBarButtonItem = saveButtonItem;
     }
 }
 

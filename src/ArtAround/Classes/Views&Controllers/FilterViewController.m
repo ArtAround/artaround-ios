@@ -108,9 +108,24 @@ static NSArray *_kFilterTypes = nil;
     [super viewDidLoad];
 
 	//add a done button
-	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
-	self.navigationItem.rightBarButtonItem = doneButton;
-	[doneButton release];
+    //setup save button
+    UIButton *doneButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 55.0f, 30.0f)];
+    [doneButton addTarget:self action:@selector(doneButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [doneButton setBackgroundColor:[UIColor colorWithRed:(241.0f/255.0f) green:(164.0f/255.0f) blue:(162.0f/255.0f) alpha:1.0f]];
+    [doneButton setTitle:@"Done" forState:UIControlStateNormal];
+    [doneButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f]];
+    UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
+    [self.navigationItem setRightBarButtonItem:doneButtonItem];
+    
+    
+    //setup back button
+    UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];
+    [backButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setImage:backButtonImage forState:UIControlStateNormal];
+    [backButton setContentMode:UIViewContentModeCenter];
+    UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backButtonItem];
 	
 	//set the UINavigationControllerDelegate delegate
 	if (_isTopLevel) {

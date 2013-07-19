@@ -41,6 +41,8 @@ static const float _kRowBufffer = 20.0f;
 - (void)setupImages;
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row;
 - (void)editButtonPressed:(id)sender;
+- (void)favoriteButtonPressed:(id)sender;
+- (void)flagButtonPressed:(id)sender;
 - (void)editSubmitButtonPressed:(id)sender;
 - (void)editCancelButtonPressed:(id)sender;
 - (void)doneButtonPressed:(id)sender;
@@ -57,8 +59,8 @@ static const float _kRowBufffer = 20.0f;
 - (void)setArt:(Art *)art forceDownload:(BOOL)force;
 - (NSString *)shareURL;
 - (NSString *)shareMessage;
-- (void)showFBDialog;
-- (void)shareOnFacebook;
+//- (void)showFBDialog;
+//- (void)shareOnFacebook;
 - (void)shareOnTwitter;
 - (void)shareViaEmail;
 - (void)shareButtonTapped;
@@ -151,11 +153,34 @@ static const float _kRowBufffer = 20.0f;
     [_footerView setBackgroundColor:[UIColor clearColor]];
     
     //footer buttons
+    _favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_favoriteButton setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:0.9]];
+    [_favoriteButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateNormal];
+    [_favoriteButton setFrame:CGRectMake(0.0f, 0.0f, 50.0f, _footerView.frame.size.height)];
+    [_favoriteButton setImage:[UIImage imageNamed:@"favoriteItIcon_plus.png"] forState:UIControlStateNormal];
+    [_favoriteButton setImage:[UIImage imageNamed:@"favoriteItIcon_minus.png"] forState:UIControlStateSelected];
+    [_flagButton setContentMode:UIViewContentModeCenter];
+    [_favoriteButton setBackgroundImage:[UIImage imageNamed:@"toolbarBackground.png"] forState:UIControlStateHighlighted];
+    [_favoriteButton addTarget:self action:@selector(favoriteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    if ([_art.favorite boolValue]) {
+        [_favoriteButton setSelected:YES];
+    }
+
+    
+    _flagButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_flagButton setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:0.9]];
+    [_flagButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateNormal];
+    [_flagButton setFrame:CGRectMake(_footerView.frame.size.width - 50.0f, 0.0f, 50.0f, _footerView.frame.size.height)];
+    [_flagButton setBackgroundImage:[UIImage imageNamed:@"toolbarBackground.png"] forState:UIControlStateHighlighted];
+    [_flagButton setImage:[UIImage imageNamed:@"flagIcon.png"] forState:UIControlStateNormal];
+    [_flagButton setContentMode:UIViewContentModeCenter];
+    [_flagButton addTarget:self action:@selector(flagButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
     _editButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_editButton setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:0.9]];
     [_editButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateNormal];
     [_editButton setTitle:@"Edit" forState:UIControlStateNormal];
-    [_editButton setFrame:CGRectMake(0.0f, 0.0f, _footerView.frame.size.width, _footerView.frame.size.height)];
+    [_editButton setFrame:CGRectMake(50.0f, 0.0f, _footerView.frame.size.width-100.0f, _footerView.frame.size.height)];
     [_editButton setBackgroundImage:[UIImage imageNamed:@"toolbarBackground.png"] forState:UIControlStateHighlighted];
     [_editButton addTarget:self action:@selector(editButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -186,6 +211,8 @@ static const float _kRowBufffer = 20.0f;
     [_textDoneButton addTarget:self action:@selector(doneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     [_footerView addSubview:_editButton];
+    [_footerView addSubview:_flagButton];
+    [_footerView addSubview:_favoriteButton];
     [_footerView addSubview:_cancelEditButton];
     [_footerView addSubview:_submitEditButton];
     [_footerView addSubview:_textDoneButton];
@@ -331,11 +358,38 @@ static const float _kRowBufffer = 20.0f;
 
 
 #pragma mark - Button Pressed
+- (void)favoriteButtonPressed:(id)sender
+{
+    //switch the art's favorite property
+    [ArtParser setFavorite:![_art.favorite boolValue] forSlug:_art.slug];
+    
+    //merge context
+    [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+    
+    //update the button
+    [_favoriteButton setSelected:([_art.favorite boolValue])];
+    
+    //refresh the mapview so that the updated favorites are showing
+    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+    [appDelegate saveContext];
+    [appDelegate.mapViewController updateArt];
+}
+
+- (void)flagButtonPressed:(id)sender
+{
+    UIActionSheet *flagSheet = [[UIActionSheet alloc] initWithTitle:@"Flag Art" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Incorrect Info", @"Missing / Damaged", @"Duplicate", nil];
+    [flagSheet setTag:_kFlagActionSheet];
+    [flagSheet showInView:self.view];
+    [flagSheet release];
+}
+
 - (void)editButtonPressed:(id)sender
 {
     _inEditMode = !_inEditMode;
     
     _editButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
+    _flagButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
+    _favoriteButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
     _cancelEditButton.alpha = (_inEditMode) ? 1.0f : 0.0f;
     _submitEditButton.alpha = (_inEditMode) ? 1.0f : 0.0f;
     self.tableView.backgroundColor = (_inEditMode) ? kLightGray : [UIColor colorWithWhite:0.95f alpha:1.0f];
@@ -434,6 +488,8 @@ static const float _kRowBufffer = 20.0f;
     _inEditMode = !_inEditMode;
     
     _editButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
+    _flagButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
+    _favoriteButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
     _cancelEditButton.alpha = (_inEditMode) ? 1.0f : 0.0f;
     _submitEditButton.alpha = (_inEditMode) ? 1.0f : 0.0f;
     self.tableView.backgroundColor = (_inEditMode) ? kLightGray : [UIColor colorWithWhite:0.95f alpha:1.0f];
@@ -1567,6 +1623,7 @@ static const float _kRowBufffer = 20.0f;
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
 			[imageView.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
 			[imageView.layer setBorderWidth:6.0f];
+//            [imageView setAdjustsImageWhenHighlighted:NO];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
 			[imageView release];
@@ -1898,11 +1955,6 @@ static const float _kRowBufffer = 20.0f;
                     [self shareOnTwitter];
                     break;
                     
-                    //share via facebook
-                case AAShareTypeFacebook:
-                    [self shareOnFacebook];
-                    break;
-                    
                 default:
                     break;
             }
@@ -1938,6 +1990,9 @@ static const float _kRowBufffer = 20.0f;
     [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    
+    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [moderationComment show];
 }
 
 //unsuccessful submission
@@ -1946,6 +2001,9 @@ static const float _kRowBufffer = 20.0f;
     [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    
+    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Sorry! Something went wrong in the flag submission. Please try again." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [moderationComment show];
 }
 
 #pragma mark - Text View Delegate
@@ -2333,7 +2391,7 @@ static const float _kRowBufffer = 20.0f;
     }
     else {
         //show an action sheet with the various sharing types
-        UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", @"Facebook", nil];
+        UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", nil];
         [shareSheet setTag:_kShareActionSheet];
         [shareSheet showInView:self.view];
         [shareSheet release];
@@ -2370,7 +2428,7 @@ static const float _kRowBufffer = 20.0f;
 }
 
 
-- (void)shareOnFacebook
+/*- (void)shareOnFacebook
 {
 	//do we have a reference to the facebook object?
 	if (!_facebook) {
@@ -2401,9 +2459,9 @@ static const float _kRowBufffer = 20.0f;
 	} else {
 		[self showFBDialog];
 	}
-}
+}*/
 
-- (void)showFBDialog
+/*- (void)showFBDialog
 {
 	//make sure we have a valid reference to the facebook object
 	if (!_facebook) {
@@ -2427,7 +2485,7 @@ static const float _kRowBufffer = 20.0f;
 	
 	//show the share dialog
 	[_facebook dialog:@"feed" andParams:params andDelegate:self];
-}
+}*/
 
 - (NSString *)shareMessage
 {
@@ -2439,14 +2497,14 @@ static const float _kRowBufffer = 20.0f;
 	return [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug];
 }
 
-#pragma mark - FBDialogDelegate
-
-- (void)dialogDidSucceed:(FBDialog*)dialog
-{
-	if ([dialog class] == [FBLoginDialog class]) {
-		[self showFBDialog];
-	}
-}
+//#pragma mark - FBDialogDelegate
+//
+//- (void)dialogDidSucceed:(FBDialog*)dialog
+//{
+//	if ([dialog class] == [FBLoginDialog class]) {
+//		[self showFBDialog];
+//	}
+//}
 
 #pragma mark - MFMailComposerDelegate
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error

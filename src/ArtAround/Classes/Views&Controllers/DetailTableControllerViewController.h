@@ -72,7 +72,7 @@ typedef enum _ArtDetailRow {
     //inputs
     UIScrollView*           _photosScrollView;
     UITextField*            _artistTextField, *_titleTextField, *_urlTextField;
-    UIButton*               _locationButton, *_categoryButton, *_dateButton, *_editButton, *_cancelEditButton, *_submitEditButton, *_textDoneButton;
+    UIButton*               _locationButton, *_categoryButton, *_dateButton, *_editButton, *_cancelEditButton, *_submitEditButton, *_textDoneButton, *_favoriteButton, *_flagButton;
     UIBarButtonItem         *_doneButton;
     UIView*                 _footerView;
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
