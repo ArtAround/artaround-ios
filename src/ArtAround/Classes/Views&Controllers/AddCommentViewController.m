@@ -67,6 +67,19 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    //setup saved field values
+    if ([Utilities instance].commentName && [Utilities instance].commentName.length > 0) {
+        self.nameField.text = [Utilities instance].commentName;
+    }
+    
+    if ([Utilities instance].commentEmail && [Utilities instance].commentEmail.length > 0) {
+        self.emailField.text = [Utilities instance].commentEmail;
+    }
+    
+    if ([Utilities instance].commentUrl && [Utilities instance].commentUrl.length > 0) {
+        self.urlField.text = [Utilities instance].commentUrl;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -115,6 +128,12 @@
             
             return;
         }
+        
+        //save field values
+        [[Utilities instance] setCommentName:[_commentDictionary objectForKey:@"name"]];
+        [[Utilities instance] setCommentEmail:[_commentDictionary objectForKey:@"email"]];
+        if ([_commentDictionary objectForKey:@"url"] && [[_commentDictionary objectForKey:@"url"] length] > 0)
+            [[Utilities instance] setCommentUrl:[_commentDictionary objectForKey:@"url"]];
         
         //upload the comment
         [[AAAPIManager instance] uploadComment:_commentDictionary forSlug:_artSlug target:self callback:@selector(commentUploadCompleted:) failCallback:@selector(commentUploadFailed:)];

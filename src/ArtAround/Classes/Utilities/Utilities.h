@@ -58,8 +58,7 @@ typedef enum {
 
 @property (nonatomic, assign) FilterType selectedFilterType;
 @property (nonatomic, assign) NSDate *lastFlickrUpdate;
-@property (nonatomic, assign) NSString *photoAttributionText;
-@property (nonatomic, assign) NSString *photoAttributionURL;
+@property (nonatomic, assign) NSString *photoAttributionText, *photoAttributionURL, *commentName, *commentEmail, *commentUrl;
 @property (nonatomic, retain) NSDictionary *keysDict;
 @property BOOL hasLoadedBefore;
 

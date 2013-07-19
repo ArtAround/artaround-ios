@@ -19,7 +19,7 @@ static Utilities *_kSharedInstance = nil;
 @end
 
 @implementation Utilities
-@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, photoAttributionText = _photoAttributionText, photoAttributionURL = _photoAttributionURL;
+@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, photoAttributionText = _photoAttributionText, photoAttributionURL = _photoAttributionURL, commentName = _commentName, commentEmail = _commentEmail, commentUrl = _commentUrl;
 
 //singleton
 + (Utilities *)instance
@@ -160,7 +160,6 @@ static Utilities *_kSharedInstance = nil;
 
 }
 
-
 - (void) setPhotoAttributionURL:(NSString*)url
 {
     _photoAttributionURL = url;
@@ -172,6 +171,48 @@ static Utilities *_kSharedInstance = nil;
 - (NSString*)photoAttributionURL
 {
     return [_defaults objectForKey:@"AAPhotoAttributionURL"];
+}
+
+- (void) setCommentName:(NSString *)commentName
+{
+    _commentName = commentName;
+	[_defaults setObject:commentName forKey:@"AACommentName"];
+    [_defaults synchronize];
+    
+}
+
+- (NSString*)commentName
+{
+    return [_defaults objectForKey:@"AACommentName"];
+    
+}
+
+- (void) setCommentEmail:(NSString *)commentEmail
+{
+    _commentEmail = commentEmail;
+	[_defaults setObject:commentEmail forKey:@"AACommentEmail"];
+    [_defaults synchronize];
+    
+}
+
+- (NSString*)commentEmail
+{
+    return [_defaults objectForKey:@"AACommentEmail"];
+    
+}
+
+- (void) setCommentUrl:(NSString *)commentUrl
+{
+    _commentUrl = commentUrl;
+	[_defaults setObject:commentUrl forKey:@"AACommentUrl"];
+    [_defaults synchronize];
+    
+}
+
+- (NSString*)commentUrl
+{
+    return [_defaults objectForKey:@"AACommentUrl"];
+    
 }
 
 #pragma mark - Filter Methods
