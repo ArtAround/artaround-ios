@@ -392,11 +392,11 @@ static Utilities *_kSharedInstance = nil;
     
 }
 
-+ (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)label value:(NSInteger*)value
++ (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l
 {
     
     NSError *error;
-    [[GANTracker sharedTracker] trackEvent:event action:action label:nil value:0 withError:&error];    
+    [[GANTracker sharedTracker] trackEvent:event action:action label:l value:0 withError:&error];
     if (error)
         DebugLog(@"Page Tracking Error: %@", [error description]);
     

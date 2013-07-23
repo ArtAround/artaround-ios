@@ -297,6 +297,27 @@ static NSArray *_kFilterTypes = nil;
 - (void)doneButtonTapped
 {
 	[self.navigationController popToRootViewControllerAnimated:YES];
+    
+    //track event
+    NSString *filterName = @"none";
+    switch ([Utilities instance].selectedFilterType) {
+        case FilterTypeArtist:
+            filterName = @"Artist";
+            break;
+        case FilterTypeFavorites:
+            filterName = @"Favorites";
+            break;
+        case FilterTypeCategory:
+            filterName = @"Category";
+            break;
+        case FilterTypeTitle:
+            filterName = @"Title";
+            break;
+        default:
+            break;
+    }
+    
+    [Utilities trackEvent:@"ArtFiltered" action:@"Filter" label:filterName];
 }
 
 @end

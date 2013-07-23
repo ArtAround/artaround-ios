@@ -69,6 +69,9 @@ static const int _kAnnotationLimit = 9999;
 {
 	[super loadView];
     
+    //track map view
+    [Utilities trackPageViewWithName:@"MapView"];
+    
 	//the map needs to be refreshed
 	_mapNeedsRefresh = YES;
     
@@ -286,6 +289,9 @@ static const int _kAnnotationLimit = 9999;
         [self.navigationController pushViewController:detailController animated:YES];
         [detailController release];
         
+        //track Detail view
+        [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"MapView", @"DetailView", selectedArt.title, nil]];
+        
 	}
 }
 
@@ -301,6 +307,9 @@ static const int _kAnnotationLimit = 9999;
         
         //set the button text
         [flipButtonLabel setText:@"Map"];
+        
+        //track list view
+        [Utilities trackPageViewWithName:@"ListView"];
     }
     else {
         [UIView transitionFromView:_listViewController.tableView toView:self.mapView duration:1 options:UIViewAnimationOptionTransitionFlipFromLeft completion:nil];
@@ -308,6 +317,9 @@ static const int _kAnnotationLimit = 9999;
         
         //set the button text
         [flipButtonLabel setText:@"List"];
+        
+        //track map view
+        [Utilities trackPageViewWithName:@"MapView"];
     }
     
     _showingMap = !_showingMap;
@@ -656,6 +668,9 @@ static const int _kAnnotationLimit = 9999;
     DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art];
     [self.navigationController pushViewController:detailController animated:YES];
     [detailController release];
+    
+    //track Detail view
+    [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", art.title, nil]];
 }
 - (void)selectedArtAtIndex:(int)index
 {
@@ -678,6 +693,8 @@ static const int _kAnnotationLimit = 9999;
     [self.navigationController pushViewController:detailController animated:YES];    
     [detailController release];
     
+    //track Detail view
+    [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", selectedArt.title, nil]];
     
 }
 
@@ -695,6 +712,7 @@ static const int _kAnnotationLimit = 9999;
 
 - (void) listViewAddArtButtonPressed {
     [self addButtonTapped];
+    
 }
 
 

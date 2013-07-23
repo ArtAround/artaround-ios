@@ -94,6 +94,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    //track Add Art view
+    [Utilities trackPageViewWithName:@"AddArtView"];
+    
     //setup back button
     UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
     UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];

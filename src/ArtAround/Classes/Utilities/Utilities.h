@@ -77,6 +77,6 @@ typedef enum {
 + (NSString *)urlDecode:(NSString *)string;
 + (void) trackPageViewWithHierarch:(NSArray*)pageHierarchy;
 + (void) trackPageViewWithName:(NSString*)pageName;
-+ (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)label value:(NSInteger*)value;
++ (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l;
 
 @end

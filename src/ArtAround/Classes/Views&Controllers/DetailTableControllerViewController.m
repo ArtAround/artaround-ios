@@ -104,6 +104,9 @@ static const float _kRowBufffer = 20.0f;
 {
     [super viewDidLoad];
     
+    //track detail view
+    [Utilities trackPageViewWithName:@"Detail"];
+    
     //nav bar buttons
     UIImage *backButtonImage = [UIImage imageNamed:@"backArrow.png"];
     UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backButtonImage.size.width + 10.0f, backButtonImage.size.height)];
@@ -373,6 +376,9 @@ static const float _kRowBufffer = 20.0f;
     ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
     [appDelegate saveContext];
     [appDelegate.mapViewController updateArt];
+    
+    //track event
+    [Utilities trackEvent:@"FavoriteButtonPressed" action:([_art.favorite boolValue]) ? @"favorited" : @"unfavorited" label:_art.title];
 }
 
 - (void)flagButtonPressed:(id)sender
@@ -386,6 +392,9 @@ static const float _kRowBufffer = 20.0f;
 - (void)editButtonPressed:(id)sender
 {
     _inEditMode = !_inEditMode;
+    
+    //track map view
+    [Utilities trackPageViewWithName:@"EditArtView"];
     
     _editButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
     _flagButton.alpha = (_inEditMode) ? 0.0f : 1.0f;
@@ -563,7 +572,7 @@ static const float _kRowBufffer = 20.0f;
     [imgView release];
     [viewController release];
     
-    
+    [Utilities trackEvent:@"PhotoViewOpened" action:@"PhotoView" label:_art.title];
 }
 
 - (void)addImageButtonTapped
@@ -586,6 +595,9 @@ static const float _kRowBufffer = 20.0f;
     
     
     if ([responseDict objectForKey:@"success"]) {
+        
+        //track event
+        [Utilities trackEvent:@"ArtEdited" action:@"ArtEdit" label:_art.title];
         
         //parse new art and update this controller instance's art
         //grab the newly created slug if this is a creation
@@ -1329,6 +1341,8 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.comments.count > 0) {
                     CommentsTableViewController *commentsVC = [[CommentsTableViewController alloc] initWithStyle:UITableViewStylePlain comments:[_art.comments allObjects]];
                     [self.navigationController pushViewController:commentsVC animated:YES];
+                    
+                    [Utilities trackEvent:@"Comments" action:@"CommentsViewed" label:_art.title];
                 }
                 
                 break;
@@ -2000,6 +2014,9 @@ static const float _kRowBufffer = 20.0f;
     
     UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [moderationComment show];
+    
+    //track event
+    [Utilities trackEvent:@"ArtFlagged" action:@"Flag" label:_art.title];
 }
 
 //unsuccessful submission
@@ -2289,6 +2306,9 @@ static const float _kRowBufffer = 20.0f;
 {
     if ([responseDict objectForKey:@"slug"]) {
         
+        //track event
+        [Utilities trackEvent:@"PhotoUploaded" action:@"Photo" label:_art.title];
+        
         //parse the art object returned and update this controller instance's art
         [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
@@ -2376,6 +2396,9 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)shareButtonTapped
 {
+    //track event
+    [Utilities trackEvent:@"ShareButtonPressed" action:@"Share" label:_art.title];
+    
     if ([Utilities is6OrHigher]) {
         
         //get the share title and url
@@ -2394,6 +2417,7 @@ static const float _kRowBufffer = 20.0f;
             [activityController setExcludedActivityTypes:[NSArray arrayWithObject:UIActivityTypeSaveToCameraRoll]];
             [self presentViewController:activityController animated:YES completion:nil];
         }
+        
         
     }
     else {

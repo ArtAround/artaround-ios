@@ -60,6 +60,8 @@
         
         [(id)self.photoImageViewDelegate attributionButtonPressed:self withTitle:self.photoAttributionButton.titleLabel.text andURL:_url];
         
+        [Utilities trackEvent:@"AttributionButtonTapped" action:@"Attribution" label:[_url absoluteString]];
+        
     }
     
 }

@@ -298,6 +298,8 @@
     //check for success
     if ([[responseDict objectForKey:@"success"] boolValue]) {
         
+        [Utilities trackEvent:@"Comments" action:@"CommentAdded" label:_artSlug];
+        
         //dismiss alert
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
         

@@ -11,7 +11,7 @@
 #import "FBConnect.h"
 #import "IntroViewController.h"
 
-#define kGoogleAnalyticsAccountID @"UA-19074200-1"
+#define kGoogleAnalyticsAccountID @"UA-41817858-1"
 // Dispatch period in seconds
 static const NSInteger kGANDispatchPeriodSec = 10;
 
