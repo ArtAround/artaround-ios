@@ -62,7 +62,7 @@
 	UIImage* anImage = [[EGOImageLoader sharedImageLoader] imageForURL:aURL shouldLoadWithObserver:self];
 	
 	if(anImage) {
-		self.image = anImage;
+		self.image = [UIImage imageWithCGImage:anImage.CGImage scale:1.0 orientation:UIImageOrientationUp];
 
 		// trigger the delegate callback if the image was found in the cache
 		if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {
@@ -85,7 +85,7 @@
 	if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
 
 	UIImage* anImage = [[notification userInfo] objectForKey:@"image"];
-	self.image = anImage;
+	self.image = [UIImage imageWithCGImage:anImage.CGImage scale:1.0 orientation:UIImageOrientationUp];
 	[self setNeedsDisplay];
 	
 	if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {

@@ -546,7 +546,7 @@ static const float _kRowBufffer = 20.0f;
     [imgView setBackgroundColor:kFontColorDarkBrown];
     
     if (button.imageView.image)
-        [imgView setImage:button.imageView.image];
+        [imgView setImage:[UIImage imageWithCGImage:button.imageView.image.CGImage scale:1.0 orientation:UIImageOrientationUp]];
     else {
         if (thisPhoto.originalURL)
             [imgView setImageURL:button.imageURL];

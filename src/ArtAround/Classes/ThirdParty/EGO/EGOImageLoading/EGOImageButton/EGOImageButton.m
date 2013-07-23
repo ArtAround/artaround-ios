@@ -62,7 +62,7 @@
 	UIImage* anImage = [[EGOImageLoader sharedImageLoader] imageForURL:aURL shouldLoadWithObserver:self];
 	
 	if(anImage) {
-		[self setImage:anImage forState:UIControlStateNormal];
+		[self setImage:[UIImage imageWithCGImage:anImage.CGImage scale:1.0 orientation:UIImageOrientationUp] forState:UIControlStateNormal];
 	} else {
 		[self setImage:self.placeholderImage forState:UIControlStateNormal];
 	}
@@ -80,7 +80,7 @@
 	if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
 	
 	UIImage* anImage = [[notification userInfo] objectForKey:@"image"];
-	[self setImage:anImage forState:UIControlStateNormal];
+	[self setImage:[UIImage imageWithCGImage:anImage.CGImage scale:1.0 orientation:UIImageOrientationUp] forState:UIControlStateNormal];
 	[self setNeedsDisplay];
 	
 	if([self.delegate respondsToSelector:@selector(imageButtonLoadedImage:)]) {

@@ -137,8 +137,7 @@
 	[self.artNameLabel setText:self.art.title];
     
     CGSize titleSize = [self.art.title sizeWithFont:self.artNameLabel.font constrainedToSize:CGSizeMake(self.artNameLabel.frame.size.width, (self.artNameLabel.font.lineHeight * 2.0f)) lineBreakMode:NSLineBreakByWordWrapping];
-    DebugLog(@"titleSize: %f, %f", titleSize.width, titleSize.height);
-    DebugLog(@"lineHeight: %f", artNameLabel.font.lineHeight);
+
     
     [self.artNameLabel setFrame:CGRectMake(self.artNameLabel.frame.origin.x, self.artNameLabel.frame.origin.y, self.artNameLabel.frame.size.width, titleSize.height)];
     
