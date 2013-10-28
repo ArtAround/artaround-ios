@@ -59,6 +59,7 @@ typedef enum {
 @property (nonatomic, assign) FilterType selectedFilterType;
 @property (nonatomic, assign) NSDate *lastFlickrUpdate;
 @property (nonatomic, assign) NSString *photoAttributionText, *photoAttributionURL, *commentName, *commentEmail, *commentUrl;
+@property (nonatomic, assign) NSNumber *flashMode;
 @property (nonatomic, retain) NSDictionary *keysDict;
 @property BOOL hasLoadedBefore;
 
@@ -70,6 +71,7 @@ typedef enum {
 - (void)stopActivity;
 + (BOOL) is5OrHigher;
 + (BOOL) is6OrHigher;
++ (BOOL) is7OrHigher;
 + (BOOL) isRetinaDisplay;
 + (BOOL)isNewHardware;
 + (void)showLogoView:(BOOL)show inNavigationBar:(UINavigationBar *)navBar;

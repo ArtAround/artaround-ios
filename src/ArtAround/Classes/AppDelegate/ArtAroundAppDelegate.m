@@ -31,6 +31,7 @@
     [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
                                            dispatchPeriod:kGANDispatchPeriodSec
                                                  delegate:nil];
+
     
 	//initialize the window
 	UIWindow *newWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

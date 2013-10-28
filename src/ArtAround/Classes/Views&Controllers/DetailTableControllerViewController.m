@@ -700,7 +700,7 @@ static const float _kRowBufffer = 20.0f;
 
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row
 {
-    UITableViewCell *cell;
+    UITableViewCell *cell = nil;
     
     if (row == ArtDetailRowPhotos) {
         NSString *cellIdentifier = @"photosCell";
@@ -1848,6 +1848,11 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    
+    //save flash mode in case it changed
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
+    
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
         
@@ -1910,6 +1915,10 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
+    //save flash mode in case it changed
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -1929,6 +1938,7 @@ static const float _kRowBufffer = 20.0f;
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                    imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
                     [self presentModalViewController:imgPicker animated:YES];
                     break;
                 }

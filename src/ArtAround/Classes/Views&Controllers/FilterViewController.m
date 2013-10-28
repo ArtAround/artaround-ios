@@ -131,6 +131,8 @@ static NSArray *_kFilterTypes = nil;
 	if (_isTopLevel) {
 		[self.navigationController setDelegate:self];
 	}
+    
+ 
 }
 
 - (void)viewDidUnload

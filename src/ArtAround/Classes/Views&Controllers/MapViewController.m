@@ -143,6 +143,17 @@ static const int _kAnnotationLimit = 9999;
     [self.view setBackgroundColor:[UIColor blackColor]];
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    if ([Utilities is7OrHigher])
+        [self setNeedsStatusBarAppearanceUpdate];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -158,6 +169,8 @@ static const int _kAnnotationLimit = 9999;
 	//show the logo view
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 }
 
 
@@ -236,6 +249,8 @@ static const int _kAnnotationLimit = 9999;
 {
 	//create a top level filter controller and push it to the nav controller
 	FilterViewController *filterController = [[FilterViewController alloc] init];
+    [filterController.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 	[self.navigationController pushViewController:filterController animated:YES];
 	[filterController release];
 }

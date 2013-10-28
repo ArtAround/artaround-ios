@@ -43,7 +43,7 @@
     _details = [[NSArray alloc] initWithObjects:
                 @"Get to know the art around you -- and let others know about it, too.",
                 @"Find art by location and by category. Learn about the artist behind it.",
-                @"Add art and say what you know about it so others can follow in your footseps.",
+                @"Add art and say what you know about it so others can follow in your footsteps.",
                 @"People are already mapping in D.C., San Francisco, and Oakland -- check it out!", nil];
     
     for (int index = 0; index < 4; index++) {

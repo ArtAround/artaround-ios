@@ -19,7 +19,7 @@ static Utilities *_kSharedInstance = nil;
 @end
 
 @implementation Utilities
-@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, photoAttributionText = _photoAttributionText, photoAttributionURL = _photoAttributionURL, commentName = _commentName, commentEmail = _commentEmail, commentUrl = _commentUrl;
+@synthesize selectedFilterType = _selectedFilterType, keysDict = _keysDict, lastFlickrUpdate = _lastFlickrUpdate, photoAttributionText = _photoAttributionText, photoAttributionURL = _photoAttributionURL, commentName = _commentName, commentEmail = _commentEmail, commentUrl = _commentUrl, flashMode = _flashMode;
 
 //singleton
 + (Utilities *)instance
@@ -215,6 +215,19 @@ static Utilities *_kSharedInstance = nil;
     
 }
 
+- (void) setFlashMode:(NSNumber *)flashMode
+{
+    _flashMode = flashMode;
+	[_defaults setObject:flashMode forKey:@"AACameraFlashMode"];
+    [_defaults synchronize];
+    
+}
+
+- (NSNumber*) flashMode
+{
+    return [_defaults objectForKey:@"AACameraFlashMode"];
+}
+
 #pragma mark - Filter Methods
 
 - (void)setSelectedFilterType:(FilterType)aFilterType
@@ -290,10 +303,16 @@ static Utilities *_kSharedInstance = nil;
 	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0");
 }
 
-//determines if the current iOS is 5.0 or higher
+//determines if the current iOS is 6.0 or higher
 + (BOOL) is6OrHigher
 {
 	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0");
+}
+
+//determines if the current iOS is 7.0 or higher
++ (BOOL) is7OrHigher
+{
+	return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0");
 }
 
 //determins if the screen is retina

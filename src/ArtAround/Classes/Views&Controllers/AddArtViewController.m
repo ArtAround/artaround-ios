@@ -1004,6 +1004,7 @@
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                    imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
                     [self presentModalViewController:imgPicker animated:YES];
                     break;
                 }
@@ -1049,8 +1050,25 @@
 
 #pragma mark - UIImagePickerControllerDelegate
 
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+
+    //save flash mode in case it changed
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
+    
+    //dismiss the picker view
+    [self dismissViewControllerAnimated:YES completion:^{
+    }];
+    
+}
+
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    
+    //save flash mode in case it changed
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
+    
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
         
