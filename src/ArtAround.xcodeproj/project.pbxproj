@@ -110,8 +110,6 @@
 		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
 		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
 		C91B24BB14CF624B000B342F /* FavoriteButtonSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B714CF624B000B342F /* FavoriteButtonSelected.png */; };
-		C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = C9722EB014CD116E00FC42E9 /* AddDetailView.html */; };
-		C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */; };
 		C9722EBA14CD19D600FC42E9 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */; };
 		C98BA75814E9E31B00784A9F /* TextFieldBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = C98BA75614E9E31B00784A9F /* TextFieldBackground.png */; };
 		C98BA75914E9E31B00784A9F /* TextFieldBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C98BA75714E9E31B00784A9F /* TextFieldBackground@2x.png */; };
@@ -189,7 +187,6 @@
 		CA5E10DB1405F0520075DAB8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10DA1405F0520075DAB8 /* main.m */; };
 		CA5E10E51405F0520075DAB8 /* ArtAround.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */; };
 		CA5E10FE1405F8650075DAB8 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10FC1405F8570075DAB8 /* MapKit.framework */; };
-		CA7AF524140F2EAE00571610 /* DetailView2x.css in Resources */ = {isa = PBXBuildFile; fileRef = CA7AF523140F2EAE00571610 /* DetailView2x.css */; };
 		CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */; };
 		CAC02B87140DBFE10032C4E5 /* FilterBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B83140DBFE10032C4E5 /* FilterBackground.png */; };
 		CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */; };
@@ -221,10 +218,6 @@
 		CAFD5B2214107DCB0078D7B6 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFD5B1614107DCB0078D7B6 /* SBJsonParser.m */; };
 		CAFD5B2314107DCB0078D7B6 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFD5B1814107DCB0078D7B6 /* SBJsonWriter.m */; };
 		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
-		CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB31409A50400C98C0E /* DetailViewController.m */; };
-		CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CB61409A51400C98C0E /* DetailView.m */; };
-		CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC31409B26D00C98C0E /* DetailView.css */; };
-		CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC51409B29000C98C0E /* DetailView.html */; };
 		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
 		CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */; };
 		CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */; };
@@ -358,9 +351,6 @@
 		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
 		C91B24B714CF624B000B342F /* FavoriteButtonSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButtonSelected.png; sourceTree = "<group>"; };
 		C922E11D14CF45F200DB6DBD /* ArtAround2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround2.xcdatamodel; sourceTree = "<group>"; };
-		C9722EB014CD116E00FC42E9 /* AddDetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AddDetailView.html; sourceTree = "<group>"; };
-		C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddDetailViewController.h; sourceTree = "<group>"; };
-		C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDetailViewController.m; sourceTree = "<group>"; };
 		C9722EB914CD19D600FC42E9 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		C98BA75614E9E31B00784A9F /* TextFieldBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TextFieldBackground.png; sourceTree = "<group>"; };
 		C98BA75714E9E31B00784A9F /* TextFieldBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TextFieldBackground@2x.png"; sourceTree = "<group>"; };
@@ -478,7 +468,6 @@
 		CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtAround-Prefix.pch"; sourceTree = "<group>"; };
 		CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround.xcdatamodel; sourceTree = "<group>"; };
 		CA5E10FC1405F8570075DAB8 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		CA7AF523140F2EAE00571610 /* DetailView2x.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView2x.css; sourceTree = "<group>"; };
 		CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		CAC02B83140DBFE10032C4E5 /* FilterBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackground.png; sourceTree = "<group>"; };
 		CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackground@2x.png"; sourceTree = "<group>"; };
@@ -526,12 +515,6 @@
 		CAFD5B1814107DCB0078D7B6 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
 		CAFF2C9C1409781600C98C0E /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		CAFF2C9D1409781600C98C0E /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
-		CAFF2CB21409A50400C98C0E /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
-		CAFF2CB31409A50400C98C0E /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
-		CAFF2CB51409A51400C98C0E /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailView.h; sourceTree = "<group>"; };
-		CAFF2CB61409A51400C98C0E /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
-		CAFF2CC31409B26D00C98C0E /* DetailView.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView.css; sourceTree = "<group>"; };
-		CAFF2CC51409B29000C98C0E /* DetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DetailView.html; sourceTree = "<group>"; };
 		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
 		CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		CAFF2CEA1409F76C00C98C0E /* FlickrAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIManager.h; sourceTree = "<group>"; };
@@ -662,13 +645,6 @@
 			name = DetailView;
 			sourceTree = "<group>";
 		};
-		468A155117358C5A00DED13C /* WebViewContoller */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = WebViewContoller;
-			sourceTree = "<group>";
-		};
 		46B357A81763E3C0006663AA /* ArtLocationSelectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -709,16 +685,6 @@
 				5FFEE4EB15391C5400C4C7BC /* FlickrNameViewController.m */,
 			);
 			name = "Flickr Name";
-			sourceTree = "<group>";
-		};
-		C9722EAE14CD115600FC42E9 /* Add */ = {
-			isa = PBXGroup;
-			children = (
-				C9722EB014CD116E00FC42E9 /* AddDetailView.html */,
-				C9722EB114CD116E00FC42E9 /* AddDetailViewController.h */,
-				C9722EB214CD116E00FC42E9 /* AddDetailViewController.m */,
-			);
-			name = Add;
 			sourceTree = "<group>";
 		};
 		C9C1BCF614E44C780057164B /* Google Analytics */ = {
@@ -823,19 +789,17 @@
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				4604E0A317356D040019011B /* ImageView */,
 				464C9AD817951F5300387F58 /* Comments */,
 				464C9ABC1794EB5B00387F58 /* IntroViewController */,
 				466B5E83178D04370000CF66 /* DetailView */,
-				C9722EAE14CD115600FC42E9 /* Add */,
 				466406F01747CC0C0003CA8A /* AddArtView */,
-				CAFF2CB81409A51800C98C0E /* Detail */,
 				CAFF2CB11409A4C400C98C0E /* Filter */,
 				5F7A24C2150D5E3300101598 /* Flagging */,
 				5FFEE4E815391C1800C4C7BC /* Flickr Name */,
 				5FAA82A3150BB32B005842BF /* List View */,
 				CAFF2CB01409A4B600C98C0E /* Map */,
 				4626F86B1749475E00ECADC2 /* SearchTable */,
-				468A155117358C5A00DED13C /* WebViewContoller */,
 			);
 			path = "Views&Controllers";
 			sourceTree = "<group>";
@@ -1195,21 +1159,6 @@
 			name = Filter;
 			sourceTree = "<group>";
 		};
-		CAFF2CB81409A51800C98C0E /* Detail */ = {
-			isa = PBXGroup;
-			children = (
-				4604E0A317356D040019011B /* ImageView */,
-				CAFF2CB21409A50400C98C0E /* DetailViewController.h */,
-				CAFF2CB31409A50400C98C0E /* DetailViewController.m */,
-				CAFF2CB51409A51400C98C0E /* DetailView.h */,
-				CAFF2CB61409A51400C98C0E /* DetailView.m */,
-				CAFF2CC31409B26D00C98C0E /* DetailView.css */,
-				CA7AF523140F2EAE00571610 /* DetailView2x.css */,
-				CAFF2CC51409B29000C98C0E /* DetailView.html */,
-			);
-			name = Detail;
-			sourceTree = "<group>";
-		};
 		CAFF2CE61409F73800C98C0E /* APIManagers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1277,8 +1226,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA5E10D91405F0520075DAB8 /* InfoPlist.strings in Resources */,
-				CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */,
-				CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */,
 				CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */,
 				CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */,
 				CA1AE9F6140C906200C56C4D /* ArtAroundLogo.png in Resources */,
@@ -1315,7 +1262,6 @@
 				CAC02B8A140DBFE10032C4E5 /* FilterBackgroundPressed@2x.png in Resources */,
 				CA0F4926140F2D2C0064F072 /* DetailBackground.jpg in Resources */,
 				CA0F4927140F2D2C0064F072 /* DetailBackground@2x.jpg in Resources */,
-				CA7AF524140F2EAE00571610 /* DetailView2x.css in Resources */,
 				CAE7E182141071380046890F /* Icon-72.png in Resources */,
 				CAE7E183141071380046890F /* Icon-Small-50.png in Resources */,
 				CAE7E184141071380046890F /* Icon-Small.png in Resources */,
@@ -1325,7 +1271,6 @@
 				CAE7E18A141071540046890F /* iTunesArtwork in Resources */,
 				CAFD5B1A14107DCB0078D7B6 /* FBDialog.bundle in Resources */,
 				CAD47C1A1410AA5D0059C69A /* ArtAround-Info-Example.plist in Resources */,
-				C9722EB314CD116E00FC42E9 /* AddDetailView.html in Resources */,
 				C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */,
 				C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */,
 				C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */,
@@ -1454,8 +1399,6 @@
 				CA00946814095E8C00E5001E /* CategoryParser.m in Sources */,
 				CA00946B1409600D00E5001E /* PhotoParser.m in Sources */,
 				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
-				CAFF2CB41409A50400C98C0E /* DetailViewController.m in Sources */,
-				CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */,
 				CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */,
 				CA546F56140AE18D008B1B91 /* EGOCache.m in Sources */,
 				CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */,
@@ -1475,7 +1418,6 @@
 				CAFD5B2214107DCB0078D7B6 /* SBJsonParser.m in Sources */,
 				CAFD5B2314107DCB0078D7B6 /* SBJsonWriter.m in Sources */,
 				CADE14471411860D0068EA45 /* JSONKit.m in Sources */,
-				C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */,
 				C9C1BD1514E4D4B20057164B /* CommentParser.m in Sources */,
 				5F7A24A4150CF8A100101598 /* EventParser.m in Sources */,
 				5F7A24C6150D5E8D00101598 /* FlagViewController.m in Sources */,
