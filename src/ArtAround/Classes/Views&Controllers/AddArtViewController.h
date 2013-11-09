@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
-#import "FBConnect.h"
 #import "FlagViewController.h"
 #import "FlickrNameViewController.h"
 #import "PhotoImageView.h"

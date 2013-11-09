@@ -59,10 +59,6 @@ static const float _kRowBufffer = 20.0f;
 - (void)setArt:(Art *)art forceDownload:(BOOL)force;
 - (NSString *)shareURL;
 - (NSString *)shareMessage;
-//- (void)showFBDialog;
-//- (void)shareOnFacebook;
-- (void)shareOnTwitter;
-- (void)shareViaEmail;
 - (void)shareButtonTapped;
 @end
 
@@ -1971,27 +1967,6 @@ static const float _kRowBufffer = 20.0f;
             
             break;
         }
-        case _kShareActionSheet:
-        {
-            //decide what to do based on the button index
-            switch (buttonIndex) {
-                    
-                    //share via email
-                case AAShareTypeEmail:
-                    [self shareViaEmail];
-                    break;
-                    
-                    //share via twitter
-                case AAShareTypeTwitter:
-                    [self shareOnTwitter];
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            break;
-        }
         default:
             break;
     }
@@ -2430,103 +2405,8 @@ static const float _kRowBufffer = 20.0f;
         
         
     }
-    else {
-        //show an action sheet with the various sharing types
-        UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", nil];
-        [shareSheet setTag:_kShareActionSheet];
-        [shareSheet showInView:self.view];
-        [shareSheet release];
-    }
+
 }
-
-- (void)shareViaEmail
-{
-	if ([MFMailComposeViewController canSendMail]) {
-		
-		//present the mail composer
-		MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
-		mailController.mailComposeDelegate = self;
-		[mailController setSubject:@"Art Around"];
-		[mailController setMessageBody:[self shareMessage] isHTML:NO];
-		[self presentModalViewController:mailController animated:YES];
-		[mailController release];
-		
-	} else {
-		
-		//this device can't send email
-		UIAlertView *emailAlert = [[UIAlertView alloc] initWithTitle:@"Email Error" message:@"This device is not configured to send email." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-		[emailAlert show];
-		[emailAlert release];
-		
-	}
-}
-
-- (void)shareOnTwitter
-{
-	//share on twitter in the browser
-	NSString *twitterShare = [NSString stringWithFormat:@"http://twitter.com/share?text=%@", [[self shareMessage] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:twitterShare]];
-}
-
-
-/*- (void)shareOnFacebook
-{
-	//do we have a reference to the facebook object?
-	if (!_facebook) {
-		
-		//get a reference to the facebook object
-		_facebook = _appDelegate.facebook;
-        
-		
-		//make sure the access token is properly set if we previously saved it
-		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-		NSString *accessToken = [prefs stringForKey:@"FBAccessTokenKey"];
-		NSDate *expirationDate = [prefs objectForKey:@"FBExpirationDateKey"];
-		[_facebook setAccessToken:accessToken];
-		[_facebook setExpirationDate:expirationDate];
-		
-	}
-	
-	//make sure we have a valid reference to the facebook object
-	if (!_facebook) {
-		[_appDelegate fbDidNotLogin:NO];
-		return;
-	}
-	
-	//make sure we are authorized
-	if (![_facebook isSessionValid]) {
-		NSArray* permissions =  [NSArray arrayWithObjects:@"publish_stream", nil];
-		[_facebook authorize:permissions];
-	} else {
-		[self showFBDialog];
-	}
-}*/
-
-/*- (void)showFBDialog
-{
-	//make sure we have a valid reference to the facebook object
-	if (!_facebook) {
-		[_appDelegate fbDidNotLogin:NO];
-		return;
-	}
-	
-	//grab the first photo
-	NSString *photoURL = @"";
-	if (_art.photos && [_art.photos count] > 0) {
-		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
-		photoURL = photo.thumbnailSource;
-	}
-	
-	//setup the parameters with info about this art
-	NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-								   @"Share on Facebook",  @"user_message_prompt",
-								   [self shareURL], @"link",
-								   photoURL, @"picture",
-								   nil];
-	
-	//show the share dialog
-	[_facebook dialog:@"feed" andParams:params andDelegate:self];
-}*/
 
 - (NSString *)shareMessage
 {
@@ -2538,19 +2418,5 @@ static const float _kRowBufffer = 20.0f;
 	return [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug];
 }
 
-//#pragma mark - FBDialogDelegate
-//
-//- (void)dialogDidSucceed:(FBDialog*)dialog
-//{
-//	if ([dialog class] == [FBLoginDialog class]) {
-//		[self showFBDialog];
-//	}
-//}
-
-#pragma mark - MFMailComposerDelegate
-- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
-{
-    [self dismissModalViewControllerAnimated:YES];
-}
 
 @end

@@ -170,7 +170,9 @@ static const int _kAnnotationLimit = 9999;
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+    
+    if ([Utilities is7OrHigher])
+        [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 }
 
 
@@ -250,7 +252,8 @@ static const int _kAnnotationLimit = 9999;
 	//create a top level filter controller and push it to the nav controller
 	FilterViewController *filterController = [[FilterViewController alloc] init];
     [filterController.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+    if ([Utilities is7OrHigher])
+        [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 	[self.navigationController pushViewController:filterController animated:YES];
 	[filterController release];
 }
