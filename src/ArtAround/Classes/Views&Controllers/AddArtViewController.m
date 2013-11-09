@@ -82,7 +82,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+     
     //set scroll view content frame
     float bottomY = self.submitButton.frame.origin.y + self.submitButton.frame.size.height + 10.0f;
     CGSize contentSize = CGSizeMake(self.view.frame.size.width, bottomY);
