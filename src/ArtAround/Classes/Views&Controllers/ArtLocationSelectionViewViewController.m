@@ -23,7 +23,7 @@
 @synthesize mapView;
 @synthesize locationLabel;
 @synthesize delegate;
-@synthesize location, geotagLocation;
+@synthesize location = _location, geotagLocation;
 @synthesize selection = _selection;
 @synthesize selectedLocation = _selectedLocation;
 
@@ -50,7 +50,8 @@
         self.selection = selectedLocation;
         self.geotagLocation = newGeotagLocation;
         [self.currentLocationButton setSelected:YES];
-        self.location = [[CLLocation alloc] initWithLatitude:newLocation.coordinate.latitude longitude:newLocation.coordinate.longitude];
+        CLLocation *loc = [[CLLocation alloc] initWithLatitude:newLocation.coordinate.latitude longitude:newLocation.coordinate.longitude];
+        self.location = loc;
         
         //set delegate
         self.delegate = myDelegate;
@@ -76,7 +77,8 @@
     [self.locationLabel.layer setShadowColor:[UIColor blackColor].CGColor];
     
     if (self.geotagLocation) {
-        self.geotagLocation = [[CLLocation alloc] initWithLatitude:geotagLocation.coordinate.latitude longitude:geotagLocation.coordinate.longitude];
+        CLLocation *geoLoc  = [[CLLocation alloc] initWithLatitude:geotagLocation.coordinate.latitude longitude:geotagLocation.coordinate.longitude];
+        self.geotagLocation = geoLoc;
         
         //enable/disable geotag button
         [self.geotagButton setEnabled:YES];
@@ -245,7 +247,8 @@
             break;
     }
     
-    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    CLLocation *selectedLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    _selectedLocation = selectedLoc;
     
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
@@ -316,8 +319,8 @@
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
-    
-    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    CLLocation *selLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    _selectedLocation = selLoc;
     
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];

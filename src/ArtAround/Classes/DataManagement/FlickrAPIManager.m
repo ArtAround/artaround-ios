@@ -95,7 +95,6 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	//parse the art
 	PhotoParser *parser = [[PhotoParser alloc] init];
 	[parser parseRequest:request];
-	[parser autorelease];
 	
 	//stop network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
