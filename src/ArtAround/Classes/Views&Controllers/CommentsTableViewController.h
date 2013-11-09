@@ -12,7 +12,7 @@
 {
     NSDateFormatter *_dateFormatter;
 }
-@property (nonatomic, retain) NSArray *comments;
+@property (nonatomic, strong) NSArray *comments;
 
 - (id)initWithStyle:(UITableViewStyle)style comments:(NSArray*)theComments;
 

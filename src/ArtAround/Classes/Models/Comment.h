@@ -15,13 +15,13 @@
 @interface Comment : NSManagedObject {
 @private
 }
-@property (nonatomic, retain) NSNumber * approved;
-@property (nonatomic, retain) NSDate * createdAt;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * email;
-@property (nonatomic, retain) NSString * commentID;
-@property (nonatomic, retain) NSString * text;
-@property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) Art *art;
+@property (nonatomic, strong) NSNumber * approved;
+@property (nonatomic, strong) NSDate * createdAt;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSString * email;
+@property (nonatomic, strong) NSString * commentID;
+@property (nonatomic, strong) NSString * text;
+@property (nonatomic, strong) NSString * url;
+@property (nonatomic, strong) Art *art;
 
 @end

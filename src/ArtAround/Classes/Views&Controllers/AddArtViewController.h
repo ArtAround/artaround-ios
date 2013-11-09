@@ -52,22 +52,22 @@ static const float _kPhotoHeight = 96.5f;
 
 
 #pragma mark - Properties
-@property (nonatomic, retain) CLLocation *currentLocation;
-@property (nonatomic, assign) Art *art;
+@property (nonatomic, strong) CLLocation *currentLocation;
+@property (nonatomic) Art *art;
 
 #pragma mark - IB Outlet
-@property (retain, nonatomic) IBOutlet TPKeyboardAvoidingScrollView *scrollView;
-@property (retain, nonatomic) IBOutlet UIScrollView *photosScrollView;
-@property (retain, nonatomic) IBOutlet UIButton *locationButton;
-@property (retain, nonatomic) IBOutlet UITextField *artistTextField;
-@property (retain, nonatomic) IBOutlet UITextField *titleTextField;
-@property (retain, nonatomic) IBOutlet UITextField *urlTextField;
-@property (retain, nonatomic) IBOutlet UIButton *categoryButton;
-@property (retain, nonatomic) IBOutlet UIButton *dateButton;
-@property (retain, nonatomic) IBOutlet UITextView *descriptionTextView;
-@property (retain, nonatomic) IBOutlet UITextView *locationDescriptionTextView;
-@property (retain, nonatomic) IBOutlet UIButton *submitButton;
-@property (retain, nonatomic) IBOutlet UIButton *commissionedByButton;
+@property (strong, nonatomic) IBOutlet TPKeyboardAvoidingScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UIScrollView *photosScrollView;
+@property (strong, nonatomic) IBOutlet UIButton *locationButton;
+@property (strong, nonatomic) IBOutlet UITextField *artistTextField;
+@property (strong, nonatomic) IBOutlet UITextField *titleTextField;
+@property (strong, nonatomic) IBOutlet UITextField *urlTextField;
+@property (strong, nonatomic) IBOutlet UIButton *categoryButton;
+@property (strong, nonatomic) IBOutlet UIButton *dateButton;
+@property (strong, nonatomic) IBOutlet UITextView *descriptionTextView;
+@property (strong, nonatomic) IBOutlet UITextView *locationDescriptionTextView;
+@property (strong, nonatomic) IBOutlet UIButton *submitButton;
+@property (strong, nonatomic) IBOutlet UIButton *commissionedByButton;
 
 - (void)userAddedImage:(UIImage*)image;
 - (void)userAddedImage:(UIImage*)image withAttributionText:(NSString*)text withAttributionURL:(NSString*)url;

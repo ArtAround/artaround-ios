@@ -9,8 +9,9 @@
 #import "AAAPIManager.h"
 #import <CoreData/CoreData.h>
 #import <sqlite3.h>
-#import "ASIHTTPRequest.h"
-#import "ASIFormDataRequest.h"
+//#import "ASIHTTPRequest.h"
+//#import "ASIFormDataRequest.h"
+#import "AFNetworking.h"
 #import "ArtAroundAppDelegate.h"
 #import "Art.h"
 #import "Category.h"
@@ -20,7 +21,10 @@
 #import "ConfigParser.h"
 #import "EGOCache.h"
 #import "Utilities.h"
-#import "JSONKit.h"
+//#import "MagicalRecord.h"
+//#import "MagicalRecord+Actions.h"
+#import "NSManagedObject+MagicalDataImport.h"
+#import "MagicalImportFunctions.h"
 
 static AAAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
@@ -34,9 +38,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 //private methods
 @interface AAAPIManager (private)
-- (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
-- (ASIHTTPRequest *)downloadNeighborhoods;
-- (ASIHTTPRequest *)downloadCategories;
+//- (id)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
+//- (id)downloadNeighborhoods;
+//- (id)downloadCategories;
 - (NSArray *)arrayForSQL:(char *)sql;
 + (BOOL)isCacheExpiredForURL:(NSURL *)url;
 + (BOOL)isCacheExpiredForURL:(NSURL *)url timeout:(int)timeout;
@@ -77,10 +81,6 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[[AAAPIManager managedObjectContext] unlock];
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
 
 #pragma mark - Arrays for Filters
 
@@ -120,7 +120,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	}
 	sqlite3_close(database);
 	
-	return [items autorelease];
+	return items;
 }
 
 - (NSArray *)categories
@@ -197,44 +197,47 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
 	//download everything
-	ASIHTTPRequest *categoryRequest = [self downloadCategories];
-	ASIHTTPRequest *neighborhoodRequest = [self downloadNeighborhoods];
+//	ASIHTTPRequest *categoryRequest = [self downloadCategories];
+//	ASIHTTPRequest *neighborhoodRequest = [self downloadNeighborhoods];
 
 	//parse the config items
-	ConfigParser *parser = [[ConfigParser alloc] init];
-	[parser parseCategoryRequest:categoryRequest neighborhoodRequest:neighborhoodRequest userInfo:userInfo];
-	[parser release];
+//	ConfigParser *parser = [[ConfigParser alloc] init];
+//	[parser parseCategoryRequest:categoryRequest neighborhoodRequest:neighborhoodRequest userInfo:userInfo];
+//	[parser release];
 }
 
-- (ASIHTTPRequest *)downloadNeighborhoods
+/*
+- (id)downloadNeighborhoods
 {
 	//start network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
 	
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] userInfo:nil];
-	[request startSynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] userInfo:nil];
+//	[request startSynchronous];
 	
 	//stop network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
 	
-	return request;
+//	return request;
+    return nil;
 }
 
-- (ASIHTTPRequest *)downloadCategories
+- (id)downloadCategories
 {
 	//start network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
 	
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"categories"] userInfo:nil];
-	[request startSynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"categories"] userInfo:nil];
+//	[request startSynchronous];
 	
 	//stop network activity indicator
 	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
 	
-	return request;
-}
+//	return request;
+    return nil;
+}*/
 
 #pragma mark - Flag Methods
 - (void)submitFlagForSlug:(NSString*)slug withText:(NSString*)text target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback
@@ -254,15 +257,16 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
 	
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:flagURL userInfo:userInfo];
-    [request setRequestMethod:@"POST"];
-	[request setDidFinishSelector:@selector(flagRequestCompleted:)];
-	[request setDidFailSelector:@selector(flagRequestFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:flagURL userInfo:userInfo];
+//    [request setRequestMethod:@"POST"];
+//	[request setDidFinishSelector:@selector(flagRequestCompleted:)];
+//	[request setDidFailSelector:@selector(flagRequestFailed:)];
+//	[request startAsynchronous];
     
 }
 
-- (void)flagRequestCompleted:(ASIHTTPRequest *)request
+/*
+- (void)flagRequestCompleted:(id)request
 {
 
 	//check for an error
@@ -304,7 +308,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[[Utilities instance] stopActivity];
 }
 
-- (void)flagRequestFailed:(ASIHTTPRequest *)request
+- (void)flagRequestFailed:(id)request
 {
 	
     //call the selector on the target if applicable
@@ -319,7 +323,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
 	//stop network activity indicator
 	[[Utilities instance] stopActivity];
-}
+}*/
 
 #pragma mark - Art Download Methods
 //download all art objects - do not force
@@ -341,19 +345,58 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	if (!force && ![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
 		return;
 	}
+    
+    NSManagedObjectContext *privateQueueContext = [NSManagedObjectContext MR_contextForCurrentThread];
+    NSArray *results = [Art MR_findAllInContext:privateQueueContext];
 	
 	//start network activity indicator
 	[[Utilities instance] startActivity];
 	
+    AFJSONRequestOperation *request = [AFJSONRequestOperation JSONRequestOperationWithRequest:[NSURLRequest requestWithURL:allArtURL] success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
+        NSLog(@"asd");
+//        DebugLog(@"%@", JSON);
+
+        NSError *err = nil;
+        // Get the local context
+        
+        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            DebugLog(@"%@", [[JSON objectForKey:@"arts"] objectAtIndex:0]);
+            NSDictionary *object = [[NSDictionary alloc] initWithDictionary:[[JSON objectForKey:@"arts"] objectAtIndex:0]];
+            Art *art = [Art MR_importFromObject:object inContext:localContext];
+            [Art MR_importFromArray:[JSON objectForKey:@"arts"] inContext:localContext];
+//            Art *art = [Art MR_createInContext:localContext];
+//            [art MR_importValuesForKeysWithObject:[[JSON objectForKey:@"arts"] objectAtIndex:0]];
+//            art.title = [[[JSON objectForKey:@"arts"] objectAtIndex:0] objectForKey:@"title"];
+        
+            
+        }];
+//        NSManagedObjectContext *localContext = [NSManagedObjectContext MR_contextForCurrentThread];
+//        Art *art = [Art MR_createInContext:localContext];
+//        art.title = [[[JSON objectForKey:@"arts"] objectAtIndex:0] objectForKey:@"title"];
+//        [localContext save:&err];
+//        DebugLog(@"%@", err);
+        //[art MR_importValuesForKeysWithObject:art];
+//        [Art MR_importFromObject:[[JSON objectForKey:@"arts"] objectAtIndex:0] inContext:localContext];
+        
+        
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        
+        NSLog(@"Fail");
+        DebugLog(@"%@", JSON);
+        
+    }];
+    [request start];
+    
 	//pass along target and selector in userInfo
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
 	//setup and start the request
 	//todo: revisit this - may need to adjust how we download if too many items are being downloaded
-	ASIHTTPRequest *request = [self requestWithURL:allArtURL userInfo:userInfo];
-	[request setDidFinishSelector:@selector(artRequestCompleted:)];
-	[request setDidFailSelector:@selector(artRequestFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:allArtURL userInfo:userInfo];
+//	[request setDidFinishSelector:@selector(artRequestCompleted:)];
+//	[request setDidFailSelector:@selector(artRequestFailed:)];
+//	[request startAsynchronous];
 }
 
 - (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback 
@@ -383,13 +426,14 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
 	
 	//setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:artURL userInfo:userInfo];
-	[request setDidFinishSelector:@selector(artRequestCompleted:)];
-	[request setDidFailSelector:@selector(artRequestFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:artURL userInfo:userInfo];
+//	[request setDidFinishSelector:@selector(artRequestCompleted:)];
+//	[request setDidFailSelector:@selector(artRequestFailed:)];
+//	[request startAsynchronous];
 }
 
-- (void)artRequestCompleted:(ASIHTTPRequest *)request
+/*
+- (void)artRequestCompleted:(id)request
 {
     
 	//parse the art in the background
@@ -398,7 +442,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 
 
-- (void)parseArtRequest:(ASIHTTPRequest *)request
+- (void)parseArtRequest:(id)request
 {
 	//in the background, use a pool
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];	
@@ -415,14 +459,14 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[pool release];
 }
 
-- (void)artRequestFailed:(ASIHTTPRequest *)request
+- (void)artRequestFailed:(id)request
 {
 	DebugLog(@"artRequestFailed");
     
 	//stop network activity indicator
 	[[Utilities instance] stopActivity];
 }
-
+*/
 
 
 #pragma mark - Art Upload Methods
@@ -442,13 +486,13 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
     
     //setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
-    [request setRequestMethod:@"POST"];
-    [request setTimeOutSeconds:45];
-    [request setNumberOfTimesToRetryOnTimeout:0];
-	[request setDidFinishSelector:@selector(artUploadCompleted:)];
-	[request setDidFailSelector:@selector(artUploadFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
+//    [request setRequestMethod:@"POST"];
+//    [request setTimeOutSeconds:45];
+//    [request setNumberOfTimesToRetryOnTimeout:0];
+//	[request setDidFinishSelector:@selector(artUploadCompleted:)];
+//	[request setDidFailSelector:@selector(artUploadFailed:)];
+//	[request startAsynchronous];
     
 }
 
@@ -468,13 +512,13 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
     
     //setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
-    [request setRequestMethod:@"PUT"];
-    [request setTimeOutSeconds:45];
-    [request setNumberOfTimesToRetryOnTimeout:0];
-	[request setDidFinishSelector:@selector(artUploadCompleted:)];
-	[request setDidFailSelector:@selector(artUploadFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:artUploadURL userInfo:userInfo];
+//    [request setRequestMethod:@"PUT"];
+//    [request setTimeOutSeconds:45];
+//    [request setNumberOfTimesToRetryOnTimeout:0];
+//	[request setDidFinishSelector:@selector(artUploadCompleted:)];
+//	[request setDidFailSelector:@selector(artUploadFailed:)];
+//	[request startAsynchronous];
     
 }
 
@@ -526,21 +570,22 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     
     //setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:photoUploadURL userInfo:userInfo];
-    [request setRequestMethod:@"POST"];
-    [request addRequestHeader:@"Content-Type" value:contentType];
-    [request setTimeOutSeconds:45];
-    [request setNumberOfTimesToRetryOnTimeout:0];
-    [request setPostBody:postbody];
-	[request setDidFinishSelector:@selector(artUploadCompleted:)];
-	[request setDidFailSelector:@selector(artUploadFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:photoUploadURL userInfo:userInfo];
+//    [request setRequestMethod:@"POST"];
+//    [request addRequestHeader:@"Content-Type" value:contentType];
+//    [request setTimeOutSeconds:45];
+//    [request setNumberOfTimesToRetryOnTimeout:0];
+//    [request setPostBody:postbody];
+//	[request setDidFinishSelector:@selector(artUploadCompleted:)];
+//	[request setDidFailSelector:@selector(artUploadFailed:)];
+//	[request startAsynchronous];
 
 
        
 }
 
-- (void)artUploadCompleted:(ASIHTTPRequest *)request
+/*
+- (void)artUploadCompleted:(id)request
 {
     
     //deserialize the json response
@@ -580,7 +625,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[[Utilities instance] stopActivity];
 }
 
-- (void)artUploadFailed:(ASIHTTPRequest *)request
+- (void)artUploadFailed:(id)request
 {
 	DebugLog(@"artUploadFailed");
     
@@ -598,7 +643,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	//stop network activity indicator
 	[[Utilities instance] stopActivity];
 }
-
+*/
 
 #pragma mark - Comment Upload
 //upload the comment dictionary
@@ -635,17 +680,18 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
     
     //setup and start the request
-	ASIHTTPRequest *request = [self requestWithURL:commentUploadURL userInfo:userInfo];
-    [request setRequestMethod:@"POST"];
-    [request setTimeOutSeconds:45];
-    [request setNumberOfTimesToRetryOnTimeout:0];
-	[request setDidFinishSelector:@selector(commentUploadCompleted:)];
-	[request setDidFailSelector:@selector(commentUploadFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:commentUploadURL userInfo:userInfo];
+//    [request setRequestMethod:@"POST"];
+//    [request setTimeOutSeconds:45];
+//    [request setNumberOfTimesToRetryOnTimeout:0];
+//	[request setDidFinishSelector:@selector(commentUploadCompleted:)];
+//	[request setDidFailSelector:@selector(commentUploadFailed:)];
+//	[request startAsynchronous];
 }
 
+/*
 //comment upload callback
-- (void)commentUploadCompleted:(ASIHTTPRequest *)request
+- (void)commentUploadCompleted:(id)request
 {
     
     //deserialize the json response
@@ -686,7 +732,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 }
 
 //coment upload fail callback
-- (void)commentUploadFailed:(ASIHTTPRequest *)request
+- (void)commentUploadFailed:(id)request
 {
 	DebugLog(@"commentUploadFailed");
     
@@ -702,12 +748,13 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
 	//stop network activity indicator
 	[[Utilities instance] stopActivity];
-}
+}*/
 
 #pragma mark - Helper Methods
 
-- (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
+/*- (id)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
 {
+    
 	//setup and start the request
 	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
 	[request setNumberOfTimesToRetryOnTimeout:1];
@@ -715,7 +762,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[request setUserInfo:userInfo];
 	
 	return request;
-}
+}*/
 
 #pragma mark - Class Methods
 
@@ -731,12 +778,12 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 + (NSManagedObjectContext *)managedObjectContext
 {
-	return [(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate managedObjectContext];
+	return nil;//[(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate managedObjectContext];
 }
 
 + (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-	return [(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate persistentStoreCoordinator];
+	return nil;//[(ArtAroundAppDelegate *)[UIApplication sharedApplication].delegate persistentStoreCoordinator];
 }
 
 //makes sure a non-NSNull value is returned

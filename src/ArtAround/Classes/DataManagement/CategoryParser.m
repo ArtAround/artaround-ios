@@ -7,7 +7,7 @@
 //
 
 #import "CategoryParser.h"
-#import "JSONKit.h"
+//#import "JSONKit.h"
 
 @implementation CategoryParser
 
@@ -43,11 +43,11 @@
 	return category;
 }
 
-+ (NSArray *)arrayForCategoryRequest:(ASIHTTPRequest *)categoryRequest
++ (NSArray *)arrayForCategoryRequest:(id)categoryRequest
 {
 	//deserialize the json response
 	NSError *error = nil;
-	NSArray *categories = [[categoryRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
+	NSArray *categories = nil;//[[categoryRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
 	
 	//check for an error
 	if (error || !categories) {

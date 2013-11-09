@@ -39,7 +39,7 @@ static NSArray *_kFilterTypes = nil;
 		_selectedTitles = [[NSMutableArray alloc] init];
 		
 		//top level titles
-		_titles = [[FilterViewController filterTypeTitles] retain];
+		_titles = [FilterViewController filterTypeTitles];
 		_isTopLevel = YES;
 		_filterType = FilterTypeNone;
 		
@@ -86,12 +86,6 @@ static NSArray *_kFilterTypes = nil;
     return self;
 }
 
-- (void)dealloc
-{
-	[_titles release];
-	[_selectedTitles release];
-	[super dealloc];
-}
 
 - (void)didReceiveMemoryWarning
 {
@@ -179,7 +173,7 @@ static NSArray *_kFilterTypes = nil;
     static NSString *CellIdentifier = @"FilterCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
 	
@@ -279,7 +273,6 @@ static NSArray *_kFilterTypes = nil;
 		//dig deeper based on the filter type selected
 		FilterViewController *filterController = [[FilterViewController alloc] initWithFilterType:indexPath.row];
 		[self.navigationController pushViewController:filterController animated:YES];
-		[filterController release];			
 	}
 	
 }

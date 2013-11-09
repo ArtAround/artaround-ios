@@ -22,15 +22,15 @@
 
 @interface Event : NSManagedObject
 
-@property (nonatomic, retain) NSDate * ends;
-@property (nonatomic, retain) NSDate * starts;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * iconURL;
-@property (nonatomic, retain) NSString * iconURLSmall;
-@property (nonatomic, retain) NSString * website;
-@property (nonatomic, retain) NSString * eventDescription;
-@property (nonatomic, retain) NSString * slug;
-@property (nonatomic, retain) NSSet *arts;
+@property (nonatomic, strong) NSDate * ends;
+@property (nonatomic, strong) NSDate * starts;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSString * iconURL;
+@property (nonatomic, strong) NSString * iconURLSmall;
+@property (nonatomic, strong) NSString * website;
+@property (nonatomic, strong) NSString * eventDescription;
+@property (nonatomic, strong) NSString * slug;
+@property (nonatomic, strong) NSSet *arts;
 @end
 
 @interface Event (CoreDataGeneratedAccessors)

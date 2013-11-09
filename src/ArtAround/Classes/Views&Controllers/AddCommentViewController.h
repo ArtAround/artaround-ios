@@ -15,13 +15,13 @@
     NSMutableDictionary*    _commentDictionary;
     UIAlertView*            _loadingAlertView;
 }
-@property (retain, nonatomic) IBOutlet UITextField *nameField;
-@property (retain, nonatomic) IBOutlet UITextField *emailField;
-@property (retain, nonatomic) IBOutlet UITextField *urlField;
-@property (retain, nonatomic) IBOutlet UITextView *commentView;
-@property (retain, nonatomic) IBOutlet UIButton *postButton;
-@property (retain, nonatomic) NSString *artSlug;
-@property (retain, nonatomic) id <AddCommentViewControllerDelegate> delegate;
+@property (strong, nonatomic) IBOutlet UITextField *nameField;
+@property (strong, nonatomic) IBOutlet UITextField *emailField;
+@property (strong, nonatomic) IBOutlet UITextField *urlField;
+@property (strong, nonatomic) IBOutlet UITextView *commentView;
+@property (strong, nonatomic) IBOutlet UIButton *postButton;
+@property (strong, nonatomic) NSString *artSlug;
+@property (strong, nonatomic) id <AddCommentViewControllerDelegate> delegate;
 
 - (IBAction)postButtonPressed:(id)sender;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil artSlug:(NSString*)slug;

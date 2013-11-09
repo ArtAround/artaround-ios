@@ -123,7 +123,6 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.map setDelegate:self];
     [self.mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self.view addSubview:self.mapView];
-	[aMapView release];
 
     
 	//default to dc map
@@ -205,12 +204,7 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)dealloc
 {
-	[_items release];
-	[_annotations release];
 	[self.mapView.map setDelegate:nil];
-	[self setMapView:nil];
-	[self setCallout:nil];
-	[super dealloc];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -255,7 +249,6 @@ static const int _kAnnotationLimit = 9999;
     if ([Utilities is7OrHigher])
         [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 	[self.navigationController pushViewController:filterController animated:YES];
-	[filterController release];
 }
 
 - (void)locateButtonTapped
@@ -288,7 +281,6 @@ static const int _kAnnotationLimit = 9999;
 		//show an alert to let them know to hold their horses
 		UIAlertView *locateAlert = [[UIAlertView alloc] initWithTitle:@"Unable To Find You" message:@"There was a problem finding your location. Please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
 		[locateAlert show];
-		[locateAlert release];
 		
 	}
 }
@@ -305,7 +297,6 @@ static const int _kAnnotationLimit = 9999;
 		//pass it along to a new detail controller and push it the navigation controller
         DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
         [self.navigationController pushViewController:detailController animated:YES];
-        [detailController release];
         
         //track Detail view
         [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"MapView", @"DetailView", selectedArt.title, nil]];
@@ -366,7 +357,7 @@ static const int _kAnnotationLimit = 9999;
 //queries core data for art and adds them to the map
 - (void)updateArt
 {
-    [self updateAndShowArt:nil];
+//    [self updateAndShowArt:nil];
 }
 
 
@@ -465,7 +456,6 @@ static const int _kAnnotationLimit = 9999;
     [_listViewController setItems:_items];
     
 	//release fetch request
-	[fetchRequest release];
 	
 	//check for errors
 	if (!_items || error) {
@@ -501,7 +491,6 @@ static const int _kAnnotationLimit = 9999;
 			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
 			annotation.index = i; //used when tapping the callout accessory button
 			[_annotations addObject:annotation];
-			[annotation release];
             
             //check for min and max lat/lon
             if (i == 0) {
@@ -569,7 +558,7 @@ static const int _kAnnotationLimit = 9999;
             pinImage = [UIImage imageNamed:@"PinArt.png"];
             
 			//setup the annotation view
-			ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+			ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
 			[pin setImage:pinImage];
 			[pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
 			[pin setCanShowCallout:NO];
@@ -627,7 +616,6 @@ static const int _kAnnotationLimit = 9999;
 			[aCallout setMapView:self.mapView.map];			
 			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
 			[self setCallout:aCallout];
-			[aCallout release];
 			
 		} else {
 			
@@ -685,7 +673,6 @@ static const int _kAnnotationLimit = 9999;
 {
     DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art];
     [self.navigationController pushViewController:detailController animated:YES];
-    [detailController release];
     
     //track Detail view
     [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", art.title, nil]];
@@ -709,7 +696,6 @@ static const int _kAnnotationLimit = 9999;
     //pass it along to a new detail controller and push it the navigation controller
     DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
     [self.navigationController pushViewController:detailController animated:YES];    
-    [detailController release];
     
     //track Detail view
     [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", selectedArt.title, nil]];

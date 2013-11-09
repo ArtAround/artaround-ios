@@ -30,7 +30,6 @@
 		MKMapView *aMap = [[MKMapView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
         [aMap setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleBottomMargin];
 		[self setMap:aMap];
-		[aMap release];
 		
 		//setup the map view
 		[self.map setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
@@ -112,11 +111,5 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[self setMap:nil];
-	[self setFilterButton:nil];
-	[super dealloc];
-}
 
 @end

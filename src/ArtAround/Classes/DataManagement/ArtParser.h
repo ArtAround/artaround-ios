@@ -12,7 +12,7 @@
 
 @interface ArtParser : ItemParser
 
-- (void)parseRequest:(ASIHTTPRequest *)request;
+- (void)parseRequest:(id *)request;
 + (Art *)artForDict:(NSDictionary *)artDict inContext:(NSManagedObjectContext *)context;
 + (BOOL)setFavorite:(BOOL)fav forSlug:(NSString*)slug;
 @end

@@ -7,17 +7,16 @@
 //
 
 #import "PhotoParser.h"
-#import "JSONKit.h"
-#import "ASIHTTPRequest.h"
+//#import "JSONKit.h"
 #import "FlickrAPIManager.h"
 
 @implementation PhotoParser
 
-- (void)parseRequest:(ASIHTTPRequest *)request
+- (void)parseRequest:(id)request
 {
 	//deserialize the json response
 	NSError *jsonError = nil;
-	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
+	NSDictionary *responseDict = nil;//[[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
 	
 	//check for an error
 	if (jsonError || !responseDict) {
@@ -31,11 +30,11 @@
 	//grab the sizes and check that they exist
 	NSDictionary *sizesDict = [responseDict objectForKey:@"sizes"];
 	if (!sizesDict) {
-		DebugLog(@"PhotoParser error: %@", [request responseString]);
+//		DebugLog(@"PhotoParser error: %@", [request responseString]);
 		return;
 	}
 	
-	DebugLog(@"%@", [request responseString]);
+//	DebugLog(@"%@", [request responseString]);
 	
 	//parse the photo info returned and add to/update the local data
 	id flickrID = [[request userInfo] objectForKey:[FlickrAPIManager flickrIDKey]];

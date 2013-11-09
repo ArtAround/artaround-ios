@@ -8,7 +8,7 @@
 
 #import "ArtParser.h"
 #import "AAAPIManager.h"
-#import "JSONKit.h"
+//#import "JSONKit.h"
 #import "Art.h"
 #import "Photo.h"
 #import "Category.h"
@@ -24,11 +24,11 @@
 
 #pragma mark - Instance Methods
 
-- (void)parseRequest:(ASIHTTPRequest *)request
+- (void)parseRequest:(id)request
 {	
 	//deserialize the json response
 	NSError *jsonError = nil;
-	NSDictionary *responseDict = [[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
+	NSDictionary *responseDict = nil;//[[request responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&jsonError];
 	
 	//check for an error
 	if (jsonError || !responseDict) {

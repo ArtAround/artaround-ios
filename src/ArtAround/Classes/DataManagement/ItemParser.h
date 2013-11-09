@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import	"ASIHTTPRequest.h"
 #import "AAAPIManager.h"
 #import "AAManagedObjectContext.h"
 
@@ -16,7 +15,7 @@
 	AAManagedObjectContext *_managedObjectContext;
 }
 
-@property (nonatomic, readonly) AAManagedObjectContext *managedObjectContext;
+@property (weak, nonatomic, readonly) AAManagedObjectContext *managedObjectContext;
 
 + (id)existingEntity:(NSString *)entityName inContext:(NSManagedObjectContext *)context uniqueKey:(NSString *)uniqueKey uniqueValue:(id)uniqueValue;
 + (NSDateFormatter *)dateFormatter;

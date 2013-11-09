@@ -11,11 +11,5 @@
 @implementation AAManagedObjectContext
 @synthesize userInfo = _userInfo;
 
-- (void)dealloc {
-	if (_userInfo) {
-		[_userInfo release];
-	}
-	[super dealloc];
-}
 
 @end

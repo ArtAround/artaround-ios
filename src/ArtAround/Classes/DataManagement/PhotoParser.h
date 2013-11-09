@@ -12,7 +12,7 @@
 
 @interface PhotoParser : ItemParser
 
-- (void)parseRequest:(ASIHTTPRequest *)request;
+- (void)parseRequest:(id)request;
 + (Photo *)photoForFlickrID:(NSNumber *)flickrID inContext:(NSManagedObjectContext *)context;
 + (Photo *)photoForFlickrID:(NSNumber *)flickrID sizesDict:(NSDictionary *)sizesDict inContext:(NSManagedObjectContext *)context;
 + (Photo *)photoForPhotoDict:(NSDictionary *)photoDict inContext:(NSManagedObjectContext *)context;

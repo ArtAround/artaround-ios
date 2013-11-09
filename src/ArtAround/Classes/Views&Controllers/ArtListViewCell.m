@@ -168,13 +168,4 @@
 	}
 }
 
-- (void)dealloc {
-    
-    [artNameLabel release];
-    [artImageView release];
-    [artDistanceLabel release];
-    [artistLabel release];
-    [yearLabel release];
-    [super dealloc];
-}
 @end

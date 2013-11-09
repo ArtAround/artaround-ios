@@ -13,8 +13,8 @@
 @interface Category : NSManagedObject {
 @private
 }
-@property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSSet *arts;
+@property (nonatomic, strong) NSString * title;
+@property (nonatomic, strong) NSSet *arts;
 @end
 
 @interface Category (CoreDataGeneratedAccessors)

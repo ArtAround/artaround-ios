@@ -70,7 +70,7 @@ typedef enum _ArtDetailRow {
     Art*                    _art;
 }
 
-@property (nonatomic, retain) CLLocation *currentLocation;
+@property (nonatomic, strong) CLLocation *currentLocation;
 
 - (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt;
 

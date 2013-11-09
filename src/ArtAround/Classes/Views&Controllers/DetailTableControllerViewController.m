@@ -131,7 +131,7 @@ static const float _kRowBufffer = 20.0f;
     //location
     _locationString = @"";
     _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
-    _currentLocation = [_mapView.userLocation.location retain];
+    _currentLocation = _mapView.userLocation.location;
 
     
     //setup the images scroll view
@@ -253,7 +253,7 @@ static const float _kRowBufffer = 20.0f;
 - (void)setArt:(Art *)art forceDownload:(BOOL)force
 {
 	//assign the art
-	_art = [art retain];
+	_art = art;
 	
 	//load images that we already have a source for
 	[self setupImages];
@@ -283,7 +283,6 @@ static const float _kRowBufffer = 20.0f;
 		//create an annotation, add it to the map, and store it in the array
 		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
 		[_mapView addAnnotation:annotation];
-		[annotation release];
 		
 	}
     
@@ -309,7 +308,6 @@ static const float _kRowBufffer = 20.0f;
         indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [indicator startAnimating];
         [_loadingAlertView addSubview:indicator];
-        [indicator release];
     }
     
     [_loadingAlertView setTitle:msg];
@@ -370,7 +368,7 @@ static const float _kRowBufffer = 20.0f;
     
     //refresh the mapview so that the updated favorites are showing
     ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-    [appDelegate saveContext];
+//    [appDelegate saveContext];
     [appDelegate.mapViewController updateArt];
     
     //track event
@@ -382,7 +380,6 @@ static const float _kRowBufffer = 20.0f;
     UIActionSheet *flagSheet = [[UIActionSheet alloc] initWithTitle:@"Flag Art" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Incorrect Info", @"Missing / Damaged", @"Duplicate", nil];
     [flagSheet setTag:_kFlagActionSheet];
     [flagSheet showInView:self.view];
-    [flagSheet release];
 }
 
 - (void)editButtonPressed:(id)sender
@@ -565,8 +562,6 @@ static const float _kRowBufffer = 20.0f;
     
     [self.navigationController pushViewController:viewController animated:YES];
     DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
-    [imgView release];
-    [viewController release];
     
     [Utilities trackEvent:@"PhotoViewOpened" action:@"PhotoView" label:_art.title];
 }
@@ -577,7 +572,6 @@ static const float _kRowBufffer = 20.0f;
     UIActionSheet *imgSheet = [[UIActionSheet alloc] initWithTitle:@"Upload Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"Camera roll", nil];
     [imgSheet setTag:_kAddImageActionSheet];
     [imgSheet showInView:self.tableView];
-    [imgSheet release];
     
 }
 
@@ -611,12 +605,12 @@ static const float _kRowBufffer = 20.0f;
         }
         
         [[AAAPIManager managedObjectContext] lock];
-        _art = [[ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]] retain];
+        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
         [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
         [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-        [(id)[[UIApplication sharedApplication] delegate] saveContext];
+//        [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
         [[(ArtAroundAppDelegate*)[[UIApplication sharedApplication] delegate] mapViewController] updateArt];
         
@@ -640,8 +634,8 @@ static const float _kRowBufffer = 20.0f;
     }
     
     //reload the map view so the updated/new art is there
-    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-    [appDelegate saveContext];
+//    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+//    [appDelegate saveContext];
     
     
 }
@@ -654,7 +648,6 @@ static const float _kRowBufffer = 20.0f;
     //show fail alert
     UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Upload Failed" message:@"The upload failed. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [failedAlertView show];
-    [failedAlertView release];
 }
 
 #pragma mark - Art Download Callback Methods
@@ -1643,7 +1636,6 @@ static const float _kRowBufffer = 20.0f;
 //            [imageView setAdjustsImageWhenHighlighted:NO];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
-			[imageView release];
 		}
 		
 		//set the image url
@@ -1712,7 +1704,6 @@ static const float _kRowBufffer = 20.0f;
 			[imageView.layer setBorderWidth:6.0f];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
-			[imageView release];
             
 		}
 		
@@ -1812,8 +1803,10 @@ static const float _kRowBufffer = 20.0f;
 //submit flag
 - (void)flickrNameViewControllerPressedSubmit:(id)controller
 {
-    [Utilities instance].photoAttributionText = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
-    [Utilities instance].photoAttributionURL = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    NSString *handle = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    [Utilities instance].photoAttributionText = handle;
+    NSString *fUrlString = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    [Utilities instance].photoAttributionURL = fUrlString;
     [self userAddedImage:[(FlickrNameViewController*)controller image] withAttribution:YES];
     
     
@@ -1853,7 +1846,7 @@ static const float _kRowBufffer = 20.0f;
     [self dismissViewControllerAnimated:YES completion:^{
         
         // Get the image from the result
-        UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
+        UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
         
             
         FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
@@ -2235,7 +2228,6 @@ static const float _kRowBufffer = 20.0f;
             [_mapView removeAnnotations:_mapView.annotations];
             ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:_selectedLocation.coordinate title:@"" subtitle:@""];
             [_mapView addAnnotation:annotation];
-            [annotation release];
         }
         
     }];
@@ -2297,7 +2289,7 @@ static const float _kRowBufffer = 20.0f;
         //parse the art object returned and update this controller instance's art
         [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        _art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
+        _art = [ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]];
 
         [[AAAPIManager managedObjectContext] unlock];
         
@@ -2320,7 +2312,7 @@ static const float _kRowBufffer = 20.0f;
         
         //reload the map view so the updated/new art is there
         ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-        [appDelegate saveContext];
+//        [appDelegate saveContext];
         
         //clear the user added images array
         [_userAddedImages removeAllObjects];
@@ -2358,7 +2350,7 @@ static const float _kRowBufffer = 20.0f;
     UIImage *pinImage = [UIImage imageNamed:@"PinArt.png"];
 
     //setup the annotation view
-    ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+    ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     [pin setImage:pinImage];
     [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
     [pin setCanShowCallout:NO];

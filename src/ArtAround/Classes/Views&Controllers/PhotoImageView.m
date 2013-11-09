@@ -90,7 +90,7 @@
     
     if (newUrl.absoluteString.length > 0) {
         
-        _url = [newUrl retain];
+        _url = newUrl;
         
         UIImage *buttonArrowImage = [UIImage imageNamed:@"buttonArrow.png"];
         UIImage *buttonArrowImageWhite = [UIImage imageNamed:@"buttonArrowWhite.png"];

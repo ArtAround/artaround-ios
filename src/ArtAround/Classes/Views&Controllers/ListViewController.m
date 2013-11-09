@@ -45,9 +45,6 @@
 - (void) setItems:(NSMutableArray*)items 
 {
     
-    if (_items) {
-        [_items release];
-    }
     
     //set items
     _items = [[NSMutableArray alloc] initWithArray:items];

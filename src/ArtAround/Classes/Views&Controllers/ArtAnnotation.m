@@ -23,10 +23,5 @@
 	return self;
 }
 
-- (void)dealloc {
-	[self setTitle:nil];
-	[self setSubtitle:nil];
-	[super dealloc];
-}
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "FlickrAPIManager.h"
-#import "ASIHTTPRequest.h"
 #import "PhotoParser.h"
 #import "Utilities.h"
 
@@ -22,7 +21,7 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 @interface FlickrAPIManager (private)
 - (NSURL *)apiURLForMethod:(NSString *)method;
 - (NSURL *)apiURLForMethod:(NSString *)method parameters:(NSDictionary *)parametersDict;
-- (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
+- (id)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo;
 @end
 
 @implementation FlickrAPIManager
@@ -56,10 +55,10 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	
 	//setup and start the request
 	NSDictionary *params = [NSDictionary dictionaryWithObject:UIImagePNGRepresentation(image) forKey:@"photo"];
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
-	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
-	[request setDidFailSelector:@selector(photoRequestFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
+//	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
+//	[request setDidFailSelector:@selector(photoRequestFailed:)];
+//	[request startAsynchronous];
 }
 
 #pragma mark - Flickr Download Methods
@@ -74,36 +73,36 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	
 	//setup and start the request
 	NSDictionary *params = [NSDictionary dictionaryWithObject:[flickrID stringValue] forKey:@"photo_id"];
-	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
-	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
-	[request setDidFailSelector:@selector(photoRequestFailed:)];
-	[request startAsynchronous];
+//	ASIHTTPRequest *request = [self requestWithURL:[self apiURLForMethod:@"flickr.photos.getSizes" parameters:params] userInfo:userInfo];
+//	[request setDidFinishSelector:@selector(photoRequestCompleted:)];
+//	[request setDidFailSelector:@selector(photoRequestFailed:)];
+//	[request startAsynchronous];
 }
 
-- (void)photoRequestCompleted:(ASIHTTPRequest *)request
+- (void)photoRequestCompleted:(id)request
 {
 	//parse the art in the background
 	[self performSelectorInBackground:@selector(parsePhotoRequest:) withObject:request];
 
 }
 
-- (void)parsePhotoRequest:(ASIHTTPRequest *)request
+- (void)parsePhotoRequest:(id)request
 {
 	//in the background, use a pool
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];	
+	@autoreleasepool {	
 	
 	//parse the art
-	PhotoParser *parser = [[PhotoParser alloc] init];
-	[parser parseRequest:request];
-	
-	//stop network activity indicator
-	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
+		PhotoParser *parser = [[PhotoParser alloc] init];
+		[parser parseRequest:request];
+		
+		//stop network activity indicator
+		[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
 	
 	//release the pool
-	[pool release];
+	}
 }
 
-- (void)photoRequestFailed:(ASIHTTPRequest *)request
+- (void)photoRequestFailed:(id)request
 {
 	DebugLog(@"artRequestFailed");
 	
@@ -135,15 +134,15 @@ static const NSString *_kFlickrIDKey = @"flickrID";
 	return [NSURL URLWithString:urlString];
 }
 
-- (ASIHTTPRequest *)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
+- (id)requestWithURL:(NSURL *)url userInfo:(NSDictionary *)userInfo
 {	
 	//setup and start the request
-	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-	[request setNumberOfTimesToRetryOnTimeout:1];
-	[request setDelegate:self];
-	[request setUserInfo:userInfo];
-	
-	return request;
+//	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//	[request setNumberOfTimesToRetryOnTimeout:1];
+//	[request setDelegate:self];
+//	[request setUserInfo:userInfo];
+	return nil;
+//	return request;
 }
 
 @end

@@ -17,11 +17,11 @@
     NSMutableArray *_createdItems;
 }
 
-@property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (nonatomic, retain) NSMutableArray *filteredSearchItems, *searchItems, *selectedItems;
-@property (nonatomic, retain) NSString *itemName;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (nonatomic, strong) NSMutableArray *filteredSearchItems, *searchItems, *selectedItems;
+@property (nonatomic, strong) NSString *itemName;
 @property BOOL multiSelectionEnabled, creationEnabled;
-@property (nonatomic, assign) id <SearchTableViewDelegate> delegate;
+@property (nonatomic, weak) id <SearchTableViewDelegate> delegate;
 
 @end
 

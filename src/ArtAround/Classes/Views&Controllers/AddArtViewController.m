@@ -127,21 +127,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [photosScrollView release];
-    [locationButton release];
-    [artistTextField release];
-    [titleTextField release];
-    [categoryButton release];
-    [descriptionTextView release];
-    [descriptionTextView release];
-    [dateButton release];
-    [locationDescriptionTextView release];
-    [urlTextField release];
-    [_scrollView release];
-    [_commissionedByButton release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setPhotosScrollView:nil];
     [self setLocationButton:nil];
@@ -412,8 +397,6 @@
     
     [self.navigationController pushViewController:viewController animated:YES];
     DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
-    [imgView release];
-    [viewController release];
     
     
     
@@ -696,12 +679,12 @@
         }
         
         [[AAAPIManager managedObjectContext] lock];
-        _art = [[ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]] retain];
+        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
         [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-        [(id)[[UIApplication sharedApplication] delegate] saveContext];
+        //[[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
     }
     else {
@@ -731,7 +714,6 @@
     //show fail alert
     UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Upload Failed" message:@"The upload failed. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [failedAlertView show];
-    [failedAlertView release];
 }
 
 #pragma mark - Photo Upload Callback Methods
@@ -762,7 +744,7 @@
         //parse the art object returned and update this controller instance's art
         [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        [self setArt:[[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain]];
+        [self setArt:[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]]];
         [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
@@ -784,7 +766,7 @@
         
         //reload the map view so the updated/new art is there
         ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-        [appDelegate saveContext];
+//        [appDelegate saveContext];
         
         
         [self.navigationController popViewControllerAnimated:YES];
@@ -827,7 +809,6 @@
         indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [indicator startAnimating];
         [_loadingAlertView addSubview:indicator];
-        [indicator release];
     }
     
     [_loadingAlertView setTitle:msg];
@@ -984,7 +965,6 @@
     UIActionSheet *imgSheet = [[UIActionSheet alloc] initWithTitle:@"Upload Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"Camera roll", nil];
     [imgSheet setTag:_kAddImageActionSheet];
     [imgSheet showInView:self.view];
-    [imgSheet release];
     
 }
 
@@ -1073,7 +1053,7 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
         // Get the image from the result
-        UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
+        UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
         
         NSMutableDictionary *newInfo = [[NSMutableDictionary alloc] initWithDictionary:info];
         [newInfo setObject:_currentLocation forKey:ALAssetPropertyLocation];
@@ -1102,7 +1082,7 @@
                               //check for location
                               if ([asset valueForProperty:ALAssetPropertyLocation]) {
                                   
-                                  _imageLocation = [[asset valueForProperty:ALAssetPropertyLocation] retain];
+                                  _imageLocation = [asset valueForProperty:ALAssetPropertyLocation];
                                   
                               }
                               else {

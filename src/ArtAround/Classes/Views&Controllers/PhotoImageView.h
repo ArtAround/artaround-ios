@@ -13,9 +13,9 @@
 
 @interface PhotoImageView : EGOImageView
 
-@property (nonatomic, assign) id <PhotoImageViewDelegate> photoImageViewDelegate;
-@property (nonatomic, retain) UIButton *photoAttributionButton;
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, weak) id <PhotoImageViewDelegate> photoImageViewDelegate;
+@property (nonatomic, strong) UIButton *photoAttributionButton;
+@property (nonatomic, strong) NSURL *url;
 @end
 
 @protocol PhotoImageViewDelegate

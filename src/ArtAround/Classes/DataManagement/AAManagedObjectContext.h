@@ -12,6 +12,6 @@
 	NSDictionary *_userInfo;
 }
 
-@property (nonatomic, retain) NSDictionary *userInfo;
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 @end

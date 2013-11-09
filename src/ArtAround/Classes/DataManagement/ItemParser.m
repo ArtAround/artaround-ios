@@ -28,7 +28,7 @@ static NSDateFormatter *_dateFormatter = nil;
 	//setup the date formatter if it doesn't exist yet
 	if (!_dateFormatter) {
 		_dateFormatter = [[NSDateFormatter alloc] init];
-		[_dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+		[_dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 		[_dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
 	}
 	return _dateFormatter;
@@ -39,10 +39,6 @@ static NSDateFormatter *_dateFormatter = nil;
 	//stop listening for notifications
 	[[NSNotificationCenter defaultCenter] removeObserver:[AAAPIManager instance] name:NSManagedObjectContextDidSaveNotification object:[self managedObjectContext]];
 
-	if (_managedObjectContext) {
-		[_managedObjectContext release];
-	}
-    [super dealloc];
 }
 
 #pragma mark - Properties
@@ -89,7 +85,7 @@ static NSDateFormatter *_dateFormatter = nil;
 		return nil;
 	}
 	@finally {
-		[request release];
+		request = nil;
 	}
 	
 	//return the item

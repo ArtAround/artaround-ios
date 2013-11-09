@@ -13,7 +13,7 @@
 
 @implementation ConfigParser
 
-- (void)parseCategoryRequest:(ASIHTTPRequest *)categoryRequest neighborhoodRequest:(ASIHTTPRequest *)neighborhoodRequest userInfo:(NSDictionary *)userInfo
+- (void)parseCategoryRequest:(NSObject*)categoryRequest neighborhoodRequest:(id)neighborhoodRequest userInfo:(NSDictionary *)userInfo
 {	
 	//deserialize the json responses
 	NSArray *neighborhoods = [NeighborhoodParser arrayForNeighborhoodRequest:neighborhoodRequest];
@@ -46,8 +46,5 @@
 	[self.managedObjectContext unlock];
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 @end

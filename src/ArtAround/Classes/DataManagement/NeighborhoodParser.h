@@ -14,6 +14,6 @@
 
 + (NSSet *)setForTitles:(NSArray *)neighborhoodTitles inContext:(NSManagedObjectContext *)context;
 + (Neighborhood *)neighborhoodForTitle:(NSString *)title inContext:(NSManagedObjectContext *)context;
-+ (NSArray *)arrayForNeighborhoodRequest:(ASIHTTPRequest *)neighborhoodRequest;
++ (NSArray *)arrayForNeighborhoodRequest:(id)neighborhoodRequest;
 
 @end

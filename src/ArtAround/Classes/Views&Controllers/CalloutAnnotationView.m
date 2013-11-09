@@ -52,7 +52,6 @@
 		[anImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
 		[self setImageView:anImageView];
 		[self addSubview:self.imageView];
-		[anImageView release];
 		
 		//title
 		UILabel *aTitleLabel = [[UILabel alloc] init];
@@ -62,7 +61,6 @@
 		[aTitleLabel setBackgroundColor:[UIColor clearColor]];
 		[self setTitleLabel:aTitleLabel];
 		[self addSubview:self.titleLabel];
-		[aTitleLabel release];
 	
 		//artist
 		UILabel *anArtistLabel = [[UILabel alloc] init];
@@ -70,7 +68,6 @@
 		[anArtistLabel setBackgroundColor:[UIColor clearColor]];
 		[self setArtistLabel:anArtistLabel];
 		[self addSubview:self.artistLabel];
-		[anArtistLabel release];
 		
 		//summary
 		UILabel *aSummaryLabel = [[UILabel alloc] init];
@@ -79,22 +76,12 @@
 		[aSummaryLabel setNumberOfLines:3];
 		[self setSummaryLabel:aSummaryLabel];
 		[self addSubview:self.summaryLabel];
-		[aSummaryLabel release];
 
     }
     
     return self;
 }
 
-- (void)dealloc
-{
-	[self setButton:nil];
-	[self setImageView:nil];
-	[self setTitleLabel:nil];
-	[self setArtistLabel:nil];
-	[self setSummaryLabel:nil];
-	[super dealloc];
-}
 
 - (void)prepareForReuse
 {

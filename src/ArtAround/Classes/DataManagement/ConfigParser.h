@@ -13,6 +13,6 @@
 
 @interface ConfigParser : ItemParser
 
-- (void)parseCategoryRequest:(ASIHTTPRequest *)categoryRequest neighborhoodRequest:(ASIHTTPRequest *)neighborhoodRequest userInfo:(NSDictionary *)userInfo;
+- (void)parseCategoryRequest:(id)categoryRequest neighborhoodRequest:(id)neighborhoodRequest userInfo:(NSDictionary *)userInfo;
 
 @end

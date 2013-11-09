@@ -71,15 +71,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [pageControl release];
-    [_scrollView release];
-    [titleLabel release];
-    [detailLabel release];
-    [closeButton release];
-    [doneButton release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setPageControl:nil];
     [self setScrollView:nil];

@@ -23,9 +23,9 @@
 }
 
 @property BOOL showFavorites;
-@property (nonatomic, retain) MapView *mapView;
-@property (nonatomic, retain) ListViewController *listViewController;
-@property (nonatomic, retain) CalloutAnnotationView *callout;
+@property (nonatomic, strong) MapView *mapView;
+@property (nonatomic, strong) ListViewController *listViewController;
+@property (nonatomic, strong) CalloutAnnotationView *callout;
 
 -(void)updateAndShowArt:(Art*)showArt;
 -(void)updateArt;

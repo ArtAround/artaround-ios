@@ -120,14 +120,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [currentLocationButton release];
-    [geotagButton release];
-    [doneButton release];
-    [mapView release];
-    [locationLabel release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setCurrentLocationButton:nil];
     [self setGeotagButton:nil];
@@ -303,7 +295,7 @@
 	
 	if ([annotation isKindOfClass:[ArtAnnotation class]]) {
         
-        ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
+        ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
         [pin setImage:[UIImage imageNamed:@"PinArt.png"]];
         [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
         [pin setCanShowCallout:NO];

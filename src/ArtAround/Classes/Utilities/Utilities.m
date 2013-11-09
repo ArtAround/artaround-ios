@@ -9,7 +9,6 @@
 #import "Utilities.h"
 #import <MapKit/MapKit.h>
 #import "ArtAnnotation.h"
-#import "ASIHTTPRequest.h"
 #import "GANTracker.h"
 
 static Utilities *_kSharedInstance = nil;
@@ -46,17 +45,11 @@ static Utilities *_kSharedInstance = nil;
 		NSString *settingsLocation = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ArtAround-Keys.plist"];
 		NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsLocation];
 		[self setKeysDict:settingsDict];
-		[settingsDict release];
 
 	}
 	return self;
 }
 
-- (void)dealloc
-{
-	[self setKeysDict:nil];
-	[super dealloc];
-}
 
 - (BOOL) hasLoadedBefore
 {
@@ -73,7 +66,7 @@ static Utilities *_kSharedInstance = nil;
 
 #pragma mark - Helper Methods
 + (NSString *)urlEncode:(NSString *)string {
-	return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8) autorelease];
+	return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8));
 }
 
 + (NSString *)urlDecode:(NSString *)string {
@@ -274,7 +267,7 @@ static Utilities *_kSharedInstance = nil;
 - (void)startActivity
 {	
 	//we are manually updating the activity indicator
-	[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
+//	[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
 	
 	//increment the activity count
 	//show start the activity indicator
@@ -291,8 +284,8 @@ static Utilities *_kSharedInstance = nil;
 		[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 		
 		//we are no longer updating the activity indicator
-		[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:YES];
-	}		
+//		[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:YES];
+	}
 }
 
 #pragma mark - device methods
@@ -359,7 +352,6 @@ static Utilities *_kSharedInstance = nil;
 		[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		[logoView setTag:logoViewTag];
 		[navBar addSubview:logoView];
-		[logoView release];
 	}
 	
 	//start animation block

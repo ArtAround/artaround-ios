@@ -86,9 +86,9 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 }
 
 - (EGOImageLoadConnection*)loadingConnectionForURL:(NSURL*)aURL {
-	EGOImageLoadConnection* connection = [[self.currentConnections objectForKey:aURL] retain];
+	EGOImageLoadConnection* connection = [self.currentConnections objectForKey:aURL];
 	if(!connection) return nil;
-	else return [connection autorelease];
+	else return connection;
 }
 
 - (void)cleanUpConnection:(EGOImageLoadConnection*)connection {
@@ -98,7 +98,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 	
 	[connectionsLock lock];
 	[currentConnections removeObjectForKey:connection.imageURL];
-	self.currentConnections = [[currentConnections copy] autorelease];
+	self.currentConnections = [currentConnections copy];
 	[connectionsLock unlock];	
 }
 
@@ -131,10 +131,9 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 	
 		[connectionsLock lock];
 		[currentConnections setObject:connection forKey:aURL];
-		self.currentConnections = [[currentConnections copy] autorelease];
+		self.currentConnections = [currentConnections copy];
 		[connectionsLock unlock];
 		[connection performSelector:@selector(start) withObject:nil afterDelay:0.01];
-		[connection release];
 		
 		return connection;
 	}
@@ -252,7 +251,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 		[[EGOCache currentCache] setData:connection.responseData forKey:keyForURL(connection.imageURL,nil) withTimeoutInterval:604800];
 		
 		[currentConnections removeObjectForKey:connection.imageURL];
-		self.currentConnections = [[currentConnections copy] autorelease];
+		self.currentConnections = [currentConnections copy];
 		
 		#if __EGOIL_USE_NOTIF
 		NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoaded(connection.imageURL)
@@ -274,7 +273,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 
 - (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error {
 	[currentConnections removeObjectForKey:connection.imageURL];
-	self.currentConnections = [[currentConnections copy] autorelease];
+	self.currentConnections = [currentConnections copy];
 	
 	#if __EGOIL_USE_NOTIF
 	NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoadFailed(connection.imageURL)
@@ -328,10 +327,8 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 		dispatch_release(_operationQueue), _operationQueue = nil;
 	#endif
 	
-	self.currentConnections = nil;
-	[currentConnections release], currentConnections = nil;
-	[connectionsLock release], connectionsLock = nil;
-	[super dealloc];
+	currentConnections = nil;
+	connectionsLock = nil;
 }
 
 @end

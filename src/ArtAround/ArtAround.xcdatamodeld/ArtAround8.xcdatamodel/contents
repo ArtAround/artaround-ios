@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3400" systemVersion="13A603" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Art" representedClassName="Art">
         <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artID" optional="YES" attributeType="String" defaultValueString="id" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="slug"/>
+            </userInfo>
+        </attribute>
         <attribute name="artist" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
@@ -24,7 +29,9 @@
         </attribute>
         <attribute name="rank" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="slug" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="slug"/>
+            </userInfo>
         </attribute>
         <attribute name="title" optional="YES" attributeType="String">
             <userInfo/>
@@ -37,17 +44,22 @@
             <userInfo/>
         </attribute>
         <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="categoriesRelationship"/>
+                <entry key="relatedByAttribute" value="artID"/>
+            </userInfo>
         </relationship>
         <relationship name="comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Comment" inverseName="art" inverseEntity="Comment">
-            <userInfo/>
-        </relationship>
-        <relationship name="event" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="arts" inverseEntity="Event" syncable="YES"/>
-        <relationship name="neighborhood" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Neighborhood" inverseName="arts" inverseEntity="Neighborhood">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="commentsRelationship"/>
+                <entry key="relatedByAttribute" value="artID"/>
+            </userInfo>
         </relationship>
         <relationship name="photos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Photo" inverseName="art" inverseEntity="Photo">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="photosRelationship"/>
+                <entry key="relatedByAttribute" value="artID"/>
+            </userInfo>
         </relationship>
         <userInfo/>
     </entity>
@@ -92,13 +104,13 @@
         <attribute name="slug" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="starts" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="event" inverseEntity="Art" syncable="YES"/>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" syncable="YES"/>
     </entity>
     <entity name="Neighborhood" representedClassName="Neighborhood">
         <attribute name="title" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
-        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="neighborhood" inverseEntity="Art">
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art">
             <userInfo/>
         </relationship>
         <userInfo/>
@@ -177,11 +189,11 @@
         <userInfo/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="375"/>
-        <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
-        <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
-        <element name="Event" positionX="160" positionY="192" width="128" height="150"/>
-        <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
-        <element name="Photo" positionX="-108" positionY="213" width="128" height="435"/>
+        <element name="Art" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Category" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Comment" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Event" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Neighborhood" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Photo" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

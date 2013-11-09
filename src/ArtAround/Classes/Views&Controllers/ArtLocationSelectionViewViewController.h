@@ -23,13 +23,13 @@ typedef enum _LocationSelection {
     ArtAnnotation *_annotation;
 }
 @property LocationSelection selection;
-@property (assign, nonatomic) CLLocation *location, *geotagLocation, *selectedLocation;
-@property (assign, nonatomic) id <ArtLocationSelectionViewViewControllerDelegate> delegate;
-@property (retain, nonatomic) IBOutlet UIButton *currentLocationButton;
-@property (retain, nonatomic) IBOutlet UIButton *geotagButton;
-@property (retain, nonatomic) IBOutlet UIButton *doneButton;
-@property (retain, nonatomic) IBOutlet MKMapView *mapView;
-@property (retain, nonatomic) IBOutlet UILabel *locationLabel;
+@property (weak, nonatomic) CLLocation *location, *geotagLocation, *selectedLocation;
+@property (weak, nonatomic) id <ArtLocationSelectionViewViewControllerDelegate> delegate;
+@property (strong, nonatomic) IBOutlet UIButton *currentLocationButton;
+@property (strong, nonatomic) IBOutlet UIButton *geotagButton;
+@property (strong, nonatomic) IBOutlet UIButton *doneButton;
+@property (strong, nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil geotagLocation:(CLLocation*)newGeotagLocation;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil geotagLocation:(CLLocation*)newGeotagLocation delegate:(id <ArtLocationSelectionViewViewControllerDelegate>)myDelegate currentLocationSelection:(LocationSelection)selectedLocation;

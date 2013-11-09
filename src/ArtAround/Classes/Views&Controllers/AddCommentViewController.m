@@ -49,7 +49,6 @@
         indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [indicator startAnimating];
         [_loadingAlertView addSubview:indicator];
-        [indicator release];
     }
     
     [_loadingAlertView setTitle:msg];
@@ -100,14 +99,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [nameField release];
-    [emailField release];
-    [urlField release];
-    [commentView release];
-    [postButton release];
-    [super dealloc];
-}
 
 - (void)viewDidUnload {
     [self setNameField:nil];
@@ -136,7 +127,6 @@
             
             UIAlertView *emailAlert = [[UIAlertView alloc] initWithTitle:@"Invalid Email" message:@"Please use a valid email address." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [emailAlert show];
-            [emailAlert release];
             
             return;
         }
@@ -157,7 +147,6 @@
     else {
         UIAlertView *noDataAlert = [[UIAlertView alloc] initWithTitle:@"Missing Data" message:@"To submit a comment you have to enter a Name, Email Address, and a Comment" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [noDataAlert show];
-        [noDataAlert release];
     }
     
 }
@@ -325,7 +314,6 @@
     //show fail alert
     UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Submission Failed" message:@"Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [failedAlertView show];
-    [failedAlertView release];
     
 }
 

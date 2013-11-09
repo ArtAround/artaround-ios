@@ -7,7 +7,7 @@
 //
 
 #import "NeighborhoodParser.h"
-#import "JSONKit.h"
+//#import "JSONKit.h"
 
 @implementation NeighborhoodParser
 
@@ -36,11 +36,11 @@
 	return neighborhood;
 }
 
-+ (NSArray *)arrayForNeighborhoodRequest:(ASIHTTPRequest *)neighborhoodRequest
++ (NSArray *)arrayForNeighborhoodRequest:(id)neighborhoodRequest
 {
 	//deserialize the json response
 	NSError *error = nil;
-	NSArray *neighborhoods = [[neighborhoodRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
+	NSArray *neighborhoods = nil;//[[neighborhoodRequest responseData] objectFromJSONDataWithParseOptions:JKParseOptionNone error:&error];
 	
 	//check for an error
 	if (error || !neighborhoods) {

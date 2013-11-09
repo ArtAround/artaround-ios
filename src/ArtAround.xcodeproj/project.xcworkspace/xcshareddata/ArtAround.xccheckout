@@ -12,6 +12,8 @@
 	<dict>
 		<key>05A3FFCA-AC78-47FC-A9B5-6640AA4AF1AC</key>
 		<string>https://github.com/ArtAround/artaround-ios.git</string>
+		<key>1AFA8164-918C-46BC-AEAC-8BFBAF40A4D5</key>
+		<string>https://github.com/magicalpanda/MagicalRecord.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>src/ArtAround.xcodeproj/project.xcworkspace</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>05A3FFCA-AC78-47FC-A9B5-6640AA4AF1AC</key>
 		<string>../../..</string>
+		<key>1AFA8164-918C-46BC-AEAC-8BFBAF40A4D5</key>
+		<string>../../ArtAround/Classes/ThirdParty/MagicalRecord</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/ArtAround/artaround-ios.git</string>
@@ -35,6 +39,14 @@
 			<string>05A3FFCA-AC78-47FC-A9B5-6640AA4AF1AC</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ArtAround</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1AFA8164-918C-46BC-AEAC-8BFBAF40A4D5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MagicalRecord</string>
 		</dict>
 	</array>
 </dict>

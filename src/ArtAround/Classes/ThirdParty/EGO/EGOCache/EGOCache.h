@@ -3,7 +3,7 @@
 //  enormego
 //
 //  Created by Shaun Harrison on 7/4/09.
-//  Copyright (c) 2009-2010 enormego
+//  Copyright (c) 2009-2012 enormego
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,19 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#endif
 
-@interface EGOCache : NSObject {
-@private
-	NSMutableDictionary* cacheDictionary;
-	NSOperationQueue* diskOperationQueue;
-	NSTimeInterval defaultTimeoutInterval;
-}
+@interface EGOCache : NSObject
 
-+ (EGOCache*)currentCache;
++ (instancetype)currentCache __deprecated; // Renamed to globalCache
+
+// Global cache for easy use
++ (instancetype)globalCache;
+
+// Opitionally create a different EGOCache instance with it's own cache directory
+- (id)initWithCacheDirectory:(NSString*)cacheDirectory;
 
 - (void)clearCache;
 - (void)removeCacheForKey:(NSString*)key;
@@ -48,6 +52,9 @@
 - (NSString*)stringForKey:(NSString*)key;
 - (void)setString:(NSString*)aString forKey:(NSString*)key;
 - (void)setString:(NSString*)aString forKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval;
+
+- (NSDate*)dateForKey:(NSString*)key;
+- (NSArray*)allKeys;
 
 #if TARGET_OS_IPHONE
 - (UIImage*)imageForKey:(NSString*)key;
@@ -65,6 +72,10 @@
 
 - (void)copyFilePath:(NSString*)filePath asKey:(NSString*)key;
 - (void)copyFilePath:(NSString*)filePath asKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval;	
+
+- (id<NSCoding>)objectForKey:(NSString*)key;
+- (void)setObject:(id<NSCoding>)anObject forKey:(NSString*)key;
+- (void)setObject:(id<NSCoding>)anObject forKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval;
 
 @property(nonatomic,assign) NSTimeInterval defaultTimeoutInterval; // Default is 1 day
 @end

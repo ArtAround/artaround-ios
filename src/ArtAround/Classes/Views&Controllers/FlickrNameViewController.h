@@ -12,11 +12,11 @@
 
 @interface FlickrNameViewController : UIViewController
 
-@property (nonatomic, retain) id <FlickrNameViewControllerDelegate> delegate;
-@property (nonatomic, retain) UIImage *image;
-@property (retain, nonatomic) IBOutlet UITextField *flickrHandleField;
-@property (retain, nonatomic) IBOutlet UITextField *attributionURLField;
-@property (retain, nonatomic) IBOutlet UILabel *flickrHandleImageLabel;
+@property (nonatomic, strong) id <FlickrNameViewControllerDelegate> delegate;
+@property (nonatomic, strong) UIImage *image;
+@property (strong, nonatomic) IBOutlet UITextField *flickrHandleField;
+@property (strong, nonatomic) IBOutlet UITextField *attributionURLField;
+@property (strong, nonatomic) IBOutlet UILabel *flickrHandleImageLabel;
 
 - (IBAction)cancelButtonPressed:(id)sender;
 - (IBAction)submitButtonPressed:(id)sender;

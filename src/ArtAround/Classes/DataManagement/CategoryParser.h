@@ -14,6 +14,6 @@
 
 + (NSSet *)setForTitles:(NSArray *)categoryTitles inContext:(NSManagedObjectContext *)context;
 + (Category *)categoryForTitle:(NSString *)title inContext:(NSManagedObjectContext *)context;
-+ (NSArray *)arrayForCategoryRequest:(ASIHTTPRequest *)categoryRequest;
++ (NSArray *)arrayForCategoryRequest:(id)categoryRequest;
 
 @end
