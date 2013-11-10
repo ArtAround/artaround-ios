@@ -13,6 +13,9 @@
 #import "Utilities.h"
 #import "GANTracker.h"
 #import "IntroViewController.h"
+//#import "MagicalRecord.h"
+//#import "NSManagedObject+MagicalDataImport.h"
+#import "Category.h"
 
 @implementation ArtAroundAppDelegate
 
@@ -26,6 +29,16 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"MRArtAround.sqlite"];
+    
+    //add categories
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        for (NSString *thisCat in [AAAPIManager instance].categories) {
+            NSDictionary *obj = @{@"title": thisCat};
+            [Category MR_importFromObject:obj inContext:localContext];
+        }
+        
+    }];
     
     [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
                                            dispatchPeriod:kGANDispatchPeriodSec

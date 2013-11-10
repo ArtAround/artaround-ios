@@ -1,47 +1,81 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3400" systemVersion="13A603" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Art" representedClassName="Art">
-        <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="description"/>
+            </userInfo>
+        </attribute>
         <attribute name="artID" optional="YES" attributeType="String" defaultValueString="id" syncable="YES">
             <userInfo>
                 <entry key="mappedKeyName" value="slug"/>
             </userInfo>
         </attribute>
         <attribute name="artist" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="artist"/>
+            </userInfo>
         </attribute>
-        <attribute name="commissioned" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="commissionedBy" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commissioned" optional="YES" attributeType="Boolean" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="commissioned"/>
+            </userInfo>
+        </attribute>
+        <attribute name="commissionedBy" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="commissioned_by.name"/>
+            </userInfo>
+        </attribute>
         <attribute name="commissionedByLink" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="updated_at"/>
+            </userInfo>
         </attribute>
         <attribute name="distance" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="favorite" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="latitude" optional="YES" attributeType="Decimal" defaultValueString="0.0">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="location.@firstObject"/>
+            </userInfo>
         </attribute>
         <attribute name="locationDescription" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
         <attribute name="longitude" optional="YES" attributeType="Decimal" defaultValueString="0.0">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="location.@lastObject"/>
+            </userInfo>
         </attribute>
-        <attribute name="rank" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="rank" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="ranking"/>
+            </userInfo>
+        </attribute>
         <attribute name="slug" optional="YES" attributeType="String">
             <userInfo>
                 <entry key="mappedKeyName" value="slug"/>
             </userInfo>
         </attribute>
         <attribute name="title" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="title"/>
+            </userInfo>
         </attribute>
         <attribute name="ward" optional="YES" attributeType="Integer 32">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="ward"/>
+            </userInfo>
         </attribute>
-        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="website"/>
+            </userInfo>
+        </attribute>
         <attribute name="year" optional="YES" attributeType="Integer 32">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="year"/>
+            </userInfo>
         </attribute>
         <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category">
             <userInfo>
@@ -64,11 +98,19 @@
         <userInfo/>
     </entity>
     <entity name="Category" representedClassName="Category">
+        <attribute name="categoryID" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="title"/>
+            </userInfo>
+        </attribute>
         <attribute name="title" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
         <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="categories" inverseEntity="Art">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="artsRelationship"/>
+                <entry key="relatedByAttribute" value="categoryID"/>
+            </userInfo>
         </relationship>
         <userInfo/>
     </entity>

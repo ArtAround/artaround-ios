@@ -340,63 +340,79 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	NSDictionary *params = [NSDictionary dictionaryWithObject:@"9999" forKey:@"per_page"];
 	NSURL *allArtURL = [AAAPIManager apiURLForMethod:@"arts" parameters:params];
 	
+    //TODO: Cache checking  (erase?)
 	//if art is cached, quit now
 	//cache for 24 hours
 	if (!force && ![AAAPIManager isCacheExpiredForURL:allArtURL timeout:60 * 60 * 24]) {
 		return;
 	}
     
-    NSManagedObjectContext *privateQueueContext = [NSManagedObjectContext MR_contextForCurrentThread];
-    NSArray *results = [Art MR_findAllInContext:privateQueueContext];
-	
+//    NSManagedObjectContext *privateQueueContext = [NSManagedObjectContext MR_contextForCurrentThread];
+//    NSArray *results = [Art MR_findAllInContext:privateQueueContext];
+//    Art *a = [results objectAtIndex:4];
+//    DebugLog(@"lat: %f  lon: %f,  cat: %@", a.latitude.floatValue, a.longitude.floatValue, a.categoriesString);
+    
+    
 	//start network activity indicator
 	[[Utilities instance] startActivity];
 	
     AFJSONRequestOperation *request = [AFJSONRequestOperation JSONRequestOperationWithRequest:[NSURLRequest requestWithURL:allArtURL] success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        NSLog(@"asd");
-//        DebugLog(@"%@", JSON);
-
-        NSError *err = nil;
-        // Get the local context
-        
-        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            DebugLog(@"%@", [[JSON objectForKey:@"arts"] objectAtIndex:0]);
-            NSDictionary *object = [[NSDictionary alloc] initWithDictionary:[[JSON objectForKey:@"arts"] objectAtIndex:0]];
-            Art *art = [Art MR_importFromObject:object inContext:localContext];
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [Art MR_importFromArray:[JSON objectForKey:@"arts"] inContext:localContext];
-//            Art *art = [Art MR_createInContext:localContext];
-//            [art MR_importValuesForKeysWithObject:[[JSON objectForKey:@"arts"] objectAtIndex:0]];
-//            art.title = [[[JSON objectForKey:@"arts"] objectAtIndex:0] objectForKey:@"title"];
-        
+        } completion:^(BOOL success, NSError *error) {
             
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                NSArray *arts = [JSON objectForKey:@"arts"];
+                
+                NSArray *categories = [Category MR_findAll];
+                for (Category *thisCat in categories) {
+                    
+                    NSString *catTitle = thisCat.title;
+                    
+                    NSArray *filteredArts = [arts filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+                        return ([[evaluatedObject objectForKey:@"category"] isKindOfClass:[NSArray class]] && [[evaluatedObject objectForKey:@"category"] containsObject:catTitle]);
+                    }]];
+                    
+                    for (NSDictionary *thisArtJson in filteredArts) {
+                        
+                        Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[thisArtJson objectForKey:@"slug"] inContext:localContext];
+                        [artRecord addCategoriesObject:thisCat];
+                        
+                    }
+                    
+                }
+            
+            } completion:^(BOOL success, NSError *error) {
+                
+                #pragma clang diagnostic push
+                #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                    [(id)target performSelector:callback withObject:nil];
+                #pragma clang diagnostic pop
+                
+                [[Utilities instance] stopActivity];
+                
+            }];
+            
+
         }];
-//        NSManagedObjectContext *localContext = [NSManagedObjectContext MR_contextForCurrentThread];
-//        Art *art = [Art MR_createInContext:localContext];
-//        art.title = [[[JSON objectForKey:@"arts"] objectAtIndex:0] objectForKey:@"title"];
-//        [localContext save:&err];
-//        DebugLog(@"%@", err);
-        //[art MR_importValuesForKeysWithObject:art];
-//        [Art MR_importFromObject:[[JSON objectForKey:@"arts"] objectAtIndex:0] inContext:localContext];
         
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
-        NSLog(@"Fail");
-        DebugLog(@"%@", JSON);
+        DebugLog(@"Download all art failed. Error: %@.  JSON: %@", error, JSON);
+        
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                [(id)target performSelector:callback withObject:nil];
+        #pragma clang diagnostic pop
         
     }];
     [request start];
     
-	//pass along target and selector in userInfo
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
-	
-	//setup and start the request
-	//todo: revisit this - may need to adjust how we download if too many items are being downloaded
-//	ASIHTTPRequest *request = [self requestWithURL:allArtURL userInfo:userInfo];
-//	[request setDidFinishSelector:@selector(artRequestCompleted:)];
-//	[request setDidFailSelector:@selector(artRequestFailed:)];
-//	[request startAsynchronous];
+
 }
 
 - (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback 

@@ -357,7 +357,7 @@ static const int _kAnnotationLimit = 9999;
 //queries core data for art and adds them to the map
 - (void)updateArt
 {
-//    [self updateAndShowArt:nil];
+    [self updateAndShowArt:nil];
 }
 
 
@@ -365,10 +365,7 @@ static const int _kAnnotationLimit = 9999;
 -(void)updateAndShowArt:(Art*)showArt
 {
 	//get art from core data
-	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
-	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-	[fetchRequest setEntity:entity];
-	[fetchRequest setFetchLimit:_kAnnotationLimit];
+	NSFetchRequest *fetchRequest = [Art MR_requestAll];
 	
     //turn the header on or off
     if ([Utilities instance].selectedFilterType == FilterTypeNone && !_showFavorites)
@@ -435,7 +432,7 @@ static const int _kAnnotationLimit = 9999;
 	//fetch art
 	//execute fetch request
 	NSError *error = nil;
-	NSArray *queryItems = [[AAAPIManager managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+	NSArray *queryItems = [[NSManagedObjectContext MR_contextForCurrentThread] executeFetchRequest:fetchRequest error:&error];
 	[_items addObjectsFromArray:queryItems];
     
     CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
