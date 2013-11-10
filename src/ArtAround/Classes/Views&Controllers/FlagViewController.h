@@ -12,7 +12,7 @@
 
 @interface FlagViewController : UIViewController
 
-@property (nonatomic, strong) id <FlagViewControllerDelegate> delegate;
+@property (nonatomic, retain) id <FlagViewControllerDelegate> delegate;
 @property (strong, nonatomic) IBOutlet UITextView *flagDescriptionTextview;
 
 - (IBAction)cancelButtonPressed:(id)sender;

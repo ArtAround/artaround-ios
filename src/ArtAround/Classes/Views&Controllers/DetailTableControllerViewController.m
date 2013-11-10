@@ -1813,6 +1813,7 @@ static const float _kRowBufffer = 20.0f;
     
     [[controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.leftBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
@@ -1827,6 +1828,7 @@ static const float _kRowBufffer = 20.0f;
     
     [[(FlickrNameViewController*)controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.leftBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
@@ -1857,6 +1859,7 @@ static const float _kRowBufffer = 20.0f;
         [self.view addSubview:flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        [self.navigationItem.leftBarButtonItem setEnabled:NO];
     
     }];
     
@@ -1873,6 +1876,7 @@ static const float _kRowBufffer = 20.0f;
         [self.view addSubview:flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        [self.navigationItem.leftBarButtonItem setEnabled:NO];
         
     }];
 }
@@ -1950,13 +1954,17 @@ static const float _kRowBufffer = 20.0f;
             //break on cancel
             if (buttonIndex == 3) break;
             
-            FlagViewController *flagController = [[FlagViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+            FlagViewController *flagController = [[FlagViewController alloc] initWithNibName:@"FlagViewController" bundle:nil];
             flagController.view.autoresizingMask = UIViewAutoresizingNone;
             flagController.delegate = self;
             
-            [self.view addSubview:flagController.view];
-            [self.navigationItem.backBarButtonItem setEnabled:NO];
-            [self.navigationItem.rightBarButtonItem setEnabled:NO];
+            [self presentViewController:flagController animated:YES completion:^{
+            
+                [self.navigationItem.backBarButtonItem setEnabled:NO];
+                [self.navigationItem.rightBarButtonItem setEnabled:NO];
+                [self.navigationItem.leftBarButtonItem setEnabled:NO];
+                
+            }];
             
             break;
         }
@@ -1978,34 +1986,45 @@ static const float _kRowBufffer = 20.0f;
 //dismiss flag controller
 - (void) flagViewControllerPressedCancel
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+    }];
+
 }
 
 //successful submission
 - (void) flagSubmissionCompleted
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
-    
-    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [moderationComment show];
-    
-    //track event
-    [Utilities trackEvent:@"ArtFlagged" action:@"Flag" label:_art.title];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+        
+        UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [moderationComment show];
+        
+        //track event
+        [Utilities trackEvent:@"ArtFlagged" action:@"Flag" label:_art.title];
+    }];
+
 }
 
 //unsuccessful submission
 - (void) flagSubmissionFailed
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
-    
-    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Sorry! Something went wrong in the flag submission. Please try again." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [moderationComment show];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //[[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+        
+        UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Sorry! Something went wrong in the flag submission. Please try again." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [moderationComment show];
+    }];
 }
 
 #pragma mark - Text View Delegate

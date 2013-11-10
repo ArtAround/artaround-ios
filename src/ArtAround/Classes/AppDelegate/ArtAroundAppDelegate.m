@@ -67,9 +67,6 @@
 	//add the nav controller view to the window
 	[self.window addSubview:self.navigationController.view];
 	
-	//download static config items
-	[self performSelectorInBackground:@selector(downloadConfig) withObject:nil];
-	
 	//set the Flickr API Key
 	[[FlickrAPIManager instance] setApiKey:[[Utilities instance].keysDict objectForKey:@"FlickrAPIKey"]];
 
@@ -102,20 +99,6 @@
     } completion:^(BOOL finished) {
         [_introVC.view removeFromSuperview];
     }];
-}
-
-//- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url { return YES; }
-
-- (void)downloadConfig
-{
-	//probably performing this in the background so create an autorelease pool
-	@autoreleasepool {
-	
-	//todo: possibly lock the interface or display a message while this is happening
-		[[AAAPIManager instance] downloadConfigWithTarget:nil callback:nil];
-	
-	//release pool
-	}
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

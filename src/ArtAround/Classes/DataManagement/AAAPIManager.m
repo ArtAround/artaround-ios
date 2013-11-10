@@ -50,36 +50,36 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 
 @implementation AAAPIManager
 
-- (void)itemParserContextDidSave:(NSNotification *)notification
-{	
-	//merge core data changes on the main thread
-	[self performSelectorOnMainThread:@selector(mergeChanges:) withObject:notification waitUntilDone:YES];
-	
-	//call the selector on the target if applicable
-	NSDictionary *userInfo = [[notification object] userInfo];
-	if (userInfo) {
-		id target = [userInfo objectForKey:_kTargetKey];
- 		SEL callback = [[userInfo objectForKey:_kCallbackKey] pointerValue];
-		if (target && [target respondsToSelector:callback]) {
-			[target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
-		}
-	}
-}
-
-//merges changes from other managed object context
-- (void)mergeChanges:(NSNotification *)notification
-{	
-	[[AAAPIManager managedObjectContext] lock];
-	[[AAAPIManager persistentStoreCoordinator] lock];
-	[[AAAPIManager managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
-	NSError *error = nil;
-	if (![[AAAPIManager managedObjectContext] save:&error] || error) {
-		DebugLog(@"Error saving after merge to the database: %@, %@", error, [error userInfo]);
-	}
-    
-	[[AAAPIManager persistentStoreCoordinator] unlock];
-	[[AAAPIManager managedObjectContext] unlock];
-}
+//- (void)itemParserContextDidSave:(NSNotification *)notification
+//{	
+//	//merge core data changes on the main thread
+//	[self performSelectorOnMainThread:@selector(mergeChanges:) withObject:notification waitUntilDone:YES];
+//	
+//	//call the selector on the target if applicable
+//	NSDictionary *userInfo = [[notification object] userInfo];
+//	if (userInfo) {
+//		id target = [userInfo objectForKey:_kTargetKey];
+// 		SEL callback = [[userInfo objectForKey:_kCallbackKey] pointerValue];
+//		if (target && [target respondsToSelector:callback]) {
+//			[target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+//		}
+//	}
+//}
+//
+////merges changes from other managed object context
+//- (void)mergeChanges:(NSNotification *)notification
+//{	
+//	[[AAAPIManager managedObjectContext] lock];
+//	[[AAAPIManager persistentStoreCoordinator] lock];
+//	[[AAAPIManager managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
+//	NSError *error = nil;
+//	if (![[AAAPIManager managedObjectContext] save:&error] || error) {
+//		DebugLog(@"Error saving after merge to the database: %@, %@", error, [error userInfo]);
+//	}
+//    
+//	[[AAAPIManager persistentStoreCoordinator] unlock];
+//	[[AAAPIManager managedObjectContext] unlock];
+//}
 
 
 #pragma mark - Arrays for Filters
@@ -180,64 +180,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	return [self arrayForSQL:"SELECT ZNAME FROM ZEVENT WHERE ZSLUG IS NOT NULL ORDER BY ZNAME"];
 }
 
-#pragma mark - Config (aka Categories & Neighborhoods) Download Methods
 
-- (void)downloadConfigWithTarget:(id)target callback:(SEL)callback
-{	
-	//cache for 1 week
-	int timeout = 60 * 60 * 24 * 7;
-	
-	//if both neighborhoods and categories are cached, quit now
-	if (![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] timeout:timeout] &&
-		![AAAPIManager isCacheExpiredForURL:[AAAPIManager apiURLForMethod:@"categories"] timeout:timeout]) {
-		return;
-	}
-	
-	//pass along target and selector in userInfo
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, nil];
-	
-	//download everything
-//	ASIHTTPRequest *categoryRequest = [self downloadCategories];
-//	ASIHTTPRequest *neighborhoodRequest = [self downloadNeighborhoods];
-
-	//parse the config items
-//	ConfigParser *parser = [[ConfigParser alloc] init];
-//	[parser parseCategoryRequest:categoryRequest neighborhoodRequest:neighborhoodRequest userInfo:userInfo];
-//	[parser release];
-}
-
-/*
-- (id)downloadNeighborhoods
-{
-	//start network activity indicator
-	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
-	
-	//setup and start the request
-//	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"neighborhoods"] userInfo:nil];
-//	[request startSynchronous];
-	
-	//stop network activity indicator
-	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
-	
-//	return request;
-    return nil;
-}
-
-- (id)downloadCategories
-{
-	//start network activity indicator
-	[[Utilities instance] performSelectorOnMainThread:@selector(startActivity) withObject:nil waitUntilDone:NO];
-	
-	//setup and start the request
-//	ASIHTTPRequest *request = [self requestWithURL:[AAAPIManager apiURLForMethod:@"categories"] userInfo:nil];
-//	[request startSynchronous];
-	
-	//stop network activity indicator
-	[[Utilities instance] performSelectorOnMainThread:@selector(stopActivity) withObject:nil waitUntilDone:NO];
-	
-//	return request;
-    return nil;
-}*/
 
 #pragma mark - Flag Methods
 - (void)submitFlagForSlug:(NSString*)slug withText:(NSString*)text target:(id)target callback:(SEL)callback failCallback:(SEL)failCallback
@@ -245,16 +188,37 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     //get the art for this slug
 	NSURL *flagURL;
-    if (text && text.length > 0)
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:@{@"source": @"iOS"}];
+    if (text && text.length > 0) {
         flagURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@/flag?text=%@&source=iOS", _kFlagAPIRoot, slug, [Utilities urlEncode:text], nil]];
-    else
+        [params setObject:[Utilities urlEncode:text] forKey:@"text"];
+    }
+    else {
         flagURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@/flag?source=iOS", _kFlagAPIRoot, slug, nil]];
+    }
     
 	//start network activity indicator
 	[[Utilities instance] startActivity];
 	
+    NSString *baseUrl = [[NSString alloc] initWithFormat:@"%@", _kFlagAPIRoot];
+    AFHTTPClient *client = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:baseUrl]];
+    [client postPath:[NSString stringWithFormat:@"%@/flag", slug, nil] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if (target && [target respondsToSelector:callback]) {
+            [target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        if (target && [target respondsToSelector:failCallback]) {
+            [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];
+        }
+        
+    }];
+    
+    
 	//pass along target and selector in userInfo
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
+	//NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:target, _kTargetKey, [NSValue valueWithPointer:callback], _kCallbackKey, [NSValue valueWithPointer:failCallback], _kFailCallbackKey, nil];
 	
 	//setup and start the request
 //	ASIHTTPRequest *request = [self requestWithURL:flagURL userInfo:userInfo];
