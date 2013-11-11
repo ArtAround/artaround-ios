@@ -9,6 +9,7 @@
 #import "DetailTableControllerViewController.h"
 #import "Art.h"
 #import "Photo.h"
+#import "Comment.h"
 #import "Category.h"
 #import "EGOImageButton.h"
 #import "PhotoImageView.h"
@@ -18,7 +19,6 @@
 #import <Social/Social.h>
 #import "Utilities.h"
 #import "SearchItem.h"
-#import "ArtParser.h"
 #import "ArtAnnotationView.h"
 #import "ArtAroundAppDelegate.h"
 #import "CommentsTableViewController.h"
@@ -261,7 +261,6 @@ static const float _kRowBufffer = 20.0f;
 	//get all the photo details for each photo that is missing the deets
 	for (Photo *photo in [_art.photos allObjects]) {
 		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
-			//[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
             [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImages) forceDownload:YES];
 		}
 	}
@@ -357,11 +356,21 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - Button Pressed
 - (void)favoriteButtonPressed:(id)sender
 {
+    
+    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+        Art *a = [_art MR_inContext:localContext];
+        [a setFavorite:[NSNumber numberWithBool:!a.favorite.boolValue]];
+    } completion:^(BOOL success, NSError *error) {
+        
+        _art = [Art MR_findFirstByAttribute:@"slug" withValue:_art.slug];
+        
+    }];
+    
     //switch the art's favorite property
-    [ArtParser setFavorite:![_art.favorite boolValue] forSlug:_art.slug];
+//    [ArtParser setFavorite:![_art.favorite boolValue] forSlug:_art.slug];
     
     //merge context
-    [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//    [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
     
     //update the button
     [_favoriteButton setSelected:([_art.favorite boolValue])];
@@ -604,12 +613,62 @@ static const float _kRowBufffer = 20.0f;
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
         
-        [[AAAPIManager managedObjectContext] lock];
-        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
-        [[AAAPIManager managedObjectContext] unlock];
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
+//        [[AAAPIManager managedObjectContext] lock];
+//        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
 //        [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
         [[(ArtAroundAppDelegate*)[[UIApplication sharedApplication] delegate] mapViewController] updateArt];
@@ -1931,7 +1990,9 @@ static const float _kRowBufffer = 20.0f;
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 case 1:
@@ -1939,7 +2000,9 @@ static const float _kRowBufffer = 20.0f;
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
                     imgPicker.delegate = self;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 default:
@@ -2304,15 +2367,65 @@ static const float _kRowBufffer = 20.0f;
         //track event
         [Utilities trackEvent:@"PhotoUploaded" action:@"Photo" label:_art.title];
         
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
         //parse the art object returned and update this controller instance's art
-        [[AAAPIManager managedObjectContext] lock];
+//        [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        _art = [ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]];
+//        _art = [ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]];
 
-        [[AAAPIManager managedObjectContext] unlock];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
     }
     else {
         [self photoUploadFailed:responseDict];
@@ -2329,7 +2442,7 @@ static const float _kRowBufffer = 20.0f;
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
         
         //reload the map view so the updated/new art is there
-        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+//        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
 //        [appDelegate saveContext];
         
         //clear the user added images array

@@ -9,21 +9,15 @@
 #import "AAAPIManager.h"
 #import <CoreData/CoreData.h>
 #import <sqlite3.h>
-//#import "ASIHTTPRequest.h"
-//#import "ASIFormDataRequest.h"
 #import "AFNetworking.h"
 #import "ArtAroundAppDelegate.h"
 #import "Art.h"
 #import "Category.h"
 #import "Photo.h"
+#import "Comment.h"
 #import "Neighborhood.h"
-#import "ArtParser.h"
-#import "CommentParser.h"
-#import "ConfigParser.h"
 #import "EGOCache.h"
 #import "Utilities.h"
-//#import "MagicalRecord.h"
-//#import "MagicalRecord+Actions.h"
 #import "NSManagedObject+MagicalDataImport.h"
 #import "MagicalImportFunctions.h"
 
@@ -563,7 +557,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [manager PUT:[AAAPIManager apiURLForMethod:@"arts"].absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
-            [target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+            [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
         }
         
         [[Utilities instance] stopActivity];
@@ -613,7 +607,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [manager PUT:[AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", [art objectForKey:@"slug"], nil]].absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
-            [target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+            [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
         }
         
         [[Utilities instance] stopActivity];
@@ -676,7 +670,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
-            [target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
+            [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
         }
         
         [[Utilities instance] stopActivity];
@@ -1005,14 +999,14 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 										  range:NSMakeRange(0, [[url absoluteString] length])];
 	
 	//if cache exists, then it has not expired
-	if ([[EGOCache currentCache] hasCacheForKey:key]) {
+	if ([[EGOCache globalCache] hasCacheForKey:key]) {
 		return NO;
 	}
 	
 	//cache didn't exist
 	//return yes, the cache is expired
 	//create a new cache entry
-	[[EGOCache currentCache] setString:@"YES" forKey:key withTimeoutInterval:timeout];
+	[[EGOCache globalCache] setString:@"YES" forKey:key withTimeoutInterval:timeout];
 	return YES;
 }
 

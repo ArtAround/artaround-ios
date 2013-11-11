@@ -54,7 +54,7 @@
         [filterLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
         [filterLabel setText:@"Filtered"];
         [filterLabel setTag:1];
-        [filterLabel setTextAlignment:UITextAlignmentCenter];
+        [filterLabel setTextAlignment:NSTextAlignmentCenter];
         [filterLabel setTextColor:[UIColor whiteColor]];
         [filterLabel setAutoresizingMask:UIViewAutoresizingNone];
         [_headerView addSubview:filterLabel];

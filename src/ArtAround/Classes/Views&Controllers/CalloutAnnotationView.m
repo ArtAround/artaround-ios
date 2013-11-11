@@ -13,7 +13,6 @@
 #import "Category.h"
 #import "Photo.h"
 #import "EGOImageView.h"
-#import "FlickrAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
 
@@ -56,7 +55,7 @@
 		//title
 		UILabel *aTitleLabel = [[UILabel alloc] init];
 		[aTitleLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:13.0f]];
-		[aTitleLabel setMinimumFontSize:13.0f];
+		[aTitleLabel setMinimumScaleFactor:1.0f];
 		[aTitleLabel setAdjustsFontSizeToFitWidth:YES];
 		[aTitleLabel setBackgroundColor:[UIColor clearColor]];
 		[self setTitleLabel:aTitleLabel];
@@ -109,7 +108,6 @@
 			[self setupImage];
 		} else {
 			[[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
-            //[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
 		}
 	}
     else {

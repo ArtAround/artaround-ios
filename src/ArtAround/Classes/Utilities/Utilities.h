@@ -42,6 +42,7 @@
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
 typedef enum {
+    FilterTypeUnchosen = -1,
 	FilterTypeNone = 0,
     FilterTypeFavorites = 1,
 	FilterTypeCategory = 2,

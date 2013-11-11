@@ -39,7 +39,7 @@ static Utilities *_kSharedInstance = nil;
 		_defaults = [NSUserDefaults standardUserDefaults];
 		
 		//set an invalid filter type so it is forced to pull from NSUserDefaults on first load
-		_selectedFilterType = -1;
+		_selectedFilterType = FilterTypeUnchosen;
 		
 		//setup the keys dictionary
 		NSString *settingsLocation = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ArtAround-Keys.plist"];
@@ -231,7 +231,7 @@ static Utilities *_kSharedInstance = nil;
 
 - (FilterType)selectedFilterType
 {
-	if (_selectedFilterType == -1) {
+	if (_selectedFilterType == FilterTypeUnchosen) {
 		_selectedFilterType = [_defaults integerForKey:@"AAFilterType"];
 	}
 	return _selectedFilterType;

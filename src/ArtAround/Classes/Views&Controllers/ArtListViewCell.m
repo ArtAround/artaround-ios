@@ -8,7 +8,6 @@
 
 #import "ArtListViewCell.h"
 #import "Photo.h"
-#import "FlickrAPIManager.h"
 #import "Category.h"
 #import "Utilities.h"
 #import "AAAPIManager.h"

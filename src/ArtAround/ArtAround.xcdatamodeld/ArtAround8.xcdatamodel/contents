@@ -167,15 +167,11 @@
         <attribute name="slug" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="starts" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" syncable="YES"/>
     </entity>
     <entity name="Neighborhood" representedClassName="Neighborhood">
         <attribute name="title" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
-        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art">
-            <userInfo/>
-        </relationship>
         <userInfo/>
     </entity>
     <entity name="Photo" representedClassName="Photo">

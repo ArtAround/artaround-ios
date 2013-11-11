@@ -120,7 +120,7 @@
     [filterLabel setBackgroundColor:[UIColor clearColor]];
     [filterLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
     [filterLabel setText:@"Filtered"];
-    [filterLabel setTextAlignment:UITextAlignmentCenter];
+    [filterLabel setTextAlignment:NSTextAlignmentCenter];
     [filterLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [filterLabel setTextColor:[UIColor whiteColor]];
     
@@ -251,7 +251,7 @@
         cell.textLabel.text = @"No Art Found";
         cell.textLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:16];
         cell.textLabel.textColor = kBGdarkBrown;
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
@@ -268,7 +268,7 @@
             cell.textLabel.font = [UIFont fontWithName:@"Verdana-Bold" size:14];
             cell.textLabel.textColor = kBGdarkBrown;
             cell.textLabel.backgroundColor = [UIColor clearColor];
-            cell.textLabel.textAlignment = UITextAlignmentCenter;
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
             cell.selectionStyle = UITableViewCellSelectionStyleGray;
             return cell;
         }

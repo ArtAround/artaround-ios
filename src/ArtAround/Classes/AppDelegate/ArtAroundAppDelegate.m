@@ -9,7 +9,6 @@
 #import "ArtAroundAppDelegate.h"
 #import "MapViewController.h"
 #import "AAAPIManager.h"
-#import "FlickrAPIManager.h"
 #import "Utilities.h"
 #import "GANTracker.h"
 #import "IntroViewController.h"
@@ -66,9 +65,6 @@
 	
 	//add the nav controller view to the window
 	[self.window addSubview:self.navigationController.view];
-	
-	//set the Flickr API Key
-	[[FlickrAPIManager instance] setApiKey:[[Utilities instance].keysDict objectForKey:@"FlickrAPIKey"]];
 
     
     if (![Utilities instance].hasLoadedBefore) {

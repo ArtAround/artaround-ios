@@ -17,7 +17,8 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "Utilities.h"
 #import "SearchItem.h"
-#import "ArtParser.h"
+#import "Category.h"
+#import "Comment.h"
 
 @interface AddArtViewController ()
 - (void) buttonPressed:(id)sender;
@@ -678,9 +679,62 @@
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
         
-        [[AAAPIManager managedObjectContext] lock];
-        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
-        [[AAAPIManager managedObjectContext] unlock];
+        
+        //TODO: Test this!!
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:_newArtDictionary inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[_newArtDictionary objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[_newArtDictionary objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [_newArtDictionary objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[_newArtDictionary objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[_newArtDictionary objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[_newArtDictionary objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[_newArtDictionary objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[_newArtDictionary objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
+        
+//        [[AAAPIManager managedObjectContext] lock];
+//        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
         //[[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
@@ -740,15 +794,65 @@
 - (void)photoUploadCompleted:(NSDictionary*)responseDict
 {
     if ([responseDict objectForKey:@"slug"]) {
+  
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
         
         //parse the art object returned and update this controller instance's art
-        [[AAAPIManager managedObjectContext] lock];
+//        [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        [self setArt:[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]]];
-        [[AAAPIManager managedObjectContext] unlock];
+//        [self setArt:[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
     }
     else {
         [self photoUploadFailed:responseDict];
@@ -985,7 +1089,9 @@
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 case 1:
@@ -993,7 +1099,9 @@
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
                     imgPicker.delegate = self;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 default:

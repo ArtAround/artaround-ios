@@ -107,7 +107,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 }
 
 - (void)clearCacheForURL:(NSURL*)aURL style:(NSString*)style {
-	[[EGOCache currentCache] removeCacheForKey:keyForURL(aURL, style)];
+	[[EGOCache globalCache] removeCacheForKey:keyForURL(aURL, style)];
 }
 
 - (BOOL)isLoadingImageURL:(NSURL*)aURL {
@@ -157,7 +157,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 - (UIImage*)imageForURL:(NSURL*)aURL shouldLoadWithObserver:(id<EGOImageLoaderObserver>)observer {
 	if(!aURL) return nil;
 	
-	UIImage* anImage = [[EGOCache currentCache] imageForKey:keyForURL(aURL,nil)];
+	UIImage* anImage = [[EGOCache globalCache] imageForKey:keyForURL(aURL,nil)];
 	
 	if(anImage) {
 		return anImage;
@@ -184,14 +184,14 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 }
 
 - (void)loadImageForURL:(NSURL*)aURL style:(NSString*)style styler:(UIImage* (^)(UIImage* image))styler completion:(void (^)(UIImage* image, NSURL* imageURL, NSError* error))completion {
-	UIImage* anImage = [[EGOCache currentCache] imageForKey:keyForURL(aURL,style)];
+	UIImage* anImage = [[EGOCache globalCache] imageForKey:keyForURL(aURL,style)];
 
 	if(anImage) {
 		completion(anImage, aURL, nil);
-	} else if(!anImage && styler && style && (anImage = [[EGOCache currentCache] imageForKey:keyForURL(aURL,nil)])) {
+	} else if(!anImage && styler && style && (anImage = [[EGOCache globalCache] imageForKey:keyForURL(aURL,nil)])) {
 		dispatch_async(kStylerQueue, ^{
 			UIImage* image = styler(anImage);
-			[[EGOCache currentCache] setImage:image forKey:keyForURL(aURL, style) withTimeoutInterval:604800];
+			[[EGOCache globalCache] setImage:image forKey:keyForURL(aURL, style) withTimeoutInterval:604800];
 			dispatch_async(kCompletionsQueue, ^{
 				completion(image, aURL, nil);
 			});
@@ -224,7 +224,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 #endif
 
 - (BOOL)hasLoadedImageURL:(NSURL*)aURL {
-	return [[EGOCache currentCache] hasCacheForKey:keyForURL(aURL,nil)];
+	return [[EGOCache globalCache] hasCacheForKey:keyForURL(aURL,nil)];
 }
 
 #pragma mark -
@@ -248,7 +248,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 		[self handleCompletionsForConnection:connection image:nil error:error];
 		#endif
 	} else {
-		[[EGOCache currentCache] setData:connection.responseData forKey:keyForURL(connection.imageURL,nil) withTimeoutInterval:604800];
+		[[EGOCache globalCache] setData:connection.responseData forKey:keyForURL(connection.imageURL,nil) withTimeoutInterval:604800];
 		
 		[currentConnections removeObjectForKey:connection.imageURL];
 		self.currentConnections = [currentConnections copy];
@@ -310,7 +310,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 		if(!error && image && styler) {
 			dispatch_async(kStylerQueue, ^{
 				UIImage* anImage = styler(image);
-				[[EGOCache currentCache] setImage:anImage forKey:keyForURL(imageURL, styleKey) withTimeoutInterval:604800];
+				[[EGOCache globalCache] setImage:anImage forKey:keyForURL(imageURL, styleKey) withTimeoutInterval:604800];
 				callCompletions(anImage, [handler objectForKey:kCompletionsKey]);
 			});
 		} else {
