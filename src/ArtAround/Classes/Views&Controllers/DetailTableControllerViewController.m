@@ -262,7 +262,7 @@ static const float _kRowBufffer = 20.0f;
 	for (Photo *photo in [_art.photos allObjects]) {
 		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
 			//[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
-            [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
+            [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImages) forceDownload:YES];
 		}
 	}
     
@@ -1633,7 +1633,6 @@ static const float _kRowBufffer = 20.0f;
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
 			[imageView.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
 			[imageView.layer setBorderWidth:6.0f];
-//            [imageView setAdjustsImageWhenHighlighted:NO];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
 		}

@@ -116,24 +116,45 @@
     </entity>
     <entity name="Comment" representedClassName="Comment">
         <attribute name="approved" optional="YES" attributeType="Boolean">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="approved"/>
+            </userInfo>
         </attribute>
-        <attribute name="commentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commentID" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="_id"/>
+            </userInfo>
+        </attribute>
         <attribute name="createdAt" optional="YES" attributeType="Date">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="created_at"/>
+            </userInfo>
         </attribute>
-        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="email"/>
+            </userInfo>
+        </attribute>
         <attribute name="name" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="name"/>
+            </userInfo>
         </attribute>
         <attribute name="text" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="text"/>
+            </userInfo>
         </attribute>
         <attribute name="url" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="url"/>
+            </userInfo>
         </attribute>
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="comments" inverseEntity="Art">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="artRelationship"/>
+                <entry key="relatedByAttribute" value="commentID"/>
+            </userInfo>
         </relationship>
         <userInfo/>
     </entity>
@@ -170,7 +191,9 @@
             <userInfo/>
         </attribute>
         <attribute name="mediumURL" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="image_small_url"/>
+            </userInfo>
         </attribute>
         <attribute name="mediumWidth" optional="YES" attributeType="Integer 32">
             <userInfo/>
@@ -182,13 +205,28 @@
             <userInfo/>
         </attribute>
         <attribute name="originalURL" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="image_big_url"/>
+            </userInfo>
         </attribute>
         <attribute name="originalWidth" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
-        <attribute name="photoAttribution" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="photoAttributionURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photoAttribution" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="attribution_text"/>
+            </userInfo>
+        </attribute>
+        <attribute name="photoAttributionURL" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="attribution_url"/>
+            </userInfo>
+        </attribute>
+        <attribute name="photoID" optional="YES" attributeType="String" syncable="YES">
+            <userInfo>
+                <entry key="mappedKeyName" value="image_big_url"/>
+            </userInfo>
+        </attribute>
         <attribute name="smallHeight" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
@@ -196,7 +234,9 @@
             <userInfo/>
         </attribute>
         <attribute name="smallURL" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="image_small_url"/>
+            </userInfo>
         </attribute>
         <attribute name="smallWidth" optional="YES" attributeType="Integer 32">
             <userInfo/>
@@ -208,7 +248,9 @@
             <userInfo/>
         </attribute>
         <attribute name="squareURL" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="image_thumbnail_url"/>
+            </userInfo>
         </attribute>
         <attribute name="squareWidth" optional="YES" attributeType="Integer 32">
             <userInfo/>
@@ -220,13 +262,18 @@
             <userInfo/>
         </attribute>
         <attribute name="thumbnailURL" optional="YES" attributeType="String">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="image_thumbnail_url"/>
+            </userInfo>
         </attribute>
         <attribute name="thumbnailWidth" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
         <relationship name="art" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Art" inverseName="photos" inverseEntity="Art">
-            <userInfo/>
+            <userInfo>
+                <entry key="mappedKeyName" value="artRelationship"/>
+                <entry key="relatedByAttribute" value="photoID"/>
+            </userInfo>
         </relationship>
         <userInfo/>
     </entity>
