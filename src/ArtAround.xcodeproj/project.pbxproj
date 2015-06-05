@@ -106,6 +106,10 @@
 		5FF963A1151030FF0030FD95 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FF9639F151030FF0030FD95 /* Default@2x.png */; };
 		5FFEE4EC15391C5400C4C7BC /* FlickrNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FFEE4EB15391C5400C4C7BC /* FlickrNameViewController.m */; };
 		5FFEE4EE15391C7300C4C7BC /* FlickrNameViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5FFEE4ED15391C7300C4C7BC /* FlickrNameViewController.xib */; };
+		96AAC13E1B21C2E500EAAF76 /* ArtAround-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC13D1B21C2E500EAAF76 /* ArtAround-Info.plist */; };
+		96AAC1401B21C2EF00EAAF76 /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */; };
+		96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */; };
+		96AAC1441B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */; };
 		C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */; };
 		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
 		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
@@ -226,7 +230,6 @@
 		CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC31409B26D00C98C0E /* DetailView.css */; };
 		CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CC51409B29000C98C0E /* DetailView.html */; };
 		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
-		CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */; };
 		CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */; };
 /* End PBXBuildFile section */
 
@@ -353,6 +356,10 @@
 		5FFEE4EA15391C5400C4C7BC /* FlickrNameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrNameViewController.h; sourceTree = "<group>"; };
 		5FFEE4EB15391C5400C4C7BC /* FlickrNameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrNameViewController.m; sourceTree = "<group>"; };
 		5FFEE4ED15391C7300C4C7BC /* FlickrNameViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FlickrNameViewController.xib; sourceTree = "<group>"; };
+		96AAC13D1B21C2E500EAAF76 /* ArtAround-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
+		96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
+		96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBgwithtext.png; sourceTree = "<group>"; };
+		96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uploadPhoto_noBgwithtext@2x.png"; sourceTree = "<group>"; };
 		C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButtonSelected@2x.png"; sourceTree = "<group>"; };
 		C91B24B514CF624B000B342F /* FavoriteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton@2x.png"; sourceTree = "<group>"; };
 		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
@@ -472,7 +479,6 @@
 		CA5E10CE1405F0520075DAB8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		CA5E10D21405F0520075DAB8 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		CA5E10D61405F0520075DAB8 /* ArtAround-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
 		CA5E10D81405F0520075DAB8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CA5E10DA1405F0520075DAB8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtAround-Prefix.pch"; sourceTree = "<group>"; };
@@ -533,7 +539,6 @@
 		CAFF2CC31409B26D00C98C0E /* DetailView.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DetailView.css; sourceTree = "<group>"; };
 		CAFF2CC51409B29000C98C0E /* DetailView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DetailView.html; sourceTree = "<group>"; };
 		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
-		CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		CAFF2CEA1409F76C00C98C0E /* FlickrAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIManager.h; sourceTree = "<group>"; };
 		CAFF2CEB1409F76C00C98C0E /* FlickrAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrAPIManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -962,6 +967,8 @@
 				4644B80C177E16F200EE27D7 /* toolbarBackground@2x.png */,
 				C9F034F514F862910031EB03 /* uploadPhoto_noBg.png */,
 				C9F034F614F862910031EB03 /* uploadPhoto_noBg@2x.png */,
+				96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */,
+				96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -1101,9 +1108,9 @@
 			isa = PBXGroup;
 			children = (
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
-				CA5E10D61405F0520075DAB8 /* ArtAround-Info.plist */,
+				96AAC13D1B21C2E500EAAF76 /* ArtAround-Info.plist */,
 				CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */,
-				CAFF2CE01409F42D00C98C0E /* ArtAround-Keys.plist */,
+				96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */,
 				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
 				CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */,
 				CA5E10D71405F0520075DAB8 /* InfoPlist.strings */,
@@ -1280,7 +1287,6 @@
 				CAFF2CC41409B26E00C98C0E /* DetailView.css in Resources */,
 				CAFF2CC61409B29000C98C0E /* DetailView.html in Resources */,
 				CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */,
-				CAFF2CE11409F42D00C98C0E /* ArtAround-Keys.plist in Resources */,
 				CA1AE9F6140C906200C56C4D /* ArtAroundLogo.png in Resources */,
 				CA1AE9F7140C906200C56C4D /* ArtAroundLogo@2x.png in Resources */,
 				CA1AE9F8140C906200C56C4D /* Filter.png in Resources */,
@@ -1342,6 +1348,7 @@
 				5FF813B0150C153C006076D5 /* MapButton.png in Resources */,
 				5FF813B1150C153C006076D5 /* MapButton@2x.png in Resources */,
 				5FF813B2150C153C006076D5 /* ListButton@2x.png in Resources */,
+				96AAC1441B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png in Resources */,
 				5FF813B3150C153C006076D5 /* FavoritePressed.png in Resources */,
 				5FF813B4150C153C006076D5 /* FavoritePressed@2x.png in Resources */,
 				5FF813B5150C153C006076D5 /* Favorite@2x.png in Resources */,
@@ -1375,6 +1382,7 @@
 				46B357B017641EC7006663AA /* closeIcon.png in Resources */,
 				46B357B117641EC7006663AA /* closeIcon@2x.png in Resources */,
 				4644B819177E16F200EE27D7 /* toolbarBackground.png in Resources */,
+				96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */,
 				4644B81A177E16F200EE27D7 /* toolbarBackground@2x.png in Resources */,
 				4644B81B177E16F200EE27D7 /* arrow.png in Resources */,
 				4644B81C177E16F200EE27D7 /* arrow@2x.png in Resources */,
@@ -1385,6 +1393,7 @@
 				4644B821177E16F200EE27D7 /* linkIcon.png in Resources */,
 				4644B822177E16F200EE27D7 /* linkIcon@2x.png in Resources */,
 				4644B823177E16F200EE27D7 /* shareIcon.png in Resources */,
+				96AAC13E1B21C2E500EAAF76 /* ArtAround-Info.plist in Resources */,
 				4644B824177E16F200EE27D7 /* shareIcon@2x.png in Resources */,
 				4644B825177E16F200EE27D7 /* backArrow.png in Resources */,
 				4644B826177E16F200EE27D7 /* backArrow@2x.png in Resources */,
@@ -1397,6 +1406,7 @@
 				464F6A05178110D40030022A /* cameraIcon.png in Resources */,
 				464F6A06178110D40030022A /* cameraIcon@2x.png in Resources */,
 				4667B276178B92ED0010C449 /* MapIcon.png in Resources */,
+				96AAC1401B21C2EF00EAAF76 /* ArtAround-Keys.plist in Resources */,
 				4667B277178B92ED0010C449 /* MapIcon@2x.png in Resources */,
 				4667B278178B92ED0010C449 /* ListIcon.png in Resources */,
 				4667B279178B92ED0010C449 /* ListIcon@2x.png in Resources */,

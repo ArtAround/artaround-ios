@@ -590,7 +590,7 @@
     
     if (!addImgButton) {
         addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
+        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBgwithtext.png"] forState:UIControlStateNormal];
         [addImgButton setTag:_kAddImageTagBase];
         [addImgButton.imageView setContentMode:UIViewContentModeCenter];
         [addImgButton setBackgroundColor:[UIColor colorWithRed:(170.0f/255.0f) green:(170.0f/255.0f) blue:(170.0f/255.0f) alpha:1.0f]];
