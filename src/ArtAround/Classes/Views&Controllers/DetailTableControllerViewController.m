@@ -1133,6 +1133,7 @@ static const float _kRowBufffer = 20.0f;
             
             if (_art.website && _art.website.length > 0) {
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+                _url=(_inEditMode) ? @"" : _art.website;
                 cell.textLabel.text = @"website";
             }
             else {
@@ -1402,6 +1403,15 @@ static const float _kRowBufffer = 20.0f;
                 [self.navigationController pushViewController:addVC animated:YES];
                 break;
             }
+            case ArtDetailRowLink:
+            {
+                Website_ViewController *website =[[Website_ViewController alloc] initWithNibName:@"Website_ViewController" bundle:nil];
+                website.url=_url;
+                [self.navigationController pushViewController:website animated:YES];
+                
+                break;
+            }
+
             default:
                 break;
         }
