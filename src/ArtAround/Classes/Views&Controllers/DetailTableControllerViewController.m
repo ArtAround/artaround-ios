@@ -789,14 +789,47 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowDescription:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-                cell.textLabel.numberOfLines = 1;
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
-                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
-                cell.detailTextLabel.layer.backgroundColor = [UIColor whiteColor].CGColor;
-                cell.detailTextLabel.numberOfLines = 0;
-                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
-                cell.detailTextLabel.textColor = [UIColor blackColor];
+                CGFloat height;
+                  if ([_art.artDescription length] > 0) {
+                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                     CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                     height += 30.0f;
+                    }
+                else
+                {
+                    height=0.0f;
+                }
+//                cell.textLabel.numberOfLines = 1;
+//                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+//                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                slogan= [[UILabel alloc] initWithFrame:CGRectMake(0,0,50,30)];
+                slogan.numberOfLines = 1;
+                slogan.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+                slogan.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                slogan.textAlignment=UITextAlignmentCenter;
+              //  slogan.font= [UIFont boldSystemFontOfSize:20];
+                slogan.backgroundColor=[UIColor clearColor];
+                [cell.contentView addSubview:slogan];
+//                cell.textLabel.numberOfLines = 1;
+//                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+//                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+
+//                cell.detailTextLabel.layer.backgroundColor = [UIColor whiteColor].CGColor;
+//                cell.detailTextLabel.numberOfLines = 0;
+//                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+//                cell.detailTextLabel.textColor = [UIColor blackColor];
+//                NSString *string = _art.artDescription;
                 
+               
+                textV=[[UITextView alloc]initWithFrame:CGRectMake(50, 0,250, height)];
+                textV.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f];
+                textV.textColor=[UIColor blackColor];
+                textV.editable=NO;
+                textV.dataDetectorTypes=UIDataDetectorTypeAll;
+                textV.delegate=self;
+                [cell.contentView addSubview:textV];
+
                 break;
             }
             case ArtDetailRowLocationDescription:
@@ -1178,12 +1211,14 @@ static const float _kRowBufffer = 20.0f;
         {
             if (!_inEditMode) {
                 if (_art.artDescription && _art.artDescription.length > 0) {
-                    cell.textLabel.text = @"About";
-                    cell.detailTextLabel.text = _art.artDescription;
+                  //  cell.textLabel.text = @"About";
+                     slogan.text=@"About";
+                     textV.text=_art.artDescription;
                 }
                 else {
-                    cell.textLabel.text = @"";
-                    cell.detailTextLabel.text = @"";
+                    slogan.text=@"";
+                    textV.text=@"";
+
                 }
             }
             break;
@@ -1405,10 +1440,11 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowLink:
             {
-                Website_ViewController *website =[[Website_ViewController alloc] initWithNibName:@"Website_ViewController" bundle:nil];
-                website.url=_url;
-                [self.navigationController pushViewController:website animated:YES];
+                NSURL *url = [NSURL URLWithString:_url];
                 
+                if (![[UIApplication sharedApplication] openURL:url]) {
+                  
+                }
                 break;
             }
 
@@ -1584,7 +1620,7 @@ static const float _kRowBufffer = 20.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
@@ -1635,6 +1671,12 @@ static const float _kRowBufffer = 20.0f;
     }
     
     return (indexPath.row != ArtDetailRowBuffer && height != 0.0f && height < 25.0f) ? 25.0f : height;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)url inRange:(NSRange)characterRange
+{
+    
+    return YES;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section

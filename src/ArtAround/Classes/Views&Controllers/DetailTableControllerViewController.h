@@ -18,6 +18,7 @@
 #import "ArtAroundAppDelegate.h"
 #import <MessageUI/MessageUI.h>
 #import "Website_ViewController.h"
+#import "KILabel.h"
 
 @class Art;
 
@@ -81,6 +82,8 @@ typedef enum _ArtDetailRow {
     Art*                    _art;
       NSString*               _url;
     NSString*               string1;
+    UITextView *textV;
+    UILabel *slogan;
 }
 
 @property (nonatomic, retain) CLLocation *currentLocation;

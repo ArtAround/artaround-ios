@@ -17,7 +17,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <webView contentMode="scaleToFill" scalesPageToFit="YES" id="73H-YL-pYD">
-                    <rect key="frame" x="0.0" y="-15.999999220183462" width="320" height="571"/>
+                    <rect key="frame" x="0.0" y="-16" width="320" height="571"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
@@ -27,7 +27,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <nil key="simulatedTopBarMetrics"/>
-            <point key="canvasLocation" x="271" y="214"/>
+            <point key="canvasLocation" x="321" y="173"/>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
