@@ -78,6 +78,7 @@ typedef enum _ArtDetailRow {
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
     
     Art*                    _art;
+    NSString*               string1;
 }
 
 @property (nonatomic, retain) CLLocation *currentLocation;

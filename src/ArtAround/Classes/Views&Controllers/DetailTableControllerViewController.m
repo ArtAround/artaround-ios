@@ -554,7 +554,8 @@ static const float _kRowBufffer = 20.0f;
     
     //set the photo attribution if they exist
     if (thisPhoto.photoAttribution) {
-        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@", thisPhoto.photoAttribution]];
+         [self createddate];
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@, Posted %@", thisPhoto.photoAttribution,string1]];
     }
     else {
         [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:@"Photo by anonymous user"];
@@ -573,6 +574,53 @@ static const float _kRowBufffer = 20.0f;
     [viewController release];
     
     [Utilities trackEvent:@"PhotoViewOpened" action:@"PhotoView" label:_art.title];
+}
+-(void)createddate
+{
+    NSUserDefaults *defualt = [NSUserDefaults standardUserDefaults];
+    NSString *userid =[defualt valueForKey:@"userid"];
+    
+    NSLog(@"userid %@",userid);
+    
+    
+    NSString * url =@"http://theartaround.us/api/v1/arts/";
+    
+    NSString *combine_url =[NSString stringWithFormat:@"%@%@",url,userid];
+    
+    NSURL *request = [NSURL URLWithString:combine_url];
+    
+    NSData *jsondata =[NSData dataWithContentsOfURL:request];
+    
+    
+    id jsonobject =[NSJSONSerialization JSONObjectWithData:jsondata options:NSJSONReadingMutableContainers error:nil];
+    
+    NSString * updatedString =[[jsonobject valueForKey:@"art"]valueForKey:@"updated_at"];
+    
+    if (updatedString.length!=0) {
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+        NSDate *date = [dateFormatter dateFromString:updatedString];
+        // NSTimeZone *pdt = [NSTimeZone timeZoneWithAbbreviation:@"PDT"];
+        // [dateFormatter setTimeZone:pdt];
+        [dateFormatter setDateFormat:@"MM/yyyy"];
+        // [dateFormatter setDateFormat:@"K:mm a, z"];
+        string1 = [dateFormatter stringFromDate:date];
+        
+    }
+    else
+    {
+        NSString * updatedString =[[jsonobject valueForKey:@"art"]valueForKey:@"created_at"];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+        NSDate *date = [dateFormatter dateFromString:updatedString];
+        // NSTimeZone *pdt = [NSTimeZone timeZoneWithAbbreviation:@"PDT"];
+        // [dateFormatter setTimeZone:pdt];
+        [dateFormatter setDateFormat:@"MM/yyyy"];
+        // [dateFormatter setDateFormat:@"K:mm a, z"];
+        string1 = [dateFormatter stringFromDate:date];
+    }
+    
+    
 }
 
 - (void)addImageButtonTapped
@@ -1761,7 +1809,7 @@ static const float _kRowBufffer = 20.0f;
             //setup the add image button
             addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
             [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
-            [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
+            [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBgwithtext.png"] forState:UIControlStateNormal];
             [addImgButton.imageView setContentMode:UIViewContentModeCenter];
             [addImgButton.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
             [addImgButton.layer setBorderWidth:6.0f];
