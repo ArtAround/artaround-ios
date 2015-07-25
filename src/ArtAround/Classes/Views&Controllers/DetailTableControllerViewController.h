@@ -17,6 +17,7 @@
 #import "FBConnect.h"
 #import "ArtAroundAppDelegate.h"
 #import <MessageUI/MessageUI.h>
+#import "Website_ViewController.h"
 
 @class Art;
 
@@ -78,6 +79,7 @@ typedef enum _ArtDetailRow {
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
     
     Art*                    _art;
+      NSString*               _url;
     NSString*               string1;
 }
 

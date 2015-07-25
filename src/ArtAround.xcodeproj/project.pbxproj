@@ -106,6 +106,8 @@
 		5FF963A1151030FF0030FD95 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FF9639F151030FF0030FD95 /* Default@2x.png */; };
 		5FFEE4EC15391C5400C4C7BC /* FlickrNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FFEE4EB15391C5400C4C7BC /* FlickrNameViewController.m */; };
 		5FFEE4EE15391C7300C4C7BC /* FlickrNameViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5FFEE4ED15391C7300C4C7BC /* FlickrNameViewController.xib */; };
+		968D72851B230A20005E1FD1 /* Website_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968D72831B230A20005E1FD1 /* Website_ViewController.m */; };
+		968D72861B230A20005E1FD1 /* Website_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968D72841B230A20005E1FD1 /* Website_ViewController.xib */; };
 		96AAC13E1B21C2E500EAAF76 /* ArtAround-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC13D1B21C2E500EAAF76 /* ArtAround-Info.plist */; };
 		96AAC1401B21C2EF00EAAF76 /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */; };
 		96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */; };
@@ -356,6 +358,9 @@
 		5FFEE4EA15391C5400C4C7BC /* FlickrNameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrNameViewController.h; sourceTree = "<group>"; };
 		5FFEE4EB15391C5400C4C7BC /* FlickrNameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrNameViewController.m; sourceTree = "<group>"; };
 		5FFEE4ED15391C7300C4C7BC /* FlickrNameViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FlickrNameViewController.xib; sourceTree = "<group>"; };
+		968D72821B230A20005E1FD1 /* Website_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Website_ViewController.h; sourceTree = "<group>"; };
+		968D72831B230A20005E1FD1 /* Website_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Website_ViewController.m; sourceTree = "<group>"; };
+		968D72841B230A20005E1FD1 /* Website_ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Website_ViewController.xib; sourceTree = "<group>"; };
 		96AAC13D1B21C2E500EAAF76 /* ArtAround-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
 		96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBgwithtext.png; sourceTree = "<group>"; };
@@ -670,6 +675,9 @@
 		468A155117358C5A00DED13C /* WebViewContoller */ = {
 			isa = PBXGroup;
 			children = (
+				968D72821B230A20005E1FD1 /* Website_ViewController.h */,
+				968D72831B230A20005E1FD1 /* Website_ViewController.m */,
+				968D72841B230A20005E1FD1 /* Website_ViewController.xib */,
 			);
 			name = WebViewContoller;
 			sourceTree = "<group>";
@@ -1361,6 +1369,7 @@
 				5F7A24D2150DA56A00101598 /* popularIcon.png in Resources */,
 				5F7A24D3150DA56A00101598 /* popularIcon@2x.png in Resources */,
 				5F7A24D4150DA56A00101598 /* commissionedIcon.png in Resources */,
+				968D72861B230A20005E1FD1 /* Website_ViewController.xib in Resources */,
 				5F7A24D5150DA56A00101598 /* commissionedIcon@2x.png in Resources */,
 				5F7A24D6150DA56A00101598 /* fiveByFiveIcon.png in Resources */,
 				5F7A24D7150DA56A00101598 /* fiveByFiveIcon@2x.png in Resources */,
@@ -1445,6 +1454,7 @@
 				CA00943F1409509B00E5001E /* ItemParser.m in Sources */,
 				CA0094411409509B00E5001E /* Category.m in Sources */,
 				CA0094421409509B00E5001E /* Comment.m in Sources */,
+				968D72851B230A20005E1FD1 /* Website_ViewController.m in Sources */,
 				CA0094431409509B00E5001E /* Neighborhood.m in Sources */,
 				CA0094441409509B00E5001E /* Photo.m in Sources */,
 				CA0094451409509B00E5001E /* ASIAuthenticationDialog.m in Sources */,
