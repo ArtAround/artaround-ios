@@ -1314,7 +1314,7 @@
 				ORGANIZATIONNAME = ArtAround;
 				TargetAttributes = {
 					CA5E10C71405F0520075DAB8 = {
-						DevelopmentTeam = HXTD3B56Q2;
+						DevelopmentTeam = ST5K4U8Q98;
 					};
 				};
 			};
@@ -1595,12 +1595,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					armv6,
-					armv7,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -1609,7 +1607,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "64ca380a-4785-4c39-8fc5-5c79db848717";
 				SDKROOT = iphoneos;
 			};
 			name = AdHoc;
@@ -1617,8 +1615,8 @@
 		CA0554771410BE4300940D61 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				GCC_VERSION = "";
@@ -1630,7 +1628,7 @@
 					"\"$(SRCROOT)/ArtAround/Classes/ThirdParty/Google Analytics\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "64ca380a-4785-4c39-8fc5-5c79db848717";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
@@ -1641,12 +1639,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					armv6,
-					armv7,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -1655,7 +1650,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "9dc8053e-4853-4c89-a540-2dde709feabf";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1664,8 +1659,8 @@
 		CA05547A1410BE7600940D61 /* AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Laurenellen McCann (ST5K4U8Q98)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				GCC_VERSION = "";
@@ -1677,7 +1672,7 @@
 					"\"$(SRCROOT)/ArtAround/Classes/ThirdParty/Google Analytics\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "9dc8053e-4853-4c89-a540-2dde709feabf";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
@@ -1688,10 +1683,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					armv6,
-					armv7,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
