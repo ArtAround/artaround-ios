@@ -2,8 +2,8 @@
 //  Art.m
 //  ArtAround
 //
-//  Created by Brian Singer on 7/9/13.
-//  Copyright (c) 2013 ArtAround. All rights reserved.
+//  Created by Samosys on 17/07/15.
+//  Copyright (c) 2015 ArtAround. All rights reserved.
 //
 
 #import "Art.h"
@@ -18,8 +18,9 @@
 
 @dynamic artDescription;
 @dynamic artist;
-@dynamic commissionedBy;
 @dynamic commissioned;
+@dynamic commissionedBy;
+@dynamic commissionedByLink;
 @dynamic createdAt;
 @dynamic distance;
 @dynamic favorite;
@@ -29,15 +30,16 @@
 @dynamic rank;
 @dynamic slug;
 @dynamic title;
-@dynamic website;
 @dynamic ward;
+@dynamic website;
 @dynamic year;
-@dynamic commissionedByLink;
+@dynamic tag;
 @dynamic categories;
 @dynamic comments;
 @dynamic event;
 @dynamic neighborhood;
 @dynamic photos;
+
 
 - (NSString*)categoriesString
 {
@@ -55,6 +57,5 @@
     
     return catString;
 }
-
 
 @end

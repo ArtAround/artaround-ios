@@ -87,6 +87,7 @@
 	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
     art.artDescription = [AAAPIManager clean:[artDict objectForKey:@"description"]];
 	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
+    art.tag =[AAAPIManager clean:[artDict objectForKey:@"tag"]];
     art.website = [AAAPIManager clean:[artDict objectForKey:@"website"]];
 	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
     if ([artDict objectForKey:@"year"] && ![[artDict objectForKey:@"year"] isKindOfClass:[NSNull class]])

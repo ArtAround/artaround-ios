@@ -24,6 +24,8 @@
 
 static AAAPIManager *_sharedInstance = nil;
 static const NSString *_kAPIRoot = @"http://theartaround.us/api/v1/";
+//kalyan local
+//static const NSString *_kAPIRoot = @"http://192.168.0.19:3000/api/v1/";
 static const NSString *_kFlagAPIRoot = @"http://theartaround.us/arts";
 //static const NSString *_kAPIRoot = @"http://staging.theartaround.us/api/v1/";
 //static const NSString *_kFlagAPIRoot = @"http://staging.theartaround.us/arts";

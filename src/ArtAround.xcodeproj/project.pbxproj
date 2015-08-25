@@ -26,7 +26,6 @@
 		4644B824177E16F200EE27D7 /* shareIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B816177E16F200EE27D7 /* shareIcon@2x.png */; };
 		4644B825177E16F200EE27D7 /* backArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B817177E16F200EE27D7 /* backArrow.png */; };
 		4644B826177E16F200EE27D7 /* backArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B818177E16F200EE27D7 /* backArrow@2x.png */; };
-		464C9ABB1794D09600387F58 /* Art.m in Sources */ = {isa = PBXBuildFile; fileRef = 464C9ABA1794D09600387F58 /* Art.m */; };
 		464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 464C9ABE1794EB7C00387F58 /* IntroViewController.m */; };
 		464C9AC11794EB7C00387F58 /* IntroViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 464C9ABF1794EB7C00387F58 /* IntroViewController.xib */; };
 		464C9AC91794F28B00387F58 /* introImage2.png in Resources */ = {isa = PBXBuildFile; fileRef = 464C9AC21794F28B00387F58 /* introImage2.png */; };
@@ -125,6 +124,7 @@
 		96AAC1401B21C2EF00EAAF76 /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */; };
 		96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */; };
 		96AAC1441B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */; };
+		B08A4D5C1B590729008FC9F7 /* Art.m in Sources */ = {isa = PBXBuildFile; fileRef = B08A4D5B1B590729008FC9F7 /* Art.m */; };
 		C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */; };
 		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
 		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
@@ -271,8 +271,6 @@
 		4644B816177E16F200EE27D7 /* shareIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shareIcon@2x.png"; sourceTree = "<group>"; };
 		4644B817177E16F200EE27D7 /* backArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backArrow.png; sourceTree = "<group>"; };
 		4644B818177E16F200EE27D7 /* backArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "backArrow@2x.png"; sourceTree = "<group>"; };
-		464C9AB91794D09600387F58 /* Art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Art.h; sourceTree = "<group>"; };
-		464C9ABA1794D09600387F58 /* Art.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Art.m; sourceTree = "<group>"; };
 		464C9ABD1794EB7C00387F58 /* IntroViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroViewController.h; sourceTree = "<group>"; };
 		464C9ABE1794EB7C00387F58 /* IntroViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroViewController.m; sourceTree = "<group>"; };
 		464C9ABF1794EB7C00387F58 /* IntroViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IntroViewController.xib; sourceTree = "<group>"; };
@@ -392,6 +390,8 @@
 		96AAC13F1B21C2EF00EAAF76 /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBgwithtext.png; sourceTree = "<group>"; };
 		96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uploadPhoto_noBgwithtext@2x.png"; sourceTree = "<group>"; };
+		B08A4D5A1B590729008FC9F7 /* Art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Art.h; sourceTree = "<group>"; };
+		B08A4D5B1B590729008FC9F7 /* Art.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Art.m; sourceTree = "<group>"; };
 		C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButtonSelected@2x.png"; sourceTree = "<group>"; };
 		C91B24B514CF624B000B342F /* FavoriteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton@2x.png"; sourceTree = "<group>"; };
 		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
@@ -632,8 +632,8 @@
 		4626F875174947F900ECADC2 /* Auto */ = {
 			isa = PBXGroup;
 			children = (
-				464C9AB91794D09600387F58 /* Art.h */,
-				464C9ABA1794D09600387F58 /* Art.m */,
+				B08A4D5A1B590729008FC9F7 /* Art.h */,
+				B08A4D5B1B590729008FC9F7 /* Art.m */,
 				CA0093FF1409509A00E5001E /* Category.h */,
 				CA0094001409509A00E5001E /* Category.m */,
 				CA0094011409509A00E5001E /* Comment.h */,
@@ -1314,7 +1314,7 @@
 				ORGANIZATIONNAME = ArtAround;
 				TargetAttributes = {
 					CA5E10C71405F0520075DAB8 = {
-						DevelopmentTeam = HXTD3B56Q2;
+						DevelopmentTeam = 6P3C65ARXL;
 					};
 				};
 			};
@@ -1540,6 +1540,7 @@
 				CAFF2CB71409A51500C98C0E /* DetailView.m in Sources */,
 				CAFF2CEC1409F76C00C98C0E /* FlickrAPIManager.m in Sources */,
 				CA546F56140AE18D008B1B91 /* EGOCache.m in Sources */,
+				B08A4D5C1B590729008FC9F7 /* Art.m in Sources */,
 				CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */,
 				CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */,
 				CA546F59140AE18D008B1B91 /* EGOImageLoader.m in Sources */,
@@ -1570,7 +1571,6 @@
 				468A0675175BCDD600F697A5 /* Event.m in Sources */,
 				46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */,
 				466B5E86178D04E70000CF66 /* DetailTableControllerViewController.m in Sources */,
-				464C9ABB1794D09600387F58 /* Art.m in Sources */,
 				464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */,
 				464C9ADB17951FC600387F58 /* CommentsTableViewController.m in Sources */,
 				469527E11796376A000F8D36 /* AddCommentViewController.m in Sources */,

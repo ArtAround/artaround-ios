@@ -2,8 +2,8 @@
 //  Art.h
 //  ArtAround
 //
-//  Created by Brian Singer on 7/9/13.
-//  Copyright (c) 2013 ArtAround. All rights reserved.
+//  Created by Samosys on 17/07/15.
+//  Copyright (c) 2015 ArtAround. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,8 +15,9 @@
 
 @property (nonatomic, retain) NSString * artDescription;
 @property (nonatomic, retain) NSString * artist;
-@property (nonatomic, retain) NSString * commissionedBy;
 @property (nonatomic, retain) NSNumber * commissioned;
+@property (nonatomic, retain) NSString * commissionedBy;
+@property (nonatomic, retain) NSString * commissionedByLink;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSDecimalNumber * distance;
 @property (nonatomic, retain) NSNumber * favorite;
@@ -26,10 +27,10 @@
 @property (nonatomic, retain) NSNumber * rank;
 @property (nonatomic, retain) NSString * slug;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) NSNumber * ward;
+@property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) NSNumber * year;
-@property (nonatomic, retain) NSString * commissionedByLink;
+@property (nonatomic, retain) NSString * tag;
 @property (nonatomic, retain) NSSet *categories;
 @property (nonatomic, retain) NSSet *comments;
 @property (nonatomic, retain) Event *event;
@@ -55,6 +56,5 @@
 - (void)removePhotos:(NSSet *)values;
 
 - (NSString*)categoriesString;
-
 
 @end

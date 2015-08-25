@@ -26,6 +26,7 @@
         <attribute name="slug" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
+        <attribute name="tag" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String">
             <userInfo/>
         </attribute>
@@ -177,7 +178,7 @@
         <userInfo/>
     </entity>
     <elements>
-        <element name="Art" positionX="-297" positionY="63" width="128" height="375"/>
+        <element name="Art" positionX="-297" positionY="63" width="128" height="390"/>
         <element name="Category" positionX="-486" positionY="108" width="128" height="75"/>
         <element name="Comment" positionX="-110" positionY="63" width="128" height="165"/>
         <element name="Event" positionX="160" positionY="192" width="128" height="150"/>

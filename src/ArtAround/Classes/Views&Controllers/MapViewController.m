@@ -557,6 +557,7 @@ static const int _kAnnotationLimit = 9999;
 -(void)updateAndShowArt:(Art*)showArt
 {
     categoryArray=[[NSMutableArray alloc]init];
+    tagArray=[[NSMutableArray alloc]init];
     x=0;
 	//get art from core data
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
@@ -692,7 +693,17 @@ static const int _kAnnotationLimit = 9999;
         {
              [categoryArray insertObject:@"nil" atIndex:i];
         }
-       
+        NSString *tag =[art valueForKey:@"tag"];
+        if (tag) {
+            [tagArray insertObject:tag atIndex:i];
+            x++;
+            
+        }
+        else
+        {
+            [tagArray insertObject:@"nil" atIndex:i];
+        }
+
        		if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
 			
 			//setup the coordinate
