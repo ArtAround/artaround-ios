@@ -570,7 +570,6 @@
 	
     
     
-    //get the add button's offset
     float prevOffset = _kPhotoPadding;
     if (prevView) {
         //adjust offset based on the previous frame
