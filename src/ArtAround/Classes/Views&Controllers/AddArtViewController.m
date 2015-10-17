@@ -529,6 +529,8 @@
             [imageView setImage:thisUserImage forState:UIControlStateNormal];
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            [imageView.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
+            [imageView.layer setBorderWidth:6.0f];
             
             deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
             [deleteButton setFrame:CGRectMake(2.0f, 2.0f, 20.0f, 20.0f)];
@@ -590,9 +592,11 @@
     
     if (!addImgButton) {
         addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
+        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBgwithtext.png"] forState:UIControlStateNormal];
         [addImgButton setTag:_kAddImageTagBase];
         [addImgButton.imageView setContentMode:UIViewContentModeCenter];
+        [addImgButton.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
+        [addImgButton.layer setBorderWidth:6.0f];
         [addImgButton setBackgroundColor:[UIColor colorWithRed:(170.0f/255.0f) green:(170.0f/255.0f) blue:(170.0f/255.0f) alpha:1.0f]];
         [addImgButton addTarget:self action:@selector(addImageButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.photosScrollView addSubview:addImgButton];
@@ -1065,9 +1069,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+//    //save flash mode in case it changed
+//    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+//    [[Utilities instance] setFlashMode:flashMode];
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{

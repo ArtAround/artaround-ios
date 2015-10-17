@@ -2,8 +2,8 @@
 //  Art.m
 //  ArtAround
 //
-//  Created by Brian Singer on 7/9/13.
-//  Copyright (c) 2013 ArtAround. All rights reserved.
+//  Created by Samosys on 25/08/15.
+//  Copyright (c) 2015 ArtAround. All rights reserved.
 //
 
 #import "Art.h"
@@ -12,14 +12,16 @@
 #import "Event.h"
 #import "Neighborhood.h"
 #import "Photo.h"
+#import "Tag.h"
 
 
 @implementation Art
 
 @dynamic artDescription;
 @dynamic artist;
-@dynamic commissionedBy;
 @dynamic commissioned;
+@dynamic commissionedBy;
+@dynamic commissionedByLink;
 @dynamic createdAt;
 @dynamic distance;
 @dynamic favorite;
@@ -29,15 +31,17 @@
 @dynamic rank;
 @dynamic slug;
 @dynamic title;
-@dynamic website;
 @dynamic ward;
+@dynamic website;
 @dynamic year;
-@dynamic commissionedByLink;
 @dynamic categories;
 @dynamic comments;
 @dynamic event;
 @dynamic neighborhood;
 @dynamic photos;
+@dynamic tags;
+
+
 
 - (NSString*)categoriesString
 {
@@ -56,5 +60,21 @@
     return catString;
 }
 
+- (NSString*)tagString
+{
+    NSString *tagString = @"";
+    NSArray *tagArray = [self.tags allObjects];
+    
+    NSMutableArray *tagTitlesArray = [[NSMutableArray alloc] initWithCapacity:tagArray.count];
+    
+    for (Tag *thistag in tagArray) {
+        [tagTitlesArray addObject:thistag.title];
+    }
+    
+    if (tagTitlesArray.count > 0)
+        tagString = [tagTitlesArray componentsJoinedByString:@", "];
+    
+    return tagString;
+}
 
 @end
