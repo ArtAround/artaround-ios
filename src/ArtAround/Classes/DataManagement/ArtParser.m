@@ -19,7 +19,7 @@
 #import "CommentParser.h"
 #import "EventParser.h"
 #import <MapKit/MapKit.h>
-
+#import "TagParser.h"
 @implementation ArtParser
 
 #pragma mark - Instance Methods
@@ -105,6 +105,13 @@
         art.categories = [CategoryParser setForTitles:[[artDict objectForKey:@"category"] componentsSeparatedByString:@","] inContext:context];
     }
     
+    // for tags
+    if ([artDict objectForKey:@"tag"] && [[artDict objectForKey:@"tag"] isKindOfClass:[NSArray class]])
+        art.tags = [TagParser setForTitles:[artDict objectForKey:@"tag"] inContext:context];
+    else if ([artDict objectForKey:@"tag"] && [[artDict objectForKey:@"tag"] isKindOfClass:[NSString class]]) {
+        art.tags = [TagParser setForTitles:[[artDict objectForKey:@"tag"] componentsSeparatedByString:@","] inContext:context];
+    }
+
     //neighborhood
 	art.neighborhood = [NeighborhoodParser neighborhoodForTitle:[artDict objectForKey:@"neighborhood"] inContext:context];
     
