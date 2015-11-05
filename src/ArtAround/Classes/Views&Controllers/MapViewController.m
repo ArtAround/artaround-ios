@@ -60,7 +60,7 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
+    // Releases the view if it doesn't have a superview. test by abby
     [super didReceiveMemoryWarning];
 
 }
