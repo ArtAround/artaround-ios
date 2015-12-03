@@ -24,7 +24,7 @@
     BOOL viewhide;
     UIView *buttonView2;
     
-    NSMutableArray *categoryArray;
+    NSMutableArray *categoryArray,*tagArray;
     NSUInteger x;
 }
 

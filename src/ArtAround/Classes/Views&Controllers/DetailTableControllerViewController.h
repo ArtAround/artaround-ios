@@ -44,14 +44,16 @@ typedef enum _ArtDetailRow {
     ArtDetailRowArtist = 3,
     ArtDetailRowYear = 4,
     ArtDetailRowCategory = 5,
-    ArtDetailRowLink = 6,
-    ArtDetailRowLocationType = 7,
-    ArtDetailRowCommissioned = 8,
-    ArtDetailRowDescription = 9,
-    ArtDetailRowLocationDescription = 10,
-    ArtDetailRowLocationMap = 11,
-    ArtDetailRowComments = 12,
-    ArtDetailRowAddComment = 13
+    ArtDetailRowTag = 6,
+    ArtDetailRowLink = 7,
+    ArtDetailRowLocationType = 8,
+    ArtDetailRowCommissioned = 9,
+    ArtDetailRowDescription = 10,
+    ArtDetailRowLocationDescription = 11,
+    ArtDetailRowLocationMap = 12,
+    ArtDetailRowComments = 13,
+    ArtDetailRowAddComment = 14
+
 } ArtDetailRow;
 
 @interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate, MFMailComposeViewControllerDelegate, FBDialogDelegate>
