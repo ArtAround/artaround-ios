@@ -777,6 +777,33 @@ static const int _kAnnotationLimit = 9999;
         //setup the annotation view for the annotation
         int index = [(ArtAnnotation *)annotation index];
         if ([_items count] > index) {
+            
+            
+            NSString *string2 =[categoryArray objectAtIndex:index ];
+            
+            NSArray * array2 = [string2 componentsSeparatedByString:@","];
+            for (int i =0; i<array2.count; i++) {
+                if ([[array2 objectAtIndex:i ]isEqualToString:@"Museum"] || [[array2 objectAtIndex:i ]isEqualToString:@"Gallery"] ) {
+                    //setup the pin image and reuse identifier
+                    NSString *reuseIdentifier = nil;
+                    UIImage *pinImage = nil;
+                    
+                    //new single pinart
+                    reuseIdentifier = @"art";
+                    pinImage = [UIImage imageNamed:@"blue.png"];
+                    
+                    //setup the annotation view
+                    ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+                    [pin setImage:pinImage];
+                    [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
+                    [pin setCanShowCallout:NO];
+                    [pin setTag:index];
+                    
+                    //return the annotion view
+                    return pin;
+                }
+            }
+            
             NSString *string =[tagArray objectAtIndex:index ];
             NSMutableArray *arraySort = [[NSMutableArray alloc] init];
             NSArray * array = [[NSArray alloc] init];
@@ -812,7 +839,7 @@ static const int _kAnnotationLimit = 9999;
                     //return the annotion view
                     return pin;
                 }
-                else if ([[array objectAtIndex:i ]isEqualToString:@"Catalog"]||[[array objectAtIndex:i ]isEqualToString:@"catalog"]) {
+                if ([[array objectAtIndex:i ]isEqualToString:@"Catalog"]||[[array objectAtIndex:i ]isEqualToString:@"catalog"]) {
                     //setup the pin image and reuse identifier
                     NSString *reuseIdentifier = nil;
                     UIImage *pinImage = nil;
@@ -851,10 +878,6 @@ static const int _kAnnotationLimit = 9999;
                     //return the annotion view
                     return pin;
                 }
-                
-                
-                
-                
                 if ([[array objectAtIndex:i ]isEqualToString:@"Artchive"]||[[array objectAtIndex:i ]isEqualToString:@"artchive"]) {
                     //setup the pin image and reuse identifier
                     NSString *reuseIdentifier = nil;
@@ -874,20 +897,15 @@ static const int _kAnnotationLimit = 9999;
                     //return the annotion view
                     return pin;
                 }
-                
-            }
-            NSString *string2 =[categoryArray objectAtIndex:index ];
-            
-            NSArray * array2 = [string2 componentsSeparatedByString:@","];
-            for (int i =0; i<array2.count; i++) {
-                if ([[array2 objectAtIndex:i ]isEqualToString:@"Museum"] || [[array2 objectAtIndex:i ]isEqualToString:@"Gallery"] ) {
+                else
+                {
                     //setup the pin image and reuse identifier
                     NSString *reuseIdentifier = nil;
                     UIImage *pinImage = nil;
                     
                     //new single pinart
                     reuseIdentifier = @"art";
-                    pinImage = [UIImage imageNamed:@"blue.png"];
+                    pinImage = [UIImage imageNamed:@"red.png"];
                     
                     //setup the annotation view
                     ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
@@ -898,9 +916,9 @@ static const int _kAnnotationLimit = 9999;
                     
                     //return the annotion view
                     return pin;
-                }}
-            
-            
+                }
+                
+            }
         }
         
     } else if ([annotation isKindOfClass:[CalloutAnnotationView class]]) {
