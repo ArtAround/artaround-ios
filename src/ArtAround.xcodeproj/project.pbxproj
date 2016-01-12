@@ -133,10 +133,12 @@
 		B034FB1D1BEB5B690084B89C /* red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB131BEB5B690084B89C /* red@2x.png */; };
 		B034FB1E1BEB5B690084B89C /* yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB141BEB5B690084B89C /* yellow.png */; };
 		B034FB1F1BEB5B690084B89C /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB151BEB5B690084B89C /* yellow@2x.png */; };
-		B034FB221BEB5B800084B89C /* ArtAround-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B034FB201BEB5B800084B89C /* ArtAround-Info.plist */; };
-		B034FB231BEB5B800084B89C /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = B034FB211BEB5B800084B89C /* ArtAround-Keys.plist */; };
 		B034FB261BEB5C130084B89C /* TagParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B034FB251BEB5C130084B89C /* TagParser.m */; };
 		B034FB291BEB5C230084B89C /* Tag.m in Sources */ = {isa = PBXBuildFile; fileRef = B034FB281BEB5C230084B89C /* Tag.m */; };
+		B0D115701C3A8D2B0040EE0F /* ArtAround-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B0D1156F1C3A8D2B0040EE0F /* ArtAround-Info.plist */; };
+		B0D115721C3A8D310040EE0F /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = B0D115711C3A8D310040EE0F /* ArtAround-Keys.plist */; };
+		B0D1157B1C3AAAE40040EE0F /* website.png in Resources */ = {isa = PBXBuildFile; fileRef = B0D115791C3AAAE40040EE0F /* website.png */; };
+		B0D1157C1C3AAAE40040EE0F /* website@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B0D1157A1C3AAAE40040EE0F /* website@2x.png */; };
 		C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */; };
 		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
 		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
@@ -412,12 +414,14 @@
 		B034FB131BEB5B690084B89C /* red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red@2x.png"; sourceTree = "<group>"; };
 		B034FB141BEB5B690084B89C /* yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yellow.png; sourceTree = "<group>"; };
 		B034FB151BEB5B690084B89C /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
-		B034FB201BEB5B800084B89C /* ArtAround-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
-		B034FB211BEB5B800084B89C /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		B034FB241BEB5C130084B89C /* TagParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagParser.h; sourceTree = "<group>"; };
 		B034FB251BEB5C130084B89C /* TagParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagParser.m; sourceTree = "<group>"; };
 		B034FB271BEB5C230084B89C /* Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
 		B034FB281BEB5C230084B89C /* Tag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tag.m; sourceTree = "<group>"; };
+		B0D1156F1C3A8D2B0040EE0F /* ArtAround-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
+		B0D115711C3A8D310040EE0F /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
+		B0D115791C3AAAE40040EE0F /* website.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = website.png; sourceTree = "<group>"; };
+		B0D1157A1C3AAAE40040EE0F /* website@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "website@2x.png"; sourceTree = "<group>"; };
 		C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButtonSelected@2x.png"; sourceTree = "<group>"; };
 		C91B24B514CF624B000B342F /* FavoriteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton@2x.png"; sourceTree = "<group>"; };
 		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
@@ -817,7 +821,8 @@
 				CA0094301409509B00E5001E /* Views&Controllers */,
 				CAFF2C9B1409781600C98C0E /* Utilities */,
 			);
-			path = Classes;
+			name = Classes;
+			path = ArtAround/Classes;
 			sourceTree = "<group>";
 		};
 		CA0093EE1409509A00E5001E /* AppDelegate */ = {
@@ -921,6 +926,8 @@
 		CA0094391409509B00E5001E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B0D115791C3AAAE40040EE0F /* website.png */,
+				B0D1157A1C3AAAE40040EE0F /* website@2x.png */,
 				464C9AD01795040200387F58 /* addIcon.png */,
 				464C9AD11795040200387F58 /* addIcon@2x.png */,
 				4644B80D177E16F200EE27D7 /* arrow.png */,
@@ -1155,6 +1162,7 @@
 		CA5E10BD1405F0520075DAB8 = {
 			isa = PBXGroup;
 			children = (
+				CA0093ED1409509A00E5001E /* Classes */,
 				46073BD7173352A400D9BCEE /* Default-568h@2x.png */,
 				CA5E10D41405F0520075DAB8 /* ArtAround */,
 				CA5E10CB1405F0520075DAB8 /* Frameworks */,
@@ -1194,7 +1202,6 @@
 		CA5E10D41405F0520075DAB8 /* ArtAround */ = {
 			isa = PBXGroup;
 			children = (
-				CA0093ED1409509A00E5001E /* Classes */,
 				CA0094391409509B00E5001E /* Images */,
 				CA5E10D51405F0520075DAB8 /* Supporting Files */,
 			);
@@ -1205,8 +1212,8 @@
 			isa = PBXGroup;
 			children = (
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
-				B034FB201BEB5B800084B89C /* ArtAround-Info.plist */,
-				B034FB211BEB5B800084B89C /* ArtAround-Keys.plist */,
+				B0D1156F1C3A8D2B0040EE0F /* ArtAround-Info.plist */,
+				B0D115711C3A8D310040EE0F /* ArtAround-Keys.plist */,
 				CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */,
 				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
 				CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */,
@@ -1354,7 +1361,7 @@
 				ORGANIZATIONNAME = ArtAround;
 				TargetAttributes = {
 					CA5E10C71405F0520075DAB8 = {
-						DevelopmentTeam = KRKMGDR3TM;
+						DevelopmentTeam = 6P3C65ARXL;
 					};
 				};
 			};
@@ -1399,7 +1406,6 @@
 				CA1AEA00140C906200C56C4D /* Locate.png in Resources */,
 				CA1AEA01140C906200C56C4D /* Locate@2x.png in Resources */,
 				965C494A1B257C7B00964284 /* pin_red@2x.png in Resources */,
-				B034FB221BEB5B800084B89C /* ArtAround-Info.plist in Resources */,
 				CA1AEA02140C906200C56C4D /* LocatePressed.png in Resources */,
 				CA1AEA03140C906200C56C4D /* LocatePressed@2x.png in Resources */,
 				CA1AEA04140C906200C56C4D /* ShareArt.png in Resources */,
@@ -1498,6 +1504,7 @@
 				965C49441B257C7B00964284 /* pin_blue@2x.png in Resources */,
 				46B357B017641EC7006663AA /* closeIcon.png in Resources */,
 				46B357B117641EC7006663AA /* closeIcon@2x.png in Resources */,
+				B0D1157C1C3AAAE40040EE0F /* website@2x.png in Resources */,
 				4644B819177E16F200EE27D7 /* toolbarBackground.png in Resources */,
 				96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */,
 				4644B81A177E16F200EE27D7 /* toolbarBackground@2x.png in Resources */,
@@ -1507,6 +1514,7 @@
 				4644B81E177E16F200EE27D7 /* pinIcon@2x.png in Resources */,
 				4644B81F177E16F200EE27D7 /* clockIcon.png in Resources */,
 				B034FB161BEB5B690084B89C /* blue.png in Resources */,
+				B0D115701C3A8D2B0040EE0F /* ArtAround-Info.plist in Resources */,
 				4644B820177E16F200EE27D7 /* clockIcon@2x.png in Resources */,
 				4644B821177E16F200EE27D7 /* linkIcon.png in Resources */,
 				4644B822177E16F200EE27D7 /* linkIcon@2x.png in Resources */,
@@ -1515,6 +1523,7 @@
 				965C49471B257C7B00964284 /* pin_green.png in Resources */,
 				4644B825177E16F200EE27D7 /* backArrow.png in Resources */,
 				4644B826177E16F200EE27D7 /* backArrow@2x.png in Resources */,
+				B0D115721C3A8D310040EE0F /* ArtAround-Keys.plist in Resources */,
 				464F69FF178110D40030022A /* phoneIconDisabled.png in Resources */,
 				464F6A00178110D40030022A /* phoneIconDisabled@2x.png in Resources */,
 				464F6A01178110D40030022A /* phoneIcon.png in Resources */,
@@ -1536,9 +1545,9 @@
 				464C9ACC1794F28B00387F58 /* introImage1.png in Resources */,
 				464C9ACD1794F28B00387F58 /* introImage3.png in Resources */,
 				464C9ACE1794F28B00387F58 /* introImage0.png in Resources */,
+				B0D1157B1C3AAAE40040EE0F /* website.png in Resources */,
 				464C9ACF1794F28B00387F58 /* introImage0@2x.png in Resources */,
 				464C9AD41795040200387F58 /* addIcon.png in Resources */,
-				B034FB231BEB5B800084B89C /* ArtAround-Keys.plist in Resources */,
 				464C9AD51795040200387F58 /* addIcon@2x.png in Resources */,
 				464C9AD61795040200387F58 /* locateIcon.png in Resources */,
 				464C9AD71795040200387F58 /* locateIcon@2x.png in Resources */,
@@ -1669,6 +1678,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				GCC_VERSION = "";
@@ -1713,6 +1723,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				GCC_VERSION = "";
@@ -1762,6 +1773,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtAround/ArtAround-Prefix.pch";
 				GCC_VERSION = "";

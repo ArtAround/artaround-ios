@@ -769,11 +769,10 @@ static const float _kRowBufffer = 20.0f;
         NSString *cellIdentifier = [NSString stringWithFormat:@"cell%i", row];
         switch (row) {
             case ArtDetailRowTitle:
-            case ArtDetailRowCommissioned:            
+            case ArtDetailRowCommissioned:
             case ArtDetailRowArtist:
             case ArtDetailRowYear:
             case ArtDetailRowLocationType:
-            case ArtDetailRowLink:
             case ArtDetailRowCategory:
             case ArtDetailRowTag:
             {
@@ -787,6 +786,7 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.contentMode = UIViewContentModeCenter;
                 break;
             }
+            
             case ArtDetailRowDescription:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
@@ -831,6 +831,19 @@ static const float _kRowBufffer = 20.0f;
                 textV.delegate=self;
                 [cell.contentView addSubview:textV];
 
+                break;
+            }
+            case ArtDetailRowLink:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
+                cell.textLabel.numberOfLines = 1;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                website = [[UIButton alloc]initWithFrame:CGRectMake(120,5,20, 20)];
+                [website setImage:[UIImage imageNamed:@"website.png"] forState:UIControlStateNormal];
+                [website addTarget:self action:@selector(openUrlbyClick) forControlEvents:UIControlEventTouchUpInside];
+                [cell.contentView addSubview:website];
+                
                 break;
             }
             case ArtDetailRowLocationDescription:
@@ -1173,13 +1186,15 @@ static const float _kRowBufffer = 20.0f;
         {
             
             if (_art.website && _art.website.length > 0) {
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+             //   [website setTitle:@"Kalyan" forState:UIControlStateNormal];
+               // cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
                 _url=(_inEditMode) ? @"" : _art.website;
                 cell.textLabel.text = @"website";
             }
             else {
-                cell.detailTextLabel.text = @"";
+//                cell.detailTextLabel.text = @"";
                 cell.textLabel.text = (_inEditMode) ? @"website" : @"";
+                website.hidden=YES;
             }
             
             break;
@@ -1483,7 +1498,14 @@ static const float _kRowBufffer = 20.0f;
     }
     
 }
-
+-(void)openUrlbyClick
+{
+    NSURL *url = [NSURL URLWithString:_url];
+    
+    if (![[UIApplication sharedApplication] openURL:url]) {
+        
+    }
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = 0.0f;
@@ -1578,14 +1600,14 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.website.length == 0 && [[_newArtDictionary objectForKey:@"website"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"website"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height;
+                 //   CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                  //  CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = 30;
                 }
                 else if ([_art.website length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height;
+                  //  CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                   // CGSize requiredLabelSize = [_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = 30;
                 }
                 
                 break;
