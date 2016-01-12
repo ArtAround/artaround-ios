@@ -450,7 +450,7 @@ static const int _kAnnotationLimit = 9999;
 {
 	//if the user location hasn't been found yet, an expection will be thrown
 	@try {
-		
+		 self.mapView.map.showsUserLocation = YES;
 		//get the user location
 		CLLocationCoordinate2D location = self.mapView.map.userLocation.coordinate;
 		

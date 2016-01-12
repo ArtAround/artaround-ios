@@ -86,6 +86,7 @@ typedef enum _ArtDetailRow {
     NSString*               string1;
     UITextView *textV;
     UILabel *slogan;
+    UIButton *website;
 }
 
 @property (nonatomic, retain) CLLocation *currentLocation;
