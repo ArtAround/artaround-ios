@@ -10,12 +10,12 @@
 #import "MapViewController.h"
 #import "FBConnect.h"
 #import "IntroViewController.h"
-
+#import <CoreLocation/CoreLocation.h>
 #define kGoogleAnalyticsAccountID @"UA-41817858-1"
 // Dispatch period in seconds
 static const NSInteger kGANDispatchPeriodSec = 10;
 
-@interface ArtAroundAppDelegate : NSObject <UIApplicationDelegate, FBSessionDelegate>
+@interface ArtAroundAppDelegate : NSObject <UIApplicationDelegate, FBSessionDelegate,CLLocationManagerDelegate>
 {
     IntroViewController *_introVC;
 }
@@ -27,7 +27,8 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (nonatomic, retain) Facebook *facebook;
-
+@property (nonatomic, retain) CLLocationManager *locationMgr;
+@property (nonatomic, retain) CLLocation *lastLocation;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 - (void) closeIntro;
