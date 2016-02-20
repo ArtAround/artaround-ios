@@ -24,7 +24,7 @@
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 @synthesize facebook = _facebook;
 @synthesize mapViewController = _mapViewController;
-
+@synthesize lastLocation;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -56,7 +56,7 @@
 	[navController release];
 	
 	//add the nav controller view to the window
-	[self.window addSubview:self.navigationController.view];
+    self.window.rootViewController=navController;
 	
 	//download static config items
 	[self performSelectorInBackground:@selector(downloadConfig) withObject:nil];
@@ -86,8 +86,40 @@
         }];
         
     }
-	
+    self.locationMgr = [[CLLocationManager alloc] init];
+    self.locationMgr.delegate = self;
+    self.locationMgr.desiredAccuracy = kCLLocationAccuracyBest; // 100 m
+    
+    if([[[UIDevice currentDevice] systemVersion] floatValue]>=8.0)
+    {
+        [self.locationMgr requestAlwaysAuthorization];
+    }
+    
+    [self.locationMgr startUpdatingLocation];
     return YES;
+}
+// For Map Current Location
+-(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    if([CLLocationManager locationServicesEnabled])
+    {
+        NSLog(@"Location Services Enabled");
+        
+        if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"App Permission Denied"
+                                                            message:@"To re-enable, please go to Settings and turn on Location Service for this app."delegate:nil
+                                                  cancelButtonTitle:@"OK"otherButtonTitles:nil];
+            [alert show];
+        }
+    }
+}
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    if (!self.lastLocation)
+    {
+        self.lastLocation = newLocation;
+    }
 }
 
 - (void) closeIntro

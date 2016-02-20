@@ -450,7 +450,7 @@ static const int _kAnnotationLimit = 9999;
 {
 	//if the user location hasn't been found yet, an expection will be thrown
 	@try {
-		
+		 self.mapView.map.showsUserLocation = YES;
 		//get the user location
 		CLLocationCoordinate2D location = self.mapView.map.userLocation.coordinate;
 		
@@ -629,7 +629,17 @@ static const int _kAnnotationLimit = 9999;
 			break;
         }
 	}
-	
+    if (_catString.length!=0) {
+        if ([_Type isEqualToString:@"Cat"]) {
+            NSArray *categoriesTitles =[NSArray arrayWithObject:_catString];
+            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND ANY categories.title IN %@" : @"ANY categories.title IN %@", categoriesTitles]];
+        }
+        else{
+            NSArray *categoriesTitles =[NSArray arrayWithObject:_catString];
+            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:(_showFavorites) ? @"favorite == TRUE AND ANY tags.title IN %@" : @"ANY tags.title IN %@", categoriesTitles]];
+        }
+        
+    }
 	//clear out the art and annotation arrays
 	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];
 	[_annotations removeAllObjects];
@@ -716,7 +726,7 @@ static const int _kAnnotationLimit = 9999;
 			artLocation.longitude = [art.longitude doubleValue];
 			
 			//create an annotation, add it to the map, and store it in the array
-			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artists];
 			annotation.index = i; //used when tapping the callout accessory button
 			[_annotations addObject:annotation];
 			[annotation release];

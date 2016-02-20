@@ -34,7 +34,9 @@ static NSArray *_kFilterTypes = nil;
 		
 		//set the title
 		[self setTitle:@"Filters"];
-		
+        NSDictionary * navBarTitleTextAttributes = @{ NSForegroundColorAttributeName : [UIColor redColor],    NSFontAttributeName            : [UIFont systemFontOfSize:14] };
+        
+        [[UINavigationBar appearance] setTitleTextAttributes:navBarTitleTextAttributes];
 		//initialize array
 		_selectedTitles = [[NSMutableArray alloc] init];
 		
@@ -46,7 +48,24 @@ static NSArray *_kFilterTypes = nil;
     }
     return self;
 }
-
+- (void)setTitle:(NSString *)title
+{
+    [super setTitle:title];
+    UILabel *titleView = (UILabel *)self.navigationItem.titleView;
+    if (!titleView) {
+        titleView = [[UILabel alloc] initWithFrame:CGRectZero];
+        titleView.backgroundColor = [UIColor clearColor];
+        titleView.font = [UIFont boldSystemFontOfSize:20.0];
+        titleView.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
+        
+        titleView.textColor = [UIColor whiteColor]; // Change to desired color
+        
+        self.navigationItem.titleView = titleView;
+        [titleView release];
+    }
+    titleView.text = title;
+    [titleView sizeToFit];
+}
 - (id)initWithFilterType:(FilterType)filterType
 {
 	self = [super initWithStyle:UITableViewStylePlain];
@@ -111,7 +130,7 @@ static NSArray *_kFilterTypes = nil;
     //setup save button
     UIButton *doneButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 55.0f, 30.0f)];
     [doneButton addTarget:self action:@selector(doneButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [doneButton setBackgroundColor:[UIColor colorWithRed:(241.0f/255.0f) green:(164.0f/255.0f) blue:(162.0f/255.0f) alpha:1.0f]];
+    [doneButton setBackgroundColor:[UIColor redColor]];
     [doneButton setTitle:@"Done" forState:UIControlStateNormal];
     [doneButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f]];
     UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];

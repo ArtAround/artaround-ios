@@ -20,6 +20,8 @@
 #import "EventParser.h"
 #import <MapKit/MapKit.h>
 #import "TagParser.h"
+#import "ArtistParser.h"
+#import "Artist.h"
 @implementation ArtParser
 
 #pragma mark - Instance Methods
@@ -86,7 +88,8 @@
 	art.slug = slug;
 	art.locationDescription = [AAAPIManager clean:[artDict objectForKey:@"location_description"]];
     art.artDescription = [AAAPIManager clean:[artDict objectForKey:@"description"]];
-	art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
+    NSLog(@"%@",artDict);
+	//art.artist = [AAAPIManager clean:[artDict objectForKey:@"artist"]];
     art.website = [AAAPIManager clean:[artDict objectForKey:@"website"]];
 	art.title = [AAAPIManager clean:[artDict objectForKey:@"title"]];
     if ([artDict objectForKey:@"year"] && ![[artDict objectForKey:@"year"] isKindOfClass:[NSNull class]])
@@ -157,15 +160,19 @@
     
     
 	//make sure we don't have empty artist
-	if (art.artist) {
-		art.artist = [art.artist stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	} else {
-		art.artist = @"";
-	}
-	if ([art.artist isEqualToString:@""] || [art.artist isEqualToString:@"?"]) {
-		art.artist = @"Unknown";
-	}
-	
+//	if (art.artist) {
+//		art.artist = [art.artist stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//	} else {
+//		art.artist = @"";
+//	}
+//	if ([art.artist isEqualToString:@""] || [art.artist isEqualToString:@"?"]) {
+//		art.artist = @"Unknown";
+//	}
+    if ([artDict objectForKey:@"artist"] && [[artDict objectForKey:@"artist"] isKindOfClass:[NSArray class]])
+        art.artists = [ArtistParser setForTitles:[artDict objectForKey:@"artist"] inContext:context];
+    else if ([artDict objectForKey:@"artist"] && [[artDict objectForKey:@"artist"] isKindOfClass:[NSString class]]) {
+        art.artists = [ArtistParser setForTitles:[[artDict objectForKey:@"artist"] componentsSeparatedByString:@","] inContext:context];
+    }
     
 	//location
 	NSArray *location = [artDict objectForKey:@"location"];
