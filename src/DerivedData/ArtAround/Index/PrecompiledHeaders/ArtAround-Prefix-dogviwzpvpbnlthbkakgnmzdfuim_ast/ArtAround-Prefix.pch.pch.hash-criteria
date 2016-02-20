@@ -1,0 +1,26 @@
+-x
+objective-c
+-arch
+armv7
+-fretain-comments-from-system-headers
+-std=gnu99
+-gmodules
+-fpascal-strings
+-O0
+-DDEBUG=1
+-isysroot
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk
+-miphoneos-version-min=6.0
+-g
+-iquote
+-iquote
+-I/Users/samosys/Desktop/ArtAround/artaround-ios/src/DerivedData/ArtAround/Build/Products/Debug-iphoneos/include
+-F/Users/samosys/Desktop/ArtAround/artaround-ios/src/DerivedData/ArtAround/Build/Products/Debug-iphoneos
+-ferror-limit=10
+-working-directory=/Users/samosys/Desktop/ArtAround/artaround-ios/src
+-Xclang
+-detailed-preprocessing-record
+arm-apple-darwin15.0.0
+"4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)"
+SDK_PRODUCT_BUILD_VERSION=13C75
+13C75

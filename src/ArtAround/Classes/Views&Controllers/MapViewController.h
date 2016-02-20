@@ -32,7 +32,8 @@
 @property (nonatomic, retain) MapView *mapView;
 @property (nonatomic, retain) ListViewController *listViewController;
 @property (nonatomic, retain) CalloutAnnotationView *callout;
-
+@property (nonatomic, strong) NSString *catString;
+@property (nonatomic, strong) NSString *Type;
 -(void)updateAndShowArt:(Art*)showArt;
 -(void)updateArt;
 -(void)refreshArt;

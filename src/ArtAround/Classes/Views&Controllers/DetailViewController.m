@@ -323,9 +323,9 @@ static const float _kPhotoHeight = 140.0f;
 		CLLocationCoordinate2D artLocation;
 		artLocation.latitude = [art.latitude doubleValue];
 		artLocation.longitude = [art.longitude doubleValue];
-		
+		NSString *artist = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
 		//create an annotation, add it to the map, and store it in the array
-		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:artist];
 		[self.detailView.mapView addAnnotation:annotation];
 		[annotation release];
 		
@@ -543,7 +543,7 @@ static const float _kPhotoHeight = 140.0f;
     //don't show "0" year
     NSString *year = (_art.year && [_art.year intValue] != 0) ? [_art.year stringValue] : @"Unknown";
     NSString *artTitle = (_art.title) ? _art.title : @"";
-    NSString *artist = (_art.artist) ? _art.artist : @"";
+    NSString *artist = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
     NSString *category = (_art.categories && [_art categoriesString]) ? [_art categoriesString] : @"";
     NSString *neighborhood = (_art.neighborhood && _art.neighborhood.title) ? _art.neighborhood.title : @"";
     NSString *ward = (_art.ward) ? [_art.ward stringValue] : @"";
@@ -1954,8 +1954,8 @@ static const float _kPhotoHeight = 140.0f;
                             if (_categoryField.text.length == 0 && [_art categoriesString].length != 0)
                                 _categoryField.text = [_art categoriesString];
                             
-                            if (_artistField.text.length == 0 && _art.artist.length != 0)
-                                _artistField.text = _art.artist;
+                            if (_artistField.text.length == 0 && [_art ArtistString].length != 0)
+                                _artistField.text = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
                             
                             if (_yearField.text.length == 0 && _art.year != 0)
                                 _yearField.text = [_art.year stringValue];
@@ -2132,11 +2132,11 @@ static const float _kPhotoHeight = 140.0f;
                             [yLabel setText:[_art.year stringValue]];
                         }
                         
-                        if (_art.artist.length > 0 && _art.year != NULL && _art.year != nil && _art.year != 0) {
-                            [aLabel setText:[NSString stringWithFormat:@"%@ - ", _art.artist, nil]];
+                        if ([_art ArtistString].length > 0 && _art.year != NULL && _art.year != nil && _art.year != 0) {
+                            [aLabel setText:[NSString stringWithFormat:@"%@ - ",(_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown", nil]];
                         }
-                        else if (_art.artist.length > 0) {
-                            [aLabel setText:_art.artist];
+                        else if ([_art ArtistString].length > 0) {
+                            [aLabel setText:(_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown"];
                         }
                         else {
                             [aLabel setText:@""];
