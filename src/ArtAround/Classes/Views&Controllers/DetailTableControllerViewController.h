@@ -82,7 +82,7 @@ typedef enum _ArtDetailRow {
     UITextView*             _descriptionTextView, *_locationDescriptionTextView;
     
     Art*                    _art;
-      NSString*               _url;
+    NSString*               _url;
     NSString*               string1;
     UITextView *textV;
     UILabel *slogan;

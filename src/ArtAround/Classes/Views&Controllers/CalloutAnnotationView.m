@@ -131,15 +131,15 @@
 	
 	//are the fields empty?
 	BOOL showTitle = _art.title && ![_art.title isEqualToString:@""];
-	BOOL showArtist = _art.artist && ![_art.artist isEqualToString:@""];
+	BOOL showArtist = _art.artists && ![_art.artists isEqualToString:@""];
 	BOOL showYear = _art.year && ![_art.year intValue] == 0;
 	
 	//artist label is a concatenation of artist - year
 	NSString *artist = @"";
 	if (showArtist && showYear) {
-		artist = [NSString stringWithFormat:@"%@ - %@", _art.artist, _art.year];
+		artist = [NSString stringWithFormat:@"%@ - %@", _art.artists, _art.year];
 	} else if (showArtist && !showYear) {
-		artist = _art.artist;
+		artist = _art.artists;
 	} else if (!showArtist && showYear) {
 		artist = [_art.year stringValue];
 	}

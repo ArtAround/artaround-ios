@@ -2,67 +2,79 @@
 //  Art.h
 //  ArtAround
 //
-//  Created by Brian Singer on 7/9/13.
-//  Copyright (c) 2013 ArtAround. All rights reserved.
+//  Created by samosys on 20/02/16.
+//  Copyright © 2016 ArtAround. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Category, Comment, Event, Neighborhood, Photo,Tag;
+@class Artist, Category, Comment, Event, Neighborhood, Photo;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface Art : NSManagedObject
 
-@property (nonatomic, retain) NSString * artDescription;
-@property (nonatomic, retain) NSString * artist;
-@property (nonatomic, retain) NSString * commissionedBy;
-@property (nonatomic, retain) NSNumber * commissioned;
-@property (nonatomic, retain) NSDate * createdAt;
-@property (nonatomic, retain) NSDecimalNumber * distance;
-@property (nonatomic, retain) NSNumber * favorite;
-@property (nonatomic, retain) NSDecimalNumber * latitude;
-@property (nonatomic, retain) NSString * locationDescription;
-@property (nonatomic, retain) NSDecimalNumber * longitude;
-@property (nonatomic, retain) NSNumber * rank;
-@property (nonatomic, retain) NSString * slug;
-@property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSString * website;
-@property (nonatomic, retain) NSNumber * ward;
-@property (nonatomic, retain) NSNumber * year;
-@property (nonatomic, retain) NSString * commissionedByLink;
-@property (nonatomic, retain) NSSet *categories;
-@property (nonatomic, retain) NSSet *comments;
-@property (nonatomic, retain) Event *event;
-@property (nonatomic, retain) Neighborhood *neighborhood;
-@property (nonatomic, retain) NSSet *photos;
-@property (nonatomic, retain) NSSet *tags;
+@property (nullable, nonatomic, retain) NSString *artDescription;
+@property (nullable, nonatomic, retain) NSNumber *commissioned;
+@property (nullable, nonatomic, retain) NSString *commissionedBy;
+@property (nullable, nonatomic, retain) NSString *commissionedByLink;
+@property (nullable, nonatomic, retain) NSDate *createdAt;
+@property (nullable, nonatomic, retain) NSDecimalNumber *distance;
+@property (nullable, nonatomic, retain) NSNumber *favorite;
+@property (nullable, nonatomic, retain) NSDecimalNumber *latitude;
+@property (nullable, nonatomic, retain) NSString *locationDescription;
+@property (nullable, nonatomic, retain) NSDecimalNumber *longitude;
+@property (nullable, nonatomic, retain) NSNumber *rank;
+@property (nullable, nonatomic, retain) NSString *slug;
+@property (nullable, nonatomic, retain) NSString *title;
+@property (nullable, nonatomic, retain) NSNumber *ward;
+@property (nullable, nonatomic, retain) NSString *website;
+@property (nullable, nonatomic, retain) NSNumber *year;
+@property (nullable, nonatomic, retain) NSSet<Category *> *categories;
+@property (nullable, nonatomic, retain) NSSet<Comment *> *comments;
+@property (nullable, nonatomic, retain) Event *event;
+@property (nullable, nonatomic, retain) Neighborhood *neighborhood;
+@property (nullable, nonatomic, retain) NSSet<Photo *> *photos;
+@property (nullable, nonatomic, retain) NSSet<NSManagedObject *> *tags;
+@property (nullable, nonatomic, retain) NSSet<Artist *> *artists;
+
+// Insert code here to declare functionality of your managed object subclass
+
 @end
 
 @interface Art (CoreDataGeneratedAccessors)
 
 - (void)addCategoriesObject:(Category *)value;
 - (void)removeCategoriesObject:(Category *)value;
-- (void)addCategories:(NSSet *)values;
-- (void)removeCategories:(NSSet *)values;
+- (void)addCategories:(NSSet<Category *> *)values;
+- (void)removeCategories:(NSSet<Category *> *)values;
 
 - (void)addCommentsObject:(Comment *)value;
 - (void)removeCommentsObject:(Comment *)value;
-- (void)addComments:(NSSet *)values;
-- (void)removeComments:(NSSet *)values;
+- (void)addComments:(NSSet<Comment *> *)values;
+- (void)removeComments:(NSSet<Comment *> *)values;
 
 - (void)addPhotosObject:(Photo *)value;
 - (void)removePhotosObject:(Photo *)value;
-- (void)addPhotos:(NSSet *)values;
-- (void)removePhotos:(NSSet *)values;
+- (void)addPhotos:(NSSet<Photo *> *)values;
+- (void)removePhotos:(NSSet<Photo *> *)values;
 
-- (void)addTagsObject:(Tag *)value;
-- (void)removeTagsObject:(Tag *)value;
-- (void)addTags:(NSSet *)values;
-- (void)removeTags:(NSSet *)values;
+- (void)addTagsObject:(NSManagedObject *)value;
+- (void)removeTagsObject:(NSManagedObject *)value;
+- (void)addTags:(NSSet<NSManagedObject *> *)values;
+- (void)removeTags:(NSSet<NSManagedObject *> *)values;
+
+- (void)addArtistsObject:(Artist *)value;
+- (void)removeArtistsObject:(Artist *)value;
+- (void)addArtists:(NSSet<Artist *> *)values;
+- (void)removeArtists:(NSSet<Artist *> *)values;
 
 - (NSString*)categoriesString;
+- (NSString*)Singlecategories;
 - (NSString*)tagString;
-
-
-
+- (NSString*)Singletag;
+-(NSString *)ArtistString;
 @end
+
+NS_ASSUME_NONNULL_END

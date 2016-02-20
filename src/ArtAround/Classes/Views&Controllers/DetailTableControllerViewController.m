@@ -22,7 +22,7 @@
 #import "ArtAnnotationView.h"
 #import "ArtAroundAppDelegate.h"
 #import "CommentsTableViewController.h"
-
+#import "Select Cat & Tag/CateTagViewController.h"
 static const float _kPhotoPadding = 5.0f;
 static const float _kPhotoSpacing = 10.0f;
 static const float _kPhotoInitialPaddingPortait = 5.0f;
@@ -283,9 +283,9 @@ static const float _kRowBufffer = 20.0f;
 		CLLocationCoordinate2D artLocation;
 		artLocation.latitude = [art.latitude doubleValue];
 		artLocation.longitude = [art.longitude doubleValue];
-		
+		NSString *title = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
 		//create an annotation, add it to the map, and store it in the array
-		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:title];
 		[_mapView addAnnotation:annotation];
 		[annotation release];
 		
@@ -429,13 +429,11 @@ static const float _kRowBufffer = 20.0f;
     }
     
     //artist
-    if ([_newArtDictionary objectForKey:@"artist"])
-        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"artist"]] forKey:@"artist"];
-    else if (_art.artist) {
-        [_newArtDictionary setObject:[Utilities urlEncode:_art.artist] forKey:@"artist"];
-        
+    if ([_newArtDictionary objectForKey:@"artist"]) {
+        [_newArtDictionary setObject:[Utilities urlEncode:[(NSArray*)[_newArtDictionary objectForKey:@"artist"] componentsJoinedByString:@","]] forKey:@"artist"];
+        [_newArtDictionary removeObjectForKey:@"artist"];
     }
-    
+
     //commissionedBy
     if ([_newArtDictionary objectForKey:@"commissioned_by"])
         [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"commissioned_by"]] forKey:@"commissioned_by"];
@@ -808,7 +806,7 @@ static const float _kRowBufffer = 20.0f;
                 slogan.numberOfLines = 1;
                 slogan.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
                 slogan.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
-                slogan.textAlignment=UITextAlignmentCenter;
+                slogan.textAlignment=NSTextAlignmentCenter;
               //  slogan.font= [UIFont boldSystemFontOfSize:20];
                 slogan.backgroundColor=[UIColor clearColor];
                 [cell.contentView addSubview:slogan];
@@ -936,8 +934,8 @@ static const float _kRowBufffer = 20.0f;
                             _artistTextField.backgroundColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
                             _artistTextField.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
                             _artistTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-                            if (_art.artist && _art.artist.length)
-                                _artistTextField.text = _art.artist;
+                            if (_art.artists && [_art ArtistString].length)
+                                _artistTextField.text = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
                             _artistTextField.tag = 5;
                         }
                         
@@ -1134,8 +1132,8 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"artist";
             
-            if (_art.artist && _art.artist.length > 0)
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
+            if (_art.artists && [_art ArtistString].length > 0)
+                cell.detailTextLabel.text = (_inEditMode) ? @"" : (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
             break;
         }
         case ArtDetailRowYear:
@@ -1207,14 +1205,15 @@ static const float _kRowBufffer = 20.0f;
                 NSString *cats = [[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "];
                 cell.detailTextLabel.text = cats;
             }
-            else if (_art.categories && [_art.categories count] > 0)
-                cell.detailTextLabel.text = [_art categoriesString];
+            else if (_art.categories && [_art.categories count] > 0){
+                cell.detailTextLabel.text = [_art Singlecategories];
+            }
             else {
                 cell.detailTextLabel.text = (_inEditMode) ? @"Categories" : @"";
                 cell.textLabel.text = (_inEditMode) ? @"categories" : @"";
             }
             
-            if (_inEditMode) {
+//            if (_inEditMode) {
                 UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
                 [arrow setFrame:CGRectMake(cell.frame.size.width - 60.0f, 0.0f, 30.0f, cell.frame.size.height)];
                 [arrow setContentMode:UIViewContentModeLeft];
@@ -1222,11 +1221,11 @@ static const float _kRowBufffer = 20.0f;
                 cell.accessoryView = arrow;
                 
                 cell.selectionStyle = UITableViewCellSelectionStyleGray;
-            }
-            else {
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-            }
+//            }
+//            else {
+//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//                cell.accessoryType = UITableViewCellAccessoryNone;
+//            }
             
             break;
         }
@@ -1240,12 +1239,18 @@ static const float _kRowBufffer = 20.0f;
                     cell.detailTextLabel.text = cats;
                 }
                 else if (_art.tags && [_art.tags count] > 0)
-                    cell.detailTextLabel.text = [_art tagString];
+                    cell.detailTextLabel.text = [_art Singletag];
                 else {
                     cell.detailTextLabel.text = (_inEditMode) ? @"Tags" : @"";
                     cell.textLabel.text = (_inEditMode) ? @"tags" : @"";
                 }
+                UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
+                [arrow setFrame:CGRectMake(cell.frame.size.width - 60.0f, 0.0f, 30.0f, cell.frame.size.height)];
+                [arrow setContentMode:UIViewContentModeLeft];
+                [arrow setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin];
+                cell.accessoryView = arrow;
                 
+                cell.selectionStyle = UITableViewCellSelectionStyleGray;
             }
             
             break;
@@ -1472,7 +1477,6 @@ static const float _kRowBufffer = 20.0f;
                     
                     [Utilities trackEvent:@"Comments" action:@"CommentsViewed" label:_art.title];
                 }
-                
                 break;
             }
             case ArtDetailRowAddComment:
@@ -1491,7 +1495,22 @@ static const float _kRowBufffer = 20.0f;
                 }
                 break;
             }
-
+            case ArtDetailRowCategory:{
+                CateTagViewController *searchTableController = [[CateTagViewController alloc] initWithNibName:@"CateTagViewController" bundle:nil];
+                searchTableController.category=_art.categoriesString;
+                searchTableController.type =@"Cat";
+                [self.navigationController pushViewController:searchTableController animated:YES];
+                
+                break;
+            }
+            case ArtDetailRowTag:{
+                CateTagViewController *searchTableController = [[CateTagViewController alloc] initWithNibName:@"CateTagViewController" bundle:nil];
+                searchTableController.category=_art.tagString;
+                searchTableController.type =@"Tag";
+                [self.navigationController pushViewController:searchTableController animated:YES];
+                
+                break;
+            }
             default:
                 break;
         }
@@ -1614,16 +1633,17 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowArtist:
             {
-                if (_art.artist.length == 0 && [[_newArtDictionary objectForKey:@"artist"] length] == 0)
+                if ([_art ArtistString].length == 0 && [[_newArtDictionary objectForKey:@"artist"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"artist"] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
                     CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
-                else if ([_art.artist length] > 0) {
+                else if ([_art ArtistString].length > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    NSString *title = (_art.artists && [_art ArtistString]) ? [_art ArtistString] : @"Unknown";
+                    CGSize requiredLabelSize = [title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1655,9 +1675,9 @@ static const float _kRowBufffer = 20.0f;
                     CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
-                else if ([_art.categoriesString length] > 0) {
+                else if ([_art.Singlecategories length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [_art.Singlecategories sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else {
@@ -1673,9 +1693,9 @@ static const float _kRowBufffer = 20.0f;
                     CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"tags"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
-                else if ([_art.tagString length] > 0) {
+                else if ([_art.Singletag length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.tagString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [_art.Singletag sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else {

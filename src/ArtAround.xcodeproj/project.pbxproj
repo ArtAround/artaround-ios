@@ -26,7 +26,6 @@
 		4644B824177E16F200EE27D7 /* shareIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B816177E16F200EE27D7 /* shareIcon@2x.png */; };
 		4644B825177E16F200EE27D7 /* backArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B817177E16F200EE27D7 /* backArrow.png */; };
 		4644B826177E16F200EE27D7 /* backArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4644B818177E16F200EE27D7 /* backArrow@2x.png */; };
-		464C9ABB1794D09600387F58 /* Art.m in Sources */ = {isa = PBXBuildFile; fileRef = 464C9ABA1794D09600387F58 /* Art.m */; };
 		464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 464C9ABE1794EB7C00387F58 /* IntroViewController.m */; };
 		464C9AC11794EB7C00387F58 /* IntroViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 464C9ABF1794EB7C00387F58 /* IntroViewController.xib */; };
 		464C9AC91794F28B00387F58 /* introImage2.png in Resources */ = {isa = PBXBuildFile; fileRef = 464C9AC21794F28B00387F58 /* introImage2.png */; };
@@ -123,6 +122,9 @@
 		968D72861B230A20005E1FD1 /* Website_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968D72841B230A20005E1FD1 /* Website_ViewController.xib */; };
 		96AAC1431B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */; };
 		96AAC1441B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */; };
+		B0133A011C7837E300D83997 /* ArtistParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B0133A001C7837E300D83997 /* ArtistParser.m */; };
+		B0133A171C78476100D83997 /* Art.m in Sources */ = {isa = PBXBuildFile; fileRef = B0133A111C78476100D83997 /* Art.m */; };
+		B0133A191C78476100D83997 /* Artist.m in Sources */ = {isa = PBXBuildFile; fileRef = B0133A151C78476100D83997 /* Artist.m */; };
 		B034FB161BEB5B690084B89C /* blue.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB0C1BEB5B690084B89C /* blue.png */; };
 		B034FB171BEB5B690084B89C /* blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB0D1BEB5B690084B89C /* blue@2x.png */; };
 		B034FB181BEB5B690084B89C /* gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B034FB0E1BEB5B690084B89C /* gray.png */; };
@@ -139,6 +141,8 @@
 		B0D115721C3A8D310040EE0F /* ArtAround-Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = B0D115711C3A8D310040EE0F /* ArtAround-Keys.plist */; };
 		B0D1157B1C3AAAE40040EE0F /* website.png in Resources */ = {isa = PBXBuildFile; fileRef = B0D115791C3AAAE40040EE0F /* website.png */; };
 		B0D1157C1C3AAAE40040EE0F /* website@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B0D1157A1C3AAAE40040EE0F /* website@2x.png */; };
+		B0EDA07A1C75E09D00762877 /* CateTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0EDA0791C75E09D00762877 /* CateTagViewController.m */; };
+		B0EDA07C1C75E32100762877 /* CateTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0EDA07B1C75E32100762877 /* CateTagViewController.xib */; };
 		C91B24B814CF624B000B342F /* FavoriteButtonSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */; };
 		C91B24B914CF624B000B342F /* FavoriteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B514CF624B000B342F /* FavoriteButton@2x.png */; };
 		C91B24BA14CF624B000B342F /* FavoriteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B24B614CF624B000B342F /* FavoriteButton.png */; };
@@ -285,8 +289,6 @@
 		4644B816177E16F200EE27D7 /* shareIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shareIcon@2x.png"; sourceTree = "<group>"; };
 		4644B817177E16F200EE27D7 /* backArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backArrow.png; sourceTree = "<group>"; };
 		4644B818177E16F200EE27D7 /* backArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "backArrow@2x.png"; sourceTree = "<group>"; };
-		464C9AB91794D09600387F58 /* Art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Art.h; sourceTree = "<group>"; };
-		464C9ABA1794D09600387F58 /* Art.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Art.m; sourceTree = "<group>"; };
 		464C9ABD1794EB7C00387F58 /* IntroViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroViewController.h; sourceTree = "<group>"; };
 		464C9ABE1794EB7C00387F58 /* IntroViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroViewController.m; sourceTree = "<group>"; };
 		464C9ABF1794EB7C00387F58 /* IntroViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IntroViewController.xib; sourceTree = "<group>"; };
@@ -404,6 +406,12 @@
 		968D72841B230A20005E1FD1 /* Website_ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Website_ViewController.xib; sourceTree = "<group>"; };
 		96AAC1411B21C37D00EAAF76 /* uploadPhoto_noBgwithtext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadPhoto_noBgwithtext.png; sourceTree = "<group>"; };
 		96AAC1421B21C37D00EAAF76 /* uploadPhoto_noBgwithtext@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uploadPhoto_noBgwithtext@2x.png"; sourceTree = "<group>"; };
+		B01339FF1C7837E300D83997 /* ArtistParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtistParser.h; sourceTree = "<group>"; };
+		B0133A001C7837E300D83997 /* ArtistParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtistParser.m; sourceTree = "<group>"; };
+		B0133A101C78476100D83997 /* Art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Art.h; sourceTree = "<group>"; };
+		B0133A111C78476100D83997 /* Art.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Art.m; sourceTree = "<group>"; };
+		B0133A141C78476100D83997 /* Artist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Artist.h; sourceTree = "<group>"; };
+		B0133A151C78476100D83997 /* Artist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Artist.m; sourceTree = "<group>"; };
 		B034FB0C1BEB5B690084B89C /* blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue.png; sourceTree = "<group>"; };
 		B034FB0D1BEB5B690084B89C /* blue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue@2x.png"; sourceTree = "<group>"; };
 		B034FB0E1BEB5B690084B89C /* gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gray.png; sourceTree = "<group>"; };
@@ -422,6 +430,9 @@
 		B0D115711C3A8D310040EE0F /* ArtAround-Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys.plist"; sourceTree = "<group>"; };
 		B0D115791C3AAAE40040EE0F /* website.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = website.png; sourceTree = "<group>"; };
 		B0D1157A1C3AAAE40040EE0F /* website@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "website@2x.png"; sourceTree = "<group>"; };
+		B0EDA0781C75E09D00762877 /* CateTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CateTagViewController.h; path = "Select Cat & Tag/CateTagViewController.h"; sourceTree = "<group>"; };
+		B0EDA0791C75E09D00762877 /* CateTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CateTagViewController.m; path = "Select Cat & Tag/CateTagViewController.m"; sourceTree = "<group>"; };
+		B0EDA07B1C75E32100762877 /* CateTagViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CateTagViewController.xib; sourceTree = "<group>"; };
 		C91B24B414CF624B000B342F /* FavoriteButtonSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButtonSelected@2x.png"; sourceTree = "<group>"; };
 		C91B24B514CF624B000B342F /* FavoriteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton@2x.png"; sourceTree = "<group>"; };
 		C91B24B614CF624B000B342F /* FavoriteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton.png; sourceTree = "<group>"; };
@@ -662,8 +673,6 @@
 		4626F875174947F900ECADC2 /* Auto */ = {
 			isa = PBXGroup;
 			children = (
-				464C9AB91794D09600387F58 /* Art.h */,
-				464C9ABA1794D09600387F58 /* Art.m */,
 				CA0093FF1409509A00E5001E /* Category.h */,
 				CA0094001409509A00E5001E /* Category.m */,
 				CA0094011409509A00E5001E /* Comment.h */,
@@ -676,6 +685,10 @@
 				CA0094061409509A00E5001E /* Photo.m */,
 				B034FB271BEB5C230084B89C /* Tag.h */,
 				B034FB281BEB5C230084B89C /* Tag.m */,
+				B0133A101C78476100D83997 /* Art.h */,
+				B0133A111C78476100D83997 /* Art.m */,
+				B0133A141C78476100D83997 /* Artist.h */,
+				B0133A151C78476100D83997 /* Artist.m */,
 			);
 			name = Auto;
 			sourceTree = "<group>";
@@ -790,6 +803,16 @@
 				9645CB041B26B67C0032746C /* KILabel.m */,
 			);
 			name = KILabel;
+			sourceTree = "<group>";
+		};
+		B0EDA0771C75DD0200762877 /* Select Category & Tag */ = {
+			isa = PBXGroup;
+			children = (
+				B0EDA0781C75E09D00762877 /* CateTagViewController.h */,
+				B0EDA0791C75E09D00762877 /* CateTagViewController.m */,
+				B0EDA07B1C75E32100762877 /* CateTagViewController.xib */,
+			);
+			name = "Select Category & Tag";
 			sourceTree = "<group>";
 		};
 		C9722EAE14CD115600FC42E9 /* Add */ = {
@@ -917,6 +940,7 @@
 				5FFEE4E815391C1800C4C7BC /* Flickr Name */,
 				5FAA82A3150BB32B005842BF /* List View */,
 				CAFF2CB01409A4B600C98C0E /* Map */,
+				B0EDA0771C75DD0200762877 /* Select Category & Tag */,
 				4626F86B1749475E00ECADC2 /* SearchTable */,
 				468A155117358C5A00DED13C /* WebViewContoller */,
 			);
@@ -1098,6 +1122,8 @@
 				CA00946A1409600D00E5001E /* PhotoParser.m */,
 				B034FB241BEB5C130084B89C /* TagParser.h */,
 				B034FB251BEB5C130084B89C /* TagParser.m */,
+				B01339FF1C7837E300D83997 /* ArtistParser.h */,
+				B0133A001C7837E300D83997 /* ArtistParser.m */,
 			);
 			name = Parsers;
 			sourceTree = "<group>";
@@ -1415,6 +1441,7 @@
 				CA1AEA08140C906200C56C4D /* PinArt.png in Resources */,
 				CA1AEA09140C906200C56C4D /* PinArt@2x.png in Resources */,
 				CA1AEA0A140C906200C56C4D /* PinArtPressed.png in Resources */,
+				B0EDA07C1C75E32100762877 /* CateTagViewController.xib in Resources */,
 				CA1AEA0B140C906200C56C4D /* PinArtPressed@2x.png in Resources */,
 				CA1AEA0C140C906200C56C4D /* PinGeneral.png in Resources */,
 				CA1AEA0D140C906200C56C4D /* PinGeneral@2x.png in Resources */,
@@ -1571,6 +1598,7 @@
 				CA00943C1409509B00E5001E /* AAManagedObjectContext.m in Sources */,
 				CA00943D1409509B00E5001E /* ArtParser.m in Sources */,
 				CA00943E1409509B00E5001E /* ConfigParser.m in Sources */,
+				B0133A191C78476100D83997 /* Artist.m in Sources */,
 				CA00943F1409509B00E5001E /* ItemParser.m in Sources */,
 				CA0094411409509B00E5001E /* Category.m in Sources */,
 				CA0094421409509B00E5001E /* Comment.m in Sources */,
@@ -1580,6 +1608,7 @@
 				CA0094451409509B00E5001E /* ASIAuthenticationDialog.m in Sources */,
 				CA0094461409509B00E5001E /* ASIDataCompressor.m in Sources */,
 				CA0094471409509B00E5001E /* ASIDataDecompressor.m in Sources */,
+				B0133A171C78476100D83997 /* Art.m in Sources */,
 				CA0094481409509B00E5001E /* ASIDownloadCache.m in Sources */,
 				CA0094491409509B00E5001E /* ASIFormDataRequest.m in Sources */,
 				CA00944A1409509B00E5001E /* ASIHTTPRequest.m in Sources */,
@@ -1603,6 +1632,7 @@
 				CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */,
 				B034FB291BEB5C230084B89C /* Tag.m in Sources */,
 				CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */,
+				B0133A011C7837E300D83997 /* ArtistParser.m in Sources */,
 				CA546F59140AE18D008B1B91 /* EGOImageLoader.m in Sources */,
 				CA546F5A140AE18D008B1B91 /* EGOImageView.m in Sources */,
 				CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */,
@@ -1618,6 +1648,7 @@
 				CAFD5B2214107DCB0078D7B6 /* SBJsonParser.m in Sources */,
 				CAFD5B2314107DCB0078D7B6 /* SBJsonWriter.m in Sources */,
 				CADE14471411860D0068EA45 /* JSONKit.m in Sources */,
+				B0EDA07A1C75E09D00762877 /* CateTagViewController.m in Sources */,
 				C9722EB414CD116E00FC42E9 /* AddDetailViewController.m in Sources */,
 				C9C1BD1514E4D4B20057164B /* CommentParser.m in Sources */,
 				5F7A24A4150CF8A100101598 /* EventParser.m in Sources */,
@@ -1631,7 +1662,6 @@
 				468A0675175BCDD600F697A5 /* Event.m in Sources */,
 				46B357AC1763E407006663AA /* ArtLocationSelectionViewViewController.m in Sources */,
 				466B5E86178D04E70000CF66 /* DetailTableControllerViewController.m in Sources */,
-				464C9ABB1794D09600387F58 /* Art.m in Sources */,
 				464C9AC01794EB7C00387F58 /* IntroViewController.m in Sources */,
 				464C9ADB17951FC600387F58 /* CommentsTableViewController.m in Sources */,
 				469527E11796376A000F8D36 /* AddCommentViewController.m in Sources */,

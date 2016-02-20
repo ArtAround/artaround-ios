@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="15A284" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15A284" minimumToolsVersion="Automatic">
     <entity name="Art" representedClassName="Art">
         <attribute name="artDescription" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="artist" optional="YES" attributeType="String">
-            <userInfo/>
-        </attribute>
         <attribute name="commissioned" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="commissionedBy" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="commissionedByLink" optional="YES" attributeType="String" syncable="YES"/>
@@ -36,6 +33,7 @@
         <attribute name="year" optional="YES" attributeType="Integer 32">
             <userInfo/>
         </attribute>
+        <relationship name="artists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Artist" inverseName="arts" inverseEntity="Artist" syncable="YES"/>
         <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Category" inverseName="arts" inverseEntity="Category">
             <userInfo/>
         </relationship>
@@ -51,6 +49,10 @@
         </relationship>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="arts" inverseEntity="Tag" syncable="YES"/>
         <userInfo/>
+    </entity>
+    <entity name="Artist" representedClassName="Artist" syncable="YES">
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="arts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Art" inverseName="artists" inverseEntity="Art" syncable="YES"/>
     </entity>
     <entity name="Category" representedClassName="Category">
         <attribute name="title" optional="YES" attributeType="String">
@@ -105,7 +107,7 @@
         <userInfo/>
     </entity>
     <entity name="Photo" representedClassName="Photo">
-        <attribute name="dateAdded" optional="YES" attributeType="Date" defaultDateTimeInterval="315556200" defaultValueString="1/1/11" syncable="YES"/>
+        <attribute name="dateAdded" optional="YES" attributeType="Date" defaultDateTimeInterval="0" syncable="YES"/>
         <attribute name="flickrID" optional="YES" attributeType="Integer 64" defaultValueString="0">
             <userInfo/>
         </attribute>
@@ -189,5 +191,6 @@
         <element name="Neighborhood" positionX="-488" positionY="213" width="128" height="75"/>
         <element name="Photo" positionX="-108" positionY="213" width="128" height="435"/>
         <element name="Tag" positionX="-279" positionY="216" width="128" height="75"/>
+        <element name="Artist" positionX="-288" positionY="207" width="128" height="75"/>
     </elements>
 </model>
