@@ -8,7 +8,7 @@
 #warning "This project uses features only available in iPhone SDK 3.0 and later."
 #endif
 
-#import "CoreData+MagicalRecord.h"
+#import <MagicalRecord/MagicalRecord.h>
 
 #ifdef __OBJC__
 	#import <UIKit/UIKit.h>

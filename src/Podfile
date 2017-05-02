@@ -1,0 +1,15 @@
+# CocoaPods Source
+source 'https://github.com/CocoaPods/Specs.git'
+
+# iOS Platform
+platform :ios, '8.0'
+use_frameworks!
+
+target 'ArtAround' do
+    project 'ArtAround.xcodeproj'
+    pod 'AFNetworking'
+    pod 'Google/Analytics'
+    pod 'MagicalRecord'
+    pod 'Reachability'
+    pod 'TPKeyboardAvoiding'
+end

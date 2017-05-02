@@ -10,7 +10,7 @@
 #import "MapViewController.h"
 #import "AAAPIManager.h"
 #import "Utilities.h"
-#import "GANTracker.h"
+#import <Google/Analytics.h>
 #import "IntroViewController.h"
 //#import "MagicalRecord.h"
 //#import "NSManagedObject+MagicalDataImport.h"
@@ -39,10 +39,12 @@
         
     }];
     
+    // TODO: replace with new code from Google Analytics
+    /*
     [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
                                            dispatchPeriod:kGANDispatchPeriodSec
                                                  delegate:nil];
-
+    */
     
 	//initialize the window
 	UIWindow *newWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -64,7 +66,7 @@
 	[self setNavigationController:navController];
 	
 	//add the nav controller view to the window
-	[self.window addSubview:self.navigationController.view];
+	[self.window setRootViewController:self.navigationController];
 
     
     if (![Utilities instance].hasLoadedBefore) {
@@ -140,6 +142,7 @@
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     /*
      Typically you should set up the Core Data stack here, usually by passing the managed object context to the first view controller.
      self.<#View controller#>.managedObjectContext = self.managedObjectContext;

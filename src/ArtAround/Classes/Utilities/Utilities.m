@@ -9,7 +9,7 @@
 #import "Utilities.h"
 #import <MapKit/MapKit.h>
 #import "ArtAnnotation.h"
-#import "GANTracker.h"
+#import <Google/Analytics.h>
 
 static Utilities *_kSharedInstance = nil;
 
@@ -380,7 +380,8 @@ static Utilities *_kSharedInstance = nil;
     }
     
     NSError *error;
-    [[GANTracker sharedTracker] trackPageview:str withError:&error];
+    // TODO: replace with new code from Google Analytics
+    //[[GANTracker sharedTracker] trackPageview:str withError:&error];
     
     if (error)
         DebugLog(@"Page Tracking Error: %@", [error description]);
@@ -395,7 +396,8 @@ static Utilities *_kSharedInstance = nil;
 //        pageName = [kViewNamesDictionary objectForKey:pageName];
     
     NSError *error;
-    [[GANTracker sharedTracker] trackPageview:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil] withError:&error];
+    // TODO: replace with new code from Google Analytics
+    //[[GANTracker sharedTracker] trackPageview:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil] withError:&error];
     
     if (error)
         DebugLog(@"Page Tracking Error: %@", [error description]);
@@ -407,7 +409,8 @@ static Utilities *_kSharedInstance = nil;
 {
     
     NSError *error;
-    [[GANTracker sharedTracker] trackEvent:event action:action label:l value:0 withError:&error];
+    // TODO: replace with new code from Google Analytics
+    //[[GANTracker sharedTracker] trackEvent:event action:action label:l value:0 withError:&error];
     if (error)
         DebugLog(@"Page Tracking Error: %@", [error description]);
     

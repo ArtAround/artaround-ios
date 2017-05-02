@@ -117,7 +117,7 @@
 	//are the fields empty?
 	BOOL showTitle = _art.title && ![_art.title isEqualToString:@""];
 	BOOL showArtist = _art.artist && ![_art.artist isEqualToString:@""];
-	BOOL showYear = _art.year && ![_art.year intValue] == 0;
+	BOOL showYear = _art.year && !([_art.year intValue] == 0);
 	
 	//artist label is a concatenation of artist - year
 	NSString *artist = @"";

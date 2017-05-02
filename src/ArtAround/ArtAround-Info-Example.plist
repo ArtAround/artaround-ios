@@ -12,16 +12,23 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>Icon.png</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>Icon.png</string>
+		<string>Icon@2x.png</string>
+		<string>Icon-72.png</string>
+		<string>Icon-Small.png</string>
+		<string>Icon-Small-50.png</string>
+		<string>Icon-Small@2x.png</string>
+	</array>
 	<key>CFBundleIdentifier</key>
-	<string>us.theartaround.artaround</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
@@ -35,6 +42,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIStatusBarStyle</key>
@@ -50,14 +59,5 @@
 	<array/>
 	<key>UTImportedTypeDeclarations</key>
 	<array/>
-	<key>CFBundleIconFiles</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-72.png</string>
-		<string>Icon-Small.png</string>
-		<string>Icon-Small-50.png</string>
-		<string>Icon-Small@2x.png</string>
-	</array>
 </dict>
 </plist>

@@ -1024,7 +1024,7 @@ static const float _kRowBufffer = 20.0f;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    NSString *cellIdentifier = (!_inEditMode) ? [NSString stringWithFormat:@"cell%i", indexPath.row] : [NSString stringWithFormat:@"cellEdit%i", indexPath.row];
+    NSString *cellIdentifier = (!_inEditMode) ? [NSString stringWithFormat:@"cell%li", indexPath.row] : [NSString stringWithFormat:@"cellEdit%li", indexPath.row];
     
     if (indexPath.row == ArtDetailRowPhotos) {
         cellIdentifier = @"photosCell";
@@ -1207,7 +1207,7 @@ static const float _kRowBufffer = 20.0f;
                 cell.textLabel.text = @"";
             }
             else {
-                cell.textLabel.text = [NSString stringWithFormat:@"Comments (%i)", _art.comments.count];
+                cell.textLabel.text = [NSString stringWithFormat:@"Comments (%lu)", _art.comments.count];
                 
                 if (_art.comments.count > 0) {
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

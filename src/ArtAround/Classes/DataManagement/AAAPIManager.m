@@ -194,9 +194,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	
 //    NSString *baseUrl = [[NSString alloc] initWithFormat:@"%@", _kFlagAPIRoot];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [manager POST:[NSString stringWithFormat:@"%@/%@/flag", _kFlagAPIRoot, slug, nil] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:[NSString stringWithFormat:@"%@/%@/flag", _kFlagAPIRoot, slug, nil] parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
 
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:nil waitUntilDone:NO];
@@ -204,7 +204,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [[Utilities instance] stopActivity];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         if (target && [target respondsToSelector:failCallback]) {
             [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];
@@ -262,9 +262,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	//start network activity indicator
 	[[Utilities instance] startActivity];
 	
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [manager GET:allArtURL.absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:allArtURL.absoluteString parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [Art MR_importFromArray:[responseObject objectForKey:@"arts"] inContext:localContext];
@@ -308,7 +308,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         }];
         
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         DebugLog(@"Download all art failed. Error: %@.", error);
         
@@ -400,9 +400,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	//start network activity indicator
 	[[Utilities instance] startActivity];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [manager GET:artURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:artURL.absoluteString parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [Art MR_importFromObject:[responseObject objectForKey:@"art"] inContext:localContext];
@@ -462,7 +462,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
             
         }];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         DebugLog(@"Download art failed. Error: %@.", error);
         
@@ -553,8 +553,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     //start network activity indicator
 	[[Utilities instance] startActivity];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager PUT:[AAAPIManager apiURLForMethod:@"arts"].absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager PUT:[AAAPIManager apiURLForMethod:@"arts"].absoluteString parameters:params success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
@@ -562,7 +562,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [[Utilities instance] stopActivity];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         if (target && [target respondsToSelector:failCallback]) {
             [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];
@@ -603,8 +603,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     //start network activity indicator
 	[[Utilities instance] startActivity];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager PUT:[AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", [art objectForKey:@"slug"], nil]].absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager PUT:[AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", [art objectForKey:@"slug"], nil]].absoluteString parameters:params success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
@@ -612,7 +612,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [[Utilities instance] stopActivity];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         if (target && [target respondsToSelector:failCallback]) {
             [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];
@@ -660,14 +660,14 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     NSData *attributionNameData = [flickrHandle dataUsingEncoding:NSUTF8StringEncoding];
     NSData *attributionUrlData = [photoAttributionURL dataUsingEncoding:NSUTF8StringEncoding];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager POST:photoUploadURL.absoluteString parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         
         [formData appendPartWithFileData:imageData name:@"file" fileName:@"file.jpeg" mimeType:@"image/jpeg"];
         [formData appendPartWithFormData:attributionNameData name:@"photo_attribution_text"];
         [formData appendPartWithFormData:attributionUrlData name:@"photo_attribution_url"];
         
-    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
@@ -675,7 +675,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [[Utilities instance] stopActivity];
 
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         if (target && [target respondsToSelector:failCallback]) {
             [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];
@@ -851,8 +851,8 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     //start network activity indicator
 	[[Utilities instance] startActivity];
 	
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:commentUploadURL.absoluteString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager POST:commentUploadURL.absoluteString parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
@@ -860,7 +860,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [[Utilities instance] stopActivity];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         
         if (target && [target respondsToSelector:failCallback]) {
             [target performSelectorOnMainThread:failCallback withObject:nil waitUntilDone:NO];

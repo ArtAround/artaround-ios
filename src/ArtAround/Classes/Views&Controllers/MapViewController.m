@@ -19,8 +19,6 @@
 #import "AddArtViewController.h"
 #import "DetailTableControllerViewController.h"
 
-static const int _kAnnotationLimit = 9999;
-
 @interface MapViewController (private)
 -(void)artUpdated;
 -(void)filterButtonTapped;

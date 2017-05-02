@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "EF1DA81C0848337371CB23CEA6AE4FD61E29CEC8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "EF1DA81C0848337371CB23CEA6AE4FD61E29CEC8" : 9223372036854775807,
+    "958932E9D08E4465709D54DB1E7CECF23B0F442E" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "00DA9E99-001F-4DDD-91A0-008184B691BA",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "EF1DA81C0848337371CB23CEA6AE4FD61E29CEC8" : "Code\/",
+    "958932E9D08E4465709D54DB1E7CECF23B0F442E" : "Code\/src\/ArtAround\/Classes\/ThirdParty\/MagicalRecord\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ArtAround",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "src\/ArtAround.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/magicalpanda\/MagicalRecord.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "958932E9D08E4465709D54DB1E7CECF23B0F442E"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:ArtAround\/artaround-ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EF1DA81C0848337371CB23CEA6AE4FD61E29CEC8"
+    }
+  ]
+}
