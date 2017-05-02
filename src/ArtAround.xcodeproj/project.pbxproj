@@ -156,11 +156,6 @@
 		CA1AEA12140C906200C56C4D /* PinVenuePressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */; };
 		CA1AEA13140C906200C56C4D /* PinVenuePressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */; };
 		CA2A10EB14109BBE009001A2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2A10EA14109BBE009001A2 /* MessageUI.framework */; };
-		CA546F56140AE18D008B1B91 /* EGOCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F49140AE18D008B1B91 /* EGOCache.m */; };
-		CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F4D140AE18D008B1B91 /* EGOImageButton.m */; };
-		CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F50140AE18D008B1B91 /* EGOImageLoadConnection.m */; };
-		CA546F59140AE18D008B1B91 /* EGOImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F52140AE18D008B1B91 /* EGOImageLoader.m */; };
-		CA546F5A140AE18D008B1B91 /* EGOImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA546F55140AE18D008B1B91 /* EGOImageView.m */; };
 		CA5E10CD1405F0520075DAB8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CC1405F0520075DAB8 /* UIKit.framework */; };
 		CA5E10CF1405F0520075DAB8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CE1405F0520075DAB8 /* Foundation.framework */; };
 		CA5E10D11405F0520075DAB8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */; };
@@ -376,16 +371,6 @@
 		CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PinVenuePressed.png; sourceTree = "<group>"; };
 		CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PinVenuePressed@2x.png"; sourceTree = "<group>"; };
 		CA2A10EA14109BBE009001A2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		CA546F48140AE18D008B1B91 /* EGOCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOCache.h; sourceTree = "<group>"; };
-		CA546F49140AE18D008B1B91 /* EGOCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOCache.m; sourceTree = "<group>"; };
-		CA546F4C140AE18D008B1B91 /* EGOImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOImageButton.h; sourceTree = "<group>"; };
-		CA546F4D140AE18D008B1B91 /* EGOImageButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOImageButton.m; sourceTree = "<group>"; };
-		CA546F4F140AE18D008B1B91 /* EGOImageLoadConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOImageLoadConnection.h; sourceTree = "<group>"; };
-		CA546F50140AE18D008B1B91 /* EGOImageLoadConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOImageLoadConnection.m; sourceTree = "<group>"; };
-		CA546F51140AE18D008B1B91 /* EGOImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOImageLoader.h; sourceTree = "<group>"; };
-		CA546F52140AE18D008B1B91 /* EGOImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOImageLoader.m; sourceTree = "<group>"; };
-		CA546F54140AE18D008B1B91 /* EGOImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGOImageView.h; sourceTree = "<group>"; };
-		CA546F55140AE18D008B1B91 /* EGOImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGOImageView.m; sourceTree = "<group>"; };
 		CA5E10C81405F0520075DAB8 /* ArtAround.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtAround.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA5E10CC1405F0520075DAB8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CA5E10CE1405F0520075DAB8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -596,7 +581,6 @@
 				CA0093EE1409509A00E5001E /* AppDelegate */,
 				CA0093F11409509A00E5001E /* DataManagement */,
 				CA0093FC1409509A00E5001E /* Models */,
-				CA0094071409509A00E5001E /* ThirdParty */,
 				CA0094301409509B00E5001E /* Views&Controllers */,
 				CAFF2C9B1409781600C98C0E /* Utilities */,
 			);
@@ -627,14 +611,6 @@
 				4626F874174947F100ECADC2 /* Manual */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		CA0094071409509A00E5001E /* ThirdParty */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F46140AE18D008B1B91 /* EGO */,
-			);
-			path = ThirdParty;
 			sourceTree = "<group>";
 		};
 		CA0094301409509B00E5001E /* Views&Controllers */ = {
@@ -779,63 +755,6 @@
 				C9F034F614F862910031EB03 /* uploadPhoto_noBg@2x.png */,
 			);
 			path = Images;
-			sourceTree = "<group>";
-		};
-		CA546F46140AE18D008B1B91 /* EGO */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F47140AE18D008B1B91 /* EGOCache */,
-				CA546F4A140AE18D008B1B91 /* EGOImageLoading */,
-			);
-			path = EGO;
-			sourceTree = "<group>";
-		};
-		CA546F47140AE18D008B1B91 /* EGOCache */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F48140AE18D008B1B91 /* EGOCache.h */,
-				CA546F49140AE18D008B1B91 /* EGOCache.m */,
-			);
-			path = EGOCache;
-			sourceTree = "<group>";
-		};
-		CA546F4A140AE18D008B1B91 /* EGOImageLoading */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F4B140AE18D008B1B91 /* EGOImageButton */,
-				CA546F4E140AE18D008B1B91 /* EGOImageLoader */,
-				CA546F53140AE18D008B1B91 /* EGOImageView */,
-			);
-			path = EGOImageLoading;
-			sourceTree = "<group>";
-		};
-		CA546F4B140AE18D008B1B91 /* EGOImageButton */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F4C140AE18D008B1B91 /* EGOImageButton.h */,
-				CA546F4D140AE18D008B1B91 /* EGOImageButton.m */,
-			);
-			path = EGOImageButton;
-			sourceTree = "<group>";
-		};
-		CA546F4E140AE18D008B1B91 /* EGOImageLoader */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F4F140AE18D008B1B91 /* EGOImageLoadConnection.h */,
-				CA546F50140AE18D008B1B91 /* EGOImageLoadConnection.m */,
-				CA546F51140AE18D008B1B91 /* EGOImageLoader.h */,
-				CA546F52140AE18D008B1B91 /* EGOImageLoader.m */,
-			);
-			path = EGOImageLoader;
-			sourceTree = "<group>";
-		};
-		CA546F53140AE18D008B1B91 /* EGOImageView */ = {
-			isa = PBXGroup;
-			children = (
-				CA546F54140AE18D008B1B91 /* EGOImageView.h */,
-				CA546F55140AE18D008B1B91 /* EGOImageView.m */,
-			);
-			path = EGOImageView;
 			sourceTree = "<group>";
 		};
 		CA5E10BD1405F0520075DAB8 = {
@@ -1213,11 +1132,6 @@
 				CA0094561409509B00E5001E /* MapView.m in Sources */,
 				CA0094571409509B00E5001E /* MapViewController.m in Sources */,
 				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
-				CA546F56140AE18D008B1B91 /* EGOCache.m in Sources */,
-				CA546F57140AE18D008B1B91 /* EGOImageButton.m in Sources */,
-				CA546F58140AE18D008B1B91 /* EGOImageLoadConnection.m in Sources */,
-				CA546F59140AE18D008B1B91 /* EGOImageLoader.m in Sources */,
-				CA546F5A140AE18D008B1B91 /* EGOImageView.m in Sources */,
 				CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */,
 				CAC02BA6140DF0140032C4E5 /* ArtAnnotationView.m in Sources */,
 				5F7A24C6150D5E8D00101598 /* FlagViewController.m in Sources */,

@@ -14,6 +14,9 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - EGOCache (2.1.3)
+  - EGOImageLoading (0.0.1):
+    - EGOCache
   - FirebaseAnalytics (3.9.0):
     - FirebaseCore (~> 3.6)
     - FirebaseInstanceID (~> 1.0)
@@ -39,6 +42,8 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking
+  - EGOCache
+  - EGOImageLoading
   - Google/Analytics
   - MagicalRecord
   - Reachability
@@ -46,6 +51,8 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  EGOCache: f0295dbe041156acabd39021354ad1045ee49e72
+  EGOImageLoading: 99d7c4a9fb5a192ab37979b63ea03efc7097fe8e
   FirebaseAnalytics: e5fe8486efc01bec33f6bf82e2fa9fce4b124052
   FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
   FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
@@ -56,6 +63,6 @@ SPEC CHECKSUMS:
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   TPKeyboardAvoiding: 0d6af20e95e2850f4c621841225b59ec7d8dd852
 
-PODFILE CHECKSUM: 4fb03f06f9def7be880f40e2050960b247b38f2b
+PODFILE CHECKSUM: 11b1bcc80e7eb046cf5424e317c3a7eaf395e431
 
 COCOAPODS: 1.2.1

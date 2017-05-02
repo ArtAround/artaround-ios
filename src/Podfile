@@ -12,4 +12,6 @@ target 'ArtAround' do
     pod 'MagicalRecord'
     pod 'Reachability'
     pod 'TPKeyboardAvoiding'
+    pod 'EGOCache'
+    pod 'EGOImageLoading'
 end

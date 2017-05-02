@@ -90,6 +90,8 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOCache/EGOCache.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOImageLoading/EGOImageLoading.framework"
   install_framework "$BUILT_PRODUCTS_DIR/GoogleToolboxForMac/GoogleToolboxForMac.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MagicalRecord/MagicalRecord.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Reachability/Reachability.framework"
@@ -97,6 +99,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "AppStore" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOCache/EGOCache.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOImageLoading/EGOImageLoading.framework"
   install_framework "$BUILT_PRODUCTS_DIR/GoogleToolboxForMac/GoogleToolboxForMac.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MagicalRecord/MagicalRecord.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Reachability/Reachability.framework"
@@ -104,6 +108,8 @@ if [[ "$CONFIGURATION" == "AppStore" ]]; then
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOCache/EGOCache.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/EGOImageLoading/EGOImageLoading.framework"
   install_framework "$BUILT_PRODUCTS_DIR/GoogleToolboxForMac/GoogleToolboxForMac.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MagicalRecord/MagicalRecord.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Reachability/Reachability.framework"
