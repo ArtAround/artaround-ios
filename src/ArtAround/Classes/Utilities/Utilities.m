@@ -379,14 +379,9 @@ static Utilities *_kSharedInstance = nil;
         str = [NSString stringWithFormat:@"%@/%@", str, pageName];
     }
     
-    NSError *error;
-    // TODO: replace with new code from Google Analytics
-    //[[GANTracker sharedTracker] trackPageview:str withError:&error];
-    
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
-    
-    
+    id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;
+    [tracker set:kGAIScreenName value:str];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 + (void) trackPageViewWithName:(NSString*)pageName
@@ -395,26 +390,18 @@ static Utilities *_kSharedInstance = nil;
 //    if ([kViewNamesDictionary objectForKey:pageName])
 //        pageName = [kViewNamesDictionary objectForKey:pageName];
     
-    NSError *error;
-    // TODO: replace with new code from Google Analytics
-    //[[GANTracker sharedTracker] trackPageview:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil] withError:&error];
-    
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
-    
-    
+    id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;
+    [tracker set:kGAIScreenName value:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil]];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 + (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l
 {
-    
-    NSError *error;
-    // TODO: replace with new code from Google Analytics
-    //[[GANTracker sharedTracker] trackEvent:event action:action label:l value:0 withError:&error];
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
-    
-    
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker send:[[GAIDictionaryBuilder createEventWithCategory:event
+                                                          action:action
+                                                           label:l
+                                                           value:0] build]];
 }
 
 @end

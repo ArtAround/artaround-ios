@@ -39,12 +39,14 @@
         
     }];
     
-    // TODO: replace with new code from Google Analytics
-    /*
-    [[GANTracker sharedTracker] startTrackerWithAccountID:kGoogleAnalyticsAccountID
-                                           dispatchPeriod:kGANDispatchPeriodSec
-                                                 delegate:nil];
-    */
+    // Configure tracker from GoogleService-Info.plist.
+    NSError *configureError;
+    [[GGLContext sharedInstance] configureWithError:&configureError];
+    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
+    
+    GAI *gai = [GAI sharedInstance];
+    gai.trackUncaughtExceptions = YES;  // report uncaught exceptions
+    gai.logger.logLevel = kGAILogLevelError;  // remove before app release
     
 	//initialize the window
 	UIWindow *newWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

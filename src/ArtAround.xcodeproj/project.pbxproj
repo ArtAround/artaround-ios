@@ -186,6 +186,7 @@
 		CAECF77914073D9100CD9A95 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77814073D9100CD9A95 /* CFNetwork.framework */; };
 		CAECF77B14073D9D00CD9A95 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */; };
 		CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */; };
+		CAF8D1431EB934DC00A3CFF5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */; };
 		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
 		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
 /* End PBXBuildFile section */
@@ -415,6 +416,7 @@
 		CAECF77814073D9100CD9A95 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		CAECF77A14073D9D00CD9A95 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CAFF2C9C1409781600C98C0E /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		CAFF2C9D1409781600C98C0E /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
 		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
@@ -891,6 +893,7 @@
 		CA5E10D51405F0520075DAB8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */,
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
 				CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */,
 				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
@@ -1130,6 +1133,7 @@
 				464C9ACC1794F28B00387F58 /* introImage1.png in Resources */,
 				464C9ACD1794F28B00387F58 /* introImage3.png in Resources */,
 				464C9ACE1794F28B00387F58 /* introImage0.png in Resources */,
+				CAF8D1431EB934DC00A3CFF5 /* GoogleService-Info.plist in Resources */,
 				464C9ACF1794F28B00387F58 /* introImage0@2x.png in Resources */,
 				464C9AD41795040200387F58 /* addIcon.png in Resources */,
 				464C9AD51795040200387F58 /* addIcon@2x.png in Resources */,
@@ -1285,7 +1289,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.artaround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1335,7 +1339,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.artaround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1392,7 +1396,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.artaround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
