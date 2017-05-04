@@ -526,10 +526,10 @@
             if (filteredAnnotations.count > 0)
                 [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
         }
-        
-        //set map region
-        [Utilities zoomToFitMapAnnotations:_mapView.map];
     });
+    
+    //set map region
+    [Utilities zoomToFitMapAnnotations:_mapView.map];
 }
 
 #pragma mark - MKMapViewDelegate

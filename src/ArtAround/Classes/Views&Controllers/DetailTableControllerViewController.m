@@ -217,7 +217,7 @@ static const float _kRowBufffer = 20.0f;
     [_footerView addSubview:_textDoneButton];
 
     if (_art)
-        [self setArt:_art forceDownload:NO];
+        [self setArt:_art forceDownload:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -252,25 +252,19 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - Helpers
 - (void)setArt:(Art *)art forceDownload:(BOOL)force
 {
-	//assign the art
-	_art = art;
-	
-	//load images that we already have a source for
-	[self setupImages];
-	
-	//get all the photo details for each photo that is missing the deets
-	for (Photo *photo in [_art.photos allObjects]) {
-		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
-            [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImages) forceDownload:YES];
-		}
-	}
-    
-    //download the full art object
-    if (art) {
+	//download the full art object
+    if (art && force) {
         //get the comments for this art
-        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
+        [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
     }
-	
+    //assign the art
+    _art = art;
+    
+	if ([_art.photos allObjects] != nil && [[_art.photos allObjects] count] > 0) {
+        //load images that we already have a source for
+        [self setupImages];
+    }
+    
 	//add the annotation for the art
 	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
 		
@@ -729,7 +723,6 @@ static const float _kRowBufffer = 20.0f;
         //reload the art
         [self setArt:_art forceDownload:NO];
     }
-    
 }
 
 #pragma mark - Table view data source
@@ -1517,12 +1510,12 @@ static const float _kRowBufffer = 20.0f;
                 else if ([[_newArtDictionary objectForKey:@"artist"] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height;
+                    height = requiredLabelSize.height + 20;
                 }
                 else if ([_art.artist length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height;
+                    height = requiredLabelSize.height + 20;
                 }
                 
                 break;

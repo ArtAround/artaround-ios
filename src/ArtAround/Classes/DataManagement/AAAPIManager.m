@@ -267,7 +267,28 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [manager GET:allArtURL.absoluteString parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            [Art MR_importFromArray:[responseObject objectForKey:@"arts"] inContext:localContext];
+            NSMutableArray *arts = [NSMutableArray array];
+            if ([[responseObject objectForKey:@"arts"] isKindOfClass:[NSArray class]]) {
+                for (NSMutableDictionary *art in [responseObject objectForKey:@"arts"]) {
+                    if ([[art objectForKey:@"artist"] isKindOfClass:[NSArray class]]) {
+                        NSMutableDictionary *artMutable = [art mutableCopy];
+                        NSMutableString *result = [[NSMutableString alloc] init];
+                        int index = 0;
+                        for (NSString *artist in [artMutable objectForKey:@"artist"]) {
+                            if (![artist isEqualToString:@""]) {
+                                if (index > 0) {
+                                    [result appendString:@", "];
+                                }
+                                [result appendString:artist];
+                                index++;
+                            }
+                        }
+                        artMutable[@"artist"] = result;
+                        [arts addObject:artMutable];
+                    }
+                }
+            }
+            [Art MR_importFromArray:arts inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
             
             
@@ -405,7 +426,25 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     [manager GET:artURL.absoluteString parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            [Art MR_importFromObject:[responseObject objectForKey:@"art"] inContext:localContext];
+            NSMutableDictionary *artMutable = [NSMutableDictionary dictionary];
+            if ([[responseObject objectForKey:@"art"] isKindOfClass:[NSDictionary class]]) {
+                NSMutableDictionary *artMutable = [[responseObject objectForKey:@"art"] mutableCopy];
+                if ([[artMutable objectForKey:@"artist"] isKindOfClass:[NSArray class]]) {
+                    NSMutableString *result = [[NSMutableString alloc] init];
+                    int index = 0;
+                    for (NSString *artist in [artMutable objectForKey:@"artist"]) {
+                        if (![artist isEqualToString:@""]) {
+                            if (index > 0) {
+                                [result appendString:@"\n"];
+                            }
+                            [result appendString:artist];
+                            index++;
+                        }
+                    }
+                    artMutable[@"artist"] = result;
+                }
+            }
+            [Art MR_importFromObject:artMutable inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
             
             
