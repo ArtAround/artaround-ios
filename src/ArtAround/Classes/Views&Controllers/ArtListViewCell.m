@@ -135,20 +135,20 @@
 	//set label text
 	[self.artNameLabel setText:self.art.title];
     
-    CGSize titleSize = [self.art.title sizeWithFont:self.artNameLabel.font constrainedToSize:CGSizeMake(self.artNameLabel.frame.size.width, (self.artNameLabel.font.lineHeight * 2.0f)) lineBreakMode:NSLineBreakByWordWrapping];
-
+    CGSize titleSize = [[Utilities instance] frameForText:self.art.title sizeWithFont:self.artNameLabel.font constrainedToSize:CGSizeMake(self.artNameLabel.frame.size.width, (self.artNameLabel.font.lineHeight * 2.0f)) lineBreakMode:NSLineBreakByWordWrapping];
+    
     
     [self.artNameLabel setFrame:CGRectMake(self.artNameLabel.frame.origin.x, self.artNameLabel.frame.origin.y, self.artNameLabel.frame.size.width, titleSize.height)];
     
     //set artist and year text and set frames
     NSString *artistString = ([self.art.artist isEqualToString:@"Unknown"]) ? @"" : self.art.artist;
     [self.artistLabel setText:artistString];
-    CGSize artistSize = [artistString sizeWithFont:self.artistLabel.font constrainedToSize:self.artistLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize artistSize = [[Utilities instance] frameForText:artistString sizeWithFont:self.artistLabel.font constrainedToSize:self.artistLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
     [self.artistLabel setFrame:CGRectMake(self.artistLabel.frame.origin.x, self.artNameLabel.frame.origin.y + self.artNameLabel.frame.size.height + 3.0f, self.artistLabel.frame.size.width, artistSize.height)];
     
     NSString *yearString = ([[self.art.year stringValue] isEqualToString:@"0"]) ? @"" : [self.art.year stringValue];
     [self.yearLabel setText:yearString];
-    CGSize yearSize = [yearString sizeWithFont:self.yearLabel.font constrainedToSize:self.yearLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize yearSize = [[Utilities instance] frameForText:yearString sizeWithFont:self.yearLabel.font constrainedToSize:self.yearLabel.frame.size lineBreakMode:NSLineBreakByWordWrapping];
     [self.yearLabel setFrame:CGRectMake(self.yearLabel.frame.origin.x, self.artistLabel.frame.origin.y + self.artistLabel.frame.size.height, self.yearLabel.frame.size.width, yearSize.height)];
     
     if (self.art.distance) {

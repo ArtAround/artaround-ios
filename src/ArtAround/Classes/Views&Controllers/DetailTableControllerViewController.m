@@ -535,7 +535,7 @@ static const float _kRowBufffer = 20.0f;
 - (void)artButtonPressed:(id)sender
 {
     EGOImageButton *button = (EGOImageButton*)sender;
-    int buttonTag = button.tag;
+    NSInteger buttonTag = button.tag;
     
     //get this photo
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
@@ -1036,7 +1036,7 @@ static const float _kRowBufffer = 20.0f;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     // Configure the cell...
     if (cell == nil) {
-        cell = [self cellForRow:indexPath.row];
+        cell = [self cellForRow:(int)indexPath.row];
     }
     
     switch (indexPath.row) {
@@ -1471,12 +1471,12 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.title length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1499,12 +1499,12 @@ static const float _kRowBufffer = 20.0f;
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"website"] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.website length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1516,12 +1516,12 @@ static const float _kRowBufffer = 20.0f;
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"artist"] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.artist length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1534,12 +1534,12 @@ static const float _kRowBufffer = 20.0f;
                 else {
                     if ([[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0) {
                         CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                        CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                     else if ([_art.commissionedBy length] > 0) {
                         CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                        CGSize requiredLabelSize = [_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                 }
@@ -1550,12 +1550,12 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.categoriesString length] > 0) {
                     CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else {
@@ -1568,13 +1568,13 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
@@ -1588,7 +1588,7 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([_locationString length] > 0) {
                     CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1598,12 +1598,12 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[_newArtDictionary objectForKey:@"location_description"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"location_description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"location_description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
                 else if ([_art.locationDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
                 else {
@@ -1640,7 +1640,7 @@ static const float _kRowBufffer = 20.0f;
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
 	EGOImageButton *prevView = nil;
-	int totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
+	NSUInteger totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
 	int photoCount = 0;
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
 	NSArray * sortedPhotos = [_art.photos sortedArrayUsingDescriptors:sortDescriptors];
@@ -1657,7 +1657,7 @@ static const float _kRowBufffer = 20.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -1725,7 +1725,7 @@ static const float _kRowBufffer = 20.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -1791,7 +1791,7 @@ static const float _kRowBufffer = 20.0f;
     } else {
         
         //adjust the initial offset based on the total number of photos
-        BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+        BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
         if (isPortrait) {
             prevOffset = _kPhotoInitialPaddingPortait;
         } else {
@@ -2226,7 +2226,7 @@ static const float _kRowBufffer = 20.0f;
     NSString *yearString = [_yearFormatter stringFromDate:[NSDate date]];
     int currentYear = [yearString intValue];
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:currentYear-row];
     title = [yearNumber stringValue];
     
     return title;
@@ -2240,7 +2240,7 @@ static const float _kRowBufffer = 20.0f;
     NSString *yearString = [_yearFormatter stringFromDate:[NSDate date]];
     int currentYear = [yearString intValue];
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:currentYear-row];
     _yearString = [[NSString alloc] initWithString:[yearNumber stringValue]];
     
     [self.tableView reloadData];

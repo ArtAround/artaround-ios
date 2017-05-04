@@ -232,7 +232,7 @@ static Utilities *_kSharedInstance = nil;
 - (FilterType)selectedFilterType
 {
 	if (_selectedFilterType == FilterTypeUnchosen) {
-		_selectedFilterType = [_defaults integerForKey:@"AAFilterType"];
+		_selectedFilterType = (int)[_defaults integerForKey:@"AAFilterType"];
 	}
 	return _selectedFilterType;
 }
@@ -402,6 +402,26 @@ static Utilities *_kSharedInstance = nil;
                                                           action:action
                                                            label:l
                                                            value:0] build]];
+}
+
+#pragma mark string helper
+
+- (CGSize)frameForText:(NSString*)text sizeWithFont:(UIFont*)font constrainedToSize:(CGSize)size lineBreakMode:(NSLineBreakMode)lineBreakMode
+{
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = lineBreakMode;
+    
+    NSDictionary * attributes = @{NSFontAttributeName:font,
+                                  NSParagraphStyleAttributeName:paragraphStyle
+                                  };
+    
+    
+    CGRect textRect = [text boundingRectWithSize:size
+                                         options:NSStringDrawingUsesLineFragmentOrigin
+                                      attributes:attributes
+                                         context:nil];
+    
+    return textRect.size;
 }
 
 @end

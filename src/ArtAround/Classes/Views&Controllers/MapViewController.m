@@ -424,109 +424,112 @@
 	
 	//clear out the art and annotation arrays
 	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];
-	[_annotations removeAllObjects];
-	[_items removeAllObjects];
 	
-	//fetch art
-	//execute fetch request
-	NSError *error = nil;
-	NSArray *queryItems = [[NSManagedObjectContext MR_contextForCurrentThread] executeFetchRequest:fetchRequest error:&error];
-	[_items addObjectsFromArray:queryItems];
-    
-    CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
-    
-    //sort items by distance
-    for (Art *thisArt in _items) {
-        CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
-        NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
-        [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
-    
-    }
-    
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
-    [_items sortUsingDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
-    
-	
-    //reset the list view
-    [_listViewController setItems:_items];
-    
-	//release fetch request
-	
-	//check for errors
-	if (!_items || error) {
-		return;
-	}
-	
-    //look for prevously added art
-    NSString *artSlug = (showArt) ? [showArt slug] : nil;
-    int annotationIndex = -1;
-    
-    //track minimum and and max lat and long to set the map bounds
-    CLLocationCoordinate2D topLeftCoord;
-    topLeftCoord.latitude = -90;
-    topLeftCoord.longitude = 180;
-    
-    CLLocationCoordinate2D bottomRightCoord;
-    bottomRightCoord.latitude = 90;
-    bottomRightCoord.longitude = -180;
-    
-	//add annotations
-	for (int i = 0; i < [_items count]; i++) {
-		
-		//add the annotation for the art
-		Art *art = [_items objectAtIndex:i];
-		if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
-			
-			//setup the coordinate
-			CLLocationCoordinate2D artLocation;
-			artLocation.latitude = [art.latitude doubleValue];
-			artLocation.longitude = [art.longitude doubleValue];
-			
-			//create an annotation, add it to the map, and store it in the array
-			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
-			annotation.index = i; //used when tapping the callout accessory button
-			[_annotations addObject:annotation];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_annotations removeAllObjects];
+        [_items removeAllObjects];
+        
+        //fetch art
+        //execute fetch request
+        NSError *error = nil;
+        NSArray *queryItems = [[NSManagedObjectContext MR_defaultContext] executeFetchRequest:fetchRequest error:&error];
+        [_items addObjectsFromArray:queryItems];
+        
+        CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
+        
+        //sort items by distance
+        for (Art *thisArt in _items) {
+            CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
+            NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
+            [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
             
-            //check for min and max lat/lon
-            if (i == 0) {
-                topLeftCoord.longitude = artLocation.longitude;
-                topLeftCoord.latitude = artLocation.latitude;
-                bottomRightCoord.longitude = artLocation.longitude;
-                bottomRightCoord.latitude = artLocation.latitude;
+        }
+        
+        NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
+        [_items sortUsingDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+        
+        
+        //reset the list view
+        [_listViewController setItems:_items];
+        
+        //release fetch request
+        
+        //check for errors
+        if (!_items || error) {
+            return;
+        }
+        
+        //look for prevously added art
+        NSString *artSlug = (showArt) ? [showArt slug] : nil;
+        int annotationIndex = -1;
+        
+        //track minimum and and max lat and long to set the map bounds
+        CLLocationCoordinate2D topLeftCoord;
+        topLeftCoord.latitude = -90;
+        topLeftCoord.longitude = 180;
+        
+        CLLocationCoordinate2D bottomRightCoord;
+        bottomRightCoord.latitude = 90;
+        bottomRightCoord.longitude = -180;
+        
+        //add annotations
+        for (int i = 0; i < [_items count]; i++) {
+            
+            //add the annotation for the art
+            Art *art = [_items objectAtIndex:i];
+            if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
+                
+                //setup the coordinate
+                CLLocationCoordinate2D artLocation;
+                artLocation.latitude = [art.latitude doubleValue];
+                artLocation.longitude = [art.longitude doubleValue];
+                
+                //create an annotation, add it to the map, and store it in the array
+                ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+                annotation.index = i; //used when tapping the callout accessory button
+                [_annotations addObject:annotation];
+                
+                //check for min and max lat/lon
+                if (i == 0) {
+                    topLeftCoord.longitude = artLocation.longitude;
+                    topLeftCoord.latitude = artLocation.latitude;
+                    bottomRightCoord.longitude = artLocation.longitude;
+                    bottomRightCoord.latitude = artLocation.latitude;
+                }
+                else {
+                    
+                    topLeftCoord.longitude = fmin(topLeftCoord.longitude, artLocation.longitude);
+                    topLeftCoord.latitude = fmax(topLeftCoord.latitude, artLocation.latitude);
+                    
+                    bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, artLocation.longitude);
+                    bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, artLocation.latitude);
+                    
+                }
+                
             }
-            else {
-                
-                topLeftCoord.longitude = fmin(topLeftCoord.longitude, artLocation.longitude);
-                topLeftCoord.latitude = fmax(topLeftCoord.latitude, artLocation.latitude);
-                
-                bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, artLocation.longitude);
-                bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, artLocation.latitude);
-                
-            }
-			
-		}
+            
+            if (art.slug == artSlug)
+                annotationIndex = i;
+            
+        }
         
-        if (art.slug == artSlug)
-            annotationIndex = i;
-		
-	}
-    
-	//add annotations
-	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
-	_mapNeedsRefresh = NO;
-    
-    
-    if (_showingMap && annotationIndex != -1) {
+        //add annotations
+        [_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
+        _mapNeedsRefresh = NO;
         
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
-        NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
         
-        if (filteredAnnotations.count > 0)
-            [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
-    }
-    
-    //set map region
-    [Utilities zoomToFitMapAnnotations:_mapView.map];
+        if (_showingMap && annotationIndex != -1) {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
+            NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
+            
+            if (filteredAnnotations.count > 0)
+                [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
+        }
+        
+        //set map region
+        [Utilities zoomToFitMapAnnotations:_mapView.map];
+    });
 }
 
 #pragma mark - MKMapViewDelegate
@@ -541,7 +544,7 @@
 	if ([annotation isKindOfClass:[ArtAnnotation class]]) {
 	
 		//setup the annotation view for the annotation
-		int index = [(ArtAnnotation *)annotation index];
+		NSInteger index = [(ArtAnnotation *)annotation index];
 		if ([_items count] > index) {
 			
 			//setup the pin image and reuse identifier
@@ -568,7 +571,7 @@
 		
 		//center the map on the callout annotation
 		//return the callout annotation view
-		if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+		if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
 			
 			//landscape
 			//exactly center on landscape has the callout off the screen, gotta take an extra step to show it
@@ -656,7 +659,7 @@
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
    
-    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
+    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
 //        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
         _foundUser = YES;
     }

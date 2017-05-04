@@ -51,7 +51,7 @@
 	//initialize the window
 	UIWindow *newWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	[self setWindow:newWindow];
-	[[self window] setBackgroundColor:[UIColor scrollViewTexturedBackgroundColor]];
+	[[self window] setBackgroundColor:[UIColor clearColor]];
 	[[self window] makeKeyAndVisible];
 	
 	//setup the map view controller

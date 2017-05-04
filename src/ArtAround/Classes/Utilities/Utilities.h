@@ -82,4 +82,6 @@ typedef enum {
 + (void) trackPageViewWithName:(NSString*)pageName;
 + (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l;
 
+- (CGSize)frameForText:(NSString*)text sizeWithFont:(UIFont*)font constrainedToSize:(CGSize)size lineBreakMode:(NSLineBreakMode)lineBreakMode;
+
 @end

@@ -166,7 +166,7 @@
         itemTitle = [(SearchItem*)item title];
     }
     
-    int index = -1;
+    NSUInteger index = -1;
     for (NSObject *thisItem in _selectedItems) {
         
         //String

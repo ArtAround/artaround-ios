@@ -234,7 +234,7 @@ static NSArray *_kFilterTypes = nil;
 	if (_isTopLevel) {
 		
 		//set the selected filter type
-		[[Utilities instance] setSelectedFilterType:indexPath.row];
+		[[Utilities instance] setSelectedFilterType:(int)indexPath.row];
 		
 		//reload all visible cells
 		[tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
@@ -271,7 +271,7 @@ static NSArray *_kFilterTypes = nil;
 	if (_isTopLevel && indexPath.row > 1) {
 			
 		//dig deeper based on the filter type selected
-		FilterViewController *filterController = [[FilterViewController alloc] initWithFilterType:indexPath.row];
+		FilterViewController *filterController = [[FilterViewController alloc] initWithFilterType:(int)indexPath.row];
 		[self.navigationController pushViewController:filterController animated:YES];
 	}
 	

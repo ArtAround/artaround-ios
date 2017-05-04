@@ -7,6 +7,7 @@
 //
 
 #import "IntroViewController.h"
+#import "Utilities.h"
 
 @interface IntroViewController ()
 - (void) setLabelsForIndex:(int)index;
@@ -60,7 +61,7 @@
     
     _originalTitleSize = self.titleLabel.frame.size;
     
-    CGSize titleSize = [self.titleLabel.text sizeWithFont:self.titleLabel.font constrainedToSize:_originalTitleSize lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize titleSize = [[Utilities instance] frameForText:self.titleLabel.text sizeWithFont:self.titleLabel.font constrainedToSize:_originalTitleSize lineBreakMode:NSLineBreakByWordWrapping];
     [self.titleLabel setFrame:CGRectMake(self.titleLabel.frame.origin.x, self.detailLabel.frame.origin.y - titleSize.height, titleSize.width, titleSize.height)];
     
 }
@@ -88,7 +89,7 @@
     [self.titleLabel setText:[_titles objectAtIndex:index]];
     [self.detailLabel setText:[_details objectAtIndex:index]];
     
-    CGSize titleSize = [self.titleLabel.text sizeWithFont:self.titleLabel.font constrainedToSize:_originalTitleSize lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize titleSize = [[Utilities instance] frameForText:self.titleLabel.text sizeWithFont:self.titleLabel.font constrainedToSize:_originalTitleSize lineBreakMode:NSLineBreakByWordWrapping];
     [self.titleLabel setFrame:CGRectMake(self.titleLabel.frame.origin.x, self.detailLabel.frame.origin.y - titleSize.height, titleSize.width, titleSize.height)];
     
     if (index == _titles.count - 1)

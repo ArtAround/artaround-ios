@@ -407,7 +407,7 @@
 - (void) photoDeleteButtonPressed:(id)sender
 {
     UIButton *button = (UIButton*)sender;
-    int buttonTag = button.tag;
+    NSInteger buttonTag = button.tag;
     
     [_userAddedImages removeObjectAtIndex:(buttonTag - _kUserAddedImageTagBase)];
     
@@ -449,7 +449,7 @@
     [_userAddedImages addObject:image];
     
     NSDictionary *attDict = [[NSDictionary alloc] initWithObjectsAndKeys:text, @"text", url, @"website", nil];
-    [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithInt:_userAddedImages.count] stringValue]];
+    [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithUnsignedLong:_userAddedImages.count] stringValue]];
     
     //reload the images to show the new image
     [self setupImages];
@@ -463,7 +463,7 @@
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
 	EGOImageButton *prevView = nil;
-	int totalPhotos = _userAddedImages.count;
+	NSUInteger totalPhotos = _userAddedImages.count;
 	int photoCount = 0;
     
     for (UIImage *thisUserImage in _userAddedImages) {
@@ -478,7 +478,7 @@
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -561,7 +561,7 @@
     } else {
         
         //adjust the initial offset based on the total number of photos
-        BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+        BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
         if (isPortrait) {
             prevOffset = _kPhotoInitialPaddingPortait;
         } else {
@@ -1487,7 +1487,7 @@
 {
     NSString *title = @"";
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:_currentYear-row];
     title = [yearNumber stringValue];
     
     return title;
@@ -1496,7 +1496,7 @@
 #pragma mark - Picker View Delegate
 - (void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:_currentYear-row];
     _yearString = [[NSString alloc] initWithString:[yearNumber stringValue]];
     [self.dateButton setTitle:_yearString forState:UIControlStateNormal];
     
