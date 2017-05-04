@@ -69,7 +69,7 @@
         
         
         //dist
-        artDistanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(267, 10, 44, 11)];
+        artDistanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(267, 10, 53, 11)];
         artDistanceLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10];
         artDistanceLabel.backgroundColor = [UIColor clearColor];
         artDistanceLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;

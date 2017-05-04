@@ -70,7 +70,11 @@ static Utilities *_kSharedInstance = nil;
 }
 
 + (NSString *)urlDecode:(NSString *)string {
-	return [string stringByReplacingPercentEscapesUsingEncoding:kCFStringEncodingUTF8];	
+    NSStringEncoding encoding = string.fastestEncoding;
+    if (encoding == NSUTF8StringEncoding) {
+        return [string stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    }
+	return [string stringByReplacingPercentEscapesUsingEncoding:encoding];
 }
 
 
