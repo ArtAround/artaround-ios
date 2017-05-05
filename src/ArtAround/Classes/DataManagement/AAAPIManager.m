@@ -286,6 +286,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
                         artMutable[@"artist"] = result;
                     }
                     artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
+                    if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
+                        artMutable[@"locationDescription"] = artMutable[@"location_description"];
+                    }
                     [arts addObject:artMutable];
                 }
             }
@@ -443,6 +446,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
                 artMutable[@"artist"] = result;
             }
             artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
+            if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
+                artMutable[@"locationDescription"] = artMutable[@"location_description"];
+            }
             [Art MR_importFromObject:artMutable inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
             

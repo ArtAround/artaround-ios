@@ -35,6 +35,7 @@ static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
 static const float _kPhotoScrollerHeight = 195.0f;
 static const float _kRowBufffer = 20.0f;
+static const float _kRowTextFieldWidth = 107.0f;
 
 
 @interface DetailTableControllerViewController ()
@@ -276,7 +277,8 @@ static const float _kRowBufffer = 20.0f;
 		//create an annotation, add it to the map, and store it in the array
 		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
 		[_mapView addAnnotation:annotation];
-		
+        //set map region
+        [Utilities zoomToFitMapAnnotations:_mapView];
 	}
     
     //reload the table
@@ -853,7 +855,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowTitle:
                     {
                         if (!_titleTextField) {
-                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _titleTextField.delegate = self;
                             _titleTextField.placeholder = @"Title";
                             _titleTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
@@ -872,7 +874,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowArtist:
                     {
                         if (!_artistTextField) {
-                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _artistTextField.delegate = self;
                             _artistTextField.placeholder = @"Artist";
                             _artistTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
@@ -910,7 +912,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowLink:
                     {
                         if (!_urlTextField) {
-                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _urlTextField.delegate = self;
                             _urlTextField.placeholder = @"Website";
                             _urlTextField.returnKeyType = UIReturnKeyDone;
@@ -1463,12 +1465,12 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowTitle:
             {
                 if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.title length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
@@ -1491,12 +1493,12 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.website.length == 0 && [[_newArtDictionary objectForKey:@"website"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"website"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.website length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
@@ -1508,14 +1510,14 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.artist.length == 0 && [[_newArtDictionary objectForKey:@"artist"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"artist"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + 20;
+                    height = requiredLabelSize.height;
                 }
                 else if ([_art.artist length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
-                    height = requiredLabelSize.height + 20;
+                    height = requiredLabelSize.height;
                 }
                 
                 break;
@@ -1526,12 +1528,12 @@ static const float _kRowBufffer = 20.0f;
                     height = 0.0f;
                 else {
                     if ([[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0) {
-                        CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                        CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                         CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                     else if ([_art.commissionedBy length] > 0) {
-                        CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                        CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                         CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
@@ -1542,12 +1544,12 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowCategory:
             {
                 if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.categoriesString length] > 0) {
-                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
@@ -1580,7 +1582,7 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowLocationType:
             {
                 if ([_locationString length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
