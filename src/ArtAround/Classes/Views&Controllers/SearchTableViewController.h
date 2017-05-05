@@ -10,14 +10,13 @@
 
 @protocol SearchTableViewDelegate;
 
-@interface SearchTableViewController : UITableViewController <UISearchBarDelegate, UISearchDisplayDelegate>
+@interface SearchTableViewController : UITableViewController
 
 {
     BOOL _isFiltered;
     NSMutableArray *_createdItems;
 }
 
-@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (nonatomic, strong) NSMutableArray *filteredSearchItems, *searchItems, *selectedItems;
 @property (nonatomic, strong) NSString *itemName;
 @property BOOL multiSelectionEnabled, creationEnabled;
