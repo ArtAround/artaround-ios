@@ -43,9 +43,6 @@
 {
     [super viewDidLoad];
     
-    self.navigationController.extendedLayoutIncludesOpaqueBars = YES;
-    self.extendedLayoutIncludesOpaqueBars = YES;
-
     //add the save button if there's no back button
     if (!self.navigationItem.backBarButtonItem) {
         
@@ -73,6 +70,8 @@
     }
     
     self.tableView.tableHeaderView = _searchController.searchBar;
+    
+    self.navigationController.extendedLayoutIncludesOpaqueBars = !self.navigationController.navigationBar.translucent;
 }
 
 - (void)didReceiveMemoryWarning
