@@ -19,7 +19,7 @@
 #import "AddArtViewController.h"
 #import "DetailTableControllerViewController.h"
 
-@interface MapViewController (private)
+@interface MapViewController (private) <CLLocationManagerDelegate>
 -(void)artUpdated;
 -(void)filterButtonTapped;
 -(void)addButtonTapped;
@@ -52,6 +52,7 @@
         //init found user
         _foundUser = NO;
 		
+        _firstLoad = YES;
     }
     return self;
 }
@@ -145,6 +146,19 @@
     
     if ([Utilities is7OrHigher])
         [self setNeedsStatusBarAppearanceUpdate];
+    
+    if ([CLLocationManager locationServicesEnabled]){
+        
+        NSLog(@"Location Services Enabled");
+        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        _locationManager.delegate = self;
+        
+        if ([CLLocationManager authorizationStatus]!=kCLAuthorizationStatusAuthorizedWhenInUse){
+            NSLog(@"requestWhenInUseAuthorization");
+            [_locationManager requestWhenInUseAuthorization];
+        }
+    }
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -268,7 +282,7 @@
 		region.center=location;
 		
 		//zoom/pan the map on the user location
-		[self.mapView.map setRegion:region animated:TRUE];
+		[self.mapView.map setRegion:region animated:YES];
 		[self.mapView.map regionThatFits:region];
 		
 	}
@@ -422,10 +436,9 @@
         }
 	}
 	
-	//clear out the art and annotation arrays
-	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];
-	
-    dispatch_async(dispatch_get_main_queue(), ^{
+	dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [_mapView.map removeAnnotations:_annotations];
         [_annotations removeAllObjects];
         [_items removeAllObjects];
         
@@ -528,8 +541,11 @@
         }
     });
     
-    //set map region
-    [Utilities zoomToFitMapAnnotations:_mapView.map];
+    if (!_firstLoad) {
+        //set map region
+        [Utilities zoomToFitMapAnnotations:_mapView.map];
+        _firstLoad = NO;
+    }
 }
 
 #pragma mark - MKMapViewDelegate
@@ -659,9 +675,10 @@
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
    
-    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
+    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse) {
 //        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
         _foundUser = YES;
+        [_locationManager stopUpdatingLocation];
     }
     
 }
@@ -717,5 +734,30 @@
     
 }
 
+#pragma mark - CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    switch (status) {
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusDenied:
+        {
+            // do some error handling
+        }
+            break;
+        default:{
+            [_locationManager startUpdatingLocation];
+        }
+            break;
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    NSLog(@"%@", locations);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"%@", error);
+}
 
 @end

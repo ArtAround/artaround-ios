@@ -165,6 +165,7 @@
 		CA5E10E51405F0520075DAB8 /* ArtAround.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */; };
 		CA5E10FE1405F8650075DAB8 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10FC1405F8570075DAB8 /* MapKit.framework */; };
 		CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */; };
+		CABEB43C1EC1230C0049D082 /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */; };
 		CAC02B87140DBFE10032C4E5 /* FilterBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B83140DBFE10032C4E5 /* FilterBackground.png */; };
 		CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */; };
 		CAC02B89140DBFE10032C4E5 /* FilterBackgroundPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B85140DBFE10032C4E5 /* FilterBackgroundPressed.png */; };
@@ -183,7 +184,6 @@
 		CAECF77D14073DA500CD9A95 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAECF77C14073DA500CD9A95 /* MobileCoreServices.framework */; };
 		CAF8D1431EB934DC00A3CFF5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */; };
 		CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAFF2C9D1409781600C98C0E /* Utilities.m */; };
-		CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -382,6 +382,7 @@
 		CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround.xcdatamodel; sourceTree = "<group>"; };
 		CA5E10FC1405F8570075DAB8 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
 		CAC02B83140DBFE10032C4E5 /* FilterBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackground.png; sourceTree = "<group>"; };
 		CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackground@2x.png"; sourceTree = "<group>"; };
 		CAC02B85140DBFE10032C4E5 /* FilterBackgroundPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackgroundPressed.png; sourceTree = "<group>"; };
@@ -390,7 +391,7 @@
 		CAC02B91140DCE410032C4E5 /* CalloutAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CalloutAnnotationView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CAC02BA4140DF0120032C4E5 /* ArtAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtAnnotationView.h; sourceTree = "<group>"; };
 		CAC02BA5140DF0120032C4E5 /* ArtAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtAnnotationView.m; sourceTree = "<group>"; };
-		CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info-Example.plist"; sourceTree = "<group>"; };
+		CAD47C191410AA5D0059C69A /* ArtAround-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Info.plist"; sourceTree = "<group>"; };
 		CAE7E17C141071380046890F /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		CAE7E17D141071380046890F /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		CAE7E17E141071380046890F /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
@@ -404,7 +405,6 @@
 		CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CAFF2C9C1409781600C98C0E /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		CAFF2C9D1409781600C98C0E /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
-		CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArtAround-Keys-Example.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -634,6 +634,7 @@
 		CA0094391409509B00E5001E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */,
 				464C9AD01795040200387F58 /* addIcon.png */,
 				464C9AD11795040200387F58 /* addIcon@2x.png */,
 				4644B80D177E16F200EE27D7 /* arrow.png */,
@@ -814,8 +815,7 @@
 			children = (
 				CAF8D1421EB934DC00A3CFF5 /* GoogleService-Info.plist */,
 				CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */,
-				CAD47C191410AA5D0059C69A /* ArtAround-Info-Example.plist */,
-				CAFF2CDE1409F34B00C98C0E /* ArtAround-Keys-Example.plist */,
+				CAD47C191410AA5D0059C69A /* ArtAround-Info.plist */,
 				CA5E10DC1405F0520075DAB8 /* ArtAround-Prefix.pch */,
 				CA5E10D71405F0520075DAB8 /* InfoPlist.strings */,
 				CAE7E189141071540046890F /* iTunesArtwork */,
@@ -929,7 +929,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA5E10D91405F0520075DAB8 /* InfoPlist.strings in Resources */,
-				CAFF2CDF1409F34B00C98C0E /* ArtAround-Keys-Example.plist in Resources */,
 				CA1AE9F6140C906200C56C4D /* ArtAroundLogo.png in Resources */,
 				CA1AE9F7140C906200C56C4D /* ArtAroundLogo@2x.png in Resources */,
 				CA1AE9F8140C906200C56C4D /* Filter.png in Resources */,
@@ -987,6 +986,7 @@
 				5FF813B0150C153C006076D5 /* MapButton.png in Resources */,
 				5FF813B1150C153C006076D5 /* MapButton@2x.png in Resources */,
 				5FF813B2150C153C006076D5 /* ListButton@2x.png in Resources */,
+				CABEB43C1EC1230C0049D082 /* Icon-60@2x.png in Resources */,
 				5FF813B3150C153C006076D5 /* FavoritePressed.png in Resources */,
 				5FF813B4150C153C006076D5 /* FavoritePressed@2x.png in Resources */,
 				5FF813B5150C153C006076D5 /* Favorite@2x.png in Resources */,
@@ -1197,13 +1197,13 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "ArtAround/ArtAround-Info-Example.plist";
+				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.artaround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1247,13 +1247,13 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "ArtAround/ArtAround-Info-Example.plist";
+				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.artaround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1304,13 +1304,13 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "ArtAround/ArtAround-Info-Example.plist";
+				INFOPLIST_FILE = "ArtAround/ArtAround-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ArtAround/Classes/ThirdParty/GoogleAnalytics/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.ArtAround;
+				PRODUCT_BUNDLE_IDENTIFIER = us.theartaround.artaround;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

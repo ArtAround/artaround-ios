@@ -360,24 +360,17 @@ static const float _kRowTextFieldWidth = 107.0f;
         
         _art = [Art MR_findFirstByAttribute:@"slug" withValue:_art.slug];
         
+        //update the button
+        [_favoriteButton setSelected:([_art.favorite boolValue])];
+        
+        //refresh the mapview so that the updated favorites are showing
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        //    [appDelegate saveContext];
+        [appDelegate.mapViewController updateArt];
+        
+        //track event
+        [Utilities trackEvent:@"FavoriteButtonPressed" action:([_art.favorite boolValue]) ? @"favorited" : @"unfavorited" label:_art.title];
     }];
-    
-    //switch the art's favorite property
-//    [ArtParser setFavorite:![_art.favorite boolValue] forSlug:_art.slug];
-    
-    //merge context
-//    [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-    
-    //update the button
-    [_favoriteButton setSelected:([_art.favorite boolValue])];
-    
-    //refresh the mapview so that the updated favorites are showing
-    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-//    [appDelegate saveContext];
-    [appDelegate.mapViewController updateArt];
-    
-    //track event
-    [Utilities trackEvent:@"FavoriteButtonPressed" action:([_art.favorite boolValue]) ? @"favorited" : @"unfavorited" label:_art.title];
 }
 
 - (void)flagButtonPressed:(id)sender
