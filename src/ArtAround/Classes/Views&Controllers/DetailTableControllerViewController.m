@@ -1897,12 +1897,12 @@ static const float _kRowTextFieldWidth = 107.0f;
         UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
         
             
-        FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
-        [flickrNameController setImage:image];
-        flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-        flickrNameController.delegate = self;
+        _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
+        [_flickrNameController setImage:image];
+        _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+        _flickrNameController.delegate = self;
         
-        [self.view addSubview:flickrNameController.view];
+        [self.view addSubview:_flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
         [self.navigationItem.leftBarButtonItem setEnabled:NO];
@@ -1914,12 +1914,12 @@ static const float _kRowTextFieldWidth = 107.0f;
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [self dismissViewControllerAnimated:YES completion:^{
         
-        FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
-        [flickrNameController setImage:image];
-        flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-        flickrNameController.delegate = self;
+        _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+        [_flickrNameController setImage:image];
+        _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+        _flickrNameController.delegate = self;
         
-        [self.view addSubview:flickrNameController.view];
+        [self.view addSubview:_flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
         [self.navigationItem.leftBarButtonItem setEnabled:NO];

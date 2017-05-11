@@ -1152,10 +1152,11 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1217,12 +1218,12 @@
         }
         else {  //if this is the first upload then prompt for their flickr handle
             
-            FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
-            [flickrNameController setImage:image];
-            flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-            flickrNameController.delegate = self;
+            _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
+            [_flickrNameController setImage:image];
+            _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+            _flickrNameController.delegate = self;
             
-            [self.view addSubview:flickrNameController.view];
+            [self.view addSubview:_flickrNameController.view];
             [self.navigationItem.backBarButtonItem setEnabled:NO];
             [self.navigationItem.rightBarButtonItem setEnabled:NO];
             
@@ -1248,12 +1249,12 @@
         }
         else {  //if this is the first upload then prompt for their flickr handle
             
-            FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
-            [flickrNameController setImage:image];
-            flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-            flickrNameController.delegate = self;
+            _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+            [_flickrNameController setImage:image];
+            _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+            _flickrNameController.delegate = self;
             
-            [self.view addSubview:flickrNameController.view];
+            [self.view addSubview:_flickrNameController.view];
             [self.navigationItem.backBarButtonItem setEnabled:NO];   
             [self.navigationItem.rightBarButtonItem setEnabled:NO];
             

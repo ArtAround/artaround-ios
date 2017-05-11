@@ -52,6 +52,7 @@ static const float _kPhotoHeight = 96.5f;
 
 
 #pragma mark - Properties
+@property (nonatomic, strong) FlickrNameViewController *flickrNameController;
 @property (nonatomic, strong) CLLocation *currentLocation;
 @property (nonatomic) Art *art;
 
