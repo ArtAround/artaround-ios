@@ -10,6 +10,8 @@
 #import "ArtAnnotationView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define CLCOORDINATES_EQUAL( coord1, coord2 ) (coord1.latitude == coord2.latitude && coord1.longitude == coord2.longitude)
+
 @interface ArtLocationSelectionViewViewController ()
 - (void) doneButonPressed;
 - (void) currentLocationButonPressed;
@@ -239,8 +241,10 @@
             break;
     }
     
-    CLLocation *selectedLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
-    _selectedLocation = selectedLoc;
+    if (CLLocationCoordinate2DIsValid(self.mapView.region.center) && !CLCOORDINATES_EQUAL(CLLocationCoordinate2DMake(0, 0), self.mapView.region.center)) {
+        CLLocation *selectedLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+        _selectedLocation = selectedLoc;
+    }
     
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];

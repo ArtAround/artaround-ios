@@ -23,7 +23,7 @@ typedef enum _LocationSelection {
     ArtAnnotation *_annotation;
 }
 @property LocationSelection selection;
-@property (weak, nonatomic) CLLocation *location, *geotagLocation, *selectedLocation;
+@property (strong, nonatomic) CLLocation *location, *geotagLocation, *selectedLocation;
 @property (weak, nonatomic) id <ArtLocationSelectionViewViewControllerDelegate> delegate;
 @property (strong, nonatomic) IBOutlet UIButton *currentLocationButton;
 @property (strong, nonatomic) IBOutlet UIButton *geotagButton;

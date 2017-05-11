@@ -67,7 +67,7 @@ static const float _kRowTextFieldWidth = 107.0f;
 
 @synthesize currentLocation = _currentLocation;
 
-- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt
+- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt currentLocation:(CLLocation*)newLocation
 {
     self = [super initWithStyle:style];
     if (self) {
@@ -93,6 +93,7 @@ static const float _kRowTextFieldWidth = 107.0f;
         //sep color
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
+        _currentLocation = newLocation;
     }
     return self;
 }
@@ -132,8 +133,6 @@ static const float _kRowTextFieldWidth = 107.0f;
     //location
     _locationString = @"";
     _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
-    _currentLocation = _mapView.userLocation.location;
-
     
     //setup the images scroll view
     _photosScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, _kPhotoScrollerHeight)];
@@ -1321,16 +1320,16 @@ static const float _kRowTextFieldWidth = 107.0f;
             }
             case ArtDetailRowLocationType:
             {
-                ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
+                _locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:_selectedLocation delegate:self currentLocationSelection:LocationSelectionPhotoLocation currentLocation:_currentLocation];
                 
-                [self.navigationController pushViewController:locationController animated:YES];
+                [self.navigationController pushViewController:_locationController animated:YES];
                 
                 if (_selectedLocation) {
-                    [locationController setSelectedLocation:_selectedLocation];
-                    [locationController setSelection:LocationSelectionManualLocation];
+                    [_locationController setSelectedLocation:_selectedLocation];
+                    [_locationController setSelection:LocationSelectionManualLocation];
                 }
                 else
-                    [locationController setSelectedLocation:_currentLocation];
+                    [_locationController setSelectedLocation:_currentLocation];
                 
                 break;
             }

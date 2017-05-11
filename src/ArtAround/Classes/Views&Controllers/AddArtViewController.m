@@ -246,16 +246,16 @@
 - (void) locationButtonPressed
 {
     
-    ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
+    _locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
 
-    [self.navigationController pushViewController:locationController animated:YES];
+    [self.navigationController pushViewController:_locationController animated:YES];
     
     if (_selectedLocation) {
-        [locationController setSelectedLocation:_selectedLocation];
-        [locationController setSelection:LocationSelectionManualLocation];
+        [_locationController setSelectedLocation:_selectedLocation];
+        [_locationController setSelection:LocationSelectionManualLocation];
     }
     else
-        [locationController setSelectedLocation:_currentLocation];
+        [_locationController setSelectedLocation:_currentLocation];
     
     
 }

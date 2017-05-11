@@ -70,10 +70,11 @@ typedef enum _ArtDetailRow {
     Art*                    _art;
 }
 
+@property (nonatomic, strong) ArtLocationSelectionViewViewController *locationController;
 @property (nonatomic, strong) FlickrNameViewController *flickrNameController;
 @property (nonatomic, strong) CLLocation *currentLocation;
 
-- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt;
+- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt currentLocation:(CLLocation*)newLocation;
 
 
 @end

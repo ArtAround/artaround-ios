@@ -307,7 +307,7 @@
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
 		//pass it along to a new detail controller and push it the navigation controller
-        DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+        DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt currentLocation:self.mapView.map.userLocation.location];
         [self.navigationController pushViewController:detailController animated:YES];
         
         //track Detail view
@@ -686,7 +686,7 @@
 #pragma mark - Listview delegate
 - (void) selectedArt:(Art*)art
 {
-    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art];
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art currentLocation:self.mapView.map.userLocation.location];
     [self.navigationController pushViewController:detailController animated:YES];
     
     //track Detail view
@@ -709,7 +709,7 @@
 //    [detailController release];
     
     //pass it along to a new detail controller and push it the navigation controller
-    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt currentLocation:self.mapView.map.userLocation.location];
     [self.navigationController pushViewController:detailController animated:YES];    
     
     //track Detail view
