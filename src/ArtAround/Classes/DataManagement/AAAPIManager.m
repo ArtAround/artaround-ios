@@ -592,13 +592,17 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     //setup the art's paramters
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:art];
-//    [params setObject:@"put" forKey:@"_method"];
+    [params setObject:@"post" forKey:@"_method"];
    
     //start network activity indicator
 	[[Utilities instance] startActivity];
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [manager PUT:[AAAPIManager apiURLForMethod:@"arts"].absoluteString parameters:params success:^(NSURLSessionDataTask *task, id responseObject) {
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    NSMutableSet *newContentTypes = [NSMutableSet setWithSet:manager.responseSerializer.acceptableContentTypes];
+    [newContentTypes addObject:@"text/html"];
+    manager.responseSerializer.acceptableContentTypes = newContentTypes;
+    [manager POST:[AAAPIManager apiURLForMethod:@"arts"].absoluteString parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
             [target performSelectorOnMainThread:callback withObject:responseObject waitUntilDone:NO];
@@ -648,6 +652,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
 	[[Utilities instance] startActivity];
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager PUT:[AAAPIManager apiURLForMethod:[NSString stringWithFormat:@"arts/%@", [art objectForKey:@"slug"], nil]].absoluteString parameters:params success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if (target && [target respondsToSelector:callback]) {
@@ -705,6 +710,7 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     NSData *attributionUrlData = [photoAttributionURL dataUsingEncoding:NSUTF8StringEncoding];
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager POST:photoUploadURL.absoluteString parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         
         [formData appendPartWithFileData:imageData name:@"file" fileName:@"file.jpeg" mimeType:@"image/jpeg"];

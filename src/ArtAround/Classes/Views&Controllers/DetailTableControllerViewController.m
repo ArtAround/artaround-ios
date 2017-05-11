@@ -403,11 +403,12 @@ static const float _kRowTextFieldWidth = 107.0f;
     [_newArtDictionary setObject:[Utilities urlEncode:_art.slug] forKey:@"slug"];
     
     //set the location
-    if (_selectedLocation)
-        [_newArtDictionary setObject:_selectedLocation forKey:@"location[]"];
-    else {
+    //set the location
+    if (_selectedLocation) {
+        [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:_selectedLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:_selectedLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
+    } else {
         CLLocation *loc = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
-        [_newArtDictionary setObject:loc forKey:@"location[]"];
+        [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:loc.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:loc.coordinate.longitude] stringValue], nil] forKey:@"location"];
     }
     
     //title

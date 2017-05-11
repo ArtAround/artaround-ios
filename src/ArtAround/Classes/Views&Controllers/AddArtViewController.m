@@ -609,9 +609,9 @@
     
         //set the location
         if (_selectedLocation)
-            [_newArtDictionary setObject:_selectedLocation forKey:@"location[]"];
+            [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:_selectedLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:_selectedLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
         else
-            [_newArtDictionary setObject:self.currentLocation forKey:@"location[]"];
+            [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:self.currentLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:self.currentLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
         
         //make sure strings are url encoded
         [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"title"]] forKey:@"title"];
@@ -680,6 +680,15 @@
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
         
+        //if there are user added images upload them
+        NSArray *keys = [_userAddedImagesAttribution allKeys];
+        for (int index = 0; index < _userAddedImages.count; index++) {
+            
+            UIImage *thisImage = [_userAddedImages objectAtIndex:index];
+            NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
+            
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:[_newArtDictionary valueForKey:@"slug"] withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"website"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        }
         
         //TODO: Test this!!
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -746,19 +755,6 @@
         [self artUploadFailed:responseDict];
         return;
     }
-    
-    
-    //if there are user added images upload them
-    NSArray *keys = [_userAddedImagesAttribution allKeys];
-    for (int index = 0; index < _userAddedImages.count; index++) {
-        
-        UIImage *thisImage = [_userAddedImages objectAtIndex:index];
-        NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
-        
-        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"website"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
-    }
-
-    
 }
 
 - (void)artUploadFailed:(NSDictionary*)responseDict
