@@ -12,9 +12,10 @@
 #import "ArtAnnotationView.h"
 #import "Category.h"
 #import "Photo.h"
-#import "EGOImageView.h"
+#import "PhotoImageView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
+#import "Utilities.h"
 
 @interface CalloutAnnotationView (private)
 - (void)preventParentSelectionChange;
@@ -42,7 +43,7 @@
 		[self addSubview:self.button];
 		
 		//image
-		EGOImageView *anImageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
+		PhotoImageView *anImageView = [[PhotoImageView alloc] initWithPlaceholderImage:nil];
 		[anImageView setContentMode:UIViewContentModeScaleAspectFill];
 		[anImageView setClipsToBounds:YES];
 		[anImageView setBackgroundColor:[UIColor lightGrayColor]];
@@ -130,9 +131,9 @@
 	}
 	
 	//set label text
-	[self.titleLabel setText:_art.title];
-	[self.artistLabel setText:artist];
-	[self.summaryLabel setText:_art.locationDescription];
+    [self.titleLabel setText:[Utilities urlDecode:_art.title]];
+	[self.artistLabel setText:[Utilities urlDecode:artist]];
+	[self.summaryLabel setText:[Utilities urlDecode:_art.locationDescription]];
 	
 	//update frames
 	const float padding = 10.0f;

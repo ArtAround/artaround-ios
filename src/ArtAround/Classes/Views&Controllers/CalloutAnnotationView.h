@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 @class Art;
 @class ArtAnnotationView;
-@class EGOImageView;
+@class PhotoImageView;
 
 @interface CalloutAnnotationView : MKAnnotationView <MKAnnotation> 
 
@@ -19,7 +19,7 @@
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) MKMapView *mapView;
 @property (nonatomic, strong) UIButton *button;
-@property (nonatomic, strong) EGOImageView *imageView;
+@property (nonatomic, strong) PhotoImageView *imageView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *artistLabel;
 @property (nonatomic, strong) UILabel *summaryLabel;

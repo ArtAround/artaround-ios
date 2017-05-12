@@ -11,7 +11,7 @@
 #import "Photo.h"
 #import "Comment.h"
 #import "Category.h"
-#import "EGOImageButton.h"
+#import "PhotoImageButton.h"
 #import "PhotoImageView.h"
 #import "AAAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
@@ -523,7 +523,7 @@ static const float _kRowTextFieldWidth = 107.0f;
 
 - (void)artButtonPressed:(id)sender
 {
-    EGOImageButton *button = (EGOImageButton*)sender;
+    PhotoImageButton *button = (PhotoImageButton*)sender;
     NSInteger buttonTag = button.tag;
     
     //get this photo
@@ -1629,7 +1629,7 @@ static const float _kRowTextFieldWidth = 107.0f;
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
-	EGOImageButton *prevView = nil;
+	PhotoImageButton *prevView = nil;
 	NSUInteger totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
 	int photoCount = 0;
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
@@ -1672,9 +1672,9 @@ static const float _kRowTextFieldWidth = 107.0f;
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[_photosScrollView viewWithTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
-		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+		PhotoImageButton *imageView = (PhotoImageButton *)[_photosScrollView viewWithTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
+        if (!imageView) {
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
 			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
 			[imageView setClipsToBounds:YES];
@@ -1689,6 +1689,7 @@ static const float _kRowTextFieldWidth = 107.0f;
 		//set the image url
 		if (imageView) {
 			[imageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.originalURL]]];
+            
 		}
 		
 		//adjust the imageView autoresizing masks when there are fewer than 3 images so that they stay centered
@@ -1740,9 +1741,9 @@ static const float _kRowTextFieldWidth = 107.0f;
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[_photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+		PhotoImageButton *imageView = (PhotoImageButton *)[_photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
 		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
 			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
 			[imageView setClipsToBounds:YES];

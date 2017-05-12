@@ -7,7 +7,7 @@
 //
 
 #import "AddArtViewController.h"
-#import "EGOImageButton.h"
+#import "PhotoImageButton.h"
 #import "Photo.h"
 #import "PhotoImageView.h"
 #import "Art.h"
@@ -366,7 +366,7 @@
 
 - (void) artButtonPressed:(id)sender
 {
-    EGOImageButton *button = (EGOImageButton*)sender;
+    PhotoImageButton *button = (PhotoImageButton*)sender;
     
     NSArray *keys = [_userAddedImagesAttribution allKeys];
     NSDictionary *attDict = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:(button.tag - _kUserAddedImageTagBase)]];
@@ -463,7 +463,7 @@
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
-	EGOImageButton *prevView = nil;
+	PhotoImageButton *prevView = nil;
 	NSUInteger totalPhotos = _userAddedImages.count;
 	int photoCount = 0;
     
@@ -504,11 +504,11 @@
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[self.photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+		PhotoImageButton *imageView = (PhotoImageButton *)[self.photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
         UIButton *deleteButton = (UIButton*)[imageView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
         
 		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setClipsToBounds:YES];
 			[imageView.imageView setContentMode:UIViewContentModeScaleAspectFill];
             [imageView setImage:thisUserImage forState:UIControlStateNormal];

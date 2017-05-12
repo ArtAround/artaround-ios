@@ -104,4 +104,10 @@
 - (NSURL*) url {
     return _url;
 }
+
+- (void)setImage:(UIImage *)image {
+    UIImage *imageToDisplay = [UIImage imageWithCGImage:[image CGImage] scale:[image scale] orientation: UIImageOrientationUp];
+    [super setImage:imageToDisplay];
+}
+
 @end

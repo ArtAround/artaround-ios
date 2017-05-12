@@ -165,6 +165,7 @@
 		CA5E10E51405F0520075DAB8 /* ArtAround.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA5E10E31405F0520075DAB8 /* ArtAround.xcdatamodeld */; };
 		CA5E10FE1405F8650075DAB8 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10FC1405F8570075DAB8 /* MapKit.framework */; };
 		CA81FB3A1408AE40004BA05D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */; };
+		CAB9F0141EC6105700DD76B4 /* PhotoImageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB9F0131EC6105700DD76B4 /* PhotoImageButton.m */; };
 		CABEB43C1EC1230C0049D082 /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */; };
 		CAC02B87140DBFE10032C4E5 /* FilterBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B83140DBFE10032C4E5 /* FilterBackground.png */; };
 		CAC02B88140DBFE10032C4E5 /* FilterBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */; };
@@ -382,6 +383,8 @@
 		CA5E10E41405F0520075DAB8 /* ArtAround.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ArtAround.xcdatamodel; sourceTree = "<group>"; };
 		CA5E10FC1405F8570075DAB8 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		CA81FB391408AE40004BA05D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		CAB9F0121EC6100500DD76B4 /* PhotoImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoImageButton.h; sourceTree = "<group>"; };
+		CAB9F0131EC6105700DD76B4 /* PhotoImageButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoImageButton.m; sourceTree = "<group>"; };
 		CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
 		CAC02B83140DBFE10032C4E5 /* FilterBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FilterBackground.png; sourceTree = "<group>"; };
 		CAC02B84140DBFE10032C4E5 /* FilterBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FilterBackground@2x.png"; sourceTree = "<group>"; };
@@ -449,6 +452,8 @@
 			children = (
 				4604E0A417356D4F0019011B /* PhotoImageView.h */,
 				4604E0A517356D4F0019011B /* PhotoImageView.m */,
+				CAB9F0121EC6100500DD76B4 /* PhotoImageButton.h */,
+				CAB9F0131EC6105700DD76B4 /* PhotoImageButton.m */,
 			);
 			name = ImageView;
 			sourceTree = "<group>";
@@ -1130,6 +1135,7 @@
 				CA0094541409509B00E5001E /* ArtAnnotation.m in Sources */,
 				CA0094551409509B00E5001E /* FilterViewController.m in Sources */,
 				CA0094561409509B00E5001E /* MapView.m in Sources */,
+				CAB9F0141EC6105700DD76B4 /* PhotoImageButton.m in Sources */,
 				CA0094571409509B00E5001E /* MapViewController.m in Sources */,
 				CAFF2C9E1409781600C98C0E /* Utilities.m in Sources */,
 				CAC02B92140DCE410032C4E5 /* CalloutAnnotationView.m in Sources */,

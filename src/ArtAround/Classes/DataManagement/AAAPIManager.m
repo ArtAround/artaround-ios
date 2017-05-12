@@ -196,6 +196,9 @@ static const NSString *_kFailCallbackKey = @"failCallback";
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    NSMutableSet *newContentTypes = [NSMutableSet setWithSet:manager.responseSerializer.acceptableContentTypes];
+    [newContentTypes addObject:@"text/html"];
+    manager.responseSerializer.acceptableContentTypes = newContentTypes;
     [manager POST:[NSString stringWithFormat:@"%@/%@/flag", _kFlagAPIRoot, slug, nil] parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
 
         if (target && [target respondsToSelector:callback]) {
