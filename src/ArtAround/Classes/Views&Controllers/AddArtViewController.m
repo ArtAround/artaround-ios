@@ -1143,9 +1143,11 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
 
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{

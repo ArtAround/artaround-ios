@@ -1084,8 +1084,11 @@ static const float _kRowTextFieldWidth = 107.0f;
         {
             cell.textLabel.text = @"artist";
             
-            if (_art.artist && _art.artist.length > 0)
+            if (_art.artist && _art.artist.length > 0) {
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
+            } else {
+                cell.textLabel.text = (_inEditMode) ? @"artist" : @"";
+            }
             break;
         }
         case ArtDetailRowYear:
@@ -1621,6 +1624,9 @@ static const float _kRowTextFieldWidth = 107.0f;
                     CGSize requiredLabelSize = [[Utilities instance] frameForText:_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
+                else {
+                    height = 0.0f;
+                }
                 
                 break;
             }
@@ -1928,10 +1934,11 @@ static const float _kRowTextFieldWidth = 107.0f;
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1997,9 +2004,11 @@ static const float _kRowTextFieldWidth = 107.0f;
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }

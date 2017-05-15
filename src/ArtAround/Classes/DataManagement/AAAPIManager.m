@@ -282,15 +282,24 @@ static const NSString *_kFailCallbackKey = @"failCallback";
                                 if (index > 0) {
                                     [result appendString:@", "];
                                 }
-                                [result appendString:artist];
+                                [result appendString:[Utilities urlDecode:artist]];
                                 index++;
                             }
                         }
                         artMutable[@"artist"] = result;
                     }
                     artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
+                    if (artMutable[@"website"]) {
+                        artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
+                    }
+                    if (artMutable[@"commissioned_by"]) {
+                        artMutable[@"commissioned_by"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+                    }
+                    if (artMutable[@"description"]) {
+                        artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
+                    }
                     if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
-                        artMutable[@"locationDescription"] = artMutable[@"location_description"];
+                        artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
                     }
                     [arts addObject:artMutable];
                 }
@@ -442,15 +451,24 @@ static const NSString *_kFailCallbackKey = @"failCallback";
                         if (index > 0) {
                             [result appendString:@"\n"];
                         }
-                        [result appendString:artist];
+                        [result appendString:[Utilities urlDecode:artist]];
                         index++;
                     }
                 }
                 artMutable[@"artist"] = result;
             }
             artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
+            if (artMutable[@"website"]) {
+                artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
+            }
+            if (artMutable[@"commissioned_by"]) {
+                artMutable[@"commissioned_by"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+            }
+            if (artMutable[@"description"]) {
+                artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
+            }
             if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
-                artMutable[@"locationDescription"] = artMutable[@"location_description"];
+                artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
             }
             [Art MR_importFromObject:artMutable inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
