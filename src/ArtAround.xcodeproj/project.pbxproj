@@ -156,6 +156,8 @@
 		CA1AEA12140C906200C56C4D /* PinVenuePressed.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */; };
 		CA1AEA13140C906200C56C4D /* PinVenuePressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */; };
 		CA2A10EB14109BBE009001A2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2A10EA14109BBE009001A2 /* MessageUI.framework */; };
+		CA3A91951ECA03D80061A0A3 /* external_link.png in Resources */ = {isa = PBXBuildFile; fileRef = CA3A91931ECA03D80061A0A3 /* external_link.png */; };
+		CA3A91961ECA03D80061A0A3 /* external_link@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA3A91941ECA03D80061A0A3 /* external_link@2x.png */; };
 		CA5E10CD1405F0520075DAB8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CC1405F0520075DAB8 /* UIKit.framework */; };
 		CA5E10CF1405F0520075DAB8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10CE1405F0520075DAB8 /* Foundation.framework */; };
 		CA5E10D11405F0520075DAB8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E10D01405F0520075DAB8 /* CoreGraphics.framework */; };
@@ -372,6 +374,8 @@
 		CA1AE9F4140C906200C56C4D /* PinVenuePressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PinVenuePressed.png; sourceTree = "<group>"; };
 		CA1AE9F5140C906200C56C4D /* PinVenuePressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PinVenuePressed@2x.png"; sourceTree = "<group>"; };
 		CA2A10EA14109BBE009001A2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		CA3A91931ECA03D80061A0A3 /* external_link.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = external_link.png; sourceTree = "<group>"; };
+		CA3A91941ECA03D80061A0A3 /* external_link@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "external_link@2x.png"; sourceTree = "<group>"; };
 		CA5E10C81405F0520075DAB8 /* ArtAround.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtAround.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA5E10CC1405F0520075DAB8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CA5E10CE1405F0520075DAB8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -639,6 +643,8 @@
 		CA0094391409509B00E5001E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				CA3A91931ECA03D80061A0A3 /* external_link.png */,
+				CA3A91941ECA03D80061A0A3 /* external_link@2x.png */,
 				CABEB43B1EC1230C0049D082 /* Icon-60@2x.png */,
 				464C9AD01795040200387F58 /* addIcon.png */,
 				464C9AD11795040200387F58 /* addIcon@2x.png */,
@@ -1013,6 +1019,7 @@
 				5F7A24DF150DAAD000101598 /* SubmitButton@2x.png in Resources */,
 				5FF963A0151030FF0030FD95 /* Default.png in Resources */,
 				5FF963A1151030FF0030FD95 /* Default@2x.png in Resources */,
+				CA3A91951ECA03D80061A0A3 /* external_link.png in Resources */,
 				5FFEE4EE15391C7300C4C7BC /* FlickrNameViewController.xib in Resources */,
 				46073BD8173352A400D9BCEE /* Default-568h@2x.png in Resources */,
 				466406F51747CC720003CA8A /* AddArtViewController.xib in Resources */,
@@ -1059,6 +1066,7 @@
 				464C9ACE1794F28B00387F58 /* introImage0.png in Resources */,
 				CAF8D1431EB934DC00A3CFF5 /* GoogleService-Info.plist in Resources */,
 				464C9ACF1794F28B00387F58 /* introImage0@2x.png in Resources */,
+				CA3A91961ECA03D80061A0A3 /* external_link@2x.png in Resources */,
 				464C9AD41795040200387F58 /* addIcon.png in Resources */,
 				464C9AD51795040200387F58 /* addIcon@2x.png in Resources */,
 				464C9AD61795040200387F58 /* locateIcon.png in Resources */,

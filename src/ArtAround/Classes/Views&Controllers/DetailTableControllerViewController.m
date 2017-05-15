@@ -761,7 +761,6 @@ static const float _kRowTextFieldWidth = 107.0f;
             case ArtDetailRowArtist:
             case ArtDetailRowYear:
             case ArtDetailRowLocationType:
-            case ArtDetailRowLink:
             case ArtDetailRowCategory:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
@@ -772,6 +771,23 @@ static const float _kRowTextFieldWidth = 107.0f;
                 cell.detailTextLabel.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
                 cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
                 cell.detailTextLabel.contentMode = UIViewContentModeCenter;
+                break;
+            }
+            case ArtDetailRowLink:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
+                cell.detailTextLabel.numberOfLines = 0;
+                cell.textLabel.numberOfLines = 0;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+                cell.detailTextLabel.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
+                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                cell.detailTextLabel.contentMode = UIViewContentModeCenter;
+                UIButton *link = [[UIButton alloc] initWithFrame:CGRectMake(([UIScreen mainScreen].bounds.size.width/2) - 45.0, 0.0, 44.0, 44.0)];
+                [link setTag:998];
+                [link setImage:[UIImage imageNamed:@"external_link"] forState:UIControlStateNormal];
+                [link addTarget:self action:@selector(artLinkButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+                [cell addSubview:link];
                 break;
             }
             case ArtDetailRowDescription:
@@ -1121,11 +1137,20 @@ static const float _kRowTextFieldWidth = 107.0f;
             
             if (_art.website && _art.website.length > 0) {
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+                if (!_inEditMode) {
+                    cell.detailTextLabel.hidden = YES;
+                } else {
+                    cell.detailTextLabel.hidden = NO;
+                }
                 cell.textLabel.text = @"website";
             }
             else {
                 cell.detailTextLabel.text = @"";
                 cell.textLabel.text = (_inEditMode) ? @"website" : @"";
+                UIView *link = [cell viewWithTag:998];
+                if (link != nil) {
+                    link.hidden = YES;
+                }
             }
             
             break;
@@ -1227,6 +1252,21 @@ static const float _kRowTextFieldWidth = 107.0f;
 - (UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     return _footerView;
+}
+
+- (void)artLinkButtonPressed:(UIButton*)sender
+{
+    UIView *superview = sender.superview;
+    if (superview != nil) {
+        while (![superview isKindOfClass:[UITableViewCell class]]) {
+            superview = superview.superview;
+        }
+        UITableViewCell *cell = (UITableViewCell*)superview;
+        NSString *url = cell.detailTextLabel.text;
+        if( [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:url]]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+        }
+    }
 }
 
 
@@ -2502,12 +2542,9 @@ static const float _kRowTextFieldWidth = 107.0f;
         
         //get the share title and url
         NSString *shareTitle = [self shareMessage];
-        NSURL *shareURL = [NSURL URLWithString:[self shareURL]];
         NSArray *shareItems = nil;
-        if (shareTitle && shareURL) {
-            shareItems = [NSArray arrayWithObjects:shareTitle, shareURL, nil];
-        } else if (shareURL) {
-            shareItems = [NSArray arrayWithObjects:shareURL, nil];
+        if (shareTitle) {
+            shareItems = [NSArray arrayWithObjects:shareTitle, nil];
         }
         
         //show the share view
@@ -2524,7 +2561,7 @@ static const float _kRowTextFieldWidth = 107.0f;
 
 - (NSString *)shareMessage
 {
-	return [NSString stringWithFormat:@"Art Around: %@", [self shareURL]];
+	return [NSString stringWithFormat:@"Check out this artwork on ArtAround: %@", [self shareURL]];
 }
 
 - (NSString *)shareURL

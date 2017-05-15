@@ -536,8 +536,10 @@
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
             NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
             
-            if (filteredAnnotations.count > 0)
-                [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
+            if (filteredAnnotations.count > 0) {
+                [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]];
+                [Utilities zoomToFitMapAnnotations:_mapView.map];
+            }
         }
     });
     
@@ -545,6 +547,31 @@
         //set map region
         [Utilities zoomToFitMapAnnotations:_mapView.map];
         _firstLoad = NO;
+    }
+}
+
+-(void)showArt:(Art*)showArt {
+    
+    if (showArt != nil && showArt.slug != nil) {
+        //look for prevously added art
+        NSString *artSlug = (showArt) ? [showArt slug] : nil;
+        int annotationIndex = -1;
+        for (int i = 0; i < [_items count]; i++) {
+            Art *art = [_items objectAtIndex:i];
+            if (art.slug == artSlug) {
+                annotationIndex = i;
+                break;
+            }
+        }
+        if (_showingMap && annotationIndex != -1) {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
+            NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
+            
+            if (filteredAnnotations.count > 0) {
+                [_mapView.map selectAnnotation:[filteredAnnotations objectAtIndex:0] animated:YES];
+            }
+        }
     }
 }
 

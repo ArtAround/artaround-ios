@@ -865,18 +865,24 @@
         //dismiss the alert view
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
         
-        //reload the map view so the updated/new art is there
-        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-//        [appDelegate saveContext];
-        
-        
         [self.navigationController popViewControllerAnimated:YES];
         
-        if (self.art)
-            [appDelegate.mapViewController updateAndShowArt:self.art];
-        else
-            [appDelegate.mapViewController updateArt];
-
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        [appDelegate.mapViewController updateArt];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artwork Uploaded" message:@"Your Artwork was uploaded successfully!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //reload the map view so the updated/new art is there
+                ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+                //        [appDelegate saveContext];
+                
+                [appDelegate.mapViewController showArt:self.art];
+            });
+        });
         
         //clear the user added images array
         [_userAddedImages removeAllObjects];

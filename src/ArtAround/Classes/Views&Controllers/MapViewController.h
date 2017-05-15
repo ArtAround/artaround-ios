@@ -31,5 +31,6 @@
 -(void)updateAndShowArt:(Art*)showArt;
 -(void)updateArt;
 -(void)refreshArt;
+-(void)showArt:(Art*)showArt;
 
 @end
