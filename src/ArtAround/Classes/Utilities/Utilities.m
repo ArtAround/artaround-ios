@@ -70,11 +70,29 @@ static Utilities *_kSharedInstance = nil;
 }
 
 + (NSString *)urlDecode:(NSString *)string {
-    NSStringEncoding encoding = string.fastestEncoding;
-    if (encoding == NSUTF8StringEncoding) {
-        return [string stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    if (string == nil || [string isEqual:[NSNull null]] || !([string isKindOfClass:[NSString class]] || [string isKindOfClass:[NSArray class]])) {
+        return @"";
     }
-	return [string stringByReplacingPercentEscapesUsingEncoding:encoding];
+    
+    NSStringEncoding encoding = NSUTF8StringEncoding;
+    if ([string isKindOfClass:[NSArray class]]) {
+        NSMutableString *result = [[NSMutableString alloc] init];
+        NSArray *stringArray = (NSArray*)string;
+        int index = 0;
+        for (NSString *substring in stringArray) {
+            if (![substring isEqualToString:@""]) {
+                if (index > 0) {
+                    [result appendString:@"\n"];
+                }
+                encoding = substring.fastestEncoding;
+                [result appendString:[substring stringByReplacingPercentEscapesUsingEncoding:encoding]];
+                index++;
+            }
+        }
+        return result;
+    }
+    encoding = string.fastestEncoding;
+    return [string stringByReplacingPercentEscapesUsingEncoding:encoding];
 }
 
 

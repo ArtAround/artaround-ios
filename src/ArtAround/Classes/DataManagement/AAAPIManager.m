@@ -274,33 +274,12 @@ static const NSString *_kFailCallbackKey = @"failCallback";
             if ([[responseObject objectForKey:@"arts"] isKindOfClass:[NSArray class]]) {
                 for (NSMutableDictionary *art in [responseObject objectForKey:@"arts"]) {
                     NSMutableDictionary *artMutable = [art mutableCopy];
-                    if ([[artMutable objectForKey:@"artist"] isKindOfClass:[NSArray class]]) {
-                        NSMutableString *result = [[NSMutableString alloc] init];
-                        int index = 0;
-                        for (NSString *artist in [artMutable objectForKey:@"artist"]) {
-                            if (![artist isEqualToString:@""]) {
-                                if (index > 0) {
-                                    [result appendString:@", "];
-                                }
-                                [result appendString:[Utilities urlDecode:artist]];
-                                index++;
-                            }
-                        }
-                        artMutable[@"artist"] = result;
-                    }
                     artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
-                    if (artMutable[@"website"]) {
-                        artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
-                    }
-                    if (artMutable[@"commissioned_by"]) {
-                        artMutable[@"commissioned_by"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
-                    }
-                    if (artMutable[@"description"]) {
-                        artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
-                    }
-                    if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
-                        artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
-                    }
+                    artMutable[@"artist"] = [Utilities urlDecode:artMutable[@"artist"]];
+                    artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
+                    artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+                    artMutable[@"artDescription"] = [Utilities urlDecode:artMutable[@"description"]];
+                    artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
                     [arts addObject:artMutable];
                 }
             }
@@ -443,33 +422,12 @@ static const NSString *_kFailCallbackKey = @"failCallback";
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             NSMutableDictionary *artMutable = [[responseObject objectForKey:@"art"] mutableCopy];
-            if ([[artMutable objectForKey:@"artist"] isKindOfClass:[NSArray class]]) {
-                NSMutableString *result = [[NSMutableString alloc] init];
-                int index = 0;
-                for (NSString *artist in [artMutable objectForKey:@"artist"]) {
-                    if (![artist isEqualToString:@""]) {
-                        if (index > 0) {
-                            [result appendString:@"\n"];
-                        }
-                        [result appendString:[Utilities urlDecode:artist]];
-                        index++;
-                    }
-                }
-                artMutable[@"artist"] = result;
-            }
             artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
-            if (artMutable[@"website"]) {
-                artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
-            }
-            if (artMutable[@"commissioned_by"]) {
-                artMutable[@"commissioned_by"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
-            }
-            if (artMutable[@"description"]) {
-                artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
-            }
-            if ([artMutable[@"location_description"] isKindOfClass:[NSString class]]) {
-                artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
-            }
+            artMutable[@"artist"] = [Utilities urlDecode:artMutable[@"artist"]];
+            artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
+            artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+            artMutable[@"artDescription"] = [Utilities urlDecode:artMutable[@"description"]];
+            artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
             [Art MR_importFromObject:artMutable inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
             
