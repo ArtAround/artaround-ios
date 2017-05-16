@@ -679,6 +679,12 @@
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        [_newArtDictionary removeObjectForKey:@"commissioned_by"];
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        [_newArtDictionary removeObjectForKey:@"description"];
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        [_newArtDictionary removeObjectForKey:@"location_description"];
         
         //if there are user added images upload them
         NSArray *keys = [_userAddedImagesAttribution allKeys];
@@ -872,7 +878,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artwork Uploaded" message:@"Your Artwork was uploaded successfully!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artwork Uploaded" message:@"Your artwork was uploaded successfully!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alertView show];
             
             dispatch_async(dispatch_get_main_queue(), ^{

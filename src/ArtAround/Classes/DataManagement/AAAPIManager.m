@@ -277,9 +277,16 @@ static const NSString *_kFailCallbackKey = @"failCallback";
                     artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
                     artMutable[@"artist"] = [Utilities urlDecode:artMutable[@"artist"]];
                     artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
-                    artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+                    if ([artMutable[@"commissioned_by"] isKindOfClass:[NSDictionary class]]) {
+                        artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"][@"name"]];
+                        artMutable[@"commissionedByLink"] = [Utilities urlDecode:artMutable[@"commissioned_by"][@"url"]];
+                    } else if ([artMutable[@"commissioned_by"] isKindOfClass:[NSString class]]) {
+                        artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+                    }
                     artMutable[@"artDescription"] = [Utilities urlDecode:artMutable[@"description"]];
+                    artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
                     artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
+                    artMutable[@"location_description"] = [Utilities urlDecode:artMutable[@"location_description"]];
                     [arts addObject:artMutable];
                 }
             }
@@ -425,9 +432,16 @@ static const NSString *_kFailCallbackKey = @"failCallback";
             artMutable[@"title"] = [Utilities urlDecode:artMutable[@"title"]];
             artMutable[@"artist"] = [Utilities urlDecode:artMutable[@"artist"]];
             artMutable[@"website"] = [Utilities urlDecode:artMutable[@"website"]];
-            artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+            if ([artMutable[@"commissioned_by"] isKindOfClass:[NSDictionary class]]) {
+                artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"][@"name"]];
+                artMutable[@"commissionedByLink"] = [Utilities urlDecode:artMutable[@"commissioned_by"][@"url"]];
+            } else if ([artMutable[@"commissioned_by"] isKindOfClass:[NSString class]]) {
+                artMutable[@"commissionedBy"] = [Utilities urlDecode:artMutable[@"commissioned_by"]];
+            }
             artMutable[@"artDescription"] = [Utilities urlDecode:artMutable[@"description"]];
+            artMutable[@"description"] = [Utilities urlDecode:artMutable[@"description"]];
             artMutable[@"locationDescription"] = [Utilities urlDecode:artMutable[@"location_description"]];
+            artMutable[@"location_description"] = [Utilities urlDecode:artMutable[@"location_description"]];
             [Art MR_importFromObject:artMutable inContext:localContext];
         } completion:^(BOOL success, NSError *error) {
             

@@ -444,8 +444,8 @@ static const float _kRowTextFieldWidth = 107.0f;
     }
     
     //description
-    if ([_newArtDictionary objectForKey:@"description"])
-        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
+    if ([_newArtDictionary objectForKey:@"artDescription"])
+        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"artDescription"]] forKey:@"description"];
     else if (_art.artDescription) {
         [_newArtDictionary setObject:[Utilities urlEncode:_art.artDescription] forKey:@"description"];
         
@@ -601,6 +601,10 @@ static const float _kRowTextFieldWidth = 107.0f;
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        [_newArtDictionary removeObjectForKey:@"description"];
+        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [Art MR_importFromObject:responseDict inContext:localContext];
@@ -783,7 +787,7 @@ static const float _kRowTextFieldWidth = 107.0f;
                 cell.detailTextLabel.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
                 cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
                 cell.detailTextLabel.contentMode = UIViewContentModeCenter;
-                UIButton *link = [[UIButton alloc] initWithFrame:CGRectMake(([UIScreen mainScreen].bounds.size.width/2) - 45.0, 0.0, 44.0, 44.0)];
+                UIButton *link = [[UIButton alloc] initWithFrame:CGRectMake(([UIScreen mainScreen].bounds.size.width/2) - 47.0, 4.0, 32.0, 32.0)];
                 [link setTag:998];
                 [link setImage:[UIImage imageNamed:@"external_link"] forState:UIControlStateNormal];
                 [link addTarget:self action:@selector(artLinkButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -1047,7 +1051,7 @@ static const float _kRowTextFieldWidth = 107.0f;
         case ArtDetailRowTitle:
         {
             cell.textLabel.text = @"title";
-            cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.title;
+            cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.title];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             DebugLog(@"TITLE CELL WIDTH: %f", cell.detailTextLabel.frame.size.width);
             break;
@@ -1056,7 +1060,7 @@ static const float _kRowTextFieldWidth = 107.0f;
         {
             cell.textLabel.text = @"commissioner";
             if (_art.commissionedBy && _art.commissionedBy.length > 0)
-                cell.detailTextLabel.text = _art.commissionedBy;
+                cell.detailTextLabel.text = [Utilities urlDecode:_art.commissionedBy];
             else if ([_newArtDictionary objectForKey:@"commissioned_by"] && [[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0)
                 cell.detailTextLabel.text = [_newArtDictionary objectForKey:@"commissioned_by"];
             else {
@@ -1085,7 +1089,7 @@ static const float _kRowTextFieldWidth = 107.0f;
             cell.textLabel.text = @"artist";
             
             if (_art.artist && _art.artist.length > 0) {
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
+                cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.artist];
             } else {
                 cell.textLabel.text = (_inEditMode) ? @"artist" : @"";
             }
@@ -1117,7 +1121,7 @@ static const float _kRowTextFieldWidth = 107.0f;
         case ArtDetailRowLocationType:
         {
             cell.textLabel.text = @"location";
-            cell.detailTextLabel.text = _locationString;
+            cell.detailTextLabel.text = [Utilities urlDecode:_locationString];
             
             if (_inEditMode) {
                 UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
@@ -1139,7 +1143,7 @@ static const float _kRowTextFieldWidth = 107.0f;
         {
             
             if (_art.website && _art.website.length > 0) {
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+                cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.website];
                 if (!_inEditMode) {
                     cell.detailTextLabel.hidden = YES;
                 } else {
@@ -1194,7 +1198,7 @@ static const float _kRowTextFieldWidth = 107.0f;
             if (!_inEditMode) {
                 if (_art.artDescription && _art.artDescription.length > 0) {
                     cell.textLabel.text = @"About";
-                    cell.detailTextLabel.text = _art.artDescription;
+                    cell.detailTextLabel.text = [Utilities urlDecode:_art.artDescription];
                 }
                 else {
                     cell.textLabel.text = @"";
@@ -1208,7 +1212,7 @@ static const float _kRowTextFieldWidth = 107.0f;
             if (!_inEditMode) {
                 if (_art.locationDescription && _art.locationDescription.length > 0) {
                     cell.textLabel.text = @"Where?";
-                    cell.detailTextLabel.text = _art.locationDescription;
+                    cell.detailTextLabel.text = [Utilities urlDecode:_art.locationDescription];
                 }
                 else {
                     cell.textLabel.text = @"";
@@ -1599,9 +1603,9 @@ static const float _kRowTextFieldWidth = 107.0f;
             }
             case ArtDetailRowDescription:
             {
-                if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
+                if ([[_newArtDictionary objectForKey:@"artDescription"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artDescription"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
@@ -2136,7 +2140,7 @@ static const float _kRowTextFieldWidth = 107.0f;
     NSString* newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
     
     if (textView == _descriptionTextView && ![textView.text isEqualToString:@"Share what you know about this art..."])
-        [_newArtDictionary setObject:newText forKey:@"description"];
+        [_newArtDictionary setObject:newText forKey:@"artDescription"];
     else if (textView == _locationDescriptionTextView && ![textView.text isEqualToString:@"Add extra location details..."])
         [_newArtDictionary setObject:newText forKey:@"location_description"];
     
