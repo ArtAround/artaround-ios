@@ -601,10 +601,16 @@ static const float _kRowTextFieldWidth = 107.0f;
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        if ([_newArtDictionary objectForKey:@"commissioned_by"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        }
+        if ([_newArtDictionary objectForKey:@"description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        }
         [_newArtDictionary removeObjectForKey:@"description"];
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        if ([_newArtDictionary objectForKey:@"location_description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        }
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [Art MR_importFromObject:responseDict inContext:localContext];

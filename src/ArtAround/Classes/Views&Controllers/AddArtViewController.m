@@ -679,12 +679,16 @@
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
-        [_newArtDictionary removeObjectForKey:@"commissioned_by"];
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        if ([_newArtDictionary objectForKey:@"commissioned_by"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        }
+        if ([_newArtDictionary objectForKey:@"description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        }
         [_newArtDictionary removeObjectForKey:@"description"];
-        [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
-        [_newArtDictionary removeObjectForKey:@"location_description"];
+        if ([_newArtDictionary objectForKey:@"location_description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        }
         
         //if there are user added images upload them
         NSArray *keys = [_userAddedImagesAttribution allKeys];
