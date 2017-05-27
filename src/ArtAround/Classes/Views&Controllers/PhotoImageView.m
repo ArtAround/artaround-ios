@@ -90,7 +90,7 @@
     
     if (newUrl.absoluteString.length > 0) {
         
-        _url = [newUrl retain];
+        _url = newUrl;
         
         UIImage *buttonArrowImage = [UIImage imageNamed:@"buttonArrow.png"];
         UIImage *buttonArrowImageWhite = [UIImage imageNamed:@"buttonArrowWhite.png"];
@@ -104,4 +104,10 @@
 - (NSURL*) url {
     return _url;
 }
+
+- (void)setImage:(UIImage *)image {
+    UIImage *imageToDisplay = [UIImage imageWithCGImage:[image CGImage] scale:[image scale] orientation: UIImageOrientationUp];
+    [super setImage:imageToDisplay];
+}
+
 @end

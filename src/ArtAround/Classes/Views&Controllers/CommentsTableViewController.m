@@ -8,6 +8,7 @@
 
 #import "CommentsTableViewController.h"
 #import "Comment.h"
+#import "Utilities.h"
 
 @interface CommentsTableViewController ()
 
@@ -69,7 +70,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *CellIdentifier = [NSString stringWithFormat:@"Cell%i", indexPath.row];
+    NSString *CellIdentifier = [NSString stringWithFormat:@"Cell%li", indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (!cell && indexPath.row == 0) {
@@ -121,7 +122,7 @@
     else {
         
         NSString *text = [(Comment*)[_comments objectAtIndex:indexPath.section] text];
-        CGSize reqSize = [text sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f] constrainedToSize:CGSizeMake(300.0f, 1000.0f)];
+        CGSize reqSize = [[Utilities instance] frameForText:text sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f] constrainedToSize:CGSizeMake(300.0f, 1000.0f) lineBreakMode:NSLineBreakByWordWrapping];
         return reqSize.height + 10.0f;
         
     }

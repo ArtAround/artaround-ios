@@ -42,6 +42,7 @@
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
 typedef enum {
+    FilterTypeUnchosen = -1,
 	FilterTypeNone = 0,
     FilterTypeFavorites = 1,
 	FilterTypeCategory = 2,
@@ -57,10 +58,10 @@ typedef enum {
 }
 
 @property (nonatomic, assign) FilterType selectedFilterType;
-@property (nonatomic, assign) NSDate *lastFlickrUpdate;
-@property (nonatomic, assign) NSString *photoAttributionText, *photoAttributionURL, *commentName, *commentEmail, *commentUrl;
-@property (nonatomic, assign) NSNumber *flashMode;
-@property (nonatomic, retain) NSDictionary *keysDict;
+@property (nonatomic, weak) NSDate *lastFlickrUpdate;
+@property (nonatomic, weak) NSString *photoAttributionText, *photoAttributionURL, *commentName, *commentEmail, *commentUrl;
+@property (nonatomic, weak) NSNumber *flashMode;
+@property (nonatomic, strong) NSDictionary *keysDict;
 @property BOOL hasLoadedBefore;
 
 + (Utilities *)instance;
@@ -80,5 +81,7 @@ typedef enum {
 + (void) trackPageViewWithHierarch:(NSArray*)pageHierarchy;
 + (void) trackPageViewWithName:(NSString*)pageName;
 + (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l;
+
+- (CGSize)frameForText:(NSString*)text sizeWithFont:(UIFont*)font constrainedToSize:(CGSize)size lineBreakMode:(NSLineBreakMode)lineBreakMode;
 
 @end

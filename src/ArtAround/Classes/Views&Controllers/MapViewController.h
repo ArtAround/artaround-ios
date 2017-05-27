@@ -17,18 +17,20 @@
 {
 	NSMutableArray *_items;
 	NSMutableArray *_annotations;
-	BOOL _mapNeedsRefresh, _showingMap, _foundUser;
+	BOOL _mapNeedsRefresh, _showingMap, _foundUser, _firstLoad;
     UIImageView *_listButton, *_mapButton;
     UIView *_initialLoadView;
 }
 
 @property BOOL showFavorites;
-@property (nonatomic, retain) MapView *mapView;
-@property (nonatomic, retain) ListViewController *listViewController;
-@property (nonatomic, retain) CalloutAnnotationView *callout;
+@property (nonatomic, strong) MapView *mapView;
+@property (nonatomic, strong) ListViewController *listViewController;
+@property (nonatomic, strong) CalloutAnnotationView *callout;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 -(void)updateAndShowArt:(Art*)showArt;
 -(void)updateArt;
 -(void)refreshArt;
+-(void)showArt:(Art*)showArt;
 
 @end

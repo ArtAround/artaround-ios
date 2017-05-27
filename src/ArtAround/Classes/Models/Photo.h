@@ -14,32 +14,32 @@
 @interface Photo : NSManagedObject {
 @private
 }
-@property (nonatomic, retain) NSNumber * flickrID;
-@property (nonatomic, retain) NSNumber * mediumHeight;
-@property (nonatomic, retain) NSString * mediumSource;
-@property (nonatomic, retain) NSString * mediumURL;
-@property (nonatomic, retain) NSNumber * mediumWidth;
-@property (nonatomic, retain) NSNumber * originalHeight;
-@property (nonatomic, retain) NSString * originalSource;
-@property (nonatomic, retain) NSString * originalURL;
-@property (nonatomic, retain) NSNumber * originalWidth;
-@property (nonatomic, retain) NSNumber * smallHeight;
-@property (nonatomic, retain) NSString * smallSource;
-@property (nonatomic, retain) NSString * smallURL;
-@property (nonatomic, retain) NSNumber * smallWidth;
-@property (nonatomic, retain) NSNumber * squareHeight;
-@property (nonatomic, retain) NSString * squareSource;
-@property (nonatomic, retain) NSString * squareURL;
-@property (nonatomic, retain) NSNumber * squareWidth;
-@property (nonatomic, retain) NSNumber * thumbnailHeight;
-@property (nonatomic, retain) NSString * thumbnailSource;
-@property (nonatomic, retain) NSString * thumbnailURL;
-@property (nonatomic, retain) NSNumber * thumbnailWidth;
-@property (nonatomic, retain) NSNumber * primary;
-@property (nonatomic, retain) NSString * flickrName;
-@property (nonatomic, retain) NSDate * dateAdded;
-@property (nonatomic, retain) NSString * photoAttribution;
-@property (nonatomic, retain) NSString * photoAttributionURL;
-@property (nonatomic, retain) Art *art;
+@property (nonatomic, strong) NSNumber * flickrID;
+@property (nonatomic, strong) NSNumber * mediumHeight;
+@property (nonatomic, strong) NSString * mediumSource;
+@property (nonatomic, strong) NSString * mediumURL;
+@property (nonatomic, strong) NSNumber * mediumWidth;
+@property (nonatomic, strong) NSNumber * originalHeight;
+@property (nonatomic, strong) NSString * originalSource;
+@property (nonatomic, strong) NSString * originalURL;
+@property (nonatomic, strong) NSNumber * originalWidth;
+@property (nonatomic, strong) NSNumber * smallHeight;
+@property (nonatomic, strong) NSString * smallSource;
+@property (nonatomic, strong) NSString * smallURL;
+@property (nonatomic, strong) NSNumber * smallWidth;
+@property (nonatomic, strong) NSNumber * squareHeight;
+@property (nonatomic, strong) NSString * squareSource;
+@property (nonatomic, strong) NSString * squareURL;
+@property (nonatomic, strong) NSNumber * squareWidth;
+@property (nonatomic, strong) NSNumber * thumbnailHeight;
+@property (nonatomic, strong) NSString * thumbnailSource;
+@property (nonatomic, strong) NSString * thumbnailURL;
+@property (nonatomic, strong) NSNumber * thumbnailWidth;
+@property (nonatomic, strong) NSNumber * primary;
+@property (nonatomic, strong) NSString * flickrName;
+@property (nonatomic, strong) NSDate * dateAdded;
+@property (nonatomic, strong) NSString * photoAttribution;
+@property (nonatomic, strong) NSString * photoAttributionURL;
+@property (nonatomic, strong) Art *art;
 
 @end

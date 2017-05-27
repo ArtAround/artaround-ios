@@ -13,12 +13,12 @@
     NSArray *_titles, *_details;
     CGSize _originalTitleSize;
 }
-@property (retain, nonatomic) IBOutlet UIPageControl *pageControl;
-@property (retain, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (retain, nonatomic) IBOutlet UILabel *titleLabel;
-@property (retain, nonatomic) IBOutlet UILabel *detailLabel;
-@property (retain, nonatomic) IBOutlet UIButton *closeButton;
-@property (retain, nonatomic) IBOutlet UIButton *doneButton;
+@property (strong, nonatomic) IBOutlet UIPageControl *pageControl;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *detailLabel;
+@property (strong, nonatomic) IBOutlet UIButton *closeButton;
+@property (strong, nonatomic) IBOutlet UIButton *doneButton;
 - (IBAction)closeButtonPressed:(id)sender;
 
 @end

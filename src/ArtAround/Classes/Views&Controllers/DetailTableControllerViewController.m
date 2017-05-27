@@ -9,8 +9,9 @@
 #import "DetailTableControllerViewController.h"
 #import "Art.h"
 #import "Photo.h"
+#import "Comment.h"
 #import "Category.h"
-#import "EGOImageButton.h"
+#import "PhotoImageButton.h"
 #import "PhotoImageView.h"
 #import "AAAPIManager.h"
 #import <QuartzCore/QuartzCore.h>
@@ -18,7 +19,6 @@
 #import <Social/Social.h>
 #import "Utilities.h"
 #import "SearchItem.h"
-#import "ArtParser.h"
 #import "ArtAnnotationView.h"
 #import "ArtAroundAppDelegate.h"
 #import "CommentsTableViewController.h"
@@ -35,6 +35,7 @@ static const float _kMapHeight = 175.0f;
 static const float _kMapPadding = 11.0f;
 static const float _kPhotoScrollerHeight = 195.0f;
 static const float _kRowBufffer = 20.0f;
+static const float _kRowTextFieldWidth = 107.0f;
 
 
 @interface DetailTableControllerViewController ()
@@ -59,10 +60,6 @@ static const float _kRowBufffer = 20.0f;
 - (void)setArt:(Art *)art forceDownload:(BOOL)force;
 - (NSString *)shareURL;
 - (NSString *)shareMessage;
-//- (void)showFBDialog;
-//- (void)shareOnFacebook;
-- (void)shareOnTwitter;
-- (void)shareViaEmail;
 - (void)shareButtonTapped;
 @end
 
@@ -70,7 +67,7 @@ static const float _kRowBufffer = 20.0f;
 
 @synthesize currentLocation = _currentLocation;
 
-- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt
+- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt currentLocation:(CLLocation*)newLocation
 {
     self = [super initWithStyle:style];
     if (self) {
@@ -96,6 +93,7 @@ static const float _kRowBufffer = 20.0f;
         //sep color
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
+        _currentLocation = newLocation;
     }
     return self;
 }
@@ -135,8 +133,6 @@ static const float _kRowBufffer = 20.0f;
     //location
     _locationString = @"";
     _selectedLocation = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
-    _currentLocation = [_mapView.userLocation.location retain];
-
     
     //setup the images scroll view
     _photosScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, _kPhotoScrollerHeight)];
@@ -221,7 +217,7 @@ static const float _kRowBufffer = 20.0f;
     [_footerView addSubview:_textDoneButton];
 
     if (_art)
-        [self setArt:_art forceDownload:NO];
+        [self setArt:_art forceDownload:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -256,26 +252,19 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - Helpers
 - (void)setArt:(Art *)art forceDownload:(BOOL)force
 {
-	//assign the art
-	_art = [art retain];
-	
-	//load images that we already have a source for
-	[self setupImages];
-	
-	//get all the photo details for each photo that is missing the deets
-	for (Photo *photo in [_art.photos allObjects]) {
-		if (!photo.thumbnailSource || [photo.thumbnailSource isEqualToString:@""]) {
-			//[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImages)];
-            [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
-		}
-	}
-    
-    //download the full art object
-    if (art) {
+	//download the full art object
+    if (art && force) {
         //get the comments for this art
-        [[AAAPIManager instance] downloadArtForSlug:_art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
+        [[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(artDownloadComplete) forceDownload:force];
     }
-	
+    //assign the art
+    _art = art;
+    
+	if ([_art.photos allObjects] != nil && [[_art.photos allObjects] count] > 0) {
+        //load images that we already have a source for
+        [self setupImages];
+    }
+    
 	//add the annotation for the art
 	if ([_art.latitude doubleValue] && [_art.longitude doubleValue]) {
 		
@@ -287,8 +276,8 @@ static const float _kRowBufffer = 20.0f;
 		//create an annotation, add it to the map, and store it in the array
 		ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
 		[_mapView addAnnotation:annotation];
-		[annotation release];
-		
+        //set map region
+        [Utilities zoomToFitMapAnnotations:_mapView];
 	}
     
     //reload the table
@@ -313,7 +302,6 @@ static const float _kRowBufffer = 20.0f;
         indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [indicator startAnimating];
         [_loadingAlertView addSubview:indicator];
-        [indicator release];
     }
     
     [_loadingAlertView setTitle:msg];
@@ -363,22 +351,25 @@ static const float _kRowBufffer = 20.0f;
 #pragma mark - Button Pressed
 - (void)favoriteButtonPressed:(id)sender
 {
-    //switch the art's favorite property
-    [ArtParser setFavorite:![_art.favorite boolValue] forSlug:_art.slug];
     
-    //merge context
-    [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-    
-    //update the button
-    [_favoriteButton setSelected:([_art.favorite boolValue])];
-    
-    //refresh the mapview so that the updated favorites are showing
-    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-    [appDelegate saveContext];
-    [appDelegate.mapViewController updateArt];
-    
-    //track event
-    [Utilities trackEvent:@"FavoriteButtonPressed" action:([_art.favorite boolValue]) ? @"favorited" : @"unfavorited" label:_art.title];
+    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+        Art *a = [_art MR_inContext:localContext];
+        [a setFavorite:[NSNumber numberWithBool:!a.favorite.boolValue]];
+    } completion:^(BOOL success, NSError *error) {
+        
+        _art = [Art MR_findFirstByAttribute:@"slug" withValue:_art.slug];
+        
+        //update the button
+        [_favoriteButton setSelected:([_art.favorite boolValue])];
+        
+        //refresh the mapview so that the updated favorites are showing
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        //    [appDelegate saveContext];
+        [appDelegate.mapViewController updateArt];
+        
+        //track event
+        [Utilities trackEvent:@"FavoriteButtonPressed" action:([_art.favorite boolValue]) ? @"favorited" : @"unfavorited" label:_art.title];
+    }];
 }
 
 - (void)flagButtonPressed:(id)sender
@@ -386,7 +377,6 @@ static const float _kRowBufffer = 20.0f;
     UIActionSheet *flagSheet = [[UIActionSheet alloc] initWithTitle:@"Flag Art" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Incorrect Info", @"Missing / Damaged", @"Duplicate", nil];
     [flagSheet setTag:_kFlagActionSheet];
     [flagSheet showInView:self.view];
-    [flagSheet release];
 }
 
 - (void)editButtonPressed:(id)sender
@@ -413,11 +403,12 @@ static const float _kRowBufffer = 20.0f;
     [_newArtDictionary setObject:[Utilities urlEncode:_art.slug] forKey:@"slug"];
     
     //set the location
-    if (_selectedLocation)
-        [_newArtDictionary setObject:_selectedLocation forKey:@"location[]"];
-    else {
+    //set the location
+    if (_selectedLocation) {
+        [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:_selectedLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:_selectedLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
+    } else {
         CLLocation *loc = [[CLLocation alloc] initWithLatitude:[_art.latitude floatValue] longitude:[_art.longitude floatValue]];
-        [_newArtDictionary setObject:loc forKey:@"location[]"];
+        [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:loc.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:loc.coordinate.longitude] stringValue], nil] forKey:@"location"];
     }
     
     //title
@@ -453,8 +444,8 @@ static const float _kRowBufffer = 20.0f;
     }
     
     //description
-    if ([_newArtDictionary objectForKey:@"description"])
-        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"description"]] forKey:@"description"];
+    if ([_newArtDictionary objectForKey:@"artDescription"])
+        [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"artDescription"]] forKey:@"description"];
     else if (_art.artDescription) {
         [_newArtDictionary setObject:[Utilities urlEncode:_art.artDescription] forKey:@"description"];
         
@@ -532,8 +523,8 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)artButtonPressed:(id)sender
 {
-    EGOImageButton *button = (EGOImageButton*)sender;
-    int buttonTag = button.tag;
+    PhotoImageButton *button = (PhotoImageButton*)sender;
+    NSInteger buttonTag = button.tag;
     
     //get this photo
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
@@ -569,8 +560,6 @@ static const float _kRowBufffer = 20.0f;
     
     [self.navigationController pushViewController:viewController animated:YES];
     DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
-    [imgView release];
-    [viewController release];
     
     [Utilities trackEvent:@"PhotoViewOpened" action:@"PhotoView" label:_art.title];
 }
@@ -581,7 +570,6 @@ static const float _kRowBufffer = 20.0f;
     UIActionSheet *imgSheet = [[UIActionSheet alloc] initWithTitle:@"Upload Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"Camera roll", nil];
     [imgSheet setTag:_kAddImageActionSheet];
     [imgSheet showInView:self.tableView];
-    [imgSheet release];
     
 }
 
@@ -613,14 +601,74 @@ static const float _kRowBufffer = 20.0f;
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
+        if ([_newArtDictionary objectForKey:@"commissioned_by"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        }
+        if ([_newArtDictionary objectForKey:@"description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        }
+        [_newArtDictionary removeObjectForKey:@"description"];
+        if ([_newArtDictionary objectForKey:@"location_description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        }
         
-        [[AAAPIManager managedObjectContext] lock];
-        _art = [[ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]] retain];
-        [[AAAPIManager managedObjectContext] unlock];
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
+//        [[AAAPIManager managedObjectContext] lock];
+//        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-        [(id)[[UIApplication sharedApplication] delegate] saveContext];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
         [[(ArtAroundAppDelegate*)[[UIApplication sharedApplication] delegate] mapViewController] updateArt];
         
@@ -644,8 +692,8 @@ static const float _kRowBufffer = 20.0f;
     }
     
     //reload the map view so the updated/new art is there
-    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-    [appDelegate saveContext];
+//    ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+//    [appDelegate saveContext];
     
     
 }
@@ -658,7 +706,6 @@ static const float _kRowBufffer = 20.0f;
     //show fail alert
     UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Upload Failed" message:@"The upload failed. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [failedAlertView show];
-    [failedAlertView release];
 }
 
 #pragma mark - Art Download Callback Methods
@@ -681,7 +728,6 @@ static const float _kRowBufffer = 20.0f;
         //reload the art
         [self setArt:_art forceDownload:NO];
     }
-    
 }
 
 #pragma mark - Table view data source
@@ -725,7 +771,6 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowArtist:
             case ArtDetailRowYear:
             case ArtDetailRowLocationType:
-            case ArtDetailRowLink:
             case ArtDetailRowCategory:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
@@ -736,6 +781,23 @@ static const float _kRowBufffer = 20.0f;
                 cell.detailTextLabel.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
                 cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
                 cell.detailTextLabel.contentMode = UIViewContentModeCenter;
+                break;
+            }
+            case ArtDetailRowLink:
+            {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
+                cell.detailTextLabel.numberOfLines = 0;
+                cell.textLabel.numberOfLines = 0;
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+                cell.detailTextLabel.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
+                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                cell.detailTextLabel.contentMode = UIViewContentModeCenter;
+                UIButton *link = [[UIButton alloc] initWithFrame:CGRectMake(([UIScreen mainScreen].bounds.size.width/2) - 47.0, 4.0, 32.0, 32.0)];
+                [link setTag:998];
+                [link setImage:[UIImage imageNamed:@"external_link"] forState:UIControlStateNormal];
+                [link addTarget:self action:@selector(artLinkButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+                [cell addSubview:link];
                 break;
             }
             case ArtDetailRowDescription:
@@ -812,7 +874,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowTitle:
                     {
                         if (!_titleTextField) {
-                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _titleTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _titleTextField.delegate = self;
                             _titleTextField.placeholder = @"Title";
                             _titleTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
@@ -831,7 +893,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowArtist:
                     {
                         if (!_artistTextField) {
-                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _artistTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _artistTextField.delegate = self;
                             _artistTextField.placeholder = @"Artist";
                             _artistTextField.autocapitalizationType = UITextAutocapitalizationTypeWords;
@@ -869,7 +931,7 @@ static const float _kRowBufffer = 20.0f;
                     case ArtDetailRowLink:
                     {
                         if (!_urlTextField) {
-                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(107.0f, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
+                            _urlTextField = [[UITextField alloc] initWithFrame:CGRectMake(_kRowTextFieldWidth, 4.0f, self.tableView.frame.size.width - 123.0f, cell.frame.size.height - 8.0f)];
                             _urlTextField.delegate = self;
                             _urlTextField.placeholder = @"Website";
                             _urlTextField.returnKeyType = UIReturnKeyDone;
@@ -976,7 +1038,7 @@ static const float _kRowBufffer = 20.0f;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    NSString *cellIdentifier = (!_inEditMode) ? [NSString stringWithFormat:@"cell%i", indexPath.row] : [NSString stringWithFormat:@"cellEdit%i", indexPath.row];
+    NSString *cellIdentifier = (!_inEditMode) ? [NSString stringWithFormat:@"cell%li", indexPath.row] : [NSString stringWithFormat:@"cellEdit%li", indexPath.row];
     
     if (indexPath.row == ArtDetailRowPhotos) {
         cellIdentifier = @"photosCell";
@@ -988,14 +1050,14 @@ static const float _kRowBufffer = 20.0f;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     // Configure the cell...
     if (cell == nil) {
-        cell = [self cellForRow:indexPath.row];
+        cell = [self cellForRow:(int)indexPath.row];
     }
     
     switch (indexPath.row) {
         case ArtDetailRowTitle:
         {
             cell.textLabel.text = @"title";
-            cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.title;
+            cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.title];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             DebugLog(@"TITLE CELL WIDTH: %f", cell.detailTextLabel.frame.size.width);
             break;
@@ -1004,7 +1066,7 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"commissioner";
             if (_art.commissionedBy && _art.commissionedBy.length > 0)
-                cell.detailTextLabel.text = _art.commissionedBy;
+                cell.detailTextLabel.text = [Utilities urlDecode:_art.commissionedBy];
             else if ([_newArtDictionary objectForKey:@"commissioned_by"] && [[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0)
                 cell.detailTextLabel.text = [_newArtDictionary objectForKey:@"commissioned_by"];
             else {
@@ -1032,8 +1094,11 @@ static const float _kRowBufffer = 20.0f;
         {
             cell.textLabel.text = @"artist";
             
-            if (_art.artist && _art.artist.length > 0)
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.artist;
+            if (_art.artist && _art.artist.length > 0) {
+                cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.artist];
+            } else {
+                cell.textLabel.text = (_inEditMode) ? @"artist" : @"";
+            }
             break;
         }
         case ArtDetailRowYear:
@@ -1062,7 +1127,7 @@ static const float _kRowBufffer = 20.0f;
         case ArtDetailRowLocationType:
         {
             cell.textLabel.text = @"location";
-            cell.detailTextLabel.text = _locationString;
+            cell.detailTextLabel.text = [Utilities urlDecode:_locationString];
             
             if (_inEditMode) {
                 UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
@@ -1084,12 +1149,21 @@ static const float _kRowBufffer = 20.0f;
         {
             
             if (_art.website && _art.website.length > 0) {
-                cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+                cell.detailTextLabel.text = (_inEditMode) ? @"" : [Utilities urlDecode:_art.website];
+                if (!_inEditMode) {
+                    cell.detailTextLabel.hidden = YES;
+                } else {
+                    cell.detailTextLabel.hidden = NO;
+                }
                 cell.textLabel.text = @"website";
             }
             else {
                 cell.detailTextLabel.text = @"";
                 cell.textLabel.text = (_inEditMode) ? @"website" : @"";
+                UIView *link = [cell viewWithTag:998];
+                if (link != nil) {
+                    link.hidden = YES;
+                }
             }
             
             break;
@@ -1130,7 +1204,7 @@ static const float _kRowBufffer = 20.0f;
             if (!_inEditMode) {
                 if (_art.artDescription && _art.artDescription.length > 0) {
                     cell.textLabel.text = @"About";
-                    cell.detailTextLabel.text = _art.artDescription;
+                    cell.detailTextLabel.text = [Utilities urlDecode:_art.artDescription];
                 }
                 else {
                     cell.textLabel.text = @"";
@@ -1144,7 +1218,7 @@ static const float _kRowBufffer = 20.0f;
             if (!_inEditMode) {
                 if (_art.locationDescription && _art.locationDescription.length > 0) {
                     cell.textLabel.text = @"Where?";
-                    cell.detailTextLabel.text = _art.locationDescription;
+                    cell.detailTextLabel.text = [Utilities urlDecode:_art.locationDescription];
                 }
                 else {
                     cell.textLabel.text = @"";
@@ -1159,7 +1233,7 @@ static const float _kRowBufffer = 20.0f;
                 cell.textLabel.text = @"";
             }
             else {
-                cell.textLabel.text = [NSString stringWithFormat:@"Comments (%i)", _art.comments.count];
+                cell.textLabel.text = [NSString stringWithFormat:@"Comments (%lu)", _art.comments.count];
                 
                 if (_art.comments.count > 0) {
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -1191,6 +1265,21 @@ static const float _kRowBufffer = 20.0f;
 - (UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     return _footerView;
+}
+
+- (void)artLinkButtonPressed:(UIButton*)sender
+{
+    UIView *superview = sender.superview;
+    if (superview != nil) {
+        while (![superview isKindOfClass:[UITableViewCell class]]) {
+            superview = superview.superview;
+        }
+        UITableViewCell *cell = (UITableViewCell*)superview;
+        NSString *url = cell.detailTextLabel.text;
+        if( [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:url]]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+        }
+    }
 }
 
 
@@ -1244,8 +1333,10 @@ static const float _kRowBufffer = 20.0f;
                 [datePicker setShowsSelectionIndicator:YES];
                 [datePicker setDataSource:self];
                 [datePicker setDelegate:self];
+                [datePicker setBackgroundColor:[UIColor whiteColor]];
                 
                 UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(dateDoneButtonPressed)];
+                [doneButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
                 UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
                 UIToolbar *dateToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, 44.0f)];
                 [dateToolbar setBackgroundColor:[UIColor colorWithRed:67.0f/255.0f green:67.0f/255.0f blue:61.0f/255.0f alpha:1.0f]];
@@ -1285,16 +1376,16 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowLocationType:
             {
-                ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
+                _locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:_selectedLocation delegate:self currentLocationSelection:LocationSelectionPhotoLocation currentLocation:_currentLocation];
                 
-                [self.navigationController pushViewController:locationController animated:YES];
+                [self.navigationController pushViewController:_locationController animated:YES];
                 
                 if (_selectedLocation) {
-                    [locationController setSelectedLocation:_selectedLocation];
-                    [locationController setSelection:LocationSelectionManualLocation];
+                    [_locationController setSelectedLocation:_selectedLocation];
+                    [_locationController setSelection:LocationSelectionManualLocation];
                 }
                 else
-                    [locationController setSelectedLocation:_currentLocation];
+                    [_locationController setSelectedLocation:_currentLocation];
                 
                 break;
             }
@@ -1422,13 +1513,13 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowTitle:
             {
                 if ([[_newArtDictionary objectForKey:@"title"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"title"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.title length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.title sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1450,13 +1541,13 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.website.length == 0 && [[_newArtDictionary objectForKey:@"website"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"website"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"website"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.website length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.website sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1467,13 +1558,13 @@ static const float _kRowBufffer = 20.0f;
                 if (_art.artist.length == 0 && [[_newArtDictionary objectForKey:@"artist"] length] == 0)
                     height = 0.0f;
                 else if ([[_newArtDictionary objectForKey:@"artist"] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artist"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.artist length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artist sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 
@@ -1485,13 +1576,13 @@ static const float _kRowBufffer = 20.0f;
                     height = 0.0f;
                 else {
                     if ([[_newArtDictionary objectForKey:@"commissioned_by"] length] > 0) {
-                        CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                        CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                        CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"commissioned_by"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                     else if ([_art.commissionedBy length] > 0) {
-                        CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                        CGSize requiredLabelSize = [_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                        CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                        CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.commissionedBy sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                         height = requiredLabelSize.height;
                     }
                 }
@@ -1501,13 +1592,13 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowCategory:
             {
                 if ([[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[[_newArtDictionary objectForKey:@"categories"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else if ([_art.categoriesString length] > 0) {
-                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.categoriesString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
                 }
                 else {
@@ -1518,15 +1609,15 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowDescription:
             {
-                if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
+                if ([[_newArtDictionary objectForKey:@"artDescription"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"artDescription"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
@@ -1539,9 +1630,12 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowLocationType:
             {
                 if ([_locationString length] > 0) {
-                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize labelSize = CGSizeMake(_kRowTextFieldWidth, 10000.0f);
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_locationString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height;
+                }
+                else {
+                    height = 0.0f;
                 }
                 
                 break;
@@ -1550,12 +1644,12 @@ static const float _kRowBufffer = 20.0f;
             {
                 if ([[_newArtDictionary objectForKey:@"location_description"] length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [[_newArtDictionary objectForKey:@"location_description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:[_newArtDictionary objectForKey:@"location_description"] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
                 else if ([_art.locationDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [[Utilities instance] frameForText:_art.locationDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                 }
                 else {
@@ -1591,8 +1685,8 @@ static const float _kRowBufffer = 20.0f;
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
-	EGOImageButton *prevView = nil;
-	int totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
+	PhotoImageButton *prevView = nil;
+	NSUInteger totalPhotos = (_art && _art.photos != nil) ? [_art.photos count] + _userAddedImages.count : _userAddedImages.count;
 	int photoCount = 0;
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:YES]];
 	NSArray * sortedPhotos = [_art.photos sortedArrayUsingDescriptors:sortDescriptors];
@@ -1609,7 +1703,7 @@ static const float _kRowBufffer = 20.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -1634,9 +1728,9 @@ static const float _kRowBufffer = 20.0f;
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[_photosScrollView viewWithTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
-		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+		PhotoImageButton *imageView = (PhotoImageButton *)[_photosScrollView viewWithTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
+        if (!imageView) {
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setTag:(10 + [[_art.photos sortedArrayUsingDescriptors:sortDescriptors] indexOfObject:photo])];
 			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
 			[imageView setClipsToBounds:YES];
@@ -1644,15 +1738,14 @@ static const float _kRowBufffer = 20.0f;
 			[imageView setBackgroundColor:[UIColor lightGrayColor]];
 			[imageView.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
 			[imageView.layer setBorderWidth:6.0f];
-//            [imageView setAdjustsImageWhenHighlighted:NO];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
-			[imageView release];
 		}
 		
 		//set the image url
 		if (imageView) {
 			[imageView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kArtAroundURL, photo.originalURL]]];
+            
 		}
 		
 		//adjust the imageView autoresizing masks when there are fewer than 3 images so that they stay centered
@@ -1679,7 +1772,7 @@ static const float _kRowBufffer = 20.0f;
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -1704,9 +1797,9 @@ static const float _kRowBufffer = 20.0f;
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[_photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+		PhotoImageButton *imageView = (PhotoImageButton *)[_photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
 		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
 			[imageView setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
 			[imageView setClipsToBounds:YES];
@@ -1716,7 +1809,6 @@ static const float _kRowBufffer = 20.0f;
 			[imageView.layer setBorderWidth:6.0f];
             [imageView addTarget:self action:@selector(artButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 			[_photosScrollView addSubview:imageView];
-			[imageView release];
             
 		}
 		
@@ -1746,7 +1838,7 @@ static const float _kRowBufffer = 20.0f;
     } else {
         
         //adjust the initial offset based on the total number of photos
-        BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+        BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
         if (isPortrait) {
             prevOffset = _kPhotoInitialPaddingPortait;
         } else {
@@ -1816,14 +1908,17 @@ static const float _kRowBufffer = 20.0f;
 //submit flag
 - (void)flickrNameViewControllerPressedSubmit:(id)controller
 {
-    [Utilities instance].photoAttributionText = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
-    [Utilities instance].photoAttributionURL = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    NSString *handle = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller flickrHandleField] text]];
+    [Utilities instance].photoAttributionText = handle;
+    NSString *fUrlString = [[NSString alloc] initWithString:[[(FlickrNameViewController*)controller attributionURLField] text]];
+    [Utilities instance].photoAttributionURL = fUrlString;
     [self userAddedImage:[(FlickrNameViewController*)controller image] withAttribution:YES];
     
     
     
     [[controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.leftBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
@@ -1838,6 +1933,7 @@ static const float _kRowBufffer = 20.0f;
     
     [[(FlickrNameViewController*)controller view] removeFromSuperview];
     [self.navigationItem.backBarButtonItem setEnabled:YES];
+    [self.navigationItem.leftBarButtonItem setEnabled:YES];
     
     if (!_inEditMode)
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
@@ -1848,26 +1944,28 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
         
         // Get the image from the result
-        UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
+        UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
         
             
-        FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
-        [flickrNameController setImage:image];
-        flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-        flickrNameController.delegate = self;
+        _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
+        [_flickrNameController setImage:image];
+        _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+        _flickrNameController.delegate = self;
         
-        [self.view addSubview:flickrNameController.view];
+        [self.view addSubview:_flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        [self.navigationItem.leftBarButtonItem setEnabled:NO];
     
     }];
     
@@ -1876,14 +1974,15 @@ static const float _kRowBufffer = 20.0f;
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [self dismissViewControllerAnimated:YES completion:^{
         
-        FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
-        [flickrNameController setImage:image];
-        flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-        flickrNameController.delegate = self;
+        _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+        [_flickrNameController setImage:image];
+        _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+        _flickrNameController.delegate = self;
         
-        [self.view addSubview:flickrNameController.view];
+        [self.view addSubview:_flickrNameController.view];
         [self.navigationItem.backBarButtonItem setEnabled:NO];
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
+        [self.navigationItem.leftBarButtonItem setEnabled:NO];
         
     }];
 }
@@ -1915,9 +2014,11 @@ static const float _kRowBufffer = 20.0f;
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -1939,7 +2040,9 @@ static const float _kRowBufffer = 20.0f;
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 case 1:
@@ -1947,7 +2050,9 @@ static const float _kRowBufffer = 20.0f;
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
                     imgPicker.delegate = self;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 default:
@@ -1961,34 +2066,17 @@ static const float _kRowBufffer = 20.0f;
             //break on cancel
             if (buttonIndex == 3) break;
             
-            FlagViewController *flagController = [[FlagViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+            FlagViewController *flagController = [[FlagViewController alloc] initWithNibName:@"FlagViewController" bundle:nil];
             flagController.view.autoresizingMask = UIViewAutoresizingNone;
             flagController.delegate = self;
             
-            [self.view addSubview:flagController.view];
-            [self.navigationItem.backBarButtonItem setEnabled:NO];
-            [self.navigationItem.rightBarButtonItem setEnabled:NO];
+            [self presentViewController:flagController animated:YES completion:^{
             
-            break;
-        }
-        case _kShareActionSheet:
-        {
-            //decide what to do based on the button index
-            switch (buttonIndex) {
-                    
-                    //share via email
-                case AAShareTypeEmail:
-                    [self shareViaEmail];
-                    break;
-                    
-                    //share via twitter
-                case AAShareTypeTwitter:
-                    [self shareOnTwitter];
-                    break;
-                    
-                default:
-                    break;
-            }
+                [self.navigationItem.backBarButtonItem setEnabled:NO];
+                [self.navigationItem.rightBarButtonItem setEnabled:NO];
+                [self.navigationItem.leftBarButtonItem setEnabled:NO];
+                
+            }];
             
             break;
         }
@@ -2010,34 +2098,45 @@ static const float _kRowBufffer = 20.0f;
 //dismiss flag controller
 - (void) flagViewControllerPressedCancel
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+    }];
+
 }
 
 //successful submission
 - (void) flagSubmissionCompleted
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
-    
-    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [moderationComment show];
-    
-    //track event
-    [Utilities trackEvent:@"ArtFlagged" action:@"Flag" label:_art.title];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+        
+        UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Thanks for your note! Our moderators will take a look." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [moderationComment show];
+        
+        //track event
+        [Utilities trackEvent:@"ArtFlagged" action:@"Flag" label:_art.title];
+    }];
+
 }
 
 //unsuccessful submission
 - (void) flagSubmissionFailed
 {
-    [[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
-    [self.navigationItem.backBarButtonItem setEnabled:YES];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
-    
-    UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Sorry! Something went wrong in the flag submission. Please try again." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [moderationComment show];
+    [self dismissViewControllerAnimated:YES completion:^{
+        //[[self.view.subviews objectAtIndex:(self.view.subviews.count - 1)] removeFromSuperview];
+        [self.navigationItem.backBarButtonItem setEnabled:YES];
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+        [self.navigationItem.leftBarButtonItem setEnabled:YES];
+        
+        UIAlertView *moderationComment = [[UIAlertView alloc] initWithTitle:@"Sorry! Something went wrong in the flag submission. Please try again." message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [moderationComment show];
+    }];
 }
 
 #pragma mark - Text View Delegate
@@ -2047,7 +2146,7 @@ static const float _kRowBufffer = 20.0f;
     NSString* newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
     
     if (textView == _descriptionTextView && ![textView.text isEqualToString:@"Share what you know about this art..."])
-        [_newArtDictionary setObject:newText forKey:@"description"];
+        [_newArtDictionary setObject:newText forKey:@"artDescription"];
     else if (textView == _locationDescriptionTextView && ![textView.text isEqualToString:@"Add extra location details..."])
         [_newArtDictionary setObject:newText forKey:@"location_description"];
     
@@ -2177,7 +2276,7 @@ static const float _kRowBufffer = 20.0f;
     NSString *yearString = [_yearFormatter stringFromDate:[NSDate date]];
     int currentYear = [yearString intValue];
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:currentYear-row];
     title = [yearNumber stringValue];
     
     return title;
@@ -2191,7 +2290,7 @@ static const float _kRowBufffer = 20.0f;
     NSString *yearString = [_yearFormatter stringFromDate:[NSDate date]];
     int currentYear = [yearString intValue];
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:currentYear-row];
     _yearString = [[NSString alloc] initWithString:[yearNumber stringValue]];
     
     [self.tableView reloadData];
@@ -2260,7 +2359,6 @@ static const float _kRowBufffer = 20.0f;
             [_mapView removeAnnotations:_mapView.annotations];
             ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:_selectedLocation.coordinate title:@"" subtitle:@""];
             [_mapView addAnnotation:annotation];
-            [annotation release];
         }
         
     }];
@@ -2319,15 +2417,65 @@ static const float _kRowBufffer = 20.0f;
         //track event
         [Utilities trackEvent:@"PhotoUploaded" action:@"Photo" label:_art.title];
         
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
         //parse the art object returned and update this controller instance's art
-        [[AAAPIManager managedObjectContext] lock];
+//        [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        _art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
+//        _art = [ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]];
 
-        [[AAAPIManager managedObjectContext] unlock];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
     }
     else {
         [self photoUploadFailed:responseDict];
@@ -2344,8 +2492,8 @@ static const float _kRowBufffer = 20.0f;
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
         
         //reload the map view so the updated/new art is there
-        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-        [appDelegate saveContext];
+//        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+//        [appDelegate saveContext];
         
         //clear the user added images array
         [_userAddedImages removeAllObjects];
@@ -2383,7 +2531,7 @@ static const float _kRowBufffer = 20.0f;
     UIImage *pinImage = [UIImage imageNamed:@"PinArt.png"];
 
     //setup the annotation view
-    ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+    ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     [pin setImage:pinImage];
     [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
     [pin setCanShowCallout:NO];
@@ -2413,12 +2561,9 @@ static const float _kRowBufffer = 20.0f;
         
         //get the share title and url
         NSString *shareTitle = [self shareMessage];
-        NSURL *shareURL = [NSURL URLWithString:[self shareURL]];
         NSArray *shareItems = nil;
-        if (shareTitle && shareURL) {
-            shareItems = [NSArray arrayWithObjects:shareTitle, shareURL, nil];
-        } else if (shareURL) {
-            shareItems = [NSArray arrayWithObjects:shareURL, nil];
+        if (shareTitle) {
+            shareItems = [NSArray arrayWithObjects:shareTitle, nil];
         }
         
         //show the share view
@@ -2430,107 +2575,12 @@ static const float _kRowBufffer = 20.0f;
         
         
     }
-    else {
-        //show an action sheet with the various sharing types
-        UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:@"Share This Item" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Email", @"Twitter", nil];
-        [shareSheet setTag:_kShareActionSheet];
-        [shareSheet showInView:self.view];
-        [shareSheet release];
-    }
+
 }
-
-- (void)shareViaEmail
-{
-	if ([MFMailComposeViewController canSendMail]) {
-		
-		//present the mail composer
-		MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
-		mailController.mailComposeDelegate = self;
-		[mailController setSubject:@"Art Around"];
-		[mailController setMessageBody:[self shareMessage] isHTML:NO];
-		[self presentModalViewController:mailController animated:YES];
-		[mailController release];
-		
-	} else {
-		
-		//this device can't send email
-		UIAlertView *emailAlert = [[UIAlertView alloc] initWithTitle:@"Email Error" message:@"This device is not configured to send email." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-		[emailAlert show];
-		[emailAlert release];
-		
-	}
-}
-
-- (void)shareOnTwitter
-{
-	//share on twitter in the browser
-	NSString *twitterShare = [NSString stringWithFormat:@"http://twitter.com/share?text=%@", [[self shareMessage] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:twitterShare]];
-}
-
-
-/*- (void)shareOnFacebook
-{
-	//do we have a reference to the facebook object?
-	if (!_facebook) {
-		
-		//get a reference to the facebook object
-		_facebook = _appDelegate.facebook;
-        
-		
-		//make sure the access token is properly set if we previously saved it
-		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-		NSString *accessToken = [prefs stringForKey:@"FBAccessTokenKey"];
-		NSDate *expirationDate = [prefs objectForKey:@"FBExpirationDateKey"];
-		[_facebook setAccessToken:accessToken];
-		[_facebook setExpirationDate:expirationDate];
-		
-	}
-	
-	//make sure we have a valid reference to the facebook object
-	if (!_facebook) {
-		[_appDelegate fbDidNotLogin:NO];
-		return;
-	}
-	
-	//make sure we are authorized
-	if (![_facebook isSessionValid]) {
-		NSArray* permissions =  [NSArray arrayWithObjects:@"publish_stream", nil];
-		[_facebook authorize:permissions];
-	} else {
-		[self showFBDialog];
-	}
-}*/
-
-/*- (void)showFBDialog
-{
-	//make sure we have a valid reference to the facebook object
-	if (!_facebook) {
-		[_appDelegate fbDidNotLogin:NO];
-		return;
-	}
-	
-	//grab the first photo
-	NSString *photoURL = @"";
-	if (_art.photos && [_art.photos count] > 0) {
-		Photo *photo = [[_art.photos allObjects] objectAtIndex:0];
-		photoURL = photo.thumbnailSource;
-	}
-	
-	//setup the parameters with info about this art
-	NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-								   @"Share on Facebook",  @"user_message_prompt",
-								   [self shareURL], @"link",
-								   photoURL, @"picture",
-								   nil];
-	
-	//show the share dialog
-	[_facebook dialog:@"feed" andParams:params andDelegate:self];
-}*/
 
 - (NSString *)shareMessage
 {
-	return [NSString stringWithFormat:@"Art Around: %@", [self shareURL]];
+	return [NSString stringWithFormat:@"Check out this artwork on ArtAround: %@", [self shareURL]];
 }
 
 - (NSString *)shareURL
@@ -2538,19 +2588,5 @@ static const float _kRowBufffer = 20.0f;
 	return [NSString stringWithFormat:@"http://theartaround.us/arts/%@", _art.slug];
 }
 
-//#pragma mark - FBDialogDelegate
-//
-//- (void)dialogDidSucceed:(FBDialog*)dialog
-//{
-//	if ([dialog class] == [FBLoginDialog class]) {
-//		[self showFBDialog];
-//	}
-//}
-
-#pragma mark - MFMailComposerDelegate
-- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
-{
-    [self dismissModalViewControllerAnimated:YES];
-}
 
 @end

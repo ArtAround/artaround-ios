@@ -18,7 +18,6 @@
 - (void)downloadAllArtWithTarget:(id)target callback:(SEL)callback forceDownload:(BOOL)force;
 - (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback;
 - (void)downloadArtForSlug:(NSString*)slug target:(id)target callback:(SEL)callback forceDownload:(BOOL)force;
-- (void)downloadConfigWithTarget:(id)target callback:(SEL)callback;
 - (void)submitArt:(NSDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 - (void)updateArt:(NSMutableDictionary*)art withTarget:(id)target callback:(SEL)callback failCallback:(SEL)failCallback;
 

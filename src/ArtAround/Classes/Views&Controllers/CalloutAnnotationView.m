@@ -12,10 +12,10 @@
 #import "ArtAnnotationView.h"
 #import "Category.h"
 #import "Photo.h"
-#import "EGOImageView.h"
-#import "FlickrAPIManager.h"
+#import "PhotoImageView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AAAPIManager.h"
+#import "Utilities.h"
 
 @interface CalloutAnnotationView (private)
 - (void)preventParentSelectionChange;
@@ -43,7 +43,7 @@
 		[self addSubview:self.button];
 		
 		//image
-		EGOImageView *anImageView = [[EGOImageView alloc] initWithPlaceholderImage:nil];
+		PhotoImageView *anImageView = [[PhotoImageView alloc] initWithPlaceholderImage:nil];
 		[anImageView setContentMode:UIViewContentModeScaleAspectFill];
 		[anImageView setClipsToBounds:YES];
 		[anImageView setBackgroundColor:[UIColor lightGrayColor]];
@@ -52,17 +52,15 @@
 		[anImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
 		[self setImageView:anImageView];
 		[self addSubview:self.imageView];
-		[anImageView release];
 		
 		//title
 		UILabel *aTitleLabel = [[UILabel alloc] init];
 		[aTitleLabel setFont:[UIFont fontWithName:@"Georgia-Bold" size:13.0f]];
-		[aTitleLabel setMinimumFontSize:13.0f];
+		[aTitleLabel setMinimumScaleFactor:1.0f];
 		[aTitleLabel setAdjustsFontSizeToFitWidth:YES];
 		[aTitleLabel setBackgroundColor:[UIColor clearColor]];
 		[self setTitleLabel:aTitleLabel];
 		[self addSubview:self.titleLabel];
-		[aTitleLabel release];
 	
 		//artist
 		UILabel *anArtistLabel = [[UILabel alloc] init];
@@ -70,7 +68,6 @@
 		[anArtistLabel setBackgroundColor:[UIColor clearColor]];
 		[self setArtistLabel:anArtistLabel];
 		[self addSubview:self.artistLabel];
-		[anArtistLabel release];
 		
 		//summary
 		UILabel *aSummaryLabel = [[UILabel alloc] init];
@@ -79,22 +76,12 @@
 		[aSummaryLabel setNumberOfLines:3];
 		[self setSummaryLabel:aSummaryLabel];
 		[self addSubview:self.summaryLabel];
-		[aSummaryLabel release];
 
     }
     
     return self;
 }
 
-- (void)dealloc
-{
-	[self setButton:nil];
-	[self setImageView:nil];
-	[self setTitleLabel:nil];
-	[self setArtistLabel:nil];
-	[self setSummaryLabel:nil];
-	[super dealloc];
-}
 
 - (void)prepareForReuse
 {
@@ -122,7 +109,6 @@
 			[self setupImage];
 		} else {
 			[[AAAPIManager instance] downloadArtForSlug:art.slug target:self callback:@selector(setupImage) forceDownload:YES];
-            //[[FlickrAPIManager instance] downloadPhotoWithID:photo.flickrID target:self callback:@selector(setupImage)];
 		}
 	}
     else {
@@ -132,7 +118,7 @@
 	//are the fields empty?
 	BOOL showTitle = _art.title && ![_art.title isEqualToString:@""];
 	BOOL showArtist = _art.artist && ![_art.artist isEqualToString:@""];
-	BOOL showYear = _art.year && ![_art.year intValue] == 0;
+	BOOL showYear = _art.year && !([_art.year intValue] == 0);
 	
 	//artist label is a concatenation of artist - year
 	NSString *artist = @"";
@@ -145,9 +131,9 @@
 	}
 	
 	//set label text
-	[self.titleLabel setText:_art.title];
-	[self.artistLabel setText:artist];
-	[self.summaryLabel setText:_art.locationDescription];
+    [self.titleLabel setText:[Utilities urlDecode:_art.title]];
+	[self.artistLabel setText:[Utilities urlDecode:artist]];
+	[self.summaryLabel setText:[Utilities urlDecode:_art.locationDescription]];
 	
 	//update frames
 	const float padding = 10.0f;

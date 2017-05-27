@@ -9,8 +9,7 @@
 #import "Utilities.h"
 #import <MapKit/MapKit.h>
 #import "ArtAnnotation.h"
-#import "ASIHTTPRequest.h"
-#import "GANTracker.h"
+#import <Google/Analytics.h>
 
 static Utilities *_kSharedInstance = nil;
 
@@ -40,23 +39,17 @@ static Utilities *_kSharedInstance = nil;
 		_defaults = [NSUserDefaults standardUserDefaults];
 		
 		//set an invalid filter type so it is forced to pull from NSUserDefaults on first load
-		_selectedFilterType = -1;
+		_selectedFilterType = FilterTypeUnchosen;
 		
 		//setup the keys dictionary
 		NSString *settingsLocation = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ArtAround-Keys.plist"];
 		NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsLocation];
 		[self setKeysDict:settingsDict];
-		[settingsDict release];
 
 	}
 	return self;
 }
 
-- (void)dealloc
-{
-	[self setKeysDict:nil];
-	[super dealloc];
-}
 
 - (BOOL) hasLoadedBefore
 {
@@ -73,11 +66,33 @@ static Utilities *_kSharedInstance = nil;
 
 #pragma mark - Helper Methods
 + (NSString *)urlEncode:(NSString *)string {
-	return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8) autorelease];
+	return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8));
 }
 
 + (NSString *)urlDecode:(NSString *)string {
-	return [string stringByReplacingPercentEscapesUsingEncoding:kCFStringEncodingUTF8];	
+    if (string == nil || [string isEqual:[NSNull null]] || !([string isKindOfClass:[NSString class]] || [string isKindOfClass:[NSArray class]])) {
+        return @"";
+    }
+    
+    NSStringEncoding encoding = NSUTF8StringEncoding;
+    if ([string isKindOfClass:[NSArray class]]) {
+        NSMutableString *result = [[NSMutableString alloc] init];
+        NSArray *stringArray = (NSArray*)string;
+        int index = 0;
+        for (NSString *substring in stringArray) {
+            if (![substring isEqualToString:@""]) {
+                if (index > 0) {
+                    [result appendString:@"\n"];
+                }
+                encoding = substring.fastestEncoding;
+                [result appendString:[substring stringByReplacingPercentEscapesUsingEncoding:encoding]];
+                index++;
+            }
+        }
+        return result;
+    }
+    encoding = string.fastestEncoding;
+    return [string stringByReplacingPercentEscapesUsingEncoding:encoding];
 }
 
 
@@ -238,8 +253,8 @@ static Utilities *_kSharedInstance = nil;
 
 - (FilterType)selectedFilterType
 {
-	if (_selectedFilterType == -1) {
-		_selectedFilterType = [_defaults integerForKey:@"AAFilterType"];
+	if (_selectedFilterType == FilterTypeUnchosen) {
+		_selectedFilterType = (int)[_defaults integerForKey:@"AAFilterType"];
 	}
 	return _selectedFilterType;
 }
@@ -274,7 +289,7 @@ static Utilities *_kSharedInstance = nil;
 - (void)startActivity
 {	
 	//we are manually updating the activity indicator
-	[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
+//	[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
 	
 	//increment the activity count
 	//show start the activity indicator
@@ -291,8 +306,8 @@ static Utilities *_kSharedInstance = nil;
 		[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 		
 		//we are no longer updating the activity indicator
-		[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:YES];
-	}		
+//		[ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:YES];
+	}
 }
 
 #pragma mark - device methods
@@ -359,7 +374,6 @@ static Utilities *_kSharedInstance = nil;
 		[logoView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		[logoView setTag:logoViewTag];
 		[navBar addSubview:logoView];
-		[logoView release];
 	}
 	
 	//start animation block
@@ -387,13 +401,9 @@ static Utilities *_kSharedInstance = nil;
         str = [NSString stringWithFormat:@"%@/%@", str, pageName];
     }
     
-    NSError *error;
-    [[GANTracker sharedTracker] trackPageview:str withError:&error];
-    
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
-    
-    
+    id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;
+    [tracker set:kGAIScreenName value:str];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 + (void) trackPageViewWithName:(NSString*)pageName
@@ -402,24 +412,38 @@ static Utilities *_kSharedInstance = nil;
 //    if ([kViewNamesDictionary objectForKey:pageName])
 //        pageName = [kViewNamesDictionary objectForKey:pageName];
     
-    NSError *error;
-    [[GANTracker sharedTracker] trackPageview:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil] withError:&error];
-    
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
-    
-    
+    id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;
+    [tracker set:kGAIScreenName value:[NSString stringWithFormat:@"/aaiOS/%@/", pageName, nil]];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 + (void) trackEvent:(NSString*)event action:(NSString*)action label:(NSString*)l
 {
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker send:[[GAIDictionaryBuilder createEventWithCategory:event
+                                                          action:action
+                                                           label:l
+                                                           value:0] build]];
+}
+
+#pragma mark string helper
+
+- (CGSize)frameForText:(NSString*)text sizeWithFont:(UIFont*)font constrainedToSize:(CGSize)size lineBreakMode:(NSLineBreakMode)lineBreakMode
+{
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = lineBreakMode;
     
-    NSError *error;
-    [[GANTracker sharedTracker] trackEvent:event action:action label:l value:0 withError:&error];
-    if (error)
-        DebugLog(@"Page Tracking Error: %@", [error description]);
+    NSDictionary * attributes = @{NSFontAttributeName:font,
+                                  NSParagraphStyleAttributeName:paragraphStyle
+                                  };
     
     
+    CGRect textRect = [text boundingRectWithSize:size
+                                         options:NSStringDrawingUsesLineFragmentOrigin
+                                      attributes:attributes
+                                         context:nil];
+    
+    return textRect.size;
 }
 
 @end

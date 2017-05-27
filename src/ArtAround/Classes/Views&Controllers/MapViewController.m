@@ -19,9 +19,7 @@
 #import "AddArtViewController.h"
 #import "DetailTableControllerViewController.h"
 
-static const int _kAnnotationLimit = 9999;
-
-@interface MapViewController (private)
+@interface MapViewController (private) <CLLocationManagerDelegate>
 -(void)artUpdated;
 -(void)filterButtonTapped;
 -(void)addButtonTapped;
@@ -54,6 +52,7 @@ static const int _kAnnotationLimit = 9999;
         //init found user
         _foundUser = NO;
 		
+        _firstLoad = YES;
     }
     return self;
 }
@@ -123,7 +122,6 @@ static const int _kAnnotationLimit = 9999;
 	[self.mapView.map setDelegate:self];
     [self.mapView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self.view addSubview:self.mapView];
-	[aMapView release];
 
     
 	//default to dc map
@@ -148,6 +146,19 @@ static const int _kAnnotationLimit = 9999;
     
     if ([Utilities is7OrHigher])
         [self setNeedsStatusBarAppearanceUpdate];
+    
+    if ([CLLocationManager locationServicesEnabled]){
+        
+        NSLog(@"Location Services Enabled");
+        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        _locationManager.delegate = self;
+        
+        if ([CLLocationManager authorizationStatus]!=kCLAuthorizationStatusAuthorizedWhenInUse){
+            NSLog(@"requestWhenInUseAuthorization");
+            [_locationManager requestWhenInUseAuthorization];
+        }
+    }
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -170,7 +181,9 @@ static const int _kAnnotationLimit = 9999;
 	[Utilities showLogoView:YES inNavigationBar:self.navigationController.navigationBar];
 
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+    
+    if ([Utilities is7OrHigher])
+        [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 }
 
 
@@ -203,12 +216,7 @@ static const int _kAnnotationLimit = 9999;
 
 - (void)dealloc
 {
-	[_items release];
-	[_annotations release];
 	[self.mapView.map setDelegate:nil];
-	[self setMapView:nil];
-	[self setCallout:nil];
-	[super dealloc];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -250,9 +258,9 @@ static const int _kAnnotationLimit = 9999;
 	//create a top level filter controller and push it to the nav controller
 	FilterViewController *filterController = [[FilterViewController alloc] init];
     [filterController.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+    if ([Utilities is7OrHigher])
+        [filterController.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 	[self.navigationController pushViewController:filterController animated:YES];
-	[filterController release];
 }
 
 - (void)locateButtonTapped
@@ -274,7 +282,7 @@ static const int _kAnnotationLimit = 9999;
 		region.center=location;
 		
 		//zoom/pan the map on the user location
-		[self.mapView.map setRegion:region animated:TRUE];
+		[self.mapView.map setRegion:region animated:YES];
 		[self.mapView.map regionThatFits:region];
 		
 	}
@@ -285,7 +293,6 @@ static const int _kAnnotationLimit = 9999;
 		//show an alert to let them know to hold their horses
 		UIAlertView *locateAlert = [[UIAlertView alloc] initWithTitle:@"Unable To Find You" message:@"There was a problem finding your location. Please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
 		[locateAlert show];
-		[locateAlert release];
 		
 	}
 }
@@ -300,9 +307,8 @@ static const int _kAnnotationLimit = 9999;
 		Art *selectedArt = [_items objectAtIndex:self.callout.tag];
 		
 		//pass it along to a new detail controller and push it the navigation controller
-        DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+        DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt currentLocation:self.mapView.map.userLocation.location];
         [self.navigationController pushViewController:detailController animated:YES];
-        [detailController release];
         
         //track Detail view
         [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"MapView", @"DetailView", selectedArt.title, nil]];
@@ -371,10 +377,7 @@ static const int _kAnnotationLimit = 9999;
 -(void)updateAndShowArt:(Art*)showArt
 {
 	//get art from core data
-	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Art" inManagedObjectContext:[AAAPIManager managedObjectContext]];
-	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-	[fetchRequest setEntity:entity];
-	[fetchRequest setFetchLimit:_kAnnotationLimit];
+	NSFetchRequest *fetchRequest = [Art MR_requestAll];
 	
     //turn the header on or off
     if ([Utilities instance].selectedFilterType == FilterTypeNone && !_showFavorites)
@@ -433,113 +436,143 @@ static const int _kAnnotationLimit = 9999;
         }
 	}
 	
-	//clear out the art and annotation arrays
-	[_mapView.map performSelectorOnMainThread:@selector(removeAnnotations:) withObject:_annotations waitUntilDone:YES];
-	[_annotations removeAllObjects];
-	[_items removeAllObjects];
-	
-	//fetch art
-	//execute fetch request
-	NSError *error = nil;
-	NSArray *queryItems = [[AAAPIManager managedObjectContext] executeFetchRequest:fetchRequest error:&error];
-	[_items addObjectsFromArray:queryItems];
-    
-    CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
-    
-    //sort items by distance
-    for (Art *thisArt in _items) {
-        CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
-        NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
-        [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
-    
-    }
-    
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
-    [_items sortUsingDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
-    
-	
-    //reset the list view
-    [_listViewController setItems:_items];
-    
-	//release fetch request
-	[fetchRequest release];
-	
-	//check for errors
-	if (!_items || error) {
-		return;
-	}
-	
-    //look for prevously added art
-    NSString *artSlug = (showArt) ? [showArt slug] : nil;
-    int annotationIndex = -1;
-    
-    //track minimum and and max lat and long to set the map bounds
-    CLLocationCoordinate2D topLeftCoord;
-    topLeftCoord.latitude = -90;
-    topLeftCoord.longitude = 180;
-    
-    CLLocationCoordinate2D bottomRightCoord;
-    bottomRightCoord.latitude = 90;
-    bottomRightCoord.longitude = -180;
-    
-	//add annotations
-	for (int i = 0; i < [_items count]; i++) {
-		
-		//add the annotation for the art
-		Art *art = [_items objectAtIndex:i];
-		if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
-			
-			//setup the coordinate
-			CLLocationCoordinate2D artLocation;
-			artLocation.latitude = [art.latitude doubleValue];
-			artLocation.longitude = [art.longitude doubleValue];
-			
-			//create an annotation, add it to the map, and store it in the array
-			ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
-			annotation.index = i; //used when tapping the callout accessory button
-			[_annotations addObject:annotation];
-			[annotation release];
+	dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [_mapView.map removeAnnotations:_annotations];
+        [_annotations removeAllObjects];
+        [_items removeAllObjects];
+        
+        //fetch art
+        //execute fetch request
+        NSError *error = nil;
+        NSArray *queryItems = [[NSManagedObjectContext MR_defaultContext] executeFetchRequest:fetchRequest error:&error];
+        [_items addObjectsFromArray:queryItems];
+        
+        CLLocation *currentLoc = [[CLLocation alloc] initWithLatitude:self.mapView.map.userLocation.coordinate.latitude longitude:self.mapView.map.userLocation.coordinate.longitude];
+        
+        //sort items by distance
+        for (Art *thisArt in _items) {
+            CLLocation *thisLoc = [[CLLocation alloc] initWithLatitude:[thisArt.latitude doubleValue] longitude:[thisArt.longitude doubleValue]];
+            NSNumber *thisDist = [NSNumber numberWithDouble:([thisLoc distanceFromLocation:currentLoc] / 1609.3)];
+            [thisArt setDistance:[NSDecimalNumber decimalNumberWithDecimal:[thisDist decimalValue]]];
             
-            //check for min and max lat/lon
-            if (i == 0) {
-                topLeftCoord.longitude = artLocation.longitude;
-                topLeftCoord.latitude = artLocation.latitude;
-                bottomRightCoord.longitude = artLocation.longitude;
-                bottomRightCoord.latitude = artLocation.latitude;
+        }
+        
+        NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
+        [_items sortUsingDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+        
+        
+        //reset the list view
+        [_listViewController setItems:_items];
+        
+        //release fetch request
+        
+        //check for errors
+        if (!_items || error) {
+            return;
+        }
+        
+        //look for prevously added art
+        NSString *artSlug = (showArt) ? [showArt slug] : nil;
+        int annotationIndex = -1;
+        
+        //track minimum and and max lat and long to set the map bounds
+        CLLocationCoordinate2D topLeftCoord;
+        topLeftCoord.latitude = -90;
+        topLeftCoord.longitude = 180;
+        
+        CLLocationCoordinate2D bottomRightCoord;
+        bottomRightCoord.latitude = 90;
+        bottomRightCoord.longitude = -180;
+        
+        //add annotations
+        for (int i = 0; i < [_items count]; i++) {
+            
+            //add the annotation for the art
+            Art *art = [_items objectAtIndex:i];
+            if ([art.latitude doubleValue] && [art.longitude doubleValue]) {
+                
+                //setup the coordinate
+                CLLocationCoordinate2D artLocation;
+                artLocation.latitude = [art.latitude doubleValue];
+                artLocation.longitude = [art.longitude doubleValue];
+                
+                //create an annotation, add it to the map, and store it in the array
+                ArtAnnotation *annotation = [[ArtAnnotation alloc] initWithCoordinate:artLocation title:art.title subtitle:art.artist];
+                annotation.index = i; //used when tapping the callout accessory button
+                [_annotations addObject:annotation];
+                
+                //check for min and max lat/lon
+                if (i == 0) {
+                    topLeftCoord.longitude = artLocation.longitude;
+                    topLeftCoord.latitude = artLocation.latitude;
+                    bottomRightCoord.longitude = artLocation.longitude;
+                    bottomRightCoord.latitude = artLocation.latitude;
+                }
+                else {
+                    
+                    topLeftCoord.longitude = fmin(topLeftCoord.longitude, artLocation.longitude);
+                    topLeftCoord.latitude = fmax(topLeftCoord.latitude, artLocation.latitude);
+                    
+                    bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, artLocation.longitude);
+                    bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, artLocation.latitude);
+                    
+                }
+                
             }
-            else {
-                
-                topLeftCoord.longitude = fmin(topLeftCoord.longitude, artLocation.longitude);
-                topLeftCoord.latitude = fmax(topLeftCoord.latitude, artLocation.latitude);
-                
-                bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, artLocation.longitude);
-                bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, artLocation.latitude);
-                
+            
+            if (art.slug == artSlug)
+                annotationIndex = i;
+            
+        }
+        
+        //add annotations
+        [_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
+        _mapNeedsRefresh = NO;
+        
+        
+        if (_showingMap && annotationIndex != -1) {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
+            NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
+            
+            if (filteredAnnotations.count > 0) {
+                [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]];
+                [Utilities zoomToFitMapAnnotations:_mapView.map];
             }
-			
-		}
-        
-        if (art.slug == artSlug)
-            annotationIndex = i;
-		
-	}
+        }
+    });
     
-	//add annotations
-	[_mapView.map performSelectorOnMainThread:@selector(addAnnotations:) withObject:_annotations waitUntilDone:YES];
-	_mapNeedsRefresh = NO;
-    
-    
-    if (_showingMap && annotationIndex != -1) {
-        
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
-        NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
-        
-        if (filteredAnnotations.count > 0)
-            [self mapView:_mapView.map didSelectAnnotationView:[_mapView.map viewForAnnotation:[filteredAnnotations objectAtIndex:0]]]; 
+    if (!_firstLoad) {
+        //set map region
+        [Utilities zoomToFitMapAnnotations:_mapView.map];
+        _firstLoad = NO;
     }
+}
+
+-(void)showArt:(Art*)showArt {
     
-    //set map region
-    [Utilities zoomToFitMapAnnotations:_mapView.map];
+    if (showArt != nil && showArt.slug != nil) {
+        //look for prevously added art
+        NSString *artSlug = (showArt) ? [showArt slug] : nil;
+        int annotationIndex = -1;
+        for (int i = 0; i < [_items count]; i++) {
+            Art *art = [_items objectAtIndex:i];
+            if (art.slug == artSlug) {
+                annotationIndex = i;
+                break;
+            }
+        }
+        if (_showingMap && annotationIndex != -1) {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.index == %i", annotationIndex];
+            NSArray *filteredAnnotations = [_annotations filteredArrayUsingPredicate:predicate];
+            
+            if (filteredAnnotations.count > 0) {
+                [_mapView.map selectAnnotation:[filteredAnnotations objectAtIndex:0] animated:YES];
+            }
+        }
+    }
 }
 
 #pragma mark - MKMapViewDelegate
@@ -554,7 +587,7 @@ static const int _kAnnotationLimit = 9999;
 	if ([annotation isKindOfClass:[ArtAnnotation class]]) {
 	
 		//setup the annotation view for the annotation
-		int index = [(ArtAnnotation *)annotation index];
+		NSInteger index = [(ArtAnnotation *)annotation index];
 		if ([_items count] > index) {
 			
 			//setup the pin image and reuse identifier
@@ -566,7 +599,7 @@ static const int _kAnnotationLimit = 9999;
             pinImage = [UIImage imageNamed:@"PinArt.png"];
             
 			//setup the annotation view
-			ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier] autorelease];
+			ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
 			[pin setImage:pinImage];
 			[pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
 			[pin setCanShowCallout:NO];
@@ -581,7 +614,7 @@ static const int _kAnnotationLimit = 9999;
 		
 		//center the map on the callout annotation
 		//return the callout annotation view
-		if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+		if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
 			
 			//landscape
 			//exactly center on landscape has the callout off the screen, gotta take an extra step to show it
@@ -624,7 +657,6 @@ static const int _kAnnotationLimit = 9999;
 			[aCallout setMapView:self.mapView.map];			
 			[aCallout.button addTarget:self action:@selector(calloutTapped) forControlEvents:UIControlEventTouchUpInside];
 			[self setCallout:aCallout];
-			[aCallout release];
 			
 		} else {
 			
@@ -670,9 +702,10 @@ static const int _kAnnotationLimit = 9999;
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
    
-    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
+    if (!_foundUser && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse) {
 //        [self.mapView.map setRegion:[self.mapView.map regionThatFits:MKCoordinateRegionMake(userLocation.coordinate, MKCoordinateSpanMake(0.09, 0.09))] animated:YES];
         _foundUser = YES;
+        [_locationManager stopUpdatingLocation];
     }
     
 }
@@ -680,9 +713,8 @@ static const int _kAnnotationLimit = 9999;
 #pragma mark - Listview delegate
 - (void) selectedArt:(Art*)art
 {
-    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art];
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:art currentLocation:self.mapView.map.userLocation.location];
     [self.navigationController pushViewController:detailController animated:YES];
-    [detailController release];
     
     //track Detail view
     [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", art.title, nil]];
@@ -704,9 +736,8 @@ static const int _kAnnotationLimit = 9999;
 //    [detailController release];
     
     //pass it along to a new detail controller and push it the navigation controller
-    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt];
+    DetailTableControllerViewController *detailController = [[DetailTableControllerViewController alloc] initWithStyle:UITableViewStylePlain art:selectedArt currentLocation:self.mapView.map.userLocation.location];
     [self.navigationController pushViewController:detailController animated:YES];    
-    [detailController release];
     
     //track Detail view
     [Utilities trackPageViewWithHierarch:[NSArray arrayWithObjects:@"ListView", @"DetailView", selectedArt.title, nil]];
@@ -730,5 +761,30 @@ static const int _kAnnotationLimit = 9999;
     
 }
 
+#pragma mark - CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    switch (status) {
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusDenied:
+        {
+            // do some error handling
+        }
+            break;
+        default:{
+            [_locationManager startUpdatingLocation];
+        }
+            break;
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    NSLog(@"%@", locations);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"%@", error);
+}
 
 @end

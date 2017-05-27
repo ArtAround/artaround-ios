@@ -1,0 +1,6 @@
+framework module EGOImageLoading {
+  umbrella header "EGOImageLoading-umbrella.h"
+
+  export *
+  module * { export * }
+}

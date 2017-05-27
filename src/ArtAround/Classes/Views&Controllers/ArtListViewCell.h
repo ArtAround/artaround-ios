@@ -12,12 +12,12 @@
 
 @interface ArtListViewCell : UITableViewCell
 
-@property (nonatomic, assign) Art *art;
-@property (retain, nonatomic) IBOutlet UILabel *artNameLabel;
-@property (retain, nonatomic) IBOutlet EGOImageView *artImageView;
-@property (retain, nonatomic) IBOutlet UILabel *artDistanceLabel;
-@property (retain, nonatomic) IBOutlet UILabel *artistLabel;
-@property (retain, nonatomic) IBOutlet UILabel *yearLabel;
+@property (nonatomic, weak) Art *art;
+@property (strong, nonatomic) IBOutlet UILabel *artNameLabel;
+@property (strong, nonatomic) IBOutlet EGOImageView *artImageView;
+@property (strong, nonatomic) IBOutlet UILabel *artDistanceLabel;
+@property (strong, nonatomic) IBOutlet UILabel *artistLabel;
+@property (strong, nonatomic) IBOutlet UILabel *yearLabel;
 
 
 - (void)setArt:(Art *)theArt;

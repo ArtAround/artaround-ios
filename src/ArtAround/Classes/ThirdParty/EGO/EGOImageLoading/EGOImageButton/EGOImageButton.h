@@ -32,7 +32,7 @@
 @private
 	NSURL* imageURL;
 	UIImage* placeholderImage;
-	id<EGOImageButtonDelegate> delegate;
+	id<EGOImageButtonDelegate> __weak delegate;
 }
 
 - (id)initWithPlaceholderImage:(UIImage*)anImage; // delegate:nil
@@ -40,9 +40,9 @@
 
 - (void)cancelImageLoad;
 
-@property(nonatomic,retain) NSURL* imageURL;
-@property(nonatomic,retain) UIImage* placeholderImage;
-@property(nonatomic,assign) id<EGOImageButtonDelegate> delegate;
+@property(nonatomic,strong) NSURL* imageURL;
+@property(nonatomic,strong) UIImage* placeholderImage;
+@property(nonatomic,weak) id<EGOImageButtonDelegate> delegate;
 @end
 
 @protocol EGOImageButtonDelegate<NSObject>

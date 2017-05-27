@@ -66,10 +66,5 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-- (void)dealloc {
-    [flickrHandleImageLabel release];
-    [flickrHandleField release];
-    [super dealloc];
-}
 
 @end

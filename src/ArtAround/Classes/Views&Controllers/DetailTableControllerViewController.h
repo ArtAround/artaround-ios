@@ -14,26 +14,17 @@
 #import "SearchTableViewController.h"
 #import "ArtLocationSelectionViewViewController.h"
 #import "AddCommentViewController.h"
-#import "FBConnect.h"
 #import "ArtAroundAppDelegate.h"
-#import <MessageUI/MessageUI.h>
 
 @class Art;
 
 #define _kAddImageActionSheet 100
-#define _kShareActionSheet 101
 #define _kFlagActionSheet 102
 #define _kLocationActionSheet 103
 #define _kUserAddedImageTagBase 1000
 #define _kAddImageTagBase 2000
 #define _kAddImageButtonTag 3333
 #define kHorizontalPadding 10.0f
-
-typedef enum AAShareType {
-	AAShareTypeEmail = 0,
-    AAShareTypeTwitter = 1,
-	AAShareTypeFacebook = 2
-} AAShareType;
 
 typedef enum _ArtDetailRow {
     ArtDetailRowPhotos = 0,
@@ -52,7 +43,7 @@ typedef enum _ArtDetailRow {
     ArtDetailRowAddComment = 13
 } ArtDetailRow;
 
-@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate, MFMailComposeViewControllerDelegate, FBDialogDelegate>
+@interface DetailTableControllerViewController : UITableViewController <UITextViewDelegate, UITextFieldDelegate, PhotoImageViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, FlickrNameViewControllerDelegate, SearchTableViewDelegate, UIScrollViewDelegate, ArtLocationSelectionViewViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FlagViewControllerDelegate, UINavigationControllerDelegate, MKMapViewDelegate, AddCommentViewControllerDelegate>
 {
     int                     _addedImageCount;
     BOOL                    _inEditMode, _usingPhotoGeotag;
@@ -66,7 +57,6 @@ typedef enum _ArtDetailRow {
     MKMapView*              _mapView;
     NSString*               _yearString, *_locationString;
     CLLocation*             _selectedLocation;
-    Facebook*               _facebook;
     ArtAroundAppDelegate*   _appDelegate;
     
     //inputs
@@ -80,9 +70,11 @@ typedef enum _ArtDetailRow {
     Art*                    _art;
 }
 
-@property (nonatomic, retain) CLLocation *currentLocation;
+@property (nonatomic, strong) ArtLocationSelectionViewViewController *locationController;
+@property (nonatomic, strong) FlickrNameViewController *flickrNameController;
+@property (nonatomic, strong) CLLocation *currentLocation;
 
-- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt;
+- (id)initWithStyle:(UITableViewStyle)style art:(Art*)thisArt currentLocation:(CLLocation*)newLocation;
 
 
 @end

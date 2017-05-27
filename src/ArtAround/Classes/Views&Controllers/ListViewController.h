@@ -20,9 +20,9 @@
     id <ListViewControllerDelegate> delegate;
 }
 
-@property (nonatomic, retain) UIButton *addArtButton, *filterButton;
-@property (nonatomic, retain) ArtListViewCell *customCell;
-@property (nonatomic, retain) id <ListViewControllerDelegate> delegate;
+@property (nonatomic, strong) UIButton *addArtButton, *filterButton;
+@property (nonatomic, strong) ArtListViewCell *customCell;
+@property (nonatomic, strong) id <ListViewControllerDelegate> delegate;
 
 - (id) initWithStyle:(UITableViewStyle)style items:(NSMutableArray*)items;
 - (void) setItems:(NSMutableArray*)items;

@@ -13,28 +13,28 @@
 
 @interface Art : NSManagedObject
 
-@property (nonatomic, retain) NSString * artDescription;
-@property (nonatomic, retain) NSString * artist;
-@property (nonatomic, retain) NSString * commissionedBy;
-@property (nonatomic, retain) NSNumber * commissioned;
-@property (nonatomic, retain) NSDate * createdAt;
-@property (nonatomic, retain) NSDecimalNumber * distance;
-@property (nonatomic, retain) NSNumber * favorite;
-@property (nonatomic, retain) NSDecimalNumber * latitude;
-@property (nonatomic, retain) NSString * locationDescription;
-@property (nonatomic, retain) NSDecimalNumber * longitude;
-@property (nonatomic, retain) NSNumber * rank;
-@property (nonatomic, retain) NSString * slug;
-@property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSString * website;
-@property (nonatomic, retain) NSNumber * ward;
-@property (nonatomic, retain) NSNumber * year;
-@property (nonatomic, retain) NSString * commissionedByLink;
-@property (nonatomic, retain) NSSet *categories;
-@property (nonatomic, retain) NSSet *comments;
-@property (nonatomic, retain) Event *event;
-@property (nonatomic, retain) Neighborhood *neighborhood;
-@property (nonatomic, retain) NSSet *photos;
+@property (nonatomic, strong) NSString * artDescription;
+@property (nonatomic, strong) NSString * artist;
+@property (nonatomic, strong) NSString * commissionedBy;
+@property (nonatomic, strong) NSNumber * commissioned;
+@property (nonatomic, strong) NSDate * createdAt;
+@property (nonatomic, strong) NSDecimalNumber * distance;
+@property (nonatomic, strong) NSNumber * favorite;
+@property (nonatomic, strong) NSDecimalNumber * latitude;
+@property (nonatomic, strong) NSString * locationDescription;
+@property (nonatomic, strong) NSDecimalNumber * longitude;
+@property (nonatomic, strong) NSNumber * rank;
+@property (nonatomic, strong) NSString * slug;
+@property (nonatomic, strong) NSString * title;
+@property (nonatomic, strong) NSString * website;
+@property (nonatomic, strong) NSNumber * ward;
+@property (nonatomic, strong) NSNumber * year;
+@property (nonatomic, strong) NSString * commissionedByLink;
+@property (nonatomic, strong) NSSet *categories;
+@property (nonatomic, strong) NSSet *comments;
+@property (nonatomic, strong) Event *event;
+@property (nonatomic, strong) Neighborhood *neighborhood;
+@property (nonatomic, strong) NSSet *photos;
 @end
 
 @interface Art (CoreDataGeneratedAccessors)

@@ -9,13 +9,14 @@
 #import "SearchTableViewController.h"
 #import "SearchItem.h"
 
-@interface SearchTableViewController ()
+@interface SearchTableViewController () <UISearchResultsUpdating>
+@property (strong, nonatomic) UISearchController *searchController;
 -(void)filterContentForSearchText:(NSString*)searchText;
 - (BOOL) items:(NSArray*)items containsItem:(NSObject*)item;
 @end
 
 @implementation SearchTableViewController
-@synthesize searchBar;
+@synthesize searchController = _searchController;
 @synthesize searchItems = _searchItems, filteredSearchItems = _filteredSearchItems, selectedItems = _selectedItems;
 @synthesize multiSelectionEnabled = _multiSelectionEnabled, creationEnabled = _creationEnabled;
 @synthesize delegate;
@@ -31,6 +32,9 @@
         _createdItems = [[NSMutableArray alloc] init];
         _creationEnabled = YES;
         _itemName = @"category";
+        _searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+        _searchController.searchResultsUpdater = self;
+        _searchController.dimsBackgroundDuringPresentation = NO;
     }
     return self;
 }
@@ -38,7 +42,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     //add the save button if there's no back button
     if (!self.navigationItem.backBarButtonItem) {
         
@@ -64,6 +68,10 @@
         
         self.navigationItem.rightBarButtonItem = saveButtonItem;
     }
+    
+    self.tableView.tableHeaderView = _searchController.searchBar;
+    
+    self.navigationController.extendedLayoutIncludesOpaqueBars = !self.navigationController.navigationBar.translucent;
 }
 
 - (void)didReceiveMemoryWarning
@@ -166,7 +174,7 @@
         itemTitle = [(SearchItem*)item title];
     }
     
-    int index = -1;
+    NSUInteger index = -1;
     for (NSObject *thisItem in _selectedItems) {
         
         //String
@@ -216,9 +224,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
-    // Return the number of rows in the section.
-    return (tableView == self.searchDisplayController.searchResultsTableView) ? _filteredSearchItems.count : _searchItems.count;
+    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        return _filteredSearchItems.count;
+    } else {
+        return _searchItems.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -226,11 +236,15 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-    // Configure the cell...
-    NSObject *thisItem = (tableView == self.searchDisplayController.searchResultsTableView) ? [_filteredSearchItems objectAtIndex:indexPath.row] : [_searchItems  objectAtIndex:indexPath.row];
+    NSObject *thisItem = nil;
+    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        thisItem = [_filteredSearchItems objectAtIndex:indexPath.row];
+    } else {
+        thisItem = [_searchItems  objectAtIndex:indexPath.row];
+    }
     
     if ([thisItem isKindOfClass:[SearchItem class]]) {
         [cell.textLabel setText:[(SearchItem*)thisItem title]];
@@ -301,7 +315,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    SearchItem *thisItem = (tableView == self.searchDisplayController.searchResultsTableView) ? [_filteredSearchItems objectAtIndex:indexPath.row] : [_searchItems  objectAtIndex:indexPath.row];
+    SearchItem *thisItem = nil;
+    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        thisItem = [_filteredSearchItems objectAtIndex:indexPath.row];
+    } else {
+        thisItem = [_searchItems  objectAtIndex:indexPath.row];
+    }
     
     //is the selected row an "add" row?
     NSRange createRange = [thisItem.title rangeOfString:@"Create \""];
@@ -325,9 +344,9 @@
         }
         
         //remove search results
-        [self.searchBar setText:@""];
-        [self.searchBar resignFirstResponder];
-        [self.searchDisplayController setActive:NO animated:YES];
+        [self.searchController.searchBar setText:@""];
+        [self.searchController.searchBar resignFirstResponder];
+        [self.searchController setActive:NO];
         [self.tableView reloadData];
         
         return;
@@ -356,25 +375,12 @@
     
 }
 
-- (void)dealloc {
-    [searchBar release];
-    [super dealloc];
-}
-- (void)viewDidUnload {
-    [self setSearchBar:nil];
-    [super viewDidUnload];
-}
+#pragma mark - UISearchResultsUpdating
 
-#pragma mark - UISearchDisplayController Delegate Methods
--(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
-    // Tells the table data source to reload when text changes
-    [self filterContentForSearchText:searchString];
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
-
-- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {
+    NSString *searchString = searchController.searchBar.text;
+    [self filterContentForSearchText:searchString];
     [self.tableView reloadData];
 }
 

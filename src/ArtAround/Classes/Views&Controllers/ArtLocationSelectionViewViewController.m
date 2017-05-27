@@ -10,6 +10,8 @@
 #import "ArtAnnotationView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define CLCOORDINATES_EQUAL( coord1, coord2 ) (coord1.latitude == coord2.latitude && coord1.longitude == coord2.longitude)
+
 @interface ArtLocationSelectionViewViewController ()
 - (void) doneButonPressed;
 - (void) currentLocationButonPressed;
@@ -23,7 +25,7 @@
 @synthesize mapView;
 @synthesize locationLabel;
 @synthesize delegate;
-@synthesize location, geotagLocation;
+@synthesize location = _location, geotagLocation;
 @synthesize selection = _selection;
 @synthesize selectedLocation = _selectedLocation;
 
@@ -50,7 +52,8 @@
         self.selection = selectedLocation;
         self.geotagLocation = newGeotagLocation;
         [self.currentLocationButton setSelected:YES];
-        self.location = [[CLLocation alloc] initWithLatitude:newLocation.coordinate.latitude longitude:newLocation.coordinate.longitude];
+        CLLocation *loc = [[CLLocation alloc] initWithLatitude:newLocation.coordinate.latitude longitude:newLocation.coordinate.longitude];
+        self.location = loc;
         
         //set delegate
         self.delegate = myDelegate;
@@ -76,7 +79,8 @@
     [self.locationLabel.layer setShadowColor:[UIColor blackColor].CGColor];
     
     if (self.geotagLocation) {
-        self.geotagLocation = [[CLLocation alloc] initWithLatitude:geotagLocation.coordinate.latitude longitude:geotagLocation.coordinate.longitude];
+        CLLocation *geoLoc  = [[CLLocation alloc] initWithLatitude:geotagLocation.coordinate.latitude longitude:geotagLocation.coordinate.longitude];
+        self.geotagLocation = geoLoc;
         
         //enable/disable geotag button
         [self.geotagButton setEnabled:YES];
@@ -118,14 +122,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [currentLocationButton release];
-    [geotagButton release];
-    [doneButton release];
-    [mapView release];
-    [locationLabel release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setCurrentLocationButton:nil];
     [self setGeotagButton:nil];
@@ -245,7 +241,10 @@
             break;
     }
     
-    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    if (CLLocationCoordinate2DIsValid(self.mapView.region.center) && !CLCOORDINATES_EQUAL(CLLocationCoordinate2DMake(0, 0), self.mapView.region.center)) {
+        CLLocation *selectedLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+        _selectedLocation = selectedLoc;
+    }
     
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];
@@ -300,7 +299,7 @@
 	
 	if ([annotation isKindOfClass:[ArtAnnotation class]]) {
         
-        ArtAnnotationView *pin = [[[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil] autorelease];
+        ArtAnnotationView *pin = [[ArtAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
         [pin setImage:[UIImage imageNamed:@"PinArt.png"]];
         [pin setRightCalloutAccessoryView:[UIButton buttonWithType:UIButtonTypeDetailDisclosure]];
         [pin setCanShowCallout:NO];
@@ -316,8 +315,8 @@
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
-    
-    _selectedLocation = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    CLLocation *selLoc = [[CLLocation alloc] initWithLatitude:self.mapView.region.center.latitude longitude:self.mapView.region.center.longitude];
+    _selectedLocation = selLoc;
     
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:_selectedLocation.coordinate.latitude longitude:_selectedLocation.coordinate.longitude];

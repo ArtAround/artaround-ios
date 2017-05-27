@@ -7,7 +7,7 @@
 //
 
 #import "AddArtViewController.h"
-#import "EGOImageButton.h"
+#import "PhotoImageButton.h"
 #import "Photo.h"
 #import "PhotoImageView.h"
 #import "Art.h"
@@ -17,7 +17,8 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "Utilities.h"
 #import "SearchItem.h"
-#import "ArtParser.h"
+#import "Category.h"
+#import "Comment.h"
 
 @interface AddArtViewController ()
 - (void) buttonPressed:(id)sender;
@@ -82,7 +83,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+     
     //set scroll view content frame
     float bottomY = self.submitButton.frame.origin.y + self.submitButton.frame.size.height + 10.0f;
     CGSize contentSize = CGSizeMake(self.view.frame.size.width, bottomY);
@@ -127,21 +128,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [photosScrollView release];
-    [locationButton release];
-    [artistTextField release];
-    [titleTextField release];
-    [categoryButton release];
-    [descriptionTextView release];
-    [descriptionTextView release];
-    [dateButton release];
-    [locationDescriptionTextView release];
-    [urlTextField release];
-    [_scrollView release];
-    [_commissionedByButton release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setPhotosScrollView:nil];
     [self setLocationButton:nil];
@@ -260,16 +246,16 @@
 - (void) locationButtonPressed
 {
     
-    ArtLocationSelectionViewViewController *locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
+    _locationController = [[ArtLocationSelectionViewViewController alloc] initWithNibName:@"ArtLocationSelectionViewViewController" bundle:[NSBundle mainBundle] geotagLocation:(_imageLocation != nil) ? _imageLocation : nil delegate:self currentLocationSelection:LocationSelectionUserLocation currentLocation:_currentLocation];
 
-    [self.navigationController pushViewController:locationController animated:YES];
+    [self.navigationController pushViewController:_locationController animated:YES];
     
     if (_selectedLocation) {
-        [locationController setSelectedLocation:_selectedLocation];
-        [locationController setSelection:LocationSelectionManualLocation];
+        [_locationController setSelectedLocation:_selectedLocation];
+        [_locationController setSelection:LocationSelectionManualLocation];
     }
     else
-        [locationController setSelectedLocation:_currentLocation];
+        [_locationController setSelectedLocation:_currentLocation];
     
     
 }
@@ -284,6 +270,7 @@
     [datePicker setDelegate:self];
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(buttonPressed:)];
+    [doneButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
     UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIToolbar *dateToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44.0f)];
     [dateToolbar setBackgroundColor:[UIColor colorWithRed:67.0f/255.0f green:67.0f/255.0f blue:61.0f/255.0f alpha:1.0f]];
@@ -379,7 +366,7 @@
 
 - (void) artButtonPressed:(id)sender
 {
-    EGOImageButton *button = (EGOImageButton*)sender;
+    PhotoImageButton *button = (PhotoImageButton*)sender;
     
     NSArray *keys = [_userAddedImagesAttribution allKeys];
     NSDictionary *attDict = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:(button.tag - _kUserAddedImageTagBase)]];
@@ -412,8 +399,6 @@
     
     [self.navigationController pushViewController:viewController animated:YES];
     DebugLog(@"Button Origin: %f", imgView.photoAttributionButton.frame.origin.y);
-    [imgView release];
-    [viewController release];
     
     
     
@@ -423,7 +408,7 @@
 - (void) photoDeleteButtonPressed:(id)sender
 {
     UIButton *button = (UIButton*)sender;
-    int buttonTag = button.tag;
+    NSInteger buttonTag = button.tag;
     
     [_userAddedImages removeObjectAtIndex:(buttonTag - _kUserAddedImageTagBase)];
     
@@ -465,7 +450,7 @@
     [_userAddedImages addObject:image];
     
     NSDictionary *attDict = [[NSDictionary alloc] initWithObjectsAndKeys:text, @"text", url, @"website", nil];
-    [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithInt:_userAddedImages.count] stringValue]];
+    [_userAddedImagesAttribution setObject:attDict forKey:[[NSNumber numberWithUnsignedLong:_userAddedImages.count] stringValue]];
     
     //reload the images to show the new image
     [self setupImages];
@@ -478,8 +463,8 @@
 	//update the url for each image view that doesn't have one yet
 	//this method may be called multiple times as the flickr api returns info on each photo
     //insert the add button at the end of the scroll view
-	EGOImageButton *prevView = nil;
-	int totalPhotos = _userAddedImages.count;
+	PhotoImageButton *prevView = nil;
+	NSUInteger totalPhotos = _userAddedImages.count;
 	int photoCount = 0;
     
     for (UIImage *thisUserImage in _userAddedImages) {
@@ -494,7 +479,7 @@
 		} else {
 			
 			//adjust the initial offset based on the total number of photos
-			BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+			BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
 			if (isPortrait) {
 				prevOffset = _kPhotoInitialPaddingPortait;
 			} else {
@@ -519,11 +504,11 @@
 		}
 		
 		//grab existing or create new image view
-		EGOImageButton *imageView = (EGOImageButton *)[self.photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
+		PhotoImageButton *imageView = (PhotoImageButton *)[self.photosScrollView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
         UIButton *deleteButton = (UIButton*)[imageView viewWithTag:(_kUserAddedImageTagBase + [_userAddedImages indexOfObject:thisUserImage])];
         
 		if (!imageView) {
-			imageView = [[EGOImageButton alloc] initWithPlaceholderImage:nil];
+			imageView = [[PhotoImageButton alloc] initWithPlaceholderImage:nil];
 			[imageView setClipsToBounds:YES];
 			[imageView.imageView setContentMode:UIViewContentModeScaleAspectFill];
             [imageView setImage:thisUserImage forState:UIControlStateNormal];
@@ -577,7 +562,7 @@
     } else {
         
         //adjust the initial offset based on the total number of photos
-        BOOL isPortrait = (UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+        BOOL isPortrait = (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]));
         if (isPortrait) {
             prevOffset = _kPhotoInitialPaddingPortait;
         } else {
@@ -624,9 +609,9 @@
     
         //set the location
         if (_selectedLocation)
-            [_newArtDictionary setObject:_selectedLocation forKey:@"location[]"];
+            [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:_selectedLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:_selectedLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
         else
-            [_newArtDictionary setObject:self.currentLocation forKey:@"location[]"];
+            [_newArtDictionary setObject:[NSArray arrayWithObjects:[[NSNumber numberWithDouble:self.currentLocation.coordinate.latitude] stringValue], [[NSNumber numberWithDouble:self.currentLocation.coordinate.longitude] stringValue], nil] forKey:@"location"];
         
         //make sure strings are url encoded
         [_newArtDictionary setObject:[Utilities urlEncode:[_newArtDictionary objectForKey:@"title"]] forKey:@"title"];
@@ -694,33 +679,92 @@
             if ([[_newArtDictionary objectForKey:thisKey] isKindOfClass:[NSString class]])
                 [_newArtDictionary setValue:[Utilities urlDecode:[_newArtDictionary objectForKey:thisKey]] forKey:thisKey];
         }
+        if ([_newArtDictionary objectForKey:@"commissioned_by"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"commissioned_by"] forKey:@"commissionedBy"];
+        }
+        if ([_newArtDictionary objectForKey:@"description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"description"] forKey:@"artDescription"];
+        }
+        [_newArtDictionary removeObjectForKey:@"description"];
+        if ([_newArtDictionary objectForKey:@"location_description"] != nil) {
+            [_newArtDictionary setObject:[_newArtDictionary objectForKey:@"location_description"] forKey:@"locationDescription"];
+        }
         
-        [[AAAPIManager managedObjectContext] lock];
-        _art = [[ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]] retain];
-        [[AAAPIManager managedObjectContext] unlock];
+        //if there are user added images upload them
+        NSArray *keys = [_userAddedImagesAttribution allKeys];
+        for (int index = 0; index < _userAddedImages.count; index++) {
+            
+            UIImage *thisImage = [_userAddedImages objectAtIndex:index];
+            NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
+            
+            [[AAAPIManager instance] uploadImage:thisImage forSlug:[_newArtDictionary valueForKey:@"slug"] withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"website"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
+        }
+        
+        //TODO: Test this!!
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:_newArtDictionary inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[_newArtDictionary objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[_newArtDictionary objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [_newArtDictionary objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[_newArtDictionary objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[_newArtDictionary objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[_newArtDictionary objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[_newArtDictionary objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[_newArtDictionary objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
+        
+        
+//        [[AAAPIManager managedObjectContext] lock];
+//        _art = [ArtParser artForDict:_newArtDictionary inContext:[AAAPIManager managedObjectContext]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
-        [(id)[[UIApplication sharedApplication] delegate] saveContext];
+        //[[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [(id)[[UIApplication sharedApplication] delegate] saveContext];
         
     }
     else {
         [self artUploadFailed:responseDict];
         return;
     }
-    
-    
-    //if there are user added images upload them
-    NSArray *keys = [_userAddedImagesAttribution allKeys];
-    for (int index = 0; index < _userAddedImages.count; index++) {
-        
-        UIImage *thisImage = [_userAddedImages objectAtIndex:index];
-        NSDictionary *thisAttribution = [_userAddedImagesAttribution objectForKey:[keys objectAtIndex:index]];
-        
-        [[AAAPIManager instance] uploadImage:thisImage forSlug:self.art.slug withFlickrHandle:[thisAttribution objectForKey:@"text"] withPhotoAttributionURL:[thisAttribution objectForKey:@"website"] withTarget:self callback:@selector(photoUploadCompleted:) failCallback:@selector(photoUploadFailed:)];
-    }
-
-    
 }
 
 - (void)artUploadFailed:(NSDictionary*)responseDict
@@ -731,7 +775,6 @@
     //show fail alert
     UIAlertView *failedAlertView = [[UIAlertView alloc] initWithTitle:@"Upload Failed" message:@"The upload failed. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [failedAlertView show];
-    [failedAlertView release];
 }
 
 #pragma mark - Photo Upload Callback Methods
@@ -758,15 +801,65 @@
 - (void)photoUploadCompleted:(NSDictionary*)responseDict
 {
     if ([responseDict objectForKey:@"slug"]) {
+  
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            [Art MR_importFromObject:responseDict inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            
+            
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                
+                Art *artRecord = [Art MR_findFirstByAttribute:@"artID" withValue:[responseDict objectForKey:@"slug"] inContext:localContext];
+                
+                //add categories
+                if ([[responseDict objectForKey:@"category"] isKindOfClass:[NSArray class]]) {
+                    
+                    for (NSString *thisCatTitle in [responseDict objectForKey:@"category"]) {
+                        
+                        Category *catObject = [Category MR_findFirstByAttribute:@"categoryID" withValue:thisCatTitle];
+                        if (catObject) {
+                            [artRecord addCategoriesObject:catObject];
+                        }
+                        
+                    }
+                    
+                }
+                
+                //add photos
+                if ([[responseDict objectForKey:@"photos"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *photoObjects = [Photo MR_importFromArray:[responseDict objectForKey:@"photos"] inContext:localContext];
+                    NSSet *photosSet = [[NSSet alloc] initWithArray:photoObjects];
+                    [artRecord addPhotos:photosSet];
+                    
+                    
+                }
+                
+                //add comments
+                if ([[responseDict objectForKey:@"comments"] isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *commentObjects = [Comment MR_importFromArray:[responseDict objectForKey:@"comments"] inContext:localContext];
+                    NSSet *commentSet = [[NSSet alloc] initWithArray:commentObjects];
+                    [artRecord addComments:commentSet];
+                    
+                    
+                }
+                
+            } completion:^(BOOL success, NSError *error) {
+                _art = [Art MR_findFirstByAttribute:@"slug" withValue:[responseDict objectForKey:@"slug"]];
+            }];
+            
+            
+        }];
         
         //parse the art object returned and update this controller instance's art
-        [[AAAPIManager managedObjectContext] lock];
+//        [[AAAPIManager managedObjectContext] lock];
         //_art = [[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain];
-        [self setArt:[[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]] retain]];
-        [[AAAPIManager managedObjectContext] unlock];
+//        [self setArt:[ArtParser artForDict:responseDict inContext:[AAAPIManager managedObjectContext]]];
+//        [[AAAPIManager managedObjectContext] unlock];
         
         //merge context
-        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
+//        [[AAAPIManager instance] performSelectorOnMainThread:@selector(mergeChanges:) withObject:[NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:[AAAPIManager managedObjectContext]] waitUntilDone:YES];
     }
     else {
         [self photoUploadFailed:responseDict];
@@ -782,18 +875,24 @@
         //dismiss the alert view
         [_loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
         
-        //reload the map view so the updated/new art is there
-        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
-        [appDelegate saveContext];
-        
-        
         [self.navigationController popViewControllerAnimated:YES];
         
-        if (self.art)
-            [appDelegate.mapViewController updateAndShowArt:self.art];
-        else
-            [appDelegate.mapViewController updateArt];
-
+        ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+        [appDelegate.mapViewController updateArt];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artwork Uploaded" message:@"Your artwork was uploaded successfully!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //reload the map view so the updated/new art is there
+                ArtAroundAppDelegate *appDelegate = (id)[[UIApplication sharedApplication] delegate];
+                //        [appDelegate saveContext];
+                
+                [appDelegate.mapViewController showArt:self.art];
+            });
+        });
         
         //clear the user added images array
         [_userAddedImages removeAllObjects];
@@ -827,7 +926,6 @@
         indicator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [indicator startAnimating];
         [_loadingAlertView addSubview:indicator];
-        [indicator release];
     }
     
     [_loadingAlertView setTitle:msg];
@@ -984,7 +1082,6 @@
     UIActionSheet *imgSheet = [[UIActionSheet alloc] initWithTitle:@"Upload Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"Camera roll", nil];
     [imgSheet setTag:_kAddImageActionSheet];
     [imgSheet showInView:self.view];
-    [imgSheet release];
     
 }
 
@@ -1005,7 +1102,9 @@
                     imgPicker.delegate = self;
                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     imgPicker.cameraFlashMode = ([Utilities instance].flashMode) ? [[Utilities instance].flashMode integerValue] : UIImagePickerControllerCameraFlashModeAuto;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 case 1:
@@ -1013,7 +1112,9 @@
                     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
                     imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
                     imgPicker.delegate = self;
-                    [self presentModalViewController:imgPicker animated:YES];
+                    [self presentViewController:imgPicker animated:YES completion:^{
+                        
+                    }];
                     break;
                 }
                 default:
@@ -1052,9 +1153,11 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
 
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1064,16 +1167,17 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        //save flash mode in case it changed
+        NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+        [[Utilities instance] setFlashMode:flashMode];
+    }
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
         
         // Get the image from the result
-        UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
+        UIImage* image = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
         
         NSMutableDictionary *newInfo = [[NSMutableDictionary alloc] initWithDictionary:info];
         [newInfo setObject:_currentLocation forKey:ALAssetPropertyLocation];
@@ -1102,7 +1206,7 @@
                               //check for location
                               if ([asset valueForProperty:ALAssetPropertyLocation]) {
                                   
-                                  _imageLocation = [[asset valueForProperty:ALAssetPropertyLocation] retain];
+                                  _imageLocation = [asset valueForProperty:ALAssetPropertyLocation];
                                   
                               }
                               else {
@@ -1129,12 +1233,12 @@
         }
         else {  //if this is the first upload then prompt for their flickr handle
             
-            FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
-            [flickrNameController setImage:image];
-            flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-            flickrNameController.delegate = self;
+            _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlickrNameViewController" bundle:[NSBundle mainBundle]];
+            [_flickrNameController setImage:image];
+            _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+            _flickrNameController.delegate = self;
             
-            [self.view addSubview:flickrNameController.view];
+            [self.view addSubview:_flickrNameController.view];
             [self.navigationItem.backBarButtonItem setEnabled:NO];
             [self.navigationItem.rightBarButtonItem setEnabled:NO];
             
@@ -1160,12 +1264,12 @@
         }
         else {  //if this is the first upload then prompt for their flickr handle
             
-            FlickrNameViewController *flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
-            [flickrNameController setImage:image];
-            flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
-            flickrNameController.delegate = self;
+            _flickrNameController = [[FlickrNameViewController alloc] initWithNibName:@"FlagViewController" bundle:[NSBundle mainBundle]];
+            [_flickrNameController setImage:image];
+            _flickrNameController.view.autoresizingMask = UIViewAutoresizingNone;
+            _flickrNameController.delegate = self;
             
-            [self.view addSubview:flickrNameController.view];
+            [self.view addSubview:_flickrNameController.view];
             [self.navigationItem.backBarButtonItem setEnabled:NO];   
             [self.navigationItem.rightBarButtonItem setEnabled:NO];
             
@@ -1399,7 +1503,7 @@
 {
     NSString *title = @"";
     
-    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:_currentYear-row];
     title = [yearNumber stringValue];
     
     return title;
@@ -1408,7 +1512,7 @@
 #pragma mark - Picker View Delegate
 - (void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    NSNumber *yearNumber = [NSNumber numberWithInt:_currentYear-row];
+    NSNumber *yearNumber = [NSNumber numberWithUnsignedLong:_currentYear-row];
     _yearString = [[NSString alloc] initWithString:[yearNumber stringValue]];
     [self.dateButton setTitle:_yearString forState:UIControlStateNormal];
     

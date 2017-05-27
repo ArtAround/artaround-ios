@@ -58,8 +58,4 @@
     [self.delegate flagViewControllerPressedSubmit:self];    
 }
 
-- (void)dealloc {
-    [flagDescriptionTextview release];
-    [super dealloc];
-}
 @end

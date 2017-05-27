@@ -10,19 +10,19 @@
 #import <MapKit/MapKit.h>
 @class Art;
 @class ArtAnnotationView;
-@class EGOImageView;
+@class PhotoImageView;
 
 @interface CalloutAnnotationView : MKAnnotationView <MKAnnotation> 
 
-@property (nonatomic, assign) Art *art;
-@property (nonatomic, assign) ArtAnnotationView *parentAnnotationView;
+@property (nonatomic, weak) Art *art;
+@property (nonatomic, weak) ArtAnnotationView *parentAnnotationView;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
-@property (nonatomic, retain) MKMapView *mapView;
-@property (nonatomic, retain) UIButton *button;
-@property (nonatomic, retain) EGOImageView *imageView;
-@property (nonatomic, retain) UILabel *titleLabel;
-@property (nonatomic, retain) UILabel *artistLabel;
-@property (nonatomic, retain) UILabel *summaryLabel;
+@property (nonatomic, strong) MKMapView *mapView;
+@property (nonatomic, strong) UIButton *button;
+@property (nonatomic, strong) PhotoImageView *imageView;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *artistLabel;
+@property (nonatomic, strong) UILabel *summaryLabel;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)theCoordinate frame:(CGRect)frame;
 
