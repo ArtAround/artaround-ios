@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Category, Comment, Event, Neighborhood, Photo;
+@class Category, Comment, Event, Neighborhood, Photo,Tag;
 
 @interface Art : NSManagedObject
 
@@ -35,6 +35,7 @@
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) Neighborhood *neighborhood;
 @property (nonatomic, retain) NSSet *photos;
+@property (nonatomic, retain) NSSet *tags;
 @end
 
 @interface Art (CoreDataGeneratedAccessors)
@@ -54,7 +55,14 @@
 - (void)addPhotos:(NSSet *)values;
 - (void)removePhotos:(NSSet *)values;
 
+- (void)addTagsObject:(Tag *)value;
+- (void)removeTagsObject:(Tag *)value;
+- (void)addTags:(NSSet *)values;
+- (void)removeTags:(NSSet *)values;
+
 - (NSString*)categoriesString;
+- (NSString*)tagString;
+
 
 
 @end

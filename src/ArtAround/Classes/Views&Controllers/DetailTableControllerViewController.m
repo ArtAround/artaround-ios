@@ -554,7 +554,8 @@ static const float _kRowBufffer = 20.0f;
     
     //set the photo attribution if they exist
     if (thisPhoto.photoAttribution) {
-        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@", thisPhoto.photoAttribution]];
+         [self createddate];
+        [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:[NSString stringWithFormat:@"Photo by %@, Posted %@", thisPhoto.photoAttribution,string1]];
     }
     else {
         [(UILabel*)[imgView.photoAttributionButton viewWithTag:kAttributionButtonLabelTag] setText:@"Photo by anonymous user"];
@@ -573,6 +574,53 @@ static const float _kRowBufffer = 20.0f;
     [viewController release];
     
     [Utilities trackEvent:@"PhotoViewOpened" action:@"PhotoView" label:_art.title];
+}
+-(void)createddate
+{
+    NSUserDefaults *defualt = [NSUserDefaults standardUserDefaults];
+    NSString *userid =[defualt valueForKey:@"userid"];
+    
+    NSLog(@"userid %@",userid);
+    
+    
+    NSString * url =@"http://theartaround.us/api/v1/arts/";
+    
+    NSString *combine_url =[NSString stringWithFormat:@"%@%@",url,userid];
+    
+    NSURL *request = [NSURL URLWithString:combine_url];
+    
+    NSData *jsondata =[NSData dataWithContentsOfURL:request];
+    
+    
+    id jsonobject =[NSJSONSerialization JSONObjectWithData:jsondata options:NSJSONReadingMutableContainers error:nil];
+    
+    NSString * updatedString =[[jsonobject valueForKey:@"art"]valueForKey:@"updated_at"];
+    
+    if (updatedString.length!=0) {
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+        NSDate *date = [dateFormatter dateFromString:updatedString];
+        // NSTimeZone *pdt = [NSTimeZone timeZoneWithAbbreviation:@"PDT"];
+        // [dateFormatter setTimeZone:pdt];
+        [dateFormatter setDateFormat:@"MM/yyyy"];
+        // [dateFormatter setDateFormat:@"K:mm a, z"];
+        string1 = [dateFormatter stringFromDate:date];
+        
+    }
+    else
+    {
+        NSString * updatedString =[[jsonobject valueForKey:@"art"]valueForKey:@"created_at"];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+        NSDate *date = [dateFormatter dateFromString:updatedString];
+        // NSTimeZone *pdt = [NSTimeZone timeZoneWithAbbreviation:@"PDT"];
+        // [dateFormatter setTimeZone:pdt];
+        [dateFormatter setDateFormat:@"MM/yyyy"];
+        // [dateFormatter setDateFormat:@"K:mm a, z"];
+        string1 = [dateFormatter stringFromDate:date];
+    }
+    
+    
 }
 
 - (void)addImageButtonTapped
@@ -695,7 +743,7 @@ static const float _kRowBufffer = 20.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 14;
+    return 15;
 }
 
 - (UITableViewCell*)cellForRow:(ArtDetailRow)row
@@ -727,6 +775,7 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowLocationType:
             case ArtDetailRowLink:
             case ArtDetailRowCategory:
+            case ArtDetailRowTag:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
                 cell.detailTextLabel.numberOfLines = 0;
@@ -741,14 +790,47 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowDescription:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-                cell.textLabel.numberOfLines = 1;
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
-                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
-                cell.detailTextLabel.layer.backgroundColor = [UIColor whiteColor].CGColor;
-                cell.detailTextLabel.numberOfLines = 0;
-                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
-                cell.detailTextLabel.textColor = [UIColor blackColor];
+                CGFloat height;
+                  if ([_art.artDescription length] > 0) {
+                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
+                     CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
+                     height += 30.0f;
+                    }
+                else
+                {
+                    height=0.0f;
+                }
+//                cell.textLabel.numberOfLines = 1;
+//                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+//                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                slogan= [[UILabel alloc] initWithFrame:CGRectMake(0,0,50,30)];
+                slogan.numberOfLines = 1;
+                slogan.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+                slogan.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+                slogan.textAlignment=UITextAlignmentCenter;
+              //  slogan.font= [UIFont boldSystemFontOfSize:20];
+                slogan.backgroundColor=[UIColor clearColor];
+                [cell.contentView addSubview:slogan];
+//                cell.textLabel.numberOfLines = 1;
+//                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:13.0f];
+//                cell.textLabel.textColor = [UIColor colorWithWhite:0.35 alpha:1.0f];
+
+//                cell.detailTextLabel.layer.backgroundColor = [UIColor whiteColor].CGColor;
+//                cell.detailTextLabel.numberOfLines = 0;
+//                cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f];
+//                cell.detailTextLabel.textColor = [UIColor blackColor];
+//                NSString *string = _art.artDescription;
                 
+               
+                textV=[[UITextView alloc]initWithFrame:CGRectMake(50, 0,250, height)];
+                textV.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:15.0f];
+                textV.textColor=[UIColor blackColor];
+                textV.editable=NO;
+                textV.dataDetectorTypes=UIDataDetectorTypeAll;
+                textV.delegate=self;
+                [cell.contentView addSubview:textV];
+
                 break;
             }
             case ArtDetailRowLocationDescription:
@@ -793,6 +875,7 @@ static const float _kRowBufffer = 20.0f;
             case ArtDetailRowLocationType:
             case ArtDetailRowLink:
             case ArtDetailRowCategory:
+            case ArtDetailRowTag:
             {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:cellIdentifier];
                 cell.detailTextLabel.numberOfLines = 1;
@@ -892,6 +975,12 @@ static const float _kRowBufffer = 20.0f;
                         cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
                         break;
                     }
+                    case ArtDetailRowTag:
+                    {
+                        cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+                        break;
+                    }
+
                     default:
                         break;
                 }
@@ -1085,6 +1174,7 @@ static const float _kRowBufffer = 20.0f;
             
             if (_art.website && _art.website.length > 0) {
                 cell.detailTextLabel.text = (_inEditMode) ? @"" : _art.website;
+                _url=(_inEditMode) ? @"" : _art.website;
                 cell.textLabel.text = @"website";
             }
             else {
@@ -1125,16 +1215,39 @@ static const float _kRowBufffer = 20.0f;
             
             break;
         }
+        case ArtDetailRowTag:
+        {
+            if (!_inEditMode) {
+                cell.textLabel.text = @"tags";
+                
+                if ([_newArtDictionary objectForKey:@"tags"] && [[_newArtDictionary objectForKey:@"tags"] count] > 0) {
+                    NSString *cats = [[_newArtDictionary objectForKey:@"tags"] componentsJoinedByString:@", "];
+                    cell.detailTextLabel.text = cats;
+                }
+                else if (_art.tags && [_art.tags count] > 0)
+                    cell.detailTextLabel.text = [_art tagString];
+                else {
+                    cell.detailTextLabel.text = (_inEditMode) ? @"Tags" : @"";
+                    cell.textLabel.text = (_inEditMode) ? @"tags" : @"";
+                }
+                
+            }
+            
+            break;
+        }
+
         case ArtDetailRowDescription:
         {
             if (!_inEditMode) {
                 if (_art.artDescription && _art.artDescription.length > 0) {
-                    cell.textLabel.text = @"About";
-                    cell.detailTextLabel.text = _art.artDescription;
+                  //  cell.textLabel.text = @"About";
+                     slogan.text=@"About";
+                     textV.text=_art.artDescription;
                 }
                 else {
-                    cell.textLabel.text = @"";
-                    cell.detailTextLabel.text = @"";
+                    slogan.text=@"";
+                    textV.text=@"";
+
                 }
             }
             break;
@@ -1354,6 +1467,16 @@ static const float _kRowBufffer = 20.0f;
                 [self.navigationController pushViewController:addVC animated:YES];
                 break;
             }
+            case ArtDetailRowLink:
+            {
+                NSURL *url = [NSURL URLWithString:_url];
+                
+                if (![[UIApplication sharedApplication] openURL:url]) {
+                  
+                }
+                break;
+            }
+
             default:
                 break;
         }
@@ -1394,6 +1517,11 @@ static const float _kRowBufffer = 20.0f;
             }
             case ArtDetailRowLocationMap:
             case ArtDetailRowComments:
+            case ArtDetailRowTag:
+            {
+                height = 0.0f;
+                break;
+            }
             case ArtDetailRowAddComment:
             {
                 height = 0.0f;
@@ -1516,6 +1644,25 @@ static const float _kRowBufffer = 20.0f;
                 
                 break;
             }
+            case ArtDetailRowTag:
+            {
+                if ([[[_newArtDictionary objectForKey:@"tags"] componentsJoinedByString:@", "] length] > 0) {
+                    CGSize labelSize = CGSizeMake(203.0f, 10000.0f);
+                    CGSize requiredLabelSize = [[[_newArtDictionary objectForKey:@"tags"] componentsJoinedByString:@", "] sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
+                }
+                else if ([_art.tagString length] > 0) {
+                    CGSize labelSize = CGSizeMake(205.0f, 10000.0f);
+                    CGSize requiredLabelSize = [_art.tagString sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    height = requiredLabelSize.height;
+                }
+                else {
+                    height = 0;
+                }
+                
+                break;
+            }
+                
             case ArtDetailRowDescription:
             {
                 if ([[_newArtDictionary objectForKey:@"description"] length] > 0) {
@@ -1526,7 +1673,7 @@ static const float _kRowBufffer = 20.0f;
                 }
                 else if ([_art.artDescription length] > 0) {
                     CGSize labelSize = CGSizeMake(300.0f, 10000.0f);
-                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
+                    CGSize requiredLabelSize = [_art.artDescription sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0f] constrainedToSize:labelSize lineBreakMode:NSLineBreakByWordWrapping];
                     height = requiredLabelSize.height + _kRowBufffer + 10.0f;
                     height += 30.0f;
                 }
@@ -1577,6 +1724,12 @@ static const float _kRowBufffer = 20.0f;
     }
     
     return (indexPath.row != ArtDetailRowBuffer && height != 0.0f && height < 25.0f) ? 25.0f : height;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)url inRange:(NSRange)characterRange
+{
+    
+    return YES;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -1761,7 +1914,7 @@ static const float _kRowBufffer = 20.0f;
             //setup the add image button
             addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
             [addImgButton setFrame:CGRectMake(prevOffset, _kPhotoPadding, _kPhotoWidth, _kPhotoHeight)];
-            [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
+            [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBgwithtext.png"] forState:UIControlStateNormal];
             [addImgButton.imageView setContentMode:UIViewContentModeCenter];
             [addImgButton.layer setBorderColor:[UIColor colorWithWhite:1.0f alpha:1.0f].CGColor];
             [addImgButton.layer setBorderWidth:6.0f];
@@ -1849,9 +2002,9 @@ static const float _kRowBufffer = 20.0f;
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     
-    //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+//    //save flash mode in case it changed
+//    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+//    [[Utilities instance] setFlashMode:flashMode];
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1916,8 +2069,8 @@ static const float _kRowBufffer = 20.0f;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     //save flash mode in case it changed
-    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-    [[Utilities instance] setFlashMode:flashMode];
+//    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+//    [[Utilities instance] setFlashMode:flashMode];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
