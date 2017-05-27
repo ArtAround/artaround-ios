@@ -590,7 +590,7 @@
     
     if (!addImgButton) {
         addImgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBgwithtext.png"] forState:UIControlStateNormal];
+        [addImgButton setImage:[UIImage imageNamed:@"uploadPhoto_noBg.png"] forState:UIControlStateNormal];
         [addImgButton setTag:_kAddImageTagBase];
         [addImgButton.imageView setContentMode:UIViewContentModeCenter];
         [addImgButton setBackgroundColor:[UIColor colorWithRed:(170.0f/255.0f) green:(170.0f/255.0f) blue:(170.0f/255.0f) alpha:1.0f]];
@@ -1052,9 +1052,9 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
 
-//    //save flash mode in case it changed
-//    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-//    [[Utilities instance] setFlashMode:flashMode];
+    //save flash mode in case it changed
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1066,8 +1066,8 @@
 {
     
     //save flash mode in case it changed
-//    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
-//    [[Utilities instance] setFlashMode:flashMode];
+    NSNumber *flashMode = [[NSNumber alloc] initWithInteger:picker.cameraFlashMode];
+    [[Utilities instance] setFlashMode:flashMode];
     
     //dismiss the picker view
     [self dismissViewControllerAnimated:YES completion:^{
@@ -1076,14 +1076,14 @@
         UIImage* image = [[info valueForKey:@"UIImagePickerControllerOriginalImage"] retain];
         
         NSMutableDictionary *newInfo = [[NSMutableDictionary alloc] initWithDictionary:info];
-        
+        [newInfo setObject:_currentLocation forKey:ALAssetPropertyLocation];
         
         //create asset library
         ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
         
         //if its from the camera we have to save it first
         if (picker.sourceType == UIImagePickerControllerSourceTypeCamera && [info valueForKey:@"UIImagePickerControllerMediaMetadata"]) {
-            [newInfo setObject:_currentLocation forKey:ALAssetPropertyLocation];
+            
             _imageLocation = [[CLLocation alloc] initWithLatitude:_currentLocation.coordinate.latitude longitude:_currentLocation.coordinate.longitude];
             
         }

@@ -355,10 +355,6 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
         [delegate selectedArt:[_items objectAtIndex:indexPath.row]];
-        NSString * str =[[_items valueForKey:@"slug"]objectAtIndex:indexPath.row];
-        NSUserDefaults *defualt = [NSUserDefaults standardUserDefaults];
-        [defualt setValue:str forKey:@"userid"];
-
         //[delegate selectedArtAtIndex:indexPath.row];
     }
 }

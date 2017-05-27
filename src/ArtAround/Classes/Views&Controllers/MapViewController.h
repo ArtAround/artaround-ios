@@ -18,14 +18,8 @@
 	NSMutableArray *_items;
 	NSMutableArray *_annotations;
 	BOOL _mapNeedsRefresh, _showingMap, _foundUser;
-    UIImageView *_listButton, *_mapButton,*keyButton;
-    UIView *_initialLoadView,*keyView;
-    
-    BOOL viewhide;
-    UIView *buttonView2;
-    
-    NSMutableArray *categoryArray,*tagArray;
-    NSUInteger x;
+    UIImageView *_listButton, *_mapButton;
+    UIView *_initialLoadView;
 }
 
 @property BOOL showFavorites;

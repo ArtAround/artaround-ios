@@ -12,7 +12,7 @@
 #import "Event.h"
 #import "Neighborhood.h"
 #import "Photo.h"
-#import "Tag.h"
+
 
 @implementation Art
 
@@ -38,7 +38,7 @@
 @dynamic event;
 @dynamic neighborhood;
 @dynamic photos;
-@dynamic tags;
+
 - (NSString*)categoriesString
 {
     NSString *catString = @"";
@@ -54,22 +54,6 @@
         catString = [catTitlesArray componentsJoinedByString:@", "];
     
     return catString;
-}
-- (NSString*)tagString
-{
-    NSString *tagString = @"";
-    NSArray *tagArray = [self.tags allObjects];
-    
-    NSMutableArray *tagTitlesArray = [[NSMutableArray alloc] initWithCapacity:tagArray.count];
-    
-    for (Tag *thistag in tagArray) {
-        [tagTitlesArray addObject:thistag.title];
-    }
-    
-    if (tagTitlesArray.count > 0)
-        tagString = [tagTitlesArray componentsJoinedByString:@", "];
-    
-    return tagString;
 }
 
 
